@@ -4,6 +4,14 @@ spring:
     username: ${db_user}
     password: ${db_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cache:
+    type: redis
+    redis:
+      host : ${redis_host}
+      port : ${redis_port}
+      password : ${redis_password}
+
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,7 +23,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
+  main:
+    allow-bean-definition-overriding: true
 logging:
   level:
     org.hibernate.SQL: debug
