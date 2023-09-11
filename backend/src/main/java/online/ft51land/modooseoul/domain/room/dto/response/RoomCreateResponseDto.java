@@ -1,23 +1,25 @@
 package online.ft51land.modooseoul.domain.room.dto.response;
 
 import lombok.Builder;
+import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.room.entity.Room;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 public record RoomCreateResponseDto(
-        Long id,
-        String name,
+        String id,
+        List<Player> players,
         Boolean isStart,
-        LocalDateTime createDateTime
+        LocalDateTime createDate
 ) {
     public static RoomCreateResponseDto of(Room room){
         return RoomCreateResponseDto.builder()
                 .id(room.getId())
-                .name(room.getName())
+                .players(room.getPlayers())
                 .isStart(room.getIsStart())
-                .createDateTime(room.getCreatedDate())
+                .createDate(room.getCreatedDate())
                 .build();
     }
 }
