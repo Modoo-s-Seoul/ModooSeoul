@@ -13,8 +13,8 @@ public class RoomWebSocketService {
 		 * 플레이어 정보가 넘어오면 처리해야 하는 로직
 		 * 레디스에 해당 정보를 저장해야함
 		 */
-		log.info("sessionId: {}", String.valueOf(playerJoinRequestDto.SessionId()));
-		log.info("nickname: {}", playerJoinRequestDto.nickName());
+		log.info("sessionId: {}", playerJoinRequestDto.sessionId());
+		log.info("nickname: {}", playerJoinRequestDto.nickname());
 		log.info("roomnumber: {}", playerJoinRequestDto.roomNumber());
 	}
 }

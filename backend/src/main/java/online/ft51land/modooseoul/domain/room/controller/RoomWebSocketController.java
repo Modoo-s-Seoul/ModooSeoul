@@ -16,6 +16,6 @@ public class RoomWebSocketController {
 	// 방 입장 시 해줘야하는 로직
 	@MessageMapping("/") // URI 바꿔야함.
 	public void handlePlayerJoin(@Payload PlayerJoinRequestDto playerJoinRequestDto) {
-		roomWebSocketService.handlePlayerJoin(playerJoinRequestDto.toPlayer());
+		roomWebSocketService.handlePlayerJoin(playerJoinRequestDto);
 	}
 }
