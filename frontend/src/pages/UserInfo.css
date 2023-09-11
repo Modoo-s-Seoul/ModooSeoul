@@ -1,0 +1,28 @@
+.playerContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  /* color: white; */
+  left: auto;
+  width: 100vw;
+}
+
+.playerBox {
+  border: 1px solid green;
+  min-height: 20vh;
+  width: 20vw;
+  margin: auto;
+  background-color: white;
+}
+
+.activePlayer {
+  border: 10px solid rgb(128, 23, 0); /* 턴에 해당하는 플레이어에게 굵은 보더 스타일 */
+}
+
+.sample {
+  color: #dddc90;
+  color: #90dd9a;
+  color: #909add;
+  color: #dd9090;
+}

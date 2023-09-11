@@ -1,4 +1,4 @@
-package online.ft51land.modooseoul.utils.domain;
+package online.ft51land.modooseoul.utils.entity;
 
 
 import lombok.Getter;

@@ -1,0 +1,22 @@
+.eventContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  /* color: white; */
+  left: auto;
+  width: 60vw;
+  height: 60vh;
+  left: 20vw;
+  top: 10vh;
+  background-color: rgb(227, 227, 227);
+  border: 20px solid rgb(196, 196, 196);
+}
+
+.eventBox {
+  border: 1px solid green;
+  min-height: 20vh;
+  width: 20vw;
+  margin: auto;
+  background-color: white;
+}
