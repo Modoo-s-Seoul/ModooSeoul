@@ -7,7 +7,7 @@ interface Props {
   turn: number;
 }
 
-function UserInfo({ playerData, turn }: Props) {
+export default function UserInfo({ playerData, turn }: Props) {
   return (
     <>
       {/* Player Board */}
@@ -25,4 +25,3 @@ function UserInfo({ playerData, turn }: Props) {
     </>
   );
 }
-export default UserInfo;

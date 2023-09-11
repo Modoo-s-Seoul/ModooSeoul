@@ -6,7 +6,7 @@ interface Props {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Key({ turnData, close }: Props) {
+export default function Key({ turnData, close }: Props) {
   return (
     <>
       <div className={"key"}>
@@ -18,4 +18,3 @@ function Key({ turnData, close }: Props) {
     </>
   );
 }
-export default Key;
