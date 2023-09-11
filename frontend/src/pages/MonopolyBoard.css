@@ -1,0 +1,31 @@
+.GameScreen {
+  z-index: 2;
+}
+.diceContainer {
+  position: fixed;
+  width: auto;
+  width: 100%;
+  top: 50vh;
+  /* background-color: #d90429; */
+}
+.rollDiceBtn {
+  position: relative;
+  padding: 5px 15px;
+  color: #fff;
+  background-color: #f4d35e;
+  border: none;
+  font-size: 20px;
+  border-radius: 20px;
+  box-shadow: 1px 3px #50514f;
+  outline: none;
+  transition: 0.3s;
+  top: 20vh;
+}
+
+.rollDiceBtn:hover,
+.rollDiceBtn:active {
+  outline: none;
+  background: #50514f;
+  cursor: pointer;
+  transform: translateY(5px);
+}
