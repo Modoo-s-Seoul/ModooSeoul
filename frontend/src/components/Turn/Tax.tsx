@@ -6,7 +6,7 @@ interface Props {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Tax({ turnData, close }: Props) {
+export default function Tax({ turnData, close }: Props) {
   return (
     <>
       <div className={"tax"}>
@@ -18,4 +18,3 @@ function Tax({ turnData, close }: Props) {
     </>
   );
 }
-export default Tax;

@@ -6,7 +6,7 @@ interface Props {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Start({ turnData, close }: Props) {
+export default function Start({ turnData, close }: Props) {
   return (
     <>
       <div className={"start"}>
@@ -18,4 +18,3 @@ function Start({ turnData, close }: Props) {
     </>
   );
 }
-export default Start;

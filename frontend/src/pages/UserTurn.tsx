@@ -18,7 +18,7 @@ interface Props {
   pNum: number;
 }
 
-function BoardInfo({ position, turn, close, pNum }: Props) {
+export default function BoardInfo({ position, turn, close, pNum }: Props) {
   const [turnData] = useState(
     boardData[
       `${position[(turn + 3) % pNum].row}-${position[(turn + 3) % pNum].col}`
@@ -48,4 +48,3 @@ function BoardInfo({ position, turn, close, pNum }: Props) {
     </>
   );
 }
-export default BoardInfo;
