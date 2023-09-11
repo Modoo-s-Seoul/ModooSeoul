@@ -7,7 +7,7 @@ interface Props {
   dice2: number;
 }
 
-function DiceRoll({ diceActive, dice1, dice2 }: Props) {
+export default function DiceRoll({ diceActive, dice1, dice2 }: Props) {
   const [diceOneClass, setDiceOneClass] = useState("");
   const [diceTwoClass, setDiceTwoClass] = useState("");
   // 실제 주사위 값 설정
@@ -127,5 +127,3 @@ function DiceRoll({ diceActive, dice1, dice2 }: Props) {
     </div>
   );
 }
-
-export default DiceRoll;
