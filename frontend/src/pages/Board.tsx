@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
 import DiceRoll from "./DiceRoll";
-import "./MonopolyBoard.css";
+import "./Board.css";
 
 export interface playerPosition {
   row: number;
@@ -21,11 +21,14 @@ export interface playerInfo {
 const MonopolyBoard = () => {
   const game = useRef<HTMLDivElement | null>(null);
 
-  // 기본 값
-  const pNum = 4; // 플레이어 수
-  const assetNames = ["Blue", "Green", "Pink", "Yellow"]; // 플레이어 캐릭터
+  /** 플레이어 수*/
+  const pNum = 4;
+  /** 플레이어 에셋*/
+  const assetNames = ["Blue", "Green", "Pink", "Yellow"];
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
-  const first_money = 10000000; // 시작 자본금
+  /** 시작 자본금*/
+  const first_money = 10000000;
+  /** 초기 플레이어 정보 */
   const playerDeafaults: playerInfo[] = [];
 
   for (let i = 1; i <= pNum; i++) {
@@ -43,9 +46,11 @@ const MonopolyBoard = () => {
   const [isRolling, setIsRolling] = useState(false); // 주사위 굴리기 버튼 활성화 상태
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [playerData, setPlayerData] = useState(playerDeafaults); // 플레이어 현재 정보
-  const [playerSprite, setPlayers] = useState<Phaser.GameObjects.Image[]>([]); //플레이어 스프라이트
-  const [playersPositions, setPlayerPositions] = useState<playerPosition[]>([]);
-  const [isUserTurnVisible, setIsUserTurnVisible] = useState(false); //
+  const [playerSprite, setPlayerSprite] = useState<Phaser.GameObjects.Image[]>(
+    []
+  ); //플레이어 스프라이트
+  const [playerPositions, setPlayerPositions] = useState<playerPosition[]>([]); // 플레이어 위치
+  const [isUserTurnVisible, setIsUserTurnVisible] = useState(false); // 플레이어 턴 수행 가능 여부
 
   const config = {
     type: Phaser.AUTO,
@@ -75,9 +80,8 @@ const MonopolyBoard = () => {
 
   // 에셋 불러오기
   function preload(this: Phaser.Scene) {
-    this.load.image("tile", "path_to_tile_image.png"); // Load your tile image
-    this.load.image("sampleTile", "assets/Polygon3.png"); // Load your tile image
-    // this.load.image("sampleTile", "assets/green_tile.png"); // Load your tile image
+    // this.load.image("sampleTile", "assets/Polygon3.png"); // Load your tile image
+    this.load.image("sampleTile", "assets/green_tile.png"); // Load your tile image
     this.load.image("sampleBuilding", "assets/building.png"); // Load your building image
     this.load.image("sampleShop", "assets/shop.png"); // Load your shop image
     this.load.image("Blue", "assets/alienBlue.png");
@@ -97,15 +101,15 @@ const MonopolyBoard = () => {
           const y = (col + row) * (tileSize / 4) + config.scale.height / 2;
 
           // 타일
-          // const sampleTile = this.add
-          //   .image(x, y, "sampleTile")
-          //   .setOrigin(0.5, 1.1);
-          // sampleTile.setScale(1.2, 1.2); // scaleX와 scaleY를 원하는 크기로 설정하세요.
-
           const sampleTile = this.add
             .image(x, y, "sampleTile")
-            .setOrigin(0.5, 3);
-          sampleTile.setScale(0.5, 0.5); // scaleX와 scaleY를 원하는 크기로 설정하세요.
+            .setOrigin(0.5, 1.1);
+          sampleTile.setScale(1.2, 1.2); // scaleX와 scaleY를 원하는 크기로 설정하세요.
+
+          // const sampleTile = this.add
+          //   .image(x, y, "sampleTile")
+          //   .setOrigin(0.5, 3);
+          // sampleTile.setScale(0.5, 0.5); // scaleX와 scaleY를 원하는 크기로 설정하세요.
 
           // 샵
           const sampleBuilding = this.add
@@ -139,10 +143,10 @@ const MonopolyBoard = () => {
 
       newPlayer.setScale(0.5, 0.5);
 
-      setPlayers([...playerSprite, newPlayer]);
+      setPlayerSprite((prevPlayerSprite) => [...prevPlayerSprite, newPlayer]);
 
-      setPlayerPositions([
-        ...playersPositions,
+      setPlayerPositions((prevPlayerPositions) => [
+        ...prevPlayerPositions,
         {
           row: 0,
           col: 0,
@@ -156,46 +160,43 @@ const MonopolyBoard = () => {
   // 플레이어 이동
   const movePlayer = (rowOffset: number, colOffset: number) => {
     const tileSize = 81;
-    const newRow = playersPositions[turn].row + rowOffset;
-    const newCol = playersPositions[turn].col + colOffset;
+    const newRow = playerPositions[turn].row + rowOffset;
+    const newCol = playerPositions[turn].col + colOffset;
 
     if (newRow >= 0 && newRow < 9 && newCol >= 0 && newCol < 9) {
-      playersPositions[turn].row = newRow;
-      playersPositions[turn].col = newCol;
+      playerPositions[turn].row = newRow;
+      playerPositions[turn].col = newCol;
 
       const x = (newCol - newRow) * (tileSize / 2) + config.scale.width / 2;
       const y = (newCol + newRow) * (tileSize / 4) + config.scale.height / 2;
 
       playerSprite[turn].setPosition(
-        x + playersPositions[turn].mx,
-        y + playersPositions[turn].my
+        x + playerPositions[turn].mx,
+        y + playerPositions[turn].my
       );
     }
   };
 
   // 플레이어 이동 방향 지정
-  const forMovePlayer = (totalDice: number) => {
+  const setPlayerDirection = (totalDice: number) => {
     for (let i = 0; i < totalDice; i++) {
       // eslint-disable-next-line no-loop-func
       setTimeout(() => {
-        if (
-          playersPositions[turn].row === 0 &&
-          playersPositions[turn].col < 8
-        ) {
+        if (playerPositions[turn].row === 0 && playerPositions[turn].col < 8) {
           movePlayer(0, 1);
         } else if (
-          playersPositions[turn].col === 8 &&
-          playersPositions[turn].row < 8
+          playerPositions[turn].col === 8 &&
+          playerPositions[turn].row < 8
         ) {
           movePlayer(1, 0);
         } else if (
-          playersPositions[turn].row === 8 &&
-          playersPositions[turn].col > 0
+          playerPositions[turn].row === 8 &&
+          playerPositions[turn].col > 0
         ) {
           movePlayer(0, -1);
         } else if (
-          playersPositions[turn].col === 0 &&
-          playersPositions[turn].row > 0
+          playerPositions[turn].col === 0 &&
+          playerPositions[turn].row > 0
         ) {
           movePlayer(-1, 0);
         }
@@ -229,7 +230,7 @@ const MonopolyBoard = () => {
 
     // 주사위 수만큼 플레이어 이동
     setTimeout(() => {
-      forMovePlayer(totalDice);
+      setPlayerDirection(totalDice);
       setDiceActive(false);
     }, 2000);
 
@@ -247,7 +248,7 @@ const MonopolyBoard = () => {
       <UserInfo playerData={playerData} turn={turn} />
       {isUserTurnVisible && (
         <UserTurn
-          position={playersPositions}
+          position={playerPositions}
           turn={turn}
           close={setIsUserTurnVisible}
           pNum={pNum}

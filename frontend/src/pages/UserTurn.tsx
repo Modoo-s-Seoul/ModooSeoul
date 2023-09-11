@@ -9,7 +9,7 @@ import Start from "../components/Turn/Start";
 import Subway from "../components/Turn/Subway";
 import Tax from "../components/Turn/Tax";
 import { useState } from "react";
-import { playerPosition } from "./MonopolyBoard";
+import { playerPosition } from "./Board";
 
 interface Props {
   position: playerPosition[];
