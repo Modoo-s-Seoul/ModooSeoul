@@ -1,5 +1,5 @@
 import "./App.css";
-import MonopolyBoard from "./pages/MonopolyBoard";
+import MonopolyBoard from "./pages/Board";
 
 function App() {
   return (
