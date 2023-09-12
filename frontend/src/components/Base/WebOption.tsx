@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./Modal.css";
+import "./WebOption.css"
 
 export default function WebOption() {
   /** 옵션창 끄고 켜기 */
@@ -31,7 +32,10 @@ function WebOptionLoad({ onClose }: WebOptionLoadProps) {
           <div onClick={onClose}>✖</div>
         </div>
         <h1>설정창</h1>
-        <p>모달 내용을 여기에 추가합니다.</p>
+        <div className="optionContainer">
+          <div className="optionBox">배경음악 on/off</div>
+          <div></div>
+        </div>
       </div>
     </div>
   );
