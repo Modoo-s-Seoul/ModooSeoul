@@ -1,4 +1,4 @@
-package online.ft51land.modooseoul.domain.player.service;
+package online.ft51land.modooseoul.domain.websocket.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +18,7 @@ public class PlayerWebSocketService {
 		 * 플레이어 정보가 넘어오면 처리해야 하는 로직
 		 * 레디스에 해당 정보를 저장해야함
 		 */
-		log.info("sessionId: {}", sessionId);
-		log.info("nickname: {}", playerJoinRequestDto.nickname());
-		log.info("roomnumber: {}", playerJoinRequestDto.roomNumber());
 
-		simpMessagingTemplate.convertAndSend("/receive", playerJoinRequestDto);
+		simpMessagingTemplate.convertAndSend("/receive/room/" + playerJoinRequestDto.roomNumber(), playerJoinRequestDto);
 	}
 }
