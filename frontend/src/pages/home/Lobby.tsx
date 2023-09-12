@@ -1,31 +1,28 @@
-// import React from 'react';
-import "./Lobby.css";
 import { Link } from "react-router-dom";
+import WebInfo from "../../components/Base/WebInfo";
+import WebOption from "../../components/Base/WebOption";
+import "./Lobby.css";
 
+/** 게임로비 컴포넌트 */
 export default function Lobby() {
   return (
     <>
       <div>
+        {/* 헤더부분 - 버튼 */}
         <div className="lobbyHeader">
           <div className="lobbyHeaderBtnContainer">
-            <div className="lobbyHeaderBtn">정보</div>
-            <div className="lobbyHeaderBtn">옵션</div>
+            <WebInfo />
+            <WebOption />
             <div className="lobbyHeaderBtn">나가기</div>
           </div>
-          <h1>모두의 서울</h1>
         </div>
+        {/* 바디부분 - 기능 이동키 */}
+        <div className="title">모두의 서울</div>
         <div className="lobbyBtnContainer">
-          <Link to={"/home/create"}>
-            <div className="lobbyBtn">
-              <div>방 생성</div>
-            </div>
+          <Link to={"/home/create"} className="customLink">
+            <div className="lobbyBtn">방 생성</div>
           </Link>
-          <Link to={"/home/enter"}>
-            <div className="lobbyBtn">
-              <div>방 참가</div>
-            </div>
-          </Link>
-          <Link to={"/home/random"}>
+          <Link to={"/home/random"} className="customLink">
             <div className="lobbyBtn">
               <div>랜덤 매칭</div>
             </div>

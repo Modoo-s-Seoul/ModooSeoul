@@ -1,4 +1,14 @@
 .lobbyHeader {
+  margin-top: 5vh;
+}
+
+.title {
+  font-size: 70px;
+  font-weight: 400;
+  text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white,
+    1px 1px 0 white;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
 }
 .lobbyHeaderBtnContainer {
   display: flex;
@@ -7,21 +17,32 @@
   margin-left: auto;
 }
 .lobbyHeaderBtn {
-  background-color: aqua;
+  /* background-color: aqua; */
+}
+.lobbyHeaderBtn:hover {
+  text-shadow: 1px 1px 1px black;
 }
 .lobbyBtnContainer {
   display: flex;
   justify-content: space-around;
+  height: 50vh;
+  align-items: center;
 }
 .lobbyBtn {
-  width: 30vw;
-  height: 30vh;
-  background-color: aquamarine;
+  width: 25vw;
+  height: 200px;
+  font-size: 40px;
+  text-shadow: 1px 1px 5px black;
+  background-color: var(--primary-color);
   text-align: center;
+  color: aliceblue;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
 }
 
 .lobbyBtn:hover {
-  background-color: rgb(25, 128, 93);
+  background-color: #71725b;
 }
 .lobbyBtn:active {
 }
