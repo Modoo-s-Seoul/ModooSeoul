@@ -1,13 +1,9 @@
-package online.ft51land.modooseoul.domain.websocket.controller;
+package online.ft51land.modooseoul.websocket.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.domain.websocket.service.PlayerWebSocketService;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
