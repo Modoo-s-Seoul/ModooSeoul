@@ -24,4 +24,9 @@ public class RoomController {
         return BaseResponseDto.ok(roomService.create());
     }
 
+    /*
+    방 참여
+     */
+//    @PostMapping("/{roomId}")
+//    public BaseResponseDto<Room>
 }
