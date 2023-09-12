@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./DiceRoll.css"; // CSS 파일을 import 해야 합니다.
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 export default function DiceRoll({ diceActive, dice1, dice2 }: Props) {
   const [diceOneClass, setDiceOneClass] = useState("");
   const [diceTwoClass, setDiceTwoClass] = useState("");
+
   // 실제 주사위 값 설정
   const rollDice = () => {
     const diceOne = dice1;
@@ -18,16 +19,19 @@ export default function DiceRoll({ diceActive, dice1, dice2 }: Props) {
     setDiceOneClass("show-" + diceOne);
     setDiceTwoClass("show-" + diceTwo);
   };
+
   // 주사위 1,1 로 초기화
   const rollDiceReset = () => {
     setDiceOneClass("show-" + 1);
     setDiceTwoClass("show-" + 1);
   };
+
   // 주사위 4,4로 한번 돌리기
   const rollDiceReset2 = () => {
     setDiceOneClass("show-" + 4);
     setDiceTwoClass("show-" + 4);
   };
+
   useEffect(() => {
     if (diceActive === true) {
       console.log("DiceActive");
