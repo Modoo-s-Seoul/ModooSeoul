@@ -1,11 +1,11 @@
 import "./App.css";
-import MonopolyBoard from "./pages/Board";
+import Board from "./pages/Board";
 
 function App() {
   return (
     <>
       <div>
-        <MonopolyBoard />
+        <Board />
       </div>
     </>
   );
