@@ -84,4 +84,8 @@ public class Player extends BaseEntity {
         this.isReady = false;
         this.createdDate = LocalDateTime.now();
     }
+
+    public void toggleReadyStatus() {
+        this.isReady = !this.isReady;
+    }
 }

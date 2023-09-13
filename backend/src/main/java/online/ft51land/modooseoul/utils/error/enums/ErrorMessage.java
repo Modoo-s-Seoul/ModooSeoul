@@ -11,6 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorMessage {
 
     // 에러 메시지 추가하면 됩니다.
+    PLAYER_NOT_FOUND(NOT_FOUND, "해당 플레이어를 찾을 수 없습니다.");
     INTERVAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "요청을 처리하는 과정에서 서버가 예상하지 못한 오류가 발생하였습니다."),
     ROOM_NOT_FOUND(NOT_FOUND, "해당 방을 찾을 수 없습니다."),
     ROOM_ALREADY_FULL(FORBIDDEN, "해당 방의 정원이 이미 가득 찼습니다."),
