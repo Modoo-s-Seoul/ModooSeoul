@@ -1,13 +1,14 @@
 package online.ft51land.modooseoul.domain.player.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,18 +40,15 @@ public class Player extends BaseEntity {
 
      */
     @Id
-    @Indexed
-    private Long id;
+    private String id;
 
-    @Column(nullable = false, name = "session_id")
-    private String sessionId;
-
+    @Column(nullable = false)
     private String nickname;
 
-    @Column(name = "room_id")
-    private Long roomId;
+    @Column(name = "room_id",nullable = false )
+    private String roomId;
 
-    @Column(name = "is_ready")
+    @Column(name = "is_ready", nullable = false)
     private Boolean isReady;
 
     @Column(name ="current_board_id")
@@ -74,17 +72,16 @@ public class Player extends BaseEntity {
     private Boolean isArrested;
 
     @Column(name = "select_stock_id")
-    private Long selectStockI;
+    private Long selectStockId;
 
     @Column(name = "reportee_player_id")
     private Long reporteePlayerId;
 
     @Builder
-    public Player(String sessionId, String nickname, Long roomId, Boolean isReady){
-        this.sessionId = sessionId;
+    public Player(String nickname, String roomId){
         this.nickname = nickname;
         this.roomId = roomId;
-        this.isReady = isReady;
+        this.isReady = false;
         this.createdDate = LocalDateTime.now();
     }
 }
