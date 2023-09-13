@@ -1,6 +1,5 @@
 package online.ft51land.modooseoul.utils.config;
 
-import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,12 +31,11 @@ public class RedisConfig {
      * 내장 혹은 외부의 Redis를 연결
      */
     @Bean
-    public RedisConnectionFactory redisConnectionFactory(){
+    public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(redis_host);
         redisStandaloneConfiguration.setPort(redis_port);
         redisStandaloneConfiguration.setPassword(RedisPassword.of(redis_password));
-
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 

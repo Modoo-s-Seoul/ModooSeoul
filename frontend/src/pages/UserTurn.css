@@ -3,14 +3,19 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  align-items: center;
   /* color: white; */
   left: auto;
   width: 60vw;
   height: 60vh;
-  left: 20vw;
+  left: 18vw;
   top: 10vh;
-  background-color: rgb(227, 227, 227);
-  border: 20px solid rgb(196, 196, 196);
+  background-color: rgb(233, 215, 176);
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 20px;
+  box-shadow: 5px 5px 50px rgb(255, 255, 255), -5px -5px 50px white;
+  padding: 2vw;
+  animation: fadeIn 0.5s ease-in-out, shake 1s ease;
 }
 
 .eventBox {
@@ -19,4 +24,48 @@
   width: 20vw;
   margin: auto;
   background-color: white;
+}
+
+.closeUserTurn {
+  background-color: unset;
+  border: unset;
+  font-size: 24px;
+  cursor: pointer;
+}
+.closeUserTurn:hover {
+  text-shadow: 1px 1px 10px rgb(118, 118, 118);
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }

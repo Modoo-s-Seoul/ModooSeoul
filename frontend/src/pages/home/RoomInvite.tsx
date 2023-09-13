@@ -1,49 +1,51 @@
 import { ChangeEvent, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { joinRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/ClickBtn";
 
-/** 링크로 진입할시 닉네임만 입력하는 컴포넌트 */
-interface RoomEnterProps {
-  roomId: string;
-  nickname: string;
-}
-/** 초대 입장 컴포넌트 */
+/** 방 입장 컴포넌트 */
 export default function Invite() {
-  // 인풋 필드 관리
-  const [formData, setFormData] = useState<RoomEnterProps>({
-    roomId: "",
-    nickname: "",
-  });
-  // 인풋 변경
+  const [nickname, setNickname] = useState(""); // 유저 닉네임
+  const navigate = useNavigate();
+  const { pk } = useParams();
+
+  /**입력값 반영 함수 */
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setNickname(e.target.value);
   };
 
-  const navigate = useNavigate();
-  const { pk } = useParams();
-  // 게임 참가버튼을 눌렀을때
-  const handelGoGame = () => {
-    if (formData.nickname == "") {
+  /**방 참가 */
+  const handelGoGame = async () => {
+    if (nickname === "") {
       window.alert("닉네임을 입력하세요."); // 경고창 표시
       return;
-    } else {
-      // 닉네임이 비어있지 않은 경우, 게임 참가 로직을 실행
-      navigate(`/home/room`, {
-        state: {
-          nickname: formData.nickname,
-          roomId: pk,
-        },
-      });
+    }
+
+    try {
+      const roomInfo = await joinRoom(nickname, pk);
+
+      if (roomInfo.message === "success") {
+        navigate(`/home/room`, {
+          // 유저 닉네임, 방 id 다음 페이지에 넘기기
+          state: {
+            nickname: nickname,
+            roomId: pk,
+          },
+        });
+      } else {
+        window.alert(roomInfo.phrase); // 경고창 표시
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching Room Info");
+      throw error;
     }
   };
+
   return (
     <>
       <div>

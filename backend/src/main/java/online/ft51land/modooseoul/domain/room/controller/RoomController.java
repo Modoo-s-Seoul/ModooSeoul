@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.room.dto.response.RoomCreateResponseDto;
 import online.ft51land.modooseoul.domain.room.service.RoomService;
 import online.ft51land.modooseoul.utils.dto.response.BaseResponseDto;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/rooms")
+@RequestMapping("/api/v1/rooms")
 public class RoomController {
 
     private final RoomService roomService;
@@ -24,9 +26,4 @@ public class RoomController {
         return BaseResponseDto.ok(roomService.create());
     }
 
-    /*
-    방 참여
-     */
-//    @PostMapping("/{roomId}")
-//    public BaseResponseDto<Room>
 }
