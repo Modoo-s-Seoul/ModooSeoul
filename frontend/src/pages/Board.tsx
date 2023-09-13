@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import Phaser from "phaser";
+// import axios from "axios";
+// import SockJS from "sockjs-client";
+// import StompJs from "@stomp/stompjs";
 import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
 import DiceRoll from "./DiceRoll";
@@ -18,7 +21,7 @@ export interface playerInfo {
   color: string;
 }
 
-const MonopolyBoard = () => {
+export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
   /** 플레이어 수*/
@@ -263,5 +266,4 @@ const MonopolyBoard = () => {
       <div ref={game} className="GameScreen" />
     </div>
   );
-};
-export default MonopolyBoard;
+}

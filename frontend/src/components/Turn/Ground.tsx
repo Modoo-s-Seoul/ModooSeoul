@@ -5,7 +5,7 @@ interface Props {
   close: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Ground({ turnData, close }: Props) {
+export default function Ground({ turnData, close }: Props) {
   return (
     <>
       <div className={"ground"}>
@@ -19,4 +19,3 @@ function Ground({ turnData, close }: Props) {
     </>
   );
 }
-export default Ground;
