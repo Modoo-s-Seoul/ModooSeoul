@@ -1,17 +1,18 @@
 package online.ft51land.modooseoul.domain.room.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.room.entity.enums.EndType;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -38,8 +39,8 @@ public class Room extends BaseEntity {
     @Id
     private String id;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
-    private List<Player> players;
+//    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
+    private List<String> players;
 
     @Column(name = "is_start", nullable = false)
     private Boolean isStart;
@@ -74,6 +75,16 @@ public class Room extends BaseEntity {
     public Room(){
         this.messageNum = 1L;
         this.isStart = false;
+        this.players = new ArrayList<>();
         this.createdDate = LocalDateTime.now();
+    }
+
+    public List<String> addPlayer(Player player){
+        this.players.add(player.getNickname());
+        return this.players;
+    }
+
+    public void start() {
+        this.isStart = true;
     }
 }
