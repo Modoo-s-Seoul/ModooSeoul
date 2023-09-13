@@ -7,11 +7,34 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: 20px;
 }
-button {
-  font-family: Dongle-Regular;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+button {
+  font-family: Dongle-Regular;
+}
+.customLink {
+  text-decoration: none;
+}
+.customInput {
+  border-radius: 200px;
+  padding: 2px;
+  border: 1px solid gray;
+  text-align: center;
+  font-family: Dongle-Regular;
+  font-size: 20px;
+}
+.clickBtnContainer {
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  margin-top: 50px;
+}
+:root {
+  --primary-color: #c6c7a1;
+  --secondary-color: #2a2609;
+  --text-color: #333;
+  /* 다른 색상 변수들도 정의할 수 있습니다. */
 }
