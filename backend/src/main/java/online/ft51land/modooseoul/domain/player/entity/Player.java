@@ -20,7 +20,8 @@ import java.util.List;
 public class Player extends BaseEntity {
 
     /*
-    id : pk -> sessionID
+    id : pk
+    session_id : 세션 아이디
     nickname : 닉네임
     room_id : 참여방
     is_ready : 준비 상태
@@ -39,18 +40,20 @@ public class Player extends BaseEntity {
      */
     @Id
     @Indexed
-    private String id;
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "session_id")
+    private String sessionId;
+
     private String nickname;
 
-    @Column(nullable = false, name = "room_id")
-    //나중에 Room형으로 바꾸기
+    @Column(name = "room_id")
     private Long roomId;
 
-    @Column(nullable = false, name = "is_ready")
+    @Column(name = "is_ready")
     private Boolean isReady;
 
+    @Column(name ="current_board_id")
     private Long currentBoardId;
     
     private Long cash;
@@ -74,12 +77,11 @@ public class Player extends BaseEntity {
     private Long selectStockI;
 
     @Column(name = "reportee_player_id")
-    //나중에 Player형으로 바꾸기
     private Long reporteePlayerId;
 
     @Builder
-    public Player(String id, String nickname, Long roomId, Boolean isReady){
-        this.id = id;
+    public Player(String sessionId, String nickname, Long roomId, Boolean isReady){
+        this.sessionId = sessionId;
         this.nickname = nickname;
         this.roomId = roomId;
         this.isReady = isReady;
