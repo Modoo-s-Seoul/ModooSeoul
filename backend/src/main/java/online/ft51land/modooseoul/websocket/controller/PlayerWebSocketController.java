@@ -23,6 +23,6 @@ public class PlayerWebSocketController {
 	public void connectPlayer(SimpMessageHeaderAccessor headerAccessor) {
 		log.info("메시지 전송 성공");
 		String sessionId = headerAccessor.getSessionId();
-		playerService.registPlayer(sessionId);
+//		playerService.registPlayer(sessionId);
 	}
 }
