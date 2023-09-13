@@ -45,8 +45,9 @@ export default function RoomCreate() {
     const createroom = async () => {
       try {
         const response = await axios.post(
-          // "http://70.12.247.90:8080/rooms",
-          "http://70.12.247.25:8080/rooms"
+          // "http://70.12.247.90:8080/api/v1/rooms",
+          // "http://70.12.247.25:8080/api/v1/rooms",
+          "http://modooseoul.online:8081/api/v1/rooms"
           // createUrl("/auth/login"),
         );
         console.log(response);

@@ -1,13 +1,11 @@
 // 보드판에 있는 칸에 대한 정보입니다.
 import "./UserInfo.css";
-import { playerInfo } from "../interface/ingame";
+import { useRecoilValue } from "recoil";
+import { playerDataState, turnState } from "../data/IngameData";
 
-interface Props {
-  playerData: playerInfo[];
-  turn: number;
-}
-
-export default function UserInfo({ playerData, turn }: Props) {
+export default function UserInfo() {
+  const playerData = useRecoilValue(playerDataState); // 플레이어 현재 정보
+  const turn = useRecoilValue(turnState); // 현재 플레이 순서
   return (
     <>
       {/* Player Board */}
