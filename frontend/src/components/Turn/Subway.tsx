@@ -1,4 +1,4 @@
-import { SpaceInfo } from "../../data/BoardData";
+import { SpaceInfo } from "../../interface/ingame";
 
 interface Props {
   turnData: SpaceInfo;
