@@ -1,15 +1,4 @@
-// data.js
-export interface SpaceInfo{
-    name: string;
-    price: number;
-    cost: number;
-    kind: string;
-    sell: boolean;
-}
-
-export interface BoardData {
-  [key: string]:SpaceInfo;
-}
+import { BoardData } from "../interface/ingame";
 
 export const boardData:BoardData = {
   "0-0": {
