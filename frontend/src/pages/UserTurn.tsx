@@ -9,7 +9,7 @@ import Start from "../components/Turn/Start";
 import Subway from "../components/Turn/Subway";
 import Tax from "../components/Turn/Tax";
 import { useState } from "react";
-import { playerPosition } from "./Board";
+import { playerPosition } from "../interface/ingame";
 
 interface Props {
   position: playerPosition[];
@@ -18,7 +18,7 @@ interface Props {
   pNum: number;
 }
 
-export default function BoardInfo({ position, turn, close, pNum }: Props) {
+export default function UserTurn({ position, turn, close, pNum }: Props) {
   const [turnData] = useState(
     boardData[
       `${position[(turn + 3) % pNum].row}-${position[(turn + 3) % pNum].col}`

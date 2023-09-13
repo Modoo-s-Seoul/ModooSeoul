@@ -7,19 +7,7 @@ import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
 import DiceRoll from "./DiceRoll";
 import "./Board.css";
-
-export interface playerPosition {
-  row: number;
-  col: number;
-  mx: number;
-  my: number;
-}
-
-export interface playerInfo {
-  name: string;
-  money: number;
-  color: string;
-}
+import { playerPosition, playerInfo } from "../interface/ingame";
 
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
@@ -73,8 +61,8 @@ export default function Board() {
     },
   };
 
-  // Game Settings
-  const setPosition = [
+  // 플레이어 스프라이트 위치 조정
+  const spritePosition = [
     [-6, -6],
     [6, -6],
     [-6, 6],
@@ -132,15 +120,15 @@ export default function Board() {
     // 플레이어 위치 초기화
     for (let i = 0; i < pNum; i++) {
       // const player = this.add.circle(
-      //   game.config.width / 2 + setPosition[i][0],
-      //   game.config.height / 2 + setPosition[i][1] - 100,
+      //   game.config.width / 2 + spritePosition[i][0],
+      //   game.config.height / 2 + spritePosition[i][1] - 100,
       //   tileSize / 10,
       //   parseInt(colorPalette[i], 16)
       // );
 
       const newPlayer = this.add.image(
-        config.scale.width / 2 + setPosition[i][0],
-        config.scale.height / 2 + setPosition[i][1] - 100,
+        config.scale.width / 2 + spritePosition[i][0],
+        config.scale.height / 2 + spritePosition[i][1] - 100,
         assetNames[i]
       );
 
@@ -153,8 +141,8 @@ export default function Board() {
         {
           row: 0,
           col: 0,
-          mx: setPosition[i][0],
-          my: setPosition[i][1] - 100,
+          mx: spritePosition[i][0],
+          my: spritePosition[i][1] - 100,
         },
       ]);
     }
