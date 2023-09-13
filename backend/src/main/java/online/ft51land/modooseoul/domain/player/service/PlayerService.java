@@ -15,6 +15,7 @@ import online.ft51land.modooseoul.websocket.service.WebSocketSendService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class PlayerService {
     public Player playerReady(String playerId) {
         // 레디 / 취소 요청한 플레이어 객체
         Player readyPlayer = playerRepository.findById(playerId)
-                                        .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+                                             .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
 
         // 레디 상태 변경
         readyPlayer.toggleReadyStatus();
@@ -48,15 +49,18 @@ public class PlayerService {
         // 방 객체 받아오기
         String roomId = player.getRoomId();
         Room room = roomRepository.findById(roomId)
-                                  .orElseThrow(() -> new BusinessException(ErrorMessage.ROOMS_NOT_FOUND));
+                                  .orElseThrow(() -> new BusinessException(ErrorMessage.ROOM_NOT_FOUND));
 
         // Message 만들기
         List<PlayerReadyMessage> message = new ArrayList<>();
-        List<Player> players = room.getPlayers();
+        List<String> players = room.getPlayers();
 
-        for (Player p : players) {
+        for (String playerId : players) {
+            Player p = playerRepository.findById(playerId)
+                                       .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
             message.add(PlayerReadyMessage.of(p));
         }
+
 
         // 메시지 전송
         webSocketSendService.sendToRoom(roomId, message);
@@ -66,22 +70,22 @@ public class PlayerService {
 
         // 1. 방이 존재하는지 확인
         Room room = roomRepository.findById(playerJoinRequestDto.roomId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.ROOM_NOT_FOUND));
+                                  .orElseThrow(() -> new BusinessException(ErrorMessage.ROOM_NOT_FOUND));
 
         // 2. 대기 중인 방인지 확인
-        if(room.getIsStart()){
+        if (room.getIsStart()) {
             throw new BusinessException(ErrorMessage.ROOM_ALREADY_GAME_START);
         }
-        
+
         // 3. 참여자 정원일 다 찼는지 확인
-        if(room.getPlayers() != null && room.getPlayers().size() >= 4){
-            throw new BusinessException(ErrorMessage. ROOM_ALREADY_FULL);
+        if (room.getPlayers() != null && room.getPlayers().size() >= 4) {
+            throw new BusinessException(ErrorMessage.ROOM_ALREADY_FULL);
         }
 
         // 4. 해당방에 중복된 닉네임이 있는지 확인
         List<String> players = room.getPlayers();
-        for(String nickname : players){
-            if(nickname.equals(playerJoinRequestDto.nickname())){
+        for (String nickname : players) {
+            if (nickname.equals(playerJoinRequestDto.nickname())) {
                 throw new BusinessException(ErrorMessage.DUPLICATE_PLAYER_NICKNAME);
             }
         }
@@ -96,3 +100,4 @@ public class PlayerService {
 
         return PlayerJoinResponseDto.of(player);
     }
+}
