@@ -6,17 +6,21 @@ import "./Room.css";
 // 초대링크, 방생성을 통해서만 접근 가능
 /** 게임 대기룸 컴포넌트 */
 export default function Room() {
-  // 게임시작 버튼 누를시
   const navigate = useNavigate();
+  /**유저 닉네임, 현재 방 ID 가져오기 */
+  const location = useLocation();
+
+  console.log(location.state);
+
+  /**게임시작 */
   const handleStartGame = () => {
     navigate(`/game`);
   };
 
-  // 링크 복사 누를시
-  const location = useLocation();
-  console.log(location.state);
+  /**방 참가 링크 복사 */
   const handleEnterLink = () => {
     const roomUrl = `http://localhost:5173/home/invite/${location.state.roomId}`;
+
     navigator.clipboard
       .writeText(roomUrl)
       .then(() => {
@@ -28,7 +32,6 @@ export default function Room() {
       });
   };
 
-  // 방에 입장시
   // 1. 웹소켓 연결
   // 2. join 요청
   // 3. 유저 키 관리
