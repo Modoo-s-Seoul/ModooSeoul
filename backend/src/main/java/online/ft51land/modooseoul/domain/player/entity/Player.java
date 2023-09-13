@@ -48,7 +48,7 @@ public class Player extends BaseEntity {
     private String nickname;
 
     @Column(name = "room_id")
-    private Long roomId;
+    private String roomId;
 
     @Column(name = "is_ready")
     private Boolean isReady;
@@ -80,11 +80,15 @@ public class Player extends BaseEntity {
     private Long reporteePlayerId;
 
     @Builder
-    public Player(String sessionId, String nickname, Long roomId, Boolean isReady){
+    public Player(String sessionId, String nickname, String roomId, Boolean isReady){
         this.sessionId = sessionId;
         this.nickname = nickname;
         this.roomId = roomId;
         this.isReady = isReady;
         this.createdDate = LocalDateTime.now();
+    }
+
+    public void toggleReadyStatus() {
+        this.isReady = !this.isReady;
     }
 }
