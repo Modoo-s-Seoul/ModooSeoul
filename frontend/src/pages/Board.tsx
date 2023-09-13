@@ -8,44 +8,55 @@ import UserTurn from "./UserTurn";
 import DiceRoll from "./DiceRoll";
 import "./Board.css";
 import { playerPosition, playerInfo } from "../interface/ingame";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  pNumState,
+  first_money,
+  turnState,
+  dice1State,
+  dice2State,
+  diceActiveState,
+  playerDataState,
+  isUserTurnVisibleState,
+  isRollingState,
+} from "../data/IngameData";
 
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
-  /** 플레이어 수*/
-  const pNum = 4;
   /** 플레이어 에셋*/
-  const assetNames = ["Blue", "Green", "Pink", "Yellow"];
+  const assetNames = ["Pink", "Blue", "Green", "Yellow"];
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
-  /** 시작 자본금*/
-  const first_money = 10000000;
   /** 초기 플레이어 정보 */
+  const pNum = useRecoilValue(pNumState); // 플레이어 수
+  const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const playerDeafaults: playerInfo[] = [];
-
+  const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   for (let i = 1; i <= pNum; i++) {
     playerDeafaults.push({
       name: `Player ${i}`,
-      money: first_money,
+      money: firstMoneyValue,
       color: colorPalette[i - 1],
     });
   }
 
-  const [turn, setTurn] = useState(0); // 현재 플레이 순서
-  const [dice1, setDice1Value] = useState(0); // 첫번째 주사위 값
-  const [dice2, setDice2Value] = useState(0); // 두번째 주사위 값
-  const [diceActive, setDiceActive] = useState(false); // 주사위 상태
-  const [isRolling, setIsRolling] = useState(false); // 주사위 굴리기 버튼 활성화 상태
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const [, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
+  const [, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
+  const [, setDiceActive] = useRecoilState(diceActiveState); // 주사위 상태
+  const [isRolling, setIsRolling] = useRecoilState(isRollingState); // 주사위 굴리기 버튼 활성화 상태
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [playerData, setPlayerData] = useState(playerDeafaults); // 플레이어 현재 정보
   const [playerSprite, setPlayerSprite] = useState<Phaser.GameObjects.Image[]>(
     []
   ); //플레이어 스프라이트
   const [playerPositions, setPlayerPositions] = useState<playerPosition[]>([]); // 플레이어 위치
-  const [isUserTurnVisible, setIsUserTurnVisible] = useState(false); // 플레이어 턴 수행 가능 여부
+  const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
+    isUserTurnVisibleState
+  ); // 플레이어 턴 수행 가능 여부
 
   const config = {
     type: Phaser.AUTO,
-
+    parent: "gameScreen",
     // transparent: true, //배경 투명하게 설정
 
     // 캔버스 크기 창 크기에 따라 자동 맞춤되는 옵션
@@ -169,7 +180,11 @@ export default function Board() {
   };
 
   // 플레이어 이동 방향 지정
-  const setPlayerDirection = (totalDice: number) => {
+  const setPlayerDirection = (
+    totalDice: number,
+    Dice1: number,
+    Dice2: number
+  ) => {
     for (let i = 0; i < totalDice; i++) {
       // eslint-disable-next-line no-loop-func
       setTimeout(() => {
@@ -197,7 +212,9 @@ export default function Board() {
           setTimeout(() => {
             setIsUserTurnVisible(true);
             setIsRolling(false);
-            setTurn((turn + 1) % pNum);
+            if (Dice1 !== Dice2) {
+              setTurn((turn + 1) % pNum);
+            }
           }, 500);
         }
       }, i * 200);
@@ -221,37 +238,47 @@ export default function Board() {
 
     // 주사위 수만큼 플레이어 이동
     setTimeout(() => {
-      setPlayerDirection(totalDice);
+      setPlayerDirection(totalDice, Dice1, Dice2);
       setDiceActive(false);
     }, 2000);
 
     console.log(turn, "의 턴입니다.");
   };
+  /**실수로 인한 창 닫기, 새로고침 방지 */
+  const preventRefresh = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; // 빈 문자열을 반환하여 경고 메시지를 표시
+  };
 
+  /**실수로 인한 뒤로가기 방지 */
+  const preventGoBack = () => {
+    history.pushState(null, "", location.href);
+  };
   useEffect(() => {
+    setPlayerData(playerDeafaults);
+    console.log(playerData);
     if (game.current) {
       new Phaser.Game(config);
     }
+    window.addEventListener("beforeunload", preventRefresh);
+
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", preventGoBack);
   }, []);
 
   return (
     <div>
-      <UserInfo playerData={playerData} turn={turn} />
-      {isUserTurnVisible && (
-        <UserTurn
-          position={playerPositions}
-          turn={turn}
-          close={setIsUserTurnVisible}
-          pNum={pNum}
-        />
+      <UserInfo />
+      {isUserTurnVisible && <UserTurn position={playerPositions} />}
+      {!isUserTurnVisible && (
+        <div className="diceContainer">
+          <DiceRoll />
+          <button id="move-button" className="rollDiceBtn" onClick={rollDice}>
+            주사위 굴리기
+          </button>
+        </div>
       )}
-      <div className="diceContainer">
-        <DiceRoll diceActive={diceActive} dice1={dice1} dice2={dice2} />
-        <button id="move-button" className="rollDiceBtn" onClick={rollDice}>
-          주사위 굴리기
-        </button>
-      </div>
-      <div ref={game} className="GameScreen" />
+      <div ref={game} className="GameScreen" id="gameScreen" />
     </div>
   );
 }

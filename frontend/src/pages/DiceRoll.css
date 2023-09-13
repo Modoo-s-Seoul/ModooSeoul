@@ -174,3 +174,29 @@
   top: 50%;
   left: 80%;
 }
+
+.doubleMsg {
+  color: #fff;
+  position: absolute;
+  left: 46vw;
+  top: -20vh;
+  font-size: 6vw;
+  text-shadow: 1px 1px 5px #d90429;
+  opacity: 0; /* 초기에 숨겨진 상태로 시작 */
+  animation: fadeIn 2s ease-in-out forwards; /* 애니메이션 적용 */
+}
+@keyframes fadeIn {
+  /* 애니메이션 키프레임 정의 */
+  0% {
+    opacity: 0; /* 0% 위치에서 투명함 */
+    transform: translateY(10vh); /* 0% 위치에서 위로 이동 */
+  }
+  80% {
+    opacity: 0; /* 0% 위치에서 투명함 */
+    transform: translateY(10vh); /* 0% 위치에서 위로 이동 */
+  }
+  100% {
+    opacity: 1; /* 100% 위치에서 불투명해짐 */
+    transform: translateY(0); /* 100% 위치에서 이동하지 않음 */
+  }
+}
