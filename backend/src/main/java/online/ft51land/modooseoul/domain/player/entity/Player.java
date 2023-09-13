@@ -1,13 +1,14 @@
 package online.ft51land.modooseoul.domain.player.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.List;
 public class Player extends BaseEntity {
 
     /*
-    id : pk -> sessionID
+    id : pk
+    session_id : 세션 아이디
     nickname : 닉네임
     room_id : 참여방
     is_ready : 준비 상태
@@ -38,19 +40,18 @@ public class Player extends BaseEntity {
 
      */
     @Id
-    @Indexed
     private String id;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false, name = "room_id")
-    //나중에 Room형으로 바꾸기
-    private Long roomId;
+    @Column(name = "room_id",nullable = false )
+    private String roomId;
 
-    @Column(nullable = false, name = "is_ready")
+    @Column(name = "is_ready", nullable = false)
     private Boolean isReady;
 
+    @Column(name ="current_board_id")
     private Long currentBoardId;
     
     private Long cash;
@@ -71,18 +72,16 @@ public class Player extends BaseEntity {
     private Boolean isArrested;
 
     @Column(name = "select_stock_id")
-    private Long selectStockI;
+    private Long selectStockId;
 
     @Column(name = "reportee_player_id")
-    //나중에 Player형으로 바꾸기
     private Long reporteePlayerId;
 
     @Builder
-    public Player(String id, String nickname, Long roomId, Boolean isReady){
-        this.id = id;
+    public Player(String nickname, String roomId){
         this.nickname = nickname;
         this.roomId = roomId;
-        this.isReady = isReady;
+        this.isReady = false;
         this.createdDate = LocalDateTime.now();
     }
 }

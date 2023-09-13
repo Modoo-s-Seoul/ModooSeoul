@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import "./DiceRoll.css"; // CSS 파일을 import 해야 합니다.
+import { useRecoilValue } from "recoil";
+import {
+  dice1State,
+  dice2State,
+  diceActiveState,
+  isRollingState,
+} from "../data/IngameData";
 
-interface Props {
-  diceActive: boolean;
-  dice1: number;
-  dice2: number;
-}
-
-export default function DiceRoll({ diceActive, dice1, dice2 }: Props) {
+export default function DiceRoll() {
+  const diceone = useRecoilValue(dice1State);
+  const dicetwo = useRecoilValue(dice2State);
+  const isRolling = useRecoilValue(isRollingState);
+  const diceActive = useRecoilValue(diceActiveState);
   const [diceOneClass, setDiceOneClass] = useState("");
   const [diceTwoClass, setDiceTwoClass] = useState("");
 
   // 실제 주사위 값 설정
   const rollDice = () => {
-    const diceOne = dice1;
-    const diceTwo = dice2;
-    console.log(diceOne + " " + diceTwo);
-    setDiceOneClass("show-" + diceOne);
-    setDiceTwoClass("show-" + diceTwo);
+    console.log(diceone + " " + dicetwo);
+    setDiceOneClass("show-" + diceone);
+    setDiceTwoClass("show-" + dicetwo);
   };
 
   // 주사위 1,1 로 초기화
@@ -48,6 +51,9 @@ export default function DiceRoll({ diceActive, dice1, dice2 }: Props) {
   return (
     <div className="diceContainer">
       <div className="flexContainer">
+        {isRolling && diceone == dicetwo && (
+          <div className="doubleMsg">더블</div>
+        )}
         <div className="container">
           <div id="dice1" className={`dice dice-one ${diceOneClass}`}>
             <div id="dice-one-side-one" className="side one">
