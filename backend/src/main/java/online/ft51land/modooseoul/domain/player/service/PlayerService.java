@@ -12,10 +12,7 @@ import online.ft51land.modooseoul.domain.room.entity.Room;
 import online.ft51land.modooseoul.domain.room.repository.RoomRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
-import online.ft51land.modooseoul.websocket.service.WebSocketSendService;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Random;
@@ -27,7 +24,6 @@ public class PlayerService {
 
     private final RoomRepository roomRepository;
     private final PlayerRepository playerRepository;
-    private final WebSocketSendService webSocketSendService;
 
     // 플레이어 레디 / 취소 할 시 레포지토리 상태 변경해주기
     public Player playerReady(String playerId) {
@@ -43,32 +39,6 @@ public class PlayerService {
 
         return readyPlayer;
     }
-
-    // DTO 변경하고 방에다 보내면됨
-    public void sendAllReadyStatusToRoom(Player player) {
-        // 방 객체 받아오기
-        String roomId = player.getRoomId();
-        Room room = roomRepository.findById(roomId)
-                                  .orElseThrow(() -> new BusinessException(ErrorMessage.ROOM_NOT_FOUND));
-
-        // Message 만들기
-        List<PlayerReadyMessage> message = new ArrayList<>();
-        List<String> players = room.getPlayers();
-
-        for (String playerId : players) {
-            log.info("playerId = {}", playerId);
-            Player p = playerRepository.findById(playerId)
-                                       .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
-            message.add(PlayerReadyMessage.of(p));
-        }
-
-        // 메시지 전송
-        webSocketSendService.sendToRoom(roomId, message);
-    }
-
-    /**
-     * 플레이어 방 참가
-     */
 
     public PlayerJoinResponseDto joinRoom(PlayerJoinRequestDto playerJoinRequestDto) {
 
