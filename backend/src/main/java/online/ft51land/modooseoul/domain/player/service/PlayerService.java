@@ -7,8 +7,8 @@ import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.room.entity.Room;
-import online.ft51land.modooseoul.domain.room.repository.RoomRepository;
+import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class PlayerService {
 
-    private final RoomRepository roomRepository;
+    private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
 
     // playerId 로 Player 객체 얻어오는 메서드
@@ -44,24 +44,24 @@ public class PlayerService {
         return readyPlayer;
     }
 
-    public PlayerJoinResponseDto joinRoom(PlayerJoinRequestDto playerJoinRequestDto) {
+    public PlayerJoinResponseDto joinGame(PlayerJoinRequestDto playerJoinRequestDto) {
 
         // 1. 방이 존재하는지 확인
-        Room room = roomRepository.findById(playerJoinRequestDto.roomId())
-                                  .orElseThrow(() -> new BusinessException(ErrorMessage.ROOM_NOT_FOUND));
+        Game game = gameRepository.findById(playerJoinRequestDto.gameId())
+                                  .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
 
         // 2. 대기 중인 방인지 확인
-        if (room.getIsStart()) {
-            throw new BusinessException(ErrorMessage.ROOM_ALREADY_GAME_START);
+        if (game.getIsStart()) {
+            throw new BusinessException(ErrorMessage.GAME_ALREADY_START);
         }
 
         // 3. 참여자 정원일 다 찼는지 확인
-        if (room.getPlayers() != null && room.getPlayers().size() >= 4) {
-            throw new BusinessException(ErrorMessage.ROOM_ALREADY_FULL);
+        if (game.getPlayers() != null && game.getPlayers().size() >= 4) {
+            throw new BusinessException(ErrorMessage.GAME_ALREADY_FULL);
         }
 
         // 4. 해당방에 중복된 닉네임이 있는지 확인
-        List<String> players = room.getPlayers();
+        List<String> players = game.getPlayers();
         for (String nickname : players) {
             if (nickname.equals(playerJoinRequestDto.nickname())) {
                 throw new BusinessException(ErrorMessage.DUPLICATE_PLAYER_NICKNAME);
@@ -72,9 +72,9 @@ public class PlayerService {
         Player player = playerRepository.save(playerJoinRequestDto.toPlayer());
 
         // 방 참여 ( 방 players에 사용자 pk 추가)
-        room.addPlayer(player);
+        game.addPlayer(player);
 
-        roomRepository.save(room);
+        gameRepository.save(game);
 
         return PlayerJoinResponseDto.of(player);
     }

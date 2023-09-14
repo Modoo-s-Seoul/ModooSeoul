@@ -37,7 +37,7 @@ public class PlayerWebSocketController {
 
 		System.out.println(message.toString());
 		// 보내기
-		webSocketSendHandler.sendToRoom(player.getRoomId(), message);
+		webSocketSendHandler.sendToGame(player.getGameId(), message);
 
 	}
 
@@ -53,6 +53,6 @@ public class PlayerWebSocketController {
 		PlayerDiceMessage playerDiceMessage = playerService.rollDice(playerId);
 		log.info("playerDiceMessage = {}", playerDiceMessage);
 		// 데이터 전달
-		webSocketSendHandler.sendToRoom(player.getRoomId(), playerDiceMessage);
+		webSocketSendHandler.sendToGame(player.getGameId(), playerDiceMessage);
 	}
 }
