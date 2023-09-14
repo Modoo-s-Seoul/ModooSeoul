@@ -20,8 +20,8 @@ public class PlayerController {
     private final PlayerService playerService;
 
     @PostMapping("/join")
-    public BaseResponseDto<PlayerJoinResponseDto> joinRoom(@RequestBody PlayerJoinRequestDto playerJoinRequestDto){
-        return BaseResponseDto.ok(playerService.joinRoom(playerJoinRequestDto));
+    public BaseResponseDto<PlayerJoinResponseDto> joinGame(@RequestBody PlayerJoinRequestDto playerJoinRequestDto){
+        return BaseResponseDto.ok(playerService.joinGame(playerJoinRequestDto));
     }
 
 }

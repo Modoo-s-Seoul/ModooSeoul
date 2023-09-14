@@ -13,9 +13,9 @@ public class WebSocketSendHandler {
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
 
-	public <T> void sendToRoom(String roomId, T message) {
-		log.info("roomId = {}, message = {}", roomId, message);
-		simpMessagingTemplate.convertAndSend("/receive/room/"+roomId, message);
+	public <T> void sendToGame(String gameId, T message) {
+		log.info("gameId = {}, message = {}", gameId, message);
+		simpMessagingTemplate.convertAndSend("/receive/game/"+gameId, message);
 	}
 
 }

@@ -1,9 +1,9 @@
-package online.ft51land.modooseoul.domain.room.controller;
+package online.ft51land.modooseoul.domain.game.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.ft51land.modooseoul.domain.room.dto.response.RoomCreateResponseDto;
-import online.ft51land.modooseoul.domain.room.service.RoomService;
+import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
+import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.utils.dto.response.BaseResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/rooms")
-public class RoomController {
+@RequestMapping("/api/v1/games")
+public class GameController {
 
-    private final RoomService roomService;
+    private final GameService gameService;
 
 
     /*
     방 생성
      */
     @PostMapping
-    public BaseResponseDto<RoomCreateResponseDto> createRoom(){
-        return BaseResponseDto.ok(roomService.create());
+    public BaseResponseDto<GameCreateResponseDto> createGame(){
+        return BaseResponseDto.ok(gameService.create());
     }
 
     @GetMapping("/test")

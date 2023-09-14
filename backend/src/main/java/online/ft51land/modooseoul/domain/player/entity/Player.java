@@ -46,8 +46,8 @@ public class Player extends BaseEntity {
     @Column(nullable = false)
     private String nickname;
 
-    @Column(name = "room_id",nullable = false )
-    private String roomId;
+    @Column(name = "gamd_id",nullable = false )
+    private String gameId;
 
     @Column(name = "is_ready", nullable = false)
     private Boolean isReady;
@@ -82,9 +82,9 @@ public class Player extends BaseEntity {
     private Long reporteePlayerId;
 
     @Builder
-    public Player(String nickname, String roomId){
+    public Player(String nickname, String gameId){
         this.nickname = nickname;
-        this.roomId = roomId;
+        this.gameId = gameId;
         this.isReady = false;
         this.createdDate = LocalDateTime.now();
     }

@@ -1,4 +1,4 @@
-package online.ft51land.modooseoul.domain.room.entity.enums;
+package online.ft51land.modooseoul.domain.game.entity.enums;
 
 public enum EndType {
     BANKRUPTCY("파산"),
