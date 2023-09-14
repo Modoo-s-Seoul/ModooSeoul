@@ -80,11 +80,12 @@ public class Room extends BaseEntity {
     }
 
     public List<String> addPlayer(Player player){
-        this.players.add(player.getNickname());
+        this.players.add(player.getId());
         return this.players;
     }
 
-    public void start() {
+    public void gameStart() {
         this.isStart = true;
     }
+
 }
