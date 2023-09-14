@@ -101,6 +101,10 @@ export default function Board() {
     // 기타 에셋
     this.load.image("flag", "assets/gameFlag.png");
     this.load.image("arrow", "assets/loctionpin.gif");
+    // 화살표
+    for (let i = 0; i < 75; i++) {
+      this.load.image(`locationframe_${i}`, `assets/location/${i}.png`);
+    }
   }
 
   function create(this: Phaser.Scene) {
@@ -124,14 +128,14 @@ export default function Board() {
             .setOrigin(0.5, 4);
           sampleTile.setScale(0.8, 0.8);
 
-          // 샵폴리곤용
+          // 샵 폴리곤용
           const sampleBuilding = this.add
             .image(x, y, "sampleBuilding")
             .setOrigin(0.5, 8);
           sampleBuilding.setScale(0.2, 0.2);
           sampleBuilding.setAlpha(0.8);
 
-          // 빌딩폴리곤용
+          // 빌딩 폴리곤용
           const sampleShop = this.add
             .image(x, y, "sampleShop")
             .setOrigin(1.1, 9.2);
@@ -163,14 +167,26 @@ export default function Board() {
     }
     // 기타 에셋 첨부
     /** 1. 턴 플레이어 화살표 */
+    const frameNames = [];
+    for (let i = 0; i < 75; i++) {
+        frameNames.push({ key: `locationframe_${i}` });
+    }
+    // 애니메이션 생성
+    this.anims.create({
+      key: "locationAnimation", // 애니메이션 키(key)
+      frames: frameNames, // 프레임들의 배열
+      frameRate: 30, // 재생 속도 (프레임/초)
+      repeat: -1, // -1로 설정하면 무한 반복
+    });
+    // 애니메이션을 스프라이트에 할당
     const arrow = this.add.sprite(
-      config.scale.width / 2,
-      config.scale.height / 2 - offset2 - 20,
-      "arrow"
+      config.scale.width / 2 - offset,
+      config.scale.height / 2 - offset - offset2 - 35,
+      "locationframe_0" // 처음 프레임을 설정
     );
     arrow.setScale(0.025, 0.025);
-    arrow.setAlpha(1);
-    arrow.anims.play("animationName", true);
+    arrow.setAlpha(0.8);
+    arrow.anims.play("locationAnimation"); // 애니메이션 재생
     /** 2. 도착지 깃발 */
     const flag = this.add.image(
       config.scale.width / 2 + 10,
@@ -178,7 +194,7 @@ export default function Board() {
       "flag"
     );
     flag.setScale(0.05, 0.05);
-    flag.setAlpha(0.8);
+    flag.setAlpha(0);
     // 기타 에셋 추가
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, arrow]);
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
