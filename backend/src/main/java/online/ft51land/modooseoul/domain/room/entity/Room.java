@@ -84,7 +84,8 @@ public class Room extends BaseEntity {
         return this.players;
     }
 
-    public void start() {
+    public void gameStart() {
         this.isStart = true;
     }
+
 }
