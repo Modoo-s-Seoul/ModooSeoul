@@ -2,6 +2,7 @@ package online.ft51land.modooseoul.domain.player.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -101,5 +103,32 @@ public class PlayerService {
         roomRepository.save(room);
 
         return PlayerJoinResponseDto.of(player);
+    }
+
+    /*
+        주사위 굴리기
+     */
+    public PlayerDiceMessage rollDice(String playerId) {
+        // 주사위 굴린 플레이어
+        Player rolledPlayer = playerRepository.findById(playerId)
+                                             .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+        Random diceRoller = new Random();
+        int one = diceRoller.nextInt(6) + 1;
+        int two = diceRoller.nextInt(6) + 1;
+        if (one == two) {
+            /*
+                같은 경우에
+                false 면 true 전달
+                true 면 false 전달
+             */
+            rolledPlayer.updateDouble(!rolledPlayer.getIsDouble());
+        }
+        else {
+            rolledPlayer.updateDouble(false);
+        }
+        playerRepository.save(rolledPlayer);
+
+        // 메세지 가공 후 리턴
+        return (PlayerDiceMessage.of(one, two, rolledPlayer));
     }
 }
