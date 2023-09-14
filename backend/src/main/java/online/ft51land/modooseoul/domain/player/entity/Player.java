@@ -33,6 +33,7 @@ public class Player extends BaseEntity {
     assets: 소유 부동산 List
     tax: 미납금
     dice : 주사위
+    already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
     select_stock_id: 확인한 뉴스의 종목
     reportee_player_id : 피고자(신고를 당한 사람)
@@ -68,6 +69,9 @@ public class Player extends BaseEntity {
 
     private Long dice;
 
+    @Column(name = "is_double")
+    private Boolean isDouble;
+
     @Column(name = "is_arrested")
     private Boolean isArrested;
 
@@ -87,5 +91,13 @@ public class Player extends BaseEntity {
 
     public void toggleReadyStatus() {
         this.isReady = !this.isReady;
+    }
+
+    public void updateDouble(Boolean isDouble) {
+        this.isDouble = isDouble;
+    }
+
+    public void updateDice(Long dice) {
+        this.dice = dice;
     }
 }
