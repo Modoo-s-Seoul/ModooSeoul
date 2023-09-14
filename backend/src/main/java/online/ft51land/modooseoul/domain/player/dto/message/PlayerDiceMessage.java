@@ -9,9 +9,9 @@ public record PlayerDiceMessage (
 		Long second,
 		Boolean isDouble
 ) {
-	public static PlayerDiceMessage of(Long one, Long two, Player player) {
+	public static PlayerDiceMessage of(Long first, Long second, Player player) {
 		return PlayerDiceMessage.builder()
-				.first(one).second(two).isDouble(player.getIsDouble())
+				.first(first).second(second).isDouble(player.getIsDouble())
 				.build();
 	}
 }

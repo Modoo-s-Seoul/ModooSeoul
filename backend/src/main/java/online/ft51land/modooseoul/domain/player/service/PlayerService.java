@@ -24,11 +24,16 @@ public class PlayerService {
     private final RoomRepository roomRepository;
     private final PlayerRepository playerRepository;
 
+    // playerId 로 Player 객체 얻어오는 메서드
+    public Player getPlayerById(String playerId) {
+        return playerRepository.findById(playerId)
+                               .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+    }
+
     // 플레이어 레디 / 취소 할 시 레포지토리 상태 변경해주기
     public Player playerReady(String playerId) {
         // 레디 / 취소 요청한 플레이어 객체
-        Player readyPlayer = playerRepository.findById(playerId)
-                                             .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+        Player readyPlayer = getPlayerById(playerId);
 
         // 레디 상태 변경
         readyPlayer.toggleReadyStatus();
@@ -79,8 +84,7 @@ public class PlayerService {
      */
     public PlayerDiceMessage rollDice(String playerId) {
         // 주사위 굴린 플레이어
-        Player rolledPlayer = playerRepository.findById(playerId)
-                                             .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+        Player rolledPlayer = getPlayerById(playerId);
         Random diceRoller = new Random();
         Long one = diceRoller.nextLong(6) + 1;
         Long two = diceRoller.nextLong(6) + 1;
