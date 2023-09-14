@@ -100,4 +100,11 @@ public class Player extends BaseEntity {
     public void updateDice(Long dice) {
         this.dice = dice;
     }
+
+    public void gameStart() {
+        this.currentBoardId = 0L;
+        this.cash = 1000L;
+        this.dice = 0L;
+        this.isDouble = false;
+    }
 }
