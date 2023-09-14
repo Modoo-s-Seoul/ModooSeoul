@@ -19,15 +19,21 @@ import {
   playerDataState,
   isUserTurnVisibleState,
   isRollingState,
+  doubleCntState,
 } from "../data/IngameData";
+import GameOption from "../components/Base/GameOption";
 
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
-  /** 플레이어 에셋*/
+  /** 글로벌 변수들 */
   const assetNames = ["Pink", "Blue", "Green", "Yellow"];
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
+  const offset = 10; // 플레이어 위치 조정
+  const offset2 = 220; // y축 위치조정용 변수
+  const globalTileSize = 121; // 타일 크기및 간격
   /** 초기 플레이어 정보 */
+  const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const playerDeafaults: playerInfo[] = [];
@@ -49,6 +55,7 @@ export default function Board() {
   const [playerSprite, setPlayerSprite] = useState<Phaser.GameObjects.Image[]>(
     []
   ); //플레이어 스프라이트
+  const [etcSprite, setEtcSprite] = useState<Phaser.GameObjects.Image[]>([]); //기타 스프라이트
   const [playerPositions, setPlayerPositions] = useState<playerPosition[]>([]); // 플레이어 위치
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
     isUserTurnVisibleState
@@ -63,7 +70,7 @@ export default function Board() {
     scale: {
       mode: Phaser.Scale.FIT,
       width: window.innerWidth,
-      height: window.innerHeight * 1,
+      height: window.innerHeight,
     },
 
     scene: {
@@ -74,27 +81,36 @@ export default function Board() {
 
   // 플레이어 스프라이트 위치 조정
   const spritePosition = [
-    [-6, -6],
-    [6, -6],
-    [-6, 6],
-    [6, 6],
+    [-offset, -offset],
+    [offset, -offset],
+    [-offset, offset],
+    [offset, offset],
   ];
 
   // 에셋 불러오기
   function preload(this: Phaser.Scene) {
-    // this.load.image("sampleTile", "assets/Polygon3.png"); // Load your tile image
-    this.load.image("sampleTile", "assets/green_tile.png"); // Load your tile image
-    this.load.image("sampleBuilding", "assets/building.png"); // Load your building image
-    this.load.image("sampleShop", "assets/shop.png"); // Load your shop image
+    // 보드관련 에셋
+    this.load.image("sampleTile", "assets/Polygon3.png");
+    this.load.image("sampleBuilding", "assets/building.png");
+    this.load.image("sampleShop", "assets/shop.png");
+    // 캐릭터 에셋
     this.load.image("Blue", "assets/alienBlue.png");
     this.load.image("Green", "assets/alienGreen.png");
     this.load.image("Pink", "assets/alienPink.png");
     this.load.image("Yellow", "assets/alienYellow.png");
+    // 기타 에셋
+    this.load.image("flag", "assets/gameFlag.png");
+    this.load.image("arrow", "assets/loctionpin.gif");
   }
 
-  // 보드 생성
   function create(this: Phaser.Scene) {
-    const tileSize = 81; // Assuming each tile is 64x64 pixels
+    // 배경 생성
+    const gradient = this.add.graphics();
+    gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
+    gradient.fillRect(0, 0, config.scale.width, config.scale.height);
+
+    // 보드 생성
+    const tileSize = globalTileSize;
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (row === 0 || col === 0 || row === 8 || col === 8) {
@@ -102,66 +118,75 @@ export default function Board() {
           const x = (col - row) * (tileSize / 2) + config.scale.width / 2;
           const y = (col + row) * (tileSize / 4) + config.scale.height / 2;
 
-          // 타일
+          // 폴리곤
           const sampleTile = this.add
             .image(x, y, "sampleTile")
-            .setOrigin(0.5, 1.1);
-          sampleTile.setScale(1.2, 1.2); // scaleX와 scaleY를 원하는 크기로 설정하세요.
+            .setOrigin(0.5, 4);
+          sampleTile.setScale(0.8, 0.8);
 
-          // const sampleTile = this.add
-          //   .image(x, y, "sampleTile")
-          //   .setOrigin(0.5, 3);
-          // sampleTile.setScale(0.5, 0.5); // scaleX와 scaleY를 원하는 크기로 설정하세요.
-
-          // 샵
+          // 샵폴리곤용
           const sampleBuilding = this.add
             .image(x, y, "sampleBuilding")
-            .setOrigin(0.8, 5.8);
-          sampleBuilding.setScale(0.125, 0.125); // scaleX와 scaleY를 원하는 크기로 설정하세요.
+            .setOrigin(0.5, 8);
+          sampleBuilding.setScale(0.2, 0.2);
+          sampleBuilding.setAlpha(0.8);
 
-          // 빌딩
+          // 빌딩폴리곤용
           const sampleShop = this.add
             .image(x, y, "sampleShop")
-            .setOrigin(1.1, 6.2);
-          sampleShop.setScale(0.2, 0.2); // scaleX와 scaleY를 원하는 크기로 설정하세요.
+            .setOrigin(1.1, 9.2);
+          sampleShop.setScale(0.3, 0.3);
+          sampleShop.setAlpha(0.8);
         }
       }
     }
 
     // 플레이어 위치 초기화
     for (let i = 0; i < pNum; i++) {
-      // const player = this.add.circle(
-      //   game.config.width / 2 + spritePosition[i][0],
-      //   game.config.height / 2 + spritePosition[i][1] - 100,
-      //   tileSize / 10,
-      //   parseInt(colorPalette[i], 16)
-      // );
-
       const newPlayer = this.add.image(
         config.scale.width / 2 + spritePosition[i][0],
-        config.scale.height / 2 + spritePosition[i][1] - 100,
+        config.scale.height / 2 + spritePosition[i][1] - offset2,
         assetNames[i]
       );
-
-      newPlayer.setScale(0.5, 0.5);
-
+      newPlayer.setScale(0.7, 0.7);
+      // 위치조정
       setPlayerSprite((prevPlayerSprite) => [...prevPlayerSprite, newPlayer]);
-
       setPlayerPositions((prevPlayerPositions) => [
         ...prevPlayerPositions,
         {
           row: 0,
           col: 0,
           mx: spritePosition[i][0],
-          my: spritePosition[i][1] - 100,
+          my: spritePosition[i][1] - offset2,
         },
       ]);
     }
+    // 기타 에셋 첨부
+    /** 1. 턴 플레이어 화살표 */
+    const arrow = this.add.sprite(
+      config.scale.width / 2,
+      config.scale.height / 2 - offset2 - 20,
+      "arrow"
+    );
+    arrow.setScale(0.025, 0.025);
+    arrow.setAlpha(1);
+    arrow.anims.play("animationName", true);
+    /** 2. 도착지 깃발 */
+    const flag = this.add.image(
+      config.scale.width / 2 + 10,
+      config.scale.height / 2 - offset2,
+      "flag"
+    );
+    flag.setScale(0.05, 0.05);
+    flag.setAlpha(0.8);
+    // 기타 에셋 추가
+    setEtcSprite((prevEtcSprite) => [...prevEtcSprite, arrow]);
+    setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
   }
 
-  // 플레이어 이동
+  // 플레이어 이동 함수
   const movePlayer = (rowOffset: number, colOffset: number) => {
-    const tileSize = 81;
+    const tileSize = globalTileSize;
     const newRow = playerPositions[turn].row + rowOffset;
     const newCol = playerPositions[turn].col + colOffset;
 
@@ -176,6 +201,11 @@ export default function Board() {
         x + playerPositions[turn].mx,
         y + playerPositions[turn].my
       );
+      // 화살표 같이 이동
+      etcSprite[0].setPosition(
+        x + playerPositions[turn].mx,
+        y + playerPositions[turn].my - 35
+      );
     }
   };
 
@@ -185,6 +215,17 @@ export default function Board() {
     Dice1: number,
     Dice2: number
   ) => {
+    // 더블 맥스 처리
+    if (doubleCnt > 2) {
+      if (Dice1 == Dice2) {
+        alert("너무많은 더블... 감옥가자");
+        console.log("너무많은 더블... 감옥가자");
+        setDoubleCnt(0);
+        setIsRolling(false);
+        setTurn((turn + 1) % pNum);
+        return;
+      }
+    }
     for (let i = 0; i < totalDice; i++) {
       // eslint-disable-next-line no-loop-func
       setTimeout(() => {
@@ -208,12 +249,21 @@ export default function Board() {
         }
         // 이동이 끝날때 옵션
         if (i === totalDice - 1) {
-          // 이벤트가 끝날 때 버튼 다시 활성화
+          // 이벤트가 끝날 때
           setTimeout(() => {
             setIsUserTurnVisible(true);
             setIsRolling(false);
+            console.log("자..", doubleCnt);
             if (Dice1 !== Dice2) {
+              // 더블이 아닐시
               setTurn((turn + 1) % pNum);
+              setDoubleCnt(0);
+            } else {
+              // 더블일시
+              console.log("더블 한번더", doubleCnt);
+              setDoubleCnt(() => {
+                return doubleCnt + 1;
+              });
             }
           }, 500);
         }
@@ -223,12 +273,13 @@ export default function Board() {
 
   const rollDice = () => {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
-
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
 
     // 주사위 값 결정
     const Dice1 = Math.floor(Math.random() * 6) + 1;
     const Dice2 = Math.floor(Math.random() * 6) + 1;
+    // const Dice1 = 2;
+    // const Dice2 = 2;
 
     setDiceActive(true);
     setDice1Value(Dice1);
@@ -236,14 +287,34 @@ export default function Board() {
 
     const totalDice = Dice1 + Dice2;
 
+    // 도착지 깃발 위치 설정
+    let goRow = playerPositions[turn].row;
+    let goCol = playerPositions[turn].col;
+    for (let i = 0; i < totalDice; i++) {
+      if (goRow === 0 && goCol < 8) {
+        goCol += 1;
+      } else if (goCol === 8 && goRow < 8) {
+        goRow += 1;
+      } else if (goRow === 8 && goCol > 0) {
+        goCol -= 1;
+      } else if (goCol === 0 && goRow > 0) {
+        goRow -= 1;
+      }
+    }
+    const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
+    const y = (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
+    etcSprite[1].setPosition(x + 10, y - 220);
+    // 깃발 생성
+    setTimeout(() => {
+      etcSprite[1].setAlpha(1);
+    }, 1500);
     // 주사위 수만큼 플레이어 이동
     setTimeout(() => {
       setPlayerDirection(totalDice, Dice1, Dice2);
       setDiceActive(false);
     }, 2000);
-
-    console.log(turn, "의 턴입니다.");
   };
+
   /**실수로 인한 창 닫기, 새로고침 방지 */
   const preventRefresh = (e: BeforeUnloadEvent) => {
     e.preventDefault();
@@ -254,6 +325,8 @@ export default function Board() {
   const preventGoBack = () => {
     history.pushState(null, "", location.href);
   };
+
+  // useEffect
   useEffect(() => {
     setPlayerData(playerDeafaults);
     console.log(playerData);
@@ -265,17 +338,36 @@ export default function Board() {
     history.pushState(null, "", location.href);
     window.addEventListener("popstate", preventGoBack);
   }, []);
-
+  // 화살표 동기화
+  useEffect(() => {
+    console.log("턴바뀜");
+    if (etcSprite[0]) {
+      const goRow = playerPositions[turn].row;
+      const goCol = playerPositions[turn].col;
+      const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
+      const y =
+        (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
+      etcSprite[0].setPosition(
+        x + playerPositions[turn].mx,
+        y + playerPositions[turn].my - 35
+      );
+      // 깃발 숨기기
+      etcSprite[1].setAlpha(0);
+    }
+  }, [turn]);
   return (
     <div>
+      <GameOption />
       <UserInfo />
       {isUserTurnVisible && <UserTurn position={playerPositions} />}
       {!isUserTurnVisible && (
         <div className="diceContainer">
           <DiceRoll />
-          <button id="move-button" className="rollDiceBtn" onClick={rollDice}>
-            주사위 굴리기
-          </button>
+          {!isRolling && (
+            <button id="move-button" className="rollDiceBtn" onClick={rollDice}>
+              주사위 굴리기
+            </button>
+          )}
         </div>
       )}
       <div ref={game} className="GameScreen" id="gameScreen" />

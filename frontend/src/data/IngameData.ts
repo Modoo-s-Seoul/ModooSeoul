@@ -14,6 +14,10 @@ export const sample2 = selector({
 });
 
 // (임시) 게임 데이터
+export const doubleCntState = atom<number>({
+  key: "doubleCntState",
+  default: 0,
+});
 export const pNumState = atom<number>({
   key: "pNumState",
   default: 4,

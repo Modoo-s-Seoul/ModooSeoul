@@ -10,10 +10,10 @@
   height: 60vh;
   left: 18vw;
   top: 10vh;
-  background-color: rgb(233, 215, 176);
-  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(227, 217, 194);
+  /* border: 2px solid rgb(0, 0, 0); */
   border-radius: 20px;
-  box-shadow: 5px 5px 50px rgb(255, 255, 255), -5px -5px 50px white;
+  box-shadow: 5px 5px 50px rgb(0, 0, 0), -5px -5px 50px rgb(0, 0, 0);
   padding: 2vw;
   animation: fadeIn 0.5s ease-in-out, shake 1s ease;
 }

@@ -50,10 +50,13 @@ export default function DiceRoll() {
 
   return (
     <div className="diceContainer">
-      <div className="flexContainer">
+      <div className="msgContainer">
         {isRolling && diceone == dicetwo && (
           <div className="doubleMsg">더블</div>
         )}
+        {isRolling && <div className="sumMsg">{diceone + dicetwo}</div>}
+      </div>
+      <div className="flexContainer">
         <div className="container">
           <div id="dice1" className={`dice dice-one ${diceOneClass}`}>
             <div id="dice-one-side-one" className="side one">
