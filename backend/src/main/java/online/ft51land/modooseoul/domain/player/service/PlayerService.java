@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -56,15 +54,19 @@ public class PlayerService {
         List<String> players = room.getPlayers();
 
         for (String playerId : players) {
+            log.info("playerId = {}", playerId);
             Player p = playerRepository.findById(playerId)
                                        .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
             message.add(PlayerReadyMessage.of(p));
         }
 
-
         // 메시지 전송
         webSocketSendService.sendToRoom(roomId, message);
     }
+
+    /**
+     * 플레이어 방 참가
+     */
 
     public PlayerJoinResponseDto joinRoom(PlayerJoinRequestDto playerJoinRequestDto) {
 
