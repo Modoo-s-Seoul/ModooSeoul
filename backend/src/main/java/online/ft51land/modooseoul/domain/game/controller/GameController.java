@@ -25,7 +25,7 @@ public class GameController {
         return BaseResponseDto.ok(gameService.create());
     }
 
-    @PostMapping
+    @PostMapping("/start")
     public Boolean startGame(@RequestBody GameStartRequestDto gameStartRequestDto) {
         Game game = gameService.getGameById(gameStartRequestDto.gameId());
         log.info("게임 시작 요청 by {}", game.getId());
