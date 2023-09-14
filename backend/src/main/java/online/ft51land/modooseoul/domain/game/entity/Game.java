@@ -1,4 +1,4 @@
-package online.ft51land.modooseoul.domain.room.entity;
+package online.ft51land.modooseoul.domain.game.entity;
 
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import online.ft51land.modooseoul.domain.player.entity.Player;
-import online.ft51land.modooseoul.domain.room.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@RedisHash(value = "room", timeToLive = 10000) // Redis Repository 사용을 위한
+@RedisHash(value = "game", timeToLive = 10000) // Redis Repository 사용을 위한
 @AllArgsConstructor
 @ToString
-public class Room extends BaseEntity {
+public class Game extends BaseEntity {
 
     /*
     id : pk - 방 아이디
@@ -72,7 +72,7 @@ public class Room extends BaseEntity {
 
 
     @Builder
-    public Room(){
+    public Game(){
         this.messageNum = 1L;
         this.isStart = false;
         this.players = new ArrayList<>();
@@ -86,6 +86,7 @@ public class Room extends BaseEntity {
 
     public void gameStart() {
         this.isStart = true;
+        this.startTime = LocalDateTime.now();
     }
 
 }
