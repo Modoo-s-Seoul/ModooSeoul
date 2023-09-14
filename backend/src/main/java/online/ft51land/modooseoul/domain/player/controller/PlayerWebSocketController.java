@@ -47,10 +47,12 @@ public class PlayerWebSocketController {
 	@MessageMapping("/roll/{playerId}")
 	public void playerRollDice(@DestinationVariable String playerId) {
 		log.info("주사위 굴리기 by {}", playerId);
+		Player player = playerService.getPlayerById(playerId);
 		// 주사위 굴리고 데이터 처리
 		// 넘겨줄 데이터 가공
 		PlayerDiceMessage playerDiceMessage = playerService.rollDice(playerId);
 		log.info("playerDiceMessage = {}", playerDiceMessage);
 		// 데이터 전달
+		webSocketSendHandler.sendToRoom(player.getRoomId(), playerDiceMessage);
 	}
 }
