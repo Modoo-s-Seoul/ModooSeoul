@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.room.dto.response.RoomCreateResponseDto;
 import online.ft51land.modooseoul.domain.room.service.RoomService;
 import online.ft51land.modooseoul.utils.dto.response.BaseResponseDto;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,4 +27,8 @@ public class RoomController {
         return BaseResponseDto.ok(roomService.create());
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Test success";
+    }
 }
