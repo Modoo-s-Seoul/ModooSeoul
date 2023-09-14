@@ -3,7 +3,6 @@ package online.ft51land.modooseoul.domain.player.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -83,9 +82,9 @@ public class PlayerService {
         Player rolledPlayer = playerRepository.findById(playerId)
                                              .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
         Random diceRoller = new Random();
-        int one = diceRoller.nextInt(6) + 1;
-        int two = diceRoller.nextInt(6) + 1;
-        if (one == two) {
+        Long one = diceRoller.nextLong(6) + 1;
+        Long two = diceRoller.nextLong(6) + 1;
+        if (one.equals(two)) {
             /*
                 같은 경우에
                 false 면 true 전달
@@ -96,6 +95,7 @@ public class PlayerService {
         else {
             rolledPlayer.updateDouble(false);
         }
+        rolledPlayer.updateDice(one + two);
         playerRepository.save(rolledPlayer);
 
         // 메세지 가공 후 리턴

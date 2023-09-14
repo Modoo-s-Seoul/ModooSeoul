@@ -2,6 +2,7 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
@@ -38,5 +39,18 @@ public class PlayerWebSocketController {
 		// 보내기
 		webSocketSendHandler.sendToRoom(player.getRoomId(), message);
 
+	}
+
+	/*
+		주사위 굴리기
+	 */
+	@MessageMapping("/roll/{playerId}")
+	public void playerRollDice(@DestinationVariable String playerId) {
+		log.info("주사위 굴리기 by {}", playerId);
+		// 주사위 굴리고 데이터 처리
+		// 넘겨줄 데이터 가공
+		PlayerDiceMessage playerDiceMessage = playerService.rollDice(playerId);
+		log.info("playerDiceMessage = {}", playerDiceMessage);
+		// 데이터 전달
 	}
 }

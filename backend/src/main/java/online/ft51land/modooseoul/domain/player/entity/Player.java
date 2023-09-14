@@ -96,4 +96,8 @@ public class Player extends BaseEntity {
     public void updateDouble(Boolean isDouble) {
         this.isDouble = isDouble;
     }
+
+    public void updateDice(Long diceNumber) {
+        this.dice = diceNumber;
+    }
 }

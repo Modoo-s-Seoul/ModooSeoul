@@ -5,11 +5,11 @@ import online.ft51land.modooseoul.domain.player.entity.Player;
 
 @Builder
 public record PlayerDiceMessage (
-		int first,
-		int second,
+		Long first,
+		Long second,
 		Boolean isDouble
 ) {
-	public static PlayerDiceMessage of(int one, int two, Player player) {
+	public static PlayerDiceMessage of(Long one, Long two, Player player) {
 		return PlayerDiceMessage.builder()
 				.first(one).second(two).isDouble(player.getIsDouble())
 				.build();
