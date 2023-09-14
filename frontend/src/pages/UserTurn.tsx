@@ -9,22 +9,18 @@ import Start from "../components/Turn/Start";
 import Subway from "../components/Turn/Subway";
 import Tax from "../components/Turn/Tax";
 import { useState } from "react";
-import { playerPosition } from "../interface/ingame";
 import { useRecoilValue } from "recoil";
-import { pNumState, turnState } from "../data/IngameData";
+import { tcolState, trowState } from "../data/IngameData";
 
-interface Props {
-  position: playerPosition[];
-}
 
-export default function UserTurn({ position }: Props) {
-  const turn = useRecoilValue(turnState); // 현재 플레이 순서
-  const pNum = useRecoilValue(pNumState); // 전체 플레이어 수
+export default function UserTurn() {
+  const tRow = useRecoilValue(trowState); // 현재 턴 row
+  const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const boardData = useRecoilValue(boardDataState);
 
   const [turnData] = useState(
     boardData[
-      `${position[(turn + 3) % pNum].row}-${position[(turn + 3) % pNum].col}`
+      `${tRow}-${tCol}`
     ]
   );
 

@@ -26,6 +26,14 @@ export const turnState = atom<number>({
   key: "turnState",
   default: 0,
 });
+export const trowState = atom<number>({
+  key: "trowState",
+  default: 0,
+});
+export const tcolState = atom<number>({
+  key: "tcolState",
+  default: 0,
+});
 export const isUserTurnVisibleState = atom<boolean>({
   key: "isUserTurnVisibleState",
   default: false,

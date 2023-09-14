@@ -20,19 +20,21 @@ import {
   isUserTurnVisibleState,
   isRollingState,
   doubleCntState,
+  trowState,
+  tcolState
 } from "../data/IngameData";
 import GameOption from "../components/Base/GameOption";
 
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
-  /** 글로벌 변수들 */
+  // 글로벌 변수들
   const assetNames = ["Pink", "Blue", "Green", "Yellow"];
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
   const offset = 10; // 플레이어 위치 조정
   const offset2 = 220; // y축 위치조정용 변수
   const globalTileSize = 121; // 타일 크기및 간격
-  /** 초기 플레이어 정보 */
+  // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
@@ -47,6 +49,8 @@ export default function Board() {
   }
 
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const [, setTRow] = useRecoilState(trowState); // 현재 턴 row
+  const [, setTCol] = useRecoilState(tcolState); // 현재 턴 col
   const [, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
   const [, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
   const [, setDiceActive] = useRecoilState(diceActiveState); // 주사위 상태
@@ -287,7 +291,7 @@ export default function Board() {
     }
   };
 
-  const rollDice = () => {
+  const rollDice = async () => {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
 
@@ -317,6 +321,8 @@ export default function Board() {
         goRow -= 1;
       }
     }
+    await setTRow(goRow)
+    await setTCol(goCol)
     const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
     const y = (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
     etcSprite[1].setPosition(x + 10, y - 220);
@@ -375,7 +381,7 @@ export default function Board() {
     <div>
       <GameOption />
       <UserInfo />
-      {isUserTurnVisible && <UserTurn position={playerPositions} />}
+      {isUserTurnVisible && <UserTurn />}
       {!isUserTurnVisible && (
         <div className="diceContainer">
           <DiceRoll />
