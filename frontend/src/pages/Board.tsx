@@ -35,6 +35,7 @@ export default function Board() {
   const assetNames = ["Pink", "Blue", "Green", "Yellow"];
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
   const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
+  colorPaletteTint;
   const offset = 10; // 플레이어 위치 조정
   const offset2 = 220; // y축 위치조정용 변수
   const globalTileSize = 121; // 타일 크기및 간격
@@ -64,6 +65,14 @@ export default function Board() {
     []
   ); //플레이어 스프라이트
   const [etcSprite, setEtcSprite] = useState<Phaser.GameObjects.Image[]>([]); //기타 스프라이트
+  const [groundSprite, setGroundSprite] = useState<Phaser.GameObjects.Image[]>(
+    []
+  ); //땅 스프라이트
+  groundSprite;
+  const [buildingSprite, setBuildingSprite] = useState<
+    Phaser.GameObjects.Image[]
+  >([]); //건물 스프라이트
+  buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<playerPosition[]>([]); // 플레이어 위치
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
     isUserTurnVisibleState
@@ -106,9 +115,6 @@ export default function Board() {
     this.load.image("Green", "assets/alienGreen.png");
     this.load.image("Pink", "assets/alienPink.png");
     this.load.image("Yellow", "assets/alienYellow.png");
-    // 기타 에셋
-    this.load.image("flag", "assets/gameFlag.png");
-    this.load.image("arrow", "assets/loctionpin.gif");
     // 화살표
     for (let i = 0; i < 75; i++) {
       this.load.image(`locationframe_${i}`, `assets/location/${i}.png`);
@@ -139,6 +145,10 @@ export default function Board() {
             .image(x, y, "sampleTile")
             .setOrigin(0.5, 4);
           sampleTile.setScale(0.8, 0.8);
+          setGroundSprite((prevGroundSprite) => [
+            ...prevGroundSprite,
+            sampleTile,
+          ]);
           // sampleTile.setTint(0xff0000);
 
           // 샵 폴리곤용
@@ -147,7 +157,11 @@ export default function Board() {
             .setOrigin(0.5, 8);
           sampleBuilding.setScale(0.2, 0.2);
           sampleBuilding.setAlpha(0.9);
-          sampleBuilding.setTint(colorPaletteTint[0]);
+          setBuildingSprite((prevBuildingSprite) => [
+            ...prevBuildingSprite,
+            sampleBuilding,
+          ]);
+          // sampleBuilding.setTint(colorPaletteTint[0]);
 
           // 빌딩 폴리곤용
           const sampleShop = this.add
@@ -229,6 +243,7 @@ export default function Board() {
 
   // 플레이어 이동 함수
   const movePlayer = (rowOffset: number, colOffset: number) => {
+    // 기본인자
     const tileSize = globalTileSize;
     const newRow = playerPositions[turn].row + rowOffset;
     const newCol = playerPositions[turn].col + colOffset;
@@ -249,6 +264,13 @@ export default function Board() {
         x + playerPositions[turn].mx,
         y + playerPositions[turn].my - 35
       );
+      // 플레이어 좌우반전 구현
+      if (newRow !== 0) {
+        playerSprite[turn].setFlipX(true);
+      }
+      if (newCol === 0) {
+        playerSprite[turn].setFlipX(false);
+      }
     }
   };
 

@@ -1,17 +1,18 @@
-import { SpaceInfo } from "../../interface/ingame";
-import { useRecoilState } from "recoil";
-import { isUserTurnVisibleState } from "../../data/IngameData";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  isUserTurnVisibleState,
+  tcolState,
+  trowState,
+} from "../../data/IngameData";
+import { useState } from "react";
+import { boardDataState } from "../../data/BoardData";
 
-interface Props {
-  turnData: SpaceInfo;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function Oil({ turnData }: Props) {
-  const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
-    isUserTurnVisibleState
-  ); // 플레이어 턴 수행 가능 여부
-  isUserTurnVisible;
+export default function Oil() {
+  const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
+  const tRow = useRecoilValue(trowState); // 현재 턴 row
+  const tCol = useRecoilValue(tcolState); // 현재 턴 col
+  const boardData = useRecoilValue(boardDataState); // 보드 데이터
+  const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   return (
     <>
       <div className={"oil"}>
@@ -27,7 +28,7 @@ export default function Oil({ turnData }: Props) {
         </div>
         {/* 중단 - 본 내용 */}
         <div>
-          <div>오일랜드</div>
+          <div>{turnData.name}</div>
         </div>
         {/* 하단 - 기능 버튼 */}
       </div>

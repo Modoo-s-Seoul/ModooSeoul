@@ -77,6 +77,10 @@ export const playerPositionsState = atom<playerPosition[]>({
   key: "playerPositionsState",
   default: [],
 });
+export const playerSpriteState = atom<Phaser.GameObjects.Image[]>({
+  key: "playerSpriteState",
+  default: [],
+});
 export interface defaultMatch {
   row: number;
   col: number;

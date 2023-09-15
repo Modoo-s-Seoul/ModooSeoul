@@ -1,14 +1,19 @@
-import { useRecoilState } from "recoil";
-import { isUserTurnVisibleState } from "../../data/IngameData";
-import { SpaceInfo } from "../../interface/ingame";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  isUserTurnVisibleState,
+  tcolState,
+  trowState,
+} from "../../data/IngameData";
 import ClickBtn from "../Base/ClickBtn";
+import { boardDataState } from "../../data/BoardData";
+import { useState } from "react";
 
-interface Props {
-  turnData: SpaceInfo;
-}
-
-export default function Ground({ turnData }: Props) {
+export default function Ground() {
   const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
+  const tRow = useRecoilValue(trowState); // 현재 턴 row
+  const tCol = useRecoilValue(tcolState); // 현재 턴 col
+  const boardData = useRecoilValue(boardDataState); // 보드 데이터
+  const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
 
   // 땅 구매
   const buyGround = () => {

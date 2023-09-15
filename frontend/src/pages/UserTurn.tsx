@@ -12,29 +12,23 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { tcolState, trowState } from "../data/IngameData";
 
-
 export default function UserTurn() {
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const boardData = useRecoilValue(boardDataState);
-
-  const [turnData] = useState(
-    boardData[
-      `${tRow}-${tCol}`
-    ]
-  );
+  const [turnData] = useState(boardData[`${tRow}-${tCol}`]);
 
   return (
     <>
       {/* Event Board */}
       <div className={"eventContainer"}>
-        {turnData.kind === "ground" && <Ground turnData={turnData} />}
-        {turnData.kind === "key" && <Key turnData={turnData} />}
-        {turnData.kind === "start" && <Start turnData={turnData} />}
-        {turnData.kind === "subway" && <Subway turnData={turnData} />}
-        {turnData.kind === "prison" && <Prison turnData={turnData} />}
-        {turnData.kind === "oil" && <Oil turnData={turnData} />}
-        {turnData.kind === "tax" && <Tax turnData={turnData} />}
+        {turnData.kind === "ground" && <Ground />}
+        {turnData.kind === "key" && <Key />}
+        {turnData.kind === "start" && <Start />}
+        {turnData.kind === "subway" && <Subway />}
+        {turnData.kind === "prison" && <Prison />}
+        {turnData.kind === "oil" && <Oil />}
+        {turnData.kind === "tax" && <Tax />}
       </div>
     </>
   );
