@@ -1,10 +1,8 @@
 import { useEffect } from "react";
-import SockJS from "sockjs-client";
-import { Stomp, CompatClient } from "@stomp/stompjs";
-import { useRecoilState } from "recoil";
-import { socketClient } from "../../data/socket";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ipAddress } from "../../api/RoomApi";
+// import { ipAddress } from "../../api/RoomApi";
+import { useSocket } from "../SocketContext";
+import { subscribeRoom, readyPlayer } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/ClickBtn";
 import "./Room.css";
@@ -12,13 +10,14 @@ import "./Room.css";
 /** 게임 대기룸 컴포넌트. 
   초대링크, 방생성을 통해서만 접근 가능*/
 export default function Room() {
-  const [client, setClient] = useRecoilState<CompatClient | null>(socketClient);
+  /**웹소켓 클라이언트 */
+  const socketClient = useSocket();
   const navigate = useNavigate();
   /**유저 닉네임, 현재 방 ID, 플레이어 ID 가져오기 */
   const location = useLocation();
 
   const nickname = location.state.nickname;
-  const roomId = location.state.roomId;
+  const gameId = location.state.gameId;
   const playerId = location.state.playerId;
 
   console.log(location.state);
@@ -30,10 +29,11 @@ export default function Room() {
 
   /**방 참가 링크 복사 */
   const handleCopyLink = () => {
-    const roomUrl = `${ipAddress}/home/invite/${roomId}`;
+    // const gameUrl = `${ipAddress}/home/invite/${gameId}`;
+    const gameUrl = `http://localhost:5173/home/invite/${gameId}`;
 
     navigator.clipboard
-      .writeText(roomUrl)
+      .writeText(gameUrl)
       .then(() => {
         alert("링크가 클립보드에 복사되었습니다.");
       })
@@ -43,30 +43,8 @@ export default function Room() {
       });
   };
 
-  const handlePlayerReady = () => {
-    if (client) {
-      client.send(`/send/ready/${playerId}`);
-    }
-  };
-
   useEffect(() => {
-    /**웹소켓 생성 */
-    if (!client) {
-      const newClient = Stomp.over(new SockJS(`${ipAddress}/ws`));
-      setClient(newClient);
-
-      newClient.connect({}, () => {
-        console.log("웹소켓 연결");
-
-        /**구독 */
-        newClient.subscribe(`/receive/room/${roomId}`, (msg) => {
-          const test = JSON.parse(msg.body);
-          console.log("subscribed!", test);
-        });
-
-        // newClient.send(`/send/ready/${playerId}`);
-      });
-    }
+    subscribeRoom(socketClient, gameId);
   }, []);
 
   return (
@@ -79,13 +57,15 @@ export default function Room() {
           </div>
         </div>
         <div className="roomBody">
-          <h1>{}의 Room</h1>
+          <h1>{nickname}의 Room</h1>
           <div className="playerCardContainer">
             <div className="playerCard crown">
               <div>플레이어 1</div>
               <div>
                 <img src="" alt="" />
-                <button onClick={handlePlayerReady}>레디</button>
+                <button onClick={() => readyPlayer(socketClient, playerId)}>
+                  레디
+                </button>
               </div>
             </div>
             <div className="playerCard"></div>

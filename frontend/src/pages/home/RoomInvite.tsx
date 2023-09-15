@@ -9,6 +9,7 @@ import ClickBtn from "../../components/Base/ClickBtn";
 export default function Invite() {
   const [nickname, setNickname] = useState(""); // 유저 닉네임
   const navigate = useNavigate();
+  /**게임 ID */
   const { pk } = useParams();
 
   /**입력값 반영 함수 */
@@ -33,7 +34,7 @@ export default function Invite() {
           // 유저 닉네임, 방 id 다음 페이지에 넘기기
           state: {
             nickname: nickname,
-            roomId: pk,
+            gameId: pk,
             playerId: joinResponse.data.id,
           },
         });

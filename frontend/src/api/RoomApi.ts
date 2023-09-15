@@ -1,4 +1,5 @@
 import axios from "axios";
+import { CompatClient } from "@stomp/stompjs";
 
 /**서버 ip 주소 */
 export const ipAddress = "http://modooseoul.online:8081";
@@ -35,6 +36,7 @@ export const createRoom = async () => {
 /**방 참가 요청 */
 export const joinRoom = async (
   nickname: string,
+  /**pk값 받아오는거라 undefined일 수 있어서 타입을 이렇게 설정함 */
   gameId: string | undefined
 ) => {
   try {
@@ -59,5 +61,28 @@ export const joinRoom = async (
   } catch (error) {
     console.error("서버 오류: Error fetching joinRoom response:", error);
     throw error;
+  }
+};
+
+/**현재 방 채널 구독 */
+export const subscribeRoom = (
+  socketClient: CompatClient | null,
+  gameId: string
+) => {
+  if (socketClient !== null) {
+    socketClient.subscribe(`/receive/game/${gameId}`, (msg) => {
+      const test = JSON.parse(msg.body);
+      console.log("subscribed!", test);
+    });
+  }
+};
+
+/**플레이어 준비 완료 */
+export const readyPlayer = (
+  socketClient: CompatClient | null,
+  playerId: string
+) => {
+  if (socketClient !== null) {
+    socketClient.send(`/send/ready/${playerId}`);
   }
 };

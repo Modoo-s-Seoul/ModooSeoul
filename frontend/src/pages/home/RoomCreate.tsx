@@ -34,7 +34,7 @@ export default function RoomCreate() {
           // 유저 닉네임, 방 id 다음 페이지에 넘기기
           state: {
             nickname: nickname,
-            roomId: roomInfo.data.id,
+            gameId: roomInfo.data.id,
             playerId: joinResponse.data.id,
           },
         });
