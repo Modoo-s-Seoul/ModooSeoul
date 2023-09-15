@@ -43,14 +43,15 @@ public class GameService {
         for (String playerId : game.getPlayers()) {
             Player player = playerService.getPlayerById(playerId);
 
-            if (player.getIsReady()) { // 준비 안한 플레이어가 있으면
+            // 레디한 플레이어 몇 명인지 체크
+            if (player.getIsReady()) {
                 readyCnt++;
             }
 
             players.add(player);
         }
         if (readyCnt <= 0 || (players.size() - 1 != readyCnt))  {
-            // 로직 보강 필요
+            // 1명일 때 시작 안됨 , 방장 제외한 모든 플레이어 준비할 경우에만 시작하게
             return false;
         }
 
