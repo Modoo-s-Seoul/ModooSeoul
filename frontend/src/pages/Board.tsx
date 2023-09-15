@@ -21,7 +21,7 @@ import {
   isRollingState,
   doubleCntState,
   trowState,
-  tcolState
+  tcolState,
 } from "../data/IngameData";
 import GameOption from "../components/Base/GameOption";
 
@@ -31,6 +31,7 @@ export default function Board() {
   // 글로벌 변수들
   const assetNames = ["Pink", "Blue", "Green", "Yellow"];
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
+  const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
   const offset = 10; // 플레이어 위치 조정
   const offset2 = 220; // y축 위치조정용 변수
   const globalTileSize = 121; // 타일 크기및 간격
@@ -109,6 +110,10 @@ export default function Board() {
     for (let i = 0; i < 75; i++) {
       this.load.image(`locationframe_${i}`, `assets/location/${i}.png`);
     }
+    // 깃발
+    for (let i = 0; i < 47; i++) {
+      this.load.image(`flagframe_${i}`, `assets/flag/${i}.png`);
+    }
   }
 
   function create(this: Phaser.Scene) {
@@ -131,13 +136,15 @@ export default function Board() {
             .image(x, y, "sampleTile")
             .setOrigin(0.5, 4);
           sampleTile.setScale(0.8, 0.8);
+          // sampleTile.setTint(0xff0000);
 
           // 샵 폴리곤용
           const sampleBuilding = this.add
             .image(x, y, "sampleBuilding")
             .setOrigin(0.5, 8);
           sampleBuilding.setScale(0.2, 0.2);
-          sampleBuilding.setAlpha(0.8);
+          sampleBuilding.setAlpha(0.9);
+          sampleBuilding.setTint(colorPaletteTint[0]);
 
           // 빌딩 폴리곤용
           const sampleShop = this.add
@@ -173,7 +180,7 @@ export default function Board() {
     /** 1. 턴 플레이어 화살표 */
     const frameNames = [];
     for (let i = 0; i < 75; i++) {
-        frameNames.push({ key: `locationframe_${i}` });
+      frameNames.push({ key: `locationframe_${i}` });
     }
     // 애니메이션 생성
     this.anims.create({
@@ -192,13 +199,26 @@ export default function Board() {
     arrow.setAlpha(0.8);
     arrow.anims.play("locationAnimation"); // 애니메이션 재생
     /** 2. 도착지 깃발 */
-    const flag = this.add.image(
+    const frameNamesFlag = [];
+    for (let i = 0; i < 75; i++) {
+      frameNamesFlag.push({ key: `flagframe_${i}` });
+    }
+    // 애니메이션 생성
+    this.anims.create({
+      key: "flagAnimation", // 애니메이션 키(key)
+      frames: frameNamesFlag, // 프레임들의 배열
+      frameRate: 80, // 재생 속도 (프레임/초)
+      repeat: -1, // -1로 설정하면 무한 반복
+    });
+    // 애니메이션을 스프라이트에 할당
+    const flag = this.add.sprite(
       config.scale.width / 2 + 10,
-      config.scale.height / 2 - offset2,
-      "flag"
+      config.scale.height / 2 - offset2 - 20,
+      "flagframe_0" // 처음 프레임을 설정
     );
-    flag.setScale(0.05, 0.05);
+    flag.setScale(0.1, 0.1);
     flag.setAlpha(0);
+    flag.anims.play("flagAnimation"); // 애니메이션 재생
     // 기타 에셋 추가
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, arrow]);
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
@@ -281,6 +301,7 @@ export default function Board() {
             } else {
               // 더블일시
               console.log("더블 한번더", doubleCnt);
+              etcSprite[1].setAlpha(0);
               setDoubleCnt(() => {
                 return doubleCnt + 1;
               });
@@ -321,8 +342,8 @@ export default function Board() {
         goRow -= 1;
       }
     }
-    await setTRow(goRow)
-    await setTCol(goCol)
+    await setTRow(goRow);
+    await setTCol(goCol);
     const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
     const y = (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
     etcSprite[1].setPosition(x + 10, y - 220);
