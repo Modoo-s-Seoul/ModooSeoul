@@ -9,7 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 11;
+  z-index: 9;
 }
 
 /* 모달 스타일 */
@@ -28,7 +28,7 @@
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
-  cursor: pointer;
+  /* cursor: pointer; */
   margin-top: 10px;
 }
 

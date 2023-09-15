@@ -20,6 +20,7 @@ export default function Oil({ turnData }: Props) {
           <button
             onClick={() => setIsUserTurnVisible(false)}
             className="closeUserTurn"
+            style={{ cursor: "pointer" }}
           >
             ✖
           </button>

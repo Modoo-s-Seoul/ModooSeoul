@@ -20,6 +20,7 @@ export default function Key({ turnData }: Props) {
           <button
             onClick={() => setIsUserTurnVisible(false)}
             className="closeUserTurn"
+            style={{ cursor: "pointer" }}
           >
             ✖
           </button>

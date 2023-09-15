@@ -13,7 +13,7 @@ export default function GameOption() {
 
   return (
     <>
-      <div className="GameOptionBtnContainer">
+      <div className="GameOptionBtnContainer" style={{ cursor: "pointer" }}>
         <div className="GameOptionBtn" onClick={toggleGameOption}>
           옵션
         </div>
@@ -45,15 +45,25 @@ function GameOptionLoad({ onClose }: GameOptionLoadProps) {
       <div className="modalOverlay">
         <div className="modal">
           <div className="modalClose">
-            <div onClick={onClose}>✖</div>
+            <div onClick={onClose} style={{ cursor: "pointer" }}>
+              ✖
+            </div>
           </div>
           <h1>설정창</h1>
           <div className="optionContainer">
-            <div className="explainBox" onClick={toggleWebInfo}>
+            <div
+              className="explainBox"
+              style={{ cursor: "pointer" }}
+              onClick={toggleWebInfo}
+            >
               게임 설명
             </div>
-            <div className="optionBox">배경음악 on/off</div>
-            <div className="exitBox">게임 나가기</div>
+            <div className="optionBox" style={{ cursor: "pointer" }}>
+              배경음악 on/off
+            </div>
+            <div className="exitBox" style={{ cursor: "pointer" }}>
+              게임 나가기
+            </div>
             <div></div>
           </div>
         </div>

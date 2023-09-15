@@ -29,7 +29,9 @@ export function WebInfoLoad({ onClose }: WebInfoLoadProps) {
     <div className="modalOverlay">
       <div className="modal">
         <div className="modalClose">
-          <div onClick={onClose}>✖</div>
+          <div style={{ cursor: "pointer" }} onClick={onClose}>
+            ✖
+          </div>
         </div>
         <h1>게임 설명</h1>
         <div className="infoContainer">

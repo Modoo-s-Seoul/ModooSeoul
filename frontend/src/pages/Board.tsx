@@ -1,4 +1,7 @@
 import { useEffect, useState, useRef } from "react";
+import { CursorifyProvider } from "@cursorify/react";
+// import { PhingerCursor } from "@cursorify/cursors";
+import { EmojiCursor } from "../components/Base/EmojiCursor";
 import Phaser from "phaser";
 // import axios from "axios";
 // import SockJS from "sockjs-client";
@@ -200,7 +203,7 @@ export default function Board() {
     arrow.anims.play("locationAnimation"); // 애니메이션 재생
     /** 2. 도착지 깃발 */
     const frameNamesFlag = [];
-    for (let i = 0; i < 75; i++) {
+    for (let i = 0; i < 46; i++) {
       frameNamesFlag.push({ key: `flagframe_${i}` });
     }
     // 애니메이션 생성
@@ -399,21 +402,28 @@ export default function Board() {
     }
   }, [turn]);
   return (
-    <div>
-      <GameOption />
-      <UserInfo />
-      {isUserTurnVisible && <UserTurn />}
-      {!isUserTurnVisible && (
-        <div className="diceContainer">
-          <DiceRoll />
-          {!isRolling && (
-            <button id="move-button" className="rollDiceBtn" onClick={rollDice}>
-              주사위 굴리기
-            </button>
-          )}
-        </div>
-      )}
-      <div ref={game} className="GameScreen" id="gameScreen" />
-    </div>
+    <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
+      <div>
+        <GameOption />
+        <UserInfo />
+        {isUserTurnVisible && <UserTurn />}
+        {!isUserTurnVisible && (
+          <div className="diceContainer">
+            <DiceRoll />
+            {!isRolling && (
+              <button
+                id="move-button"
+                className="rollDiceBtn"
+                onClick={rollDice}
+                style={{ cursor: "pointer" }}
+              >
+                주사위 굴리기
+              </button>
+            )}
+          </div>
+        )}
+        <div ref={game} className="GameScreen" id="gameScreen" />
+      </div>
+    </CursorifyProvider>
   );
 }
