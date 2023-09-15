@@ -9,9 +9,21 @@ const apiAddress = `${ipAddress}/api/v1`;
 /**방 생성 및 방 정보 요청 */
 export const createRoom = async () => {
   try {
-    const { data } = await axios.post(`${apiAddress}/rooms`);
+    const { data } = await axios.post(`${apiAddress}/games`);
     console.log("createRoom");
     console.log("Room Info: ", data);
+
+    /* data 형태 예시:
+      {
+        "message": "success",
+        "data": {
+            "id": "0b16c0e2-db7a-4eab-891c-09cbc04b8054",
+            "players": null,
+            "isStart": false,
+            "createDate": "2023-09-11T16:15:01.1458221"
+        }
+      }
+    */
 
     return data;
   } catch (error) {
@@ -23,15 +35,25 @@ export const createRoom = async () => {
 /**방 참가 요청 */
 export const joinRoom = async (
   nickname: string,
-  roomId: string | undefined
+  gameId: string | undefined
 ) => {
   try {
     const { data } = await axios.post(`${apiAddress}/players/join`, {
       nickname: nickname,
-      roomId: roomId,
+      gameId: gameId,
     });
     console.log("joinRoom");
     console.log("response: ", data);
+
+    /* data 형태 예시:
+
+      {
+        "message": "success",
+        "data": {
+            "id": "2e1f3f32-4935-4d58-9eea-28560d41d4c0"
+        }
+      }
+    */
 
     return data;
   } catch (error) {
