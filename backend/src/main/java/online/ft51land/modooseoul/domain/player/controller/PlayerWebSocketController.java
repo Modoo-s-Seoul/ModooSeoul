@@ -24,6 +24,19 @@ public class PlayerWebSocketController {
 	private final WebSocketSendHandler webSocketSendHandler;
 
 
+	/*
+		플레이어 참가
+	 */
+	@MessageMapping("/join/{gameId}")
+	public void playerJoin(@DestinationVariable String gameId) {
+		log.info("플레이어 참가");
+
+		// 게임 객체 얻어오기
+		Game game = gameService.getGameById(gameId);
+		// 메시지 가공 후 전송
+		webSocketSendHandler.sendToGame("join", gameId, playerService.getPlayersInfoForRoom(game));
+	}
+
 	// 플레이어 레디
 	@MessageMapping("/ready/{playerId}")
 	public void playerReady(@DestinationVariable String playerId) {
