@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -72,5 +73,21 @@ public class GameService {
          */
 
         return true;
+    }
+
+    public void sequencePlayer(Game game) {
+        /* 게임 선 세팅
+           하나 랜덤으로 정해서 선 주고 그 플레이어 기준으로 오름차순으로 순서 부여 */
+        Random random = new Random();
+        int playerNum = game.getPlayers().size();
+        int firstPlayer = random.nextInt(playerNum); //0~n-1 까지의 수
+        System.out.println(firstPlayer);
+
+        for(int i = 0; i < playerNum; i++) {
+            int currentPlayer = (firstPlayer + i) % playerNum;
+            game.sequencePlayer(currentPlayer);
+        }
+        gameRepository.save(game);
+
     }
 }

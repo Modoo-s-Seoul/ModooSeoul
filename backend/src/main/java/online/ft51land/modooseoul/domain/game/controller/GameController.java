@@ -39,6 +39,8 @@ public class GameController {
 
         // 게임 시작 가능하면 게임 시작 데이터 전송
         if (isStart) {
+            //선 정하기
+            gameService.sequencePlayer(game);
             webSocketSendHandler.sendToGame(game.getId(), gameStartMessage);
         }
 

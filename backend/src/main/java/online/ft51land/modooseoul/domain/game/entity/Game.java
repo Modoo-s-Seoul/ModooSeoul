@@ -24,6 +24,7 @@ public class Game extends BaseEntity {
     /*
     id : pk - 방 아이디
     players :  참여자
+    players_sequence : 플레이어 선 정보(0: 선)
     is_start : 상태
     start_time : 게임 시작시간
     end_time : 게임 종료 시간
@@ -41,6 +42,9 @@ public class Game extends BaseEntity {
 
 //    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
     private List<String> players;
+
+    @Column(name = "players_sequence")
+    private List<Integer> playersSequence;
 
     @Column(name = "is_start", nullable = false)
     private Boolean isStart;
@@ -76,6 +80,7 @@ public class Game extends BaseEntity {
         this.messageNum = 1L;
         this.isStart = false;
         this.players = new ArrayList<>();
+        this.playersSequence = new ArrayList<>();
         this.createdDate = LocalDateTime.now();
     }
 
@@ -89,4 +94,8 @@ public class Game extends BaseEntity {
         this.startTime = LocalDateTime.now();
     }
 
+
+    public void sequencePlayer(int sequence) {
+        this.playersSequence.add(sequence);
+    }
 }
