@@ -89,4 +89,7 @@ public class Game extends BaseEntity {
         this.startTime = LocalDateTime.now();
     }
 
+    public void sequencePlayer(List<String> players) {
+        this.players = players;
+    }
 }
