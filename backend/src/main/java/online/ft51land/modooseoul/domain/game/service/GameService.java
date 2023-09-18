@@ -13,7 +13,9 @@ import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -72,5 +74,16 @@ public class GameService {
         }
 
         return GameStartMessage.of(true, "게임 시작!");
+    }
+
+    /* 게임 선 세팅
+          player 리스트 랜덤으로 섞어서 다시 저장*/
+    public void sequencePlayer(Game game) {
+
+        List<String> players = game.getPlayers();
+        Collections.shuffle(players); //리스트 순서 섞기
+        game.sequencePlayer(players);
+
+        gameRepository.save(game);
     }
 }
