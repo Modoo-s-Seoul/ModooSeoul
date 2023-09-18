@@ -3,6 +3,7 @@ package online.ft51land.modooseoul.domain.player.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -13,6 +14,7 @@ import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -28,6 +30,18 @@ public class PlayerService {
     public Player getPlayerById(String playerId) {
         return playerRepository.findById(playerId)
                                .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+    }
+
+    public List<PlayerInfoMessage> getPlayersInfoForRoom(Game game) {
+        // Message 만들기
+        List<PlayerInfoMessage> message = new ArrayList<>();
+        List<String> players = game.getPlayers();
+
+        for (String playerId : players) {
+            Player p = getPlayerById(playerId);
+            message.add(PlayerInfoMessage.of(p));
+        }
+        return message;
     }
 
     // 플레이어 레디 / 취소 할 시 레포지토리 상태 변경해주기
@@ -55,7 +69,7 @@ public class PlayerService {
             throw new BusinessException(ErrorMessage.GAME_ALREADY_START);
         }
 
-        // 3. 참여자 정원일 다 찼는지 확인
+        // 3. 참여자 정원이 다 찼는지 확인
         if (game.getPlayers() != null && game.getPlayers().size() >= 4) {
             throw new BusinessException(ErrorMessage.GAME_ALREADY_FULL);
         }
@@ -75,7 +89,6 @@ public class PlayerService {
         game.addPlayer(player);
 
         gameRepository.save(game);
-
         return PlayerJoinResponseDto.of(player);
     }
 
