@@ -4,11 +4,13 @@ import lombok.Builder;
 
 @Builder
 public record GameStartMessage(
-		Boolean isStart
+		Boolean isStart,
+		String message
 ) {
-	public static GameStartMessage of(Boolean isStart) {
+	public static GameStartMessage of(Boolean isStart, String message) {
 		return GameStartMessage.builder()
 				.isStart(isStart)
+				.message(message)
 				.build();
 	}
 }

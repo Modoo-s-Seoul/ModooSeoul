@@ -2,7 +2,10 @@ package online.ft51land.modooseoul.domain.game.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
+import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
+import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -12,12 +15,21 @@ import org.springframework.stereotype.Controller;
 @AllArgsConstructor
 public class GameWebSocketController {
 
-
 	private final GameService gameService;
+	private final WebSocketSendHandler webSocketSendHandler;
 
-	@MessageMapping("/game-start/{gameId}")
+	@MessageMapping("/start/{gameId}")
 	public void gameStart(@DestinationVariable String gameId){
-//		gameService.sendGameStartToRoom(roomService.gameStart(gameId));
+		Game game = gameService.getGameById(gameId);
+
+		log.info("게임 시작 메시지 수령 by = {}", gameId);
+
+		// 게임 시작 가능 여부 반환
+		GameStartMessage gameStartMessage = gameService.gameStart(game);
+
+		// 게임 시작 가능한지 여부 전송
+		webSocketSendHandler.sendToGame(game.getId(), gameStartMessage);
+
 	}
-	
+
 }

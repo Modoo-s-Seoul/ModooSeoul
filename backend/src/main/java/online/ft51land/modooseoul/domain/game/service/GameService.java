@@ -1,6 +1,7 @@
 package online.ft51land.modooseoul.domain.game.service;
 
 import lombok.RequiredArgsConstructor;
+import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
@@ -30,11 +31,10 @@ public class GameService {
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
-        System.out.println(game.toString());
         return GameCreateResponseDto.of(game);
     }
 
-    public Boolean gameStart(Game game) {
+    public GameStartMessage gameStart(Game game) {
 
         // 게임 시작 가능 여부 확인
         List<Player> players = new ArrayList<>();
@@ -50,9 +50,15 @@ public class GameService {
 
             players.add(player);
         }
-        if (readyCnt <= 0 || (players.size() - 1 != readyCnt))  {
-            // 1명일 때 시작 안됨 , 방장 제외한 모든 플레이어 준비할 경우에만 시작하게
-            return false;
+
+        // 방장만 있을 경우
+        if (players.size() == 1) {
+            return GameStartMessage.of(false, "플레이어가 최소 2명 이상이어야 합니다.");
+        }
+
+        // 준비 안 한 플레이어가 있는 경우
+        if (players.size() -1 != readyCnt) {
+            return GameStartMessage.of(false, "플레이어가 모두 레디해야 합니다.");
         }
 
         // 방 초기 세팅
@@ -65,12 +71,6 @@ public class GameService {
             playerRepository.save(player);
         }
 
-        /*
-          게임 초기 세팅
-          1. 방
-          2. 플레이어들
-         */
-
-        return true;
+        return GameStartMessage.of(true, "게임 시작!");
     }
 }
