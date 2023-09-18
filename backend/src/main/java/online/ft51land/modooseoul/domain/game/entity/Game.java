@@ -24,7 +24,6 @@ public class Game extends BaseEntity {
     /*
     id : pk - 방 아이디
     players :  참여자
-    players_sequence : 플레이어 선 정보(0: 선)
     is_start : 상태
     start_time : 게임 시작시간
     end_time : 게임 종료 시간
