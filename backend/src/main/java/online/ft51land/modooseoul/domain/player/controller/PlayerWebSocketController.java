@@ -65,10 +65,8 @@ public class PlayerWebSocketController {
 
 		Player player = playerService.getPlayerById(playerId);
 
-		// 주사위 굴리고 데이터 처리
-		// 넘겨줄 데이터 가공
+		// 주사위 굴리고 데이터 가공
 		PlayerDiceMessage playerDiceMessage = playerService.rollDice(playerId);
-		log.info("playerDiceMessage = {}", playerDiceMessage);
 
 		// 데이터 전달
 		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
