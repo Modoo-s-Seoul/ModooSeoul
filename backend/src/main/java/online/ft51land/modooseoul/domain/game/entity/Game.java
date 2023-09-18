@@ -43,8 +43,8 @@ public class Game extends BaseEntity {
 //    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
     private List<String> players;
 
-    @Column(name = "players_sequence")
-    private List<Integer> playersSequence;
+//    @Column(name = "players_sequence")
+//    private List<Integer> playersSequence;
 
     @Column(name = "is_start", nullable = false)
     private Boolean isStart;
@@ -80,7 +80,7 @@ public class Game extends BaseEntity {
         this.messageNum = 1L;
         this.isStart = false;
         this.players = new ArrayList<>();
-        this.playersSequence = new ArrayList<>();
+//        this.playersSequence = new ArrayList<>();
         this.createdDate = LocalDateTime.now();
     }
 
@@ -94,8 +94,7 @@ public class Game extends BaseEntity {
         this.startTime = LocalDateTime.now();
     }
 
-
-    public void sequencePlayer(int sequence) {
-        this.playersSequence.add(sequence);
+    public void sequencePlayer(List<String> players) {
+        this.players = players;
     }
 }

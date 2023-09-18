@@ -13,6 +13,7 @@ import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -76,19 +77,13 @@ public class GameService {
     }
 
     /* 게임 선 세팅
-           하나 랜덤으로 정해서 선 주고 그 플레이어 기준으로 오름차순으로 순서 부여 */
+          player 리스트 랜덤으로 섞어서 다시 저장*/
     public void sequencePlayer(Game game) {
 
-        Random random = new Random();
-        int playerNum = game.getPlayers().size();
-        int firstPlayer = random.nextInt(playerNum); // 선 플레이어 : 0~n-1 까지의 수
+        List<String> players = game.getPlayers();
+        Collections.shuffle(players); //리스트 순서 섞기
+        game.sequencePlayer(players);
 
-        // 선 플레이어를 기준으로 오름차순으로 순서 부여
-        for(int i = 0; i < playerNum; i++) {
-            int currentPlayer = (firstPlayer + i) % playerNum;
-            game.sequencePlayer(currentPlayer);
-        }
         gameRepository.save(game);
-
     }
 }
