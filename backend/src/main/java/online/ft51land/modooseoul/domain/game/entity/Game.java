@@ -23,7 +23,7 @@ public class Game extends BaseEntity {
 
     /*
     id : pk - 방 아이디
-    players :  참여자
+    players :  참여자 - player의 id
     is_start : 상태
     start_time : 게임 시작시간
     end_time : 게임 종료 시간
@@ -41,6 +41,7 @@ public class Game extends BaseEntity {
 
 //    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
     private List<String> players;
+
 
     @Column(name = "is_start", nullable = false)
     private Boolean isStart;

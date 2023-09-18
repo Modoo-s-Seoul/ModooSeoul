@@ -76,20 +76,27 @@ public class PlayerService {
 
         // 4. 해당방에 중복된 닉네임이 있는지 확인
         List<String> players = game.getPlayers();
-        for (String nickname : players) {
-            if (nickname.equals(playerJoinRequestDto.nickname())) {
+        for (String id : players) {
+            //이미 참여중인 플레이어들의 id를 받아서 player 받아오기
+            Player player = playerRepository.findById(id)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+            
+            if (player.getNickname().equals(playerJoinRequestDto.nickname())) {
                 throw new BusinessException(ErrorMessage.DUPLICATE_PLAYER_NICKNAME);
             }
+            
         }
 
         // 중복되지 않으면 사용자를 생성 후
-        Player player = playerRepository.save(playerJoinRequestDto.toPlayer());
-
+        Player joinPlayer = playerRepository.save(playerJoinRequestDto.toPlayer());
+        
         // 방 참여 ( 방 players에 사용자 pk 추가)
-        game.addPlayer(player);
+        game.addPlayer(joinPlayer);
 
+        // 수정된 게임정보 수정
         gameRepository.save(game);
-        return PlayerJoinResponseDto.of(player);
+        // 프론트에서 구독을 위한 새로운 플레이어의 id를 response
+        return PlayerJoinResponseDto.of(joinPlayer);
     }
 
     /*
