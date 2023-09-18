@@ -98,24 +98,35 @@ public class PlayerService {
     public PlayerDiceMessage rollDice(String playerId) {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
+
+        // 랜덤 숫자 생성
         Random diceRoller = new Random();
         Long one = diceRoller.nextLong(6) + 1;
         Long two = diceRoller.nextLong(6) + 1;
+
+        // 두 개의 눈금이 같을 경우
         if (one.equals(two)) {
-            /*
-                같은 경우에
-                false 면 true 전달
-                true 면 false 전달
-             */
             rolledPlayer.updateDouble(!rolledPlayer.getIsDouble());
         }
         else {
             rolledPlayer.updateDouble(false);
         }
+
+        // 주사위 얼마 나왔는지 저장
         rolledPlayer.updateDice(one + two);
+
+        // 어디로 이동했는지 저장
+        Long bef = rolledPlayer.getCurrentBoardId();
+        Long aft = (bef + (one + two)) % 32;
+        rolledPlayer.playerMove(aft);
+
+        // 월급 받았는지 안 받았는지 여부 저장
+        Boolean isSalary = bef > aft;
+
+        // DB 갱신
         playerRepository.save(rolledPlayer);
 
         // 메세지 가공 후 리턴
-        return (PlayerDiceMessage.of(one, two, rolledPlayer));
+        return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
     }
 }
