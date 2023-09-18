@@ -14,46 +14,57 @@ export const sample2 = selector({
 });
 
 // (임시) 게임 데이터
+/** 더블 중첩 횟수 */
 export const doubleCntState = atom<number>({
   key: "doubleCntState",
   default: 0,
 });
+/** 플레이어 수 */
 export const pNumState = atom<number>({
   key: "pNumState",
   default: 4,
 });
+/** 턴 정보 */
 export const turnState = atom<number>({
   key: "turnState",
   default: 0,
 });
+/** 해당 턴 row값 */
 export const trowState = atom<number>({
   key: "trowState",
   default: 0,
 });
+/** 해당 턴 col값 */
 export const tcolState = atom<number>({
   key: "tcolState",
   default: 0,
 });
+/** 플레이어 턴 컴포넌트 활성화 */
 export const isUserTurnVisibleState = atom<boolean>({
   key: "isUserTurnVisibleState",
   default: false,
 });
+/** 초기자금 */
 export const first_money = atom<number>({
   key: "first_money",
   default: 10000000,
 });
+/** 주사위 1 */
 export const dice1State = atom<number>({
   key: "dice1State",
   default: 0,
 });
+/** 주사위 2 */
 export const dice2State = atom<number>({
   key: "dice2State",
   default: 1,
 });
+/** 주사위 컴포넌트 활성화 */
 export const diceActiveState = atom<boolean>({
   key: "diceActiveState",
   default: false,
 });
+/** 주사위 구르는 중 */
 export const isRollingState = atom<boolean>({
   key: "isRollingState",
   default: false,
@@ -63,6 +74,7 @@ export interface playerInfo {
   money: number;
   color: string;
 }
+/** 플레이어 정보 기록 */
 export const playerDataState = atom<playerInfo[]>({
   key: "playerDataState",
   default: [],
@@ -73,18 +85,49 @@ export interface playerPosition {
   mx: number;
   my: number;
 }
+/** 플레이어 위치 기록 */
 export const playerPositionsState = atom<playerPosition[]>({
   key: "playerPositionsState",
   default: [],
 });
-export const playerSpriteState = atom<Phaser.GameObjects.Image[]>({
-  key: "playerSpriteState",
+/** (타입) 건물 정보 기록 */
+export interface builingInfoType {
+  player: number | null;
+  sell: boolean;
+  color: string;
+}
+/** 건물 정보 기록 */
+export const builingInfoState = atom<builingInfoType[]>({
+  key: "builingInfoState",
   default: [],
+});
+/** (타입) 땅 정보 기록 */
+export interface groundInfoType {
+  player: number | null;
+  sell: boolean;
+  color: string;
+}
+/** 땅 정보 기록 */
+export const groundInfoState = atom<groundInfoType[]>({
+  key: "groundInfoState",
+  default: [],
+});
+/** (타입) 땅 변동 기록 */
+export interface groundChangeType {
+  player: number | null;
+  index: number;
+  // sell: boolean;
+}
+/** 땅 변동 기록 */
+export const groundChangeState = atom<groundChangeType[]>({
+  key: "groundChangeState",
+  default: [{ player: null, index: -1 }],
 });
 export interface defaultMatch {
   row: number;
   col: number;
 }
+/** 보드판 위치 정보 */
 export const matchPosition = atom<defaultMatch[]>({
   key: "matchPosition",
   default: [

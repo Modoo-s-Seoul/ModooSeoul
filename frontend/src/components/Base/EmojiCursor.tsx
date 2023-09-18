@@ -151,7 +151,7 @@ export const EmojiCursor: React.FC<CursorProps> = ({ disabled }) => {
       {(() => {
         if (disabled) return p1;
         if (style === "pointer") return pp1;
-        if (mouseState === "mouseDown") return pp1;
+        if (mouseState === "mouseDown") return p1;
         return p1;
       })()}
     </div>

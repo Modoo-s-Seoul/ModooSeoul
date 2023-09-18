@@ -25,6 +25,8 @@ import {
   doubleCntState,
   trowState,
   tcolState,
+  builingInfoState,
+  groundChangeState,
 } from "../data/IngameData";
 import GameOption from "../components/Base/GameOption";
 
@@ -43,6 +45,7 @@ export default function Board() {
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
+  const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const playerDeafaults: playerInfo[] = [];
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   for (let i = 1; i <= pNum; i++) {
@@ -69,9 +72,11 @@ export default function Board() {
     []
   ); //땅 스프라이트
   groundSprite;
+
   const [buildingSprite, setBuildingSprite] = useState<
     Phaser.GameObjects.Image[]
   >([]); //건물 스프라이트
+  const [, setBuildingInfo] = useRecoilState(builingInfoState); //건물 정보
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<playerPosition[]>([]); // 플레이어 위치
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
@@ -151,24 +156,46 @@ export default function Board() {
           ]);
           // sampleTile.setTint(0xff0000);
 
-          // 샵 폴리곤용
+          // 디폴트 건물 1
           const sampleBuilding = this.add
             .image(x, y, "sampleBuilding")
-            .setOrigin(0.5, 8);
+            .setOrigin(0.4, 8);
           sampleBuilding.setScale(0.2, 0.2);
           sampleBuilding.setAlpha(0.9);
+          // 디폴트 건물 2
+          const sampleBuilding2 = this.add
+            .image(x, y, "sampleBuilding")
+            .setOrigin(-0.45, 7.5);
+          sampleBuilding2.setScale(0.2, 0.2);
+          sampleBuilding2.setAlpha(0.9);
+          // 디폴트 건물 3
+          const sampleBuilding3 = this.add
+            .image(x, y, "sampleBuilding")
+            .setOrigin(1.2, 7.5);
+          sampleBuilding3.setScale(0.2, 0.2);
+          sampleBuilding3.setAlpha(0.9);
+          // 스프라이트 리스트 추가
           setBuildingSprite((prevBuildingSprite) => [
             ...prevBuildingSprite,
             sampleBuilding,
+            sampleBuilding2,
+            sampleBuilding3,
+          ]);
+          // 건물 정보 리스트 추가
+          setBuildingInfo((prevBuildingInfo) => [
+            ...prevBuildingInfo,
+            { player: null, sell: false, color: "default" },
+            { player: null, sell: false, color: "default" },
+            { player: null, sell: false, color: "default" },
           ]);
           // sampleBuilding.setTint(colorPaletteTint[0]);
 
-          // 빌딩 폴리곤용
-          const sampleShop = this.add
-            .image(x, y, "sampleShop")
-            .setOrigin(1.1, 9.2);
-          sampleShop.setScale(0.3, 0.3);
-          sampleShop.setAlpha(0.8);
+          // 샵 폴리곤용
+          // const sampleShop = this.add
+          //   .image(x, y, "sampleShop")
+          //   .setOrigin(1.1, 9.2);
+          // sampleShop.setScale(0.3, 0.3);
+          // sampleShop.setAlpha(0.8);
         }
       }
     }
@@ -281,10 +308,9 @@ export default function Board() {
     Dice2: number
   ) => {
     // 더블 맥스 처리
-    if (doubleCnt > 2) {
+    if (doubleCnt > 1) {
       if (Dice1 == Dice2) {
         alert("너무많은 더블... 감옥가자");
-        console.log("너무많은 더블... 감옥가자");
         setDoubleCnt(0);
         setIsRolling(false);
         setTurn((turn + 1) % pNum);
@@ -342,10 +368,10 @@ export default function Board() {
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
 
     // 주사위 값 결정
-    const Dice1 = Math.floor(Math.random() * 6) + 1;
-    const Dice2 = Math.floor(Math.random() * 6) + 1;
-    // const Dice1 = 2;
-    // const Dice2 = 2;
+    // const Dice1 = Math.floor(Math.random() * 6) + 1;
+    // const Dice2 = Math.floor(Math.random() * 6) + 1;
+    const Dice1 = 3;
+    const Dice2 = 3;
 
     setDiceActive(true);
     setDice1Value(Dice1);
@@ -394,8 +420,9 @@ export default function Board() {
     history.pushState(null, "", location.href);
   };
 
-  // useEffect
+  // 기본 useEffect
   useEffect(() => {
+    // 유저정보 기본 세팅
     setPlayerData(playerDeafaults);
     console.log(playerData);
     if (game.current) {
@@ -406,6 +433,7 @@ export default function Board() {
     history.pushState(null, "", location.href);
     window.addEventListener("popstate", preventGoBack);
   }, []);
+
   // 화살표 동기화
   useEffect(() => {
     console.log("턴바뀜");
@@ -423,6 +451,16 @@ export default function Board() {
       etcSprite[1].setAlpha(0);
     }
   }, [turn]);
+
+  // 땅 정보 변경시
+  useEffect(() => {
+    if (groundChange[0].player !== null) {
+      groundSprite[groundChange[0].index].setTint(
+        colorPaletteTint[groundChange[0].player]
+      );
+    }
+  }, [groundChange]);
+
   return (
     <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
       <div>
