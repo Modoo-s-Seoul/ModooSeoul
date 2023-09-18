@@ -28,25 +28,6 @@ public class GameController {
         return BaseResponseDto.ok(gameService.create());
     }
 
-    @PostMapping("/start")
-    public BaseResponseDto<GameStartMessage> startGame(@RequestBody GameStartRequestDto gameStartRequestDto) {
-        Game game = gameService.getGameById(gameStartRequestDto.gameId());
-        log.info("게임 시작 요청 by {}", game.getId());
-
-        // 게임 시작 가능 여부 반환
-        Boolean isStart = gameService.gameStart(game);
-        GameStartMessage gameStartMessage = GameStartMessage.of(isStart);
-
-        // 게임 시작 가능하면 게임 시작 데이터 전송
-        if (isStart) {
-            //선 정하기
-            gameService.sequencePlayer(game);
-            webSocketSendHandler.sendToGame(game.getId(), gameStartMessage);
-        }
-
-        return BaseResponseDto.ok(gameStartMessage);
-    }
-
     @GetMapping("/test")
     public String test() {
         return "Test success";
