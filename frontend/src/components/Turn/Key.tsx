@@ -1,30 +1,20 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  isUserTurnVisibleState,
-  tcolState,
-  trowState,
-} from "../../data/IngameData";
+import { useRecoilValue } from "recoil";
+import { tcolState, trowState } from "../../data/IngameData";
 import { useState } from "react";
 import { boardDataState } from "../../data/BoardData";
+import CloseBtn from "./CloseBtn";
 
 export default function Key() {
-  const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const boardData = useRecoilValue(boardDataState); // 보드 데이터
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   return (
     <>
-      <div className={"key"}>
+      <div className={"userTurnContainer"}>
         {/* 상단 - 닫기 버튼 */}
         <div>
-          <button
-            onClick={() => setIsUserTurnVisible(false)}
-            className="closeUserTurn"
-            style={{ cursor: "pointer" }}
-          >
-            ✖
-          </button>
+          <CloseBtn />
         </div>
         {/* 중단 - 본 내용 */}
         <div>

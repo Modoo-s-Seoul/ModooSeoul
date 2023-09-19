@@ -8,20 +8,49 @@ import Prison from "../components/Turn/Prison";
 import Start from "../components/Turn/Start";
 import Subway from "../components/Turn/Subway";
 import Tax from "../components/Turn/Tax";
-import { useState } from "react";
-import { useRecoilValue } from "recoil";
-import { tcolState, trowState } from "../data/IngameData";
+import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  isUserTurnVisibleState,
+  tcolState,
+  trowState,
+} from "../data/IngameData";
 
 export default function UserTurn() {
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const boardData = useRecoilValue(boardDataState);
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]);
+  const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
+    isUserTurnVisibleState
+  ); // 플레이어 턴 수행 가능 여부
+
+  /** 턴 시간 제한 (작업을 위해 꺼둠) */
+  useEffect(() => {
+    // const timeoutMap: { [key: string]: number } = {
+    //   ground: 10000,
+    //   key: 10000,
+    //   start: 10000,
+    //   subway: 10000,
+    //   prison: 10000,
+    //   oil: 10000,
+    //   tax: 10000,
+    // };
+    // const timeout = timeoutMap[turnData.kind] || 10000;
+    // const timeoutId = setTimeout(() => {
+    //   setIsUserTurnVisible(false);
+    // }, timeout);
+    // return () => clearTimeout(timeoutId);
+  }, [turnData.kind, setIsUserTurnVisible]);
 
   return (
     <>
       {/* Event Board */}
-      <div className={"eventContainer"}>
+      <div
+        className={`eventContainer ${
+          isUserTurnVisible ? "userTurnActive" : ""
+        }`}
+      >
         {turnData.kind === "ground" && <Ground />}
         {turnData.kind === "key" && <Key />}
         {turnData.kind === "start" && <Start />}

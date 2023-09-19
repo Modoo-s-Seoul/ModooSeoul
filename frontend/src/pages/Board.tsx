@@ -8,6 +8,7 @@ import Phaser from "phaser";
 // import StompJs from "@stomp/stompjs";
 import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
+import CommonTurn from "../components/All/CommonTurn";
 import DiceRoll from "./DiceRoll";
 import "./Board.css";
 import { playerPosition, playerInfo } from "../interface/ingame";
@@ -27,6 +28,8 @@ import {
   tcolState,
   builingInfoState,
   groundChangeState,
+  buildingChangeState,
+  isCommonTurnVisibleState,
 } from "../data/IngameData";
 import GameOption from "../components/Base/GameOption";
 
@@ -46,8 +49,10 @@ export default function Board() {
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
+  const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
   const playerDeafaults: playerInfo[] = [];
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  playerData;
   for (let i = 1; i <= pNum; i++) {
     playerDeafaults.push({
       name: `Player ${i}`,
@@ -82,6 +87,9 @@ export default function Board() {
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
     isUserTurnVisibleState
   ); // 플레이어 턴 수행 가능 여부
+  const [isCommonTurnVisible, setIsCommonTurnVisible] = useRecoilState(
+    isCommonTurnVisibleState
+  ); // 공통 턴 수행 가능 여부
 
   const config = {
     type: Phaser.AUTO,
@@ -161,19 +169,19 @@ export default function Board() {
             .image(x, y, "sampleBuilding")
             .setOrigin(0.4, 8);
           sampleBuilding.setScale(0.2, 0.2);
-          sampleBuilding.setAlpha(0.9);
+          sampleBuilding.setAlpha(0);
           // 디폴트 건물 2
           const sampleBuilding2 = this.add
             .image(x, y, "sampleBuilding")
             .setOrigin(-0.45, 7.5);
           sampleBuilding2.setScale(0.2, 0.2);
-          sampleBuilding2.setAlpha(0.9);
+          sampleBuilding2.setAlpha(0);
           // 디폴트 건물 3
           const sampleBuilding3 = this.add
             .image(x, y, "sampleBuilding")
             .setOrigin(1.2, 7.5);
           sampleBuilding3.setScale(0.2, 0.2);
-          sampleBuilding3.setAlpha(0.9);
+          sampleBuilding3.setAlpha(0);
           // 스프라이트 리스트 추가
           setBuildingSprite((prevBuildingSprite) => [
             ...prevBuildingSprite,
@@ -188,14 +196,6 @@ export default function Board() {
             { player: null, sell: false, color: "default" },
             { player: null, sell: false, color: "default" },
           ]);
-          // sampleBuilding.setTint(colorPaletteTint[0]);
-
-          // 샵 폴리곤용
-          // const sampleShop = this.add
-          //   .image(x, y, "sampleShop")
-          //   .setOrigin(1.1, 9.2);
-          // sampleShop.setScale(0.3, 0.3);
-          // sampleShop.setAlpha(0.8);
         }
       }
     }
@@ -268,7 +268,7 @@ export default function Board() {
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
   }
 
-  // 플레이어 이동 함수
+  /** 플레이어 이동 함수 */
   const movePlayer = (rowOffset: number, colOffset: number) => {
     // 기본인자
     const tileSize = globalTileSize;
@@ -301,7 +301,7 @@ export default function Board() {
     }
   };
 
-  // 플레이어 이동 방향 지정
+  /** 플레이어 이동 방향 지정 */
   const setPlayerDirection = (
     totalDice: number,
     Dice1: number,
@@ -311,9 +311,12 @@ export default function Board() {
     if (doubleCnt > 1) {
       if (Dice1 == Dice2) {
         alert("너무많은 더블... 감옥가자");
+        // 캐릭터 감옥이동
+
+        // 기본 정보 재세팅
         setDoubleCnt(0);
         setIsRolling(false);
-        setTurn((turn + 1) % pNum);
+        setTurn(turn + 1);
         return;
       }
     }
@@ -344,14 +347,11 @@ export default function Board() {
           setTimeout(() => {
             setIsUserTurnVisible(true);
             setIsRolling(false);
-            console.log("자..", doubleCnt);
             if (Dice1 !== Dice2) {
               // 더블이 아닐시
-              setTurn((turn + 1) % pNum);
               setDoubleCnt(0);
             } else {
               // 더블일시
-              console.log("더블 한번더", doubleCnt);
               etcSprite[1].setAlpha(0);
               setDoubleCnt(() => {
                 return doubleCnt + 1;
@@ -363,15 +363,16 @@ export default function Board() {
     }
   };
 
+  /** 주사위 굴리기 함수 */
   const rollDice = async () => {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
 
     // 주사위 값 결정
-    // const Dice1 = Math.floor(Math.random() * 6) + 1;
-    // const Dice2 = Math.floor(Math.random() * 6) + 1;
-    const Dice1 = 3;
-    const Dice2 = 3;
+    const Dice1 = Math.floor(Math.random() * 6) + 1;
+    const Dice2 = Math.floor(Math.random() * 6) + 1;
+    // const Dice1 = 1;
+    // const Dice2 = 2;
 
     setDiceActive(true);
     setDice1Value(Dice1);
@@ -420,24 +421,25 @@ export default function Board() {
     history.pushState(null, "", location.href);
   };
 
-  // 기본 useEffect
+  /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
     setPlayerData(playerDeafaults);
-    console.log(playerData);
+    console.log("플레이어 시작 정보입니다", playerDeafaults);
     if (game.current) {
       new Phaser.Game(config);
     }
+    // 디폴트 기능 억제
     window.addEventListener("beforeunload", preventRefresh);
-
     history.pushState(null, "", location.href);
     window.addEventListener("popstate", preventGoBack);
+    // 전체화면
   }, []);
 
-  // 화살표 동기화
+  /** 화살표 동기화 */
   useEffect(() => {
-    console.log("턴바뀜");
-    if (etcSprite[0]) {
+    if (etcSprite[0] && turn !== pNum) {
+      etcSprite[0].setAlpha(1);
       const goRow = playerPositions[turn].row;
       const goCol = playerPositions[turn].col;
       const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
@@ -449,17 +451,52 @@ export default function Board() {
       );
       // 깃발 숨기기
       etcSprite[1].setAlpha(0);
+    } else if (etcSprite[0] && turn === pNum) {
+      etcSprite[0].setAlpha(0);
     }
   }, [turn]);
 
-  // 땅 정보 변경시
+  /** 땅 정보 변경시 */
   useEffect(() => {
-    if (groundChange[0].player !== null) {
+    if (groundChange[0].player !== null && groundChange[0].player !== 6) {
       groundSprite[groundChange[0].index].setTint(
         colorPaletteTint[groundChange[0].player]
       );
+    } else if (groundChange[0].player === 6) {
+      // 판매요청시
+      groundSprite[groundChange[0].index].clearTint();
     }
   }, [groundChange]);
+
+  /** 건물 정보 변경시 */
+  useEffect(() => {
+    if (buildingChange[0].player !== null && buildingChange[0].player !== 6) {
+      // 색변경
+      buildingSprite[buildingChange[0].index + buildingChange[0].point].setTint(
+        colorPaletteTint[buildingChange[0].player]
+      );
+      // 투명도 조정
+      buildingSprite[
+        buildingChange[0].index + buildingChange[0].point
+      ].setAlpha(1);
+    } else if (buildingChange[0].player === 6) {
+      // 판매요청시
+      buildingSprite[buildingChange[0].index].clearTint();
+      buildingSprite[
+        buildingChange[0].index + buildingChange[0].point
+      ].setAlpha(0);
+    }
+  }, [buildingChange]);
+
+  /** 유저 턴 구현 */
+
+  /** 공통 턴 구현 */
+  useEffect(() => {
+    if (turn === pNum) {
+      console.log("공통턴 띄워라");
+      setIsCommonTurnVisible(true);
+    }
+  }, [turn]);
 
   return (
     <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
@@ -467,7 +504,8 @@ export default function Board() {
         <GameOption />
         <UserInfo />
         {isUserTurnVisible && <UserTurn />}
-        {!isUserTurnVisible && (
+        {isCommonTurnVisible && <CommonTurn />}
+        {!isUserTurnVisible && !isCommonTurnVisible && (
           <div className="diceContainer">
             <DiceRoll />
             {!isRolling && (

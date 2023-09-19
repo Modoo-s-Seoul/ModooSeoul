@@ -44,6 +44,11 @@ export const isUserTurnVisibleState = atom<boolean>({
   key: "isUserTurnVisibleState",
   default: false,
 });
+/** 공통 턴 컴포넌트 활성화 */
+export const isCommonTurnVisibleState = atom<boolean>({
+  key: "isCommonTurnVisibleState",
+  default: false,
+});
 /** 초기자금 */
 export const first_money = atom<number>({
   key: "first_money",
@@ -94,7 +99,6 @@ export const playerPositionsState = atom<playerPosition[]>({
 export interface builingInfoType {
   player: number | null;
   sell: boolean;
-  color: string;
 }
 /** 건물 정보 기록 */
 export const builingInfoState = atom<builingInfoType[]>({
@@ -122,6 +126,18 @@ export interface groundChangeType {
 export const groundChangeState = atom<groundChangeType[]>({
   key: "groundChangeState",
   default: [{ player: null, index: -1 }],
+});
+/** (타입) 건물 변동 기록 */
+export interface buildingChangeType {
+  player: number | null;
+  index: number;
+  point: number;
+  // sell: boolean;
+}
+/** 건물 변동 기록 */
+export const buildingChangeState = atom<buildingChangeType[]>({
+  key: "buildingChangeState",
+  default: [{ player: null, index: -1, point: -1 }],
 });
 export interface defaultMatch {
   row: number;
