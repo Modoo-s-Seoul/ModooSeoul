@@ -95,6 +95,7 @@ public class PlayerService {
 
         // 수정된 게임정보 수정
         gameRepository.save(game);
+        
         // 프론트에서 구독을 위한 새로운 플레이어의 id를 response
         return PlayerJoinResponseDto.of(joinPlayer);
     }
