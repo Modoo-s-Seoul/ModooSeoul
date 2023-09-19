@@ -3,6 +3,7 @@ package online.ft51land.modooseoul.domain.player.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -13,6 +14,7 @@ import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -28,6 +30,18 @@ public class PlayerService {
     public Player getPlayerById(String playerId) {
         return playerRepository.findById(playerId)
                                .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+    }
+
+    public List<PlayerInfoMessage> getPlayersInfoForRoom(Game game) {
+        // Message 만들기
+        List<PlayerInfoMessage> message = new ArrayList<>();
+        List<String> players = game.getPlayers();
+
+        for (String playerId : players) {
+            Player p = getPlayerById(playerId);
+            message.add(PlayerInfoMessage.of(p));
+        }
+        return message;
     }
 
     // 플레이어 레디 / 취소 할 시 레포지토리 상태 변경해주기
@@ -55,28 +69,35 @@ public class PlayerService {
             throw new BusinessException(ErrorMessage.GAME_ALREADY_START);
         }
 
-        // 3. 참여자 정원일 다 찼는지 확인
+        // 3. 참여자 정원이 다 찼는지 확인
         if (game.getPlayers() != null && game.getPlayers().size() >= 4) {
             throw new BusinessException(ErrorMessage.GAME_ALREADY_FULL);
         }
 
         // 4. 해당방에 중복된 닉네임이 있는지 확인
         List<String> players = game.getPlayers();
-        for (String nickname : players) {
-            if (nickname.equals(playerJoinRequestDto.nickname())) {
+        for (String id : players) {
+            //이미 참여중인 플레이어들의 id를 받아서 player 받아오기
+            Player player = playerRepository.findById(id)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+            
+            if (player.getNickname().equals(playerJoinRequestDto.nickname())) {
                 throw new BusinessException(ErrorMessage.DUPLICATE_PLAYER_NICKNAME);
             }
+            
         }
 
         // 중복되지 않으면 사용자를 생성 후
-        Player player = playerRepository.save(playerJoinRequestDto.toPlayer());
-
+        Player joinPlayer = playerRepository.save(playerJoinRequestDto.toPlayer());
+        
         // 방 참여 ( 방 players에 사용자 pk 추가)
-        game.addPlayer(player);
+        game.addPlayer(joinPlayer);
 
+        // 수정된 게임정보 수정
         gameRepository.save(game);
-
-        return PlayerJoinResponseDto.of(player);
+        
+        // 프론트에서 구독을 위한 새로운 플레이어의 id를 response
+        return PlayerJoinResponseDto.of(joinPlayer);
     }
 
     /*
@@ -85,24 +106,35 @@ public class PlayerService {
     public PlayerDiceMessage rollDice(String playerId) {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
+
+        // 랜덤 숫자 생성
         Random diceRoller = new Random();
         Long one = diceRoller.nextLong(6) + 1;
         Long two = diceRoller.nextLong(6) + 1;
+
+        // 두 개의 눈금이 같을 경우
         if (one.equals(two)) {
-            /*
-                같은 경우에
-                false 면 true 전달
-                true 면 false 전달
-             */
             rolledPlayer.updateDouble(!rolledPlayer.getIsDouble());
         }
         else {
             rolledPlayer.updateDouble(false);
         }
+
+        // 주사위 얼마 나왔는지 저장
         rolledPlayer.updateDice(one + two);
+
+        // 어디로 이동했는지 저장
+        Long bef = rolledPlayer.getCurrentBoardId();
+        Long aft = (bef + (one + two)) % 32;
+        rolledPlayer.playerMove(aft);
+
+        // 월급 받았는지 안 받았는지 여부 저장
+        Boolean isSalary = bef > aft;
+
+        // DB 갱신
         playerRepository.save(rolledPlayer);
 
         // 메세지 가공 후 리턴
-        return (PlayerDiceMessage.of(one, two, rolledPlayer));
+        return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
     }
 }

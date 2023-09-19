@@ -12,10 +12,9 @@ public class WebSocketSendHandler {
 
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
-
-	public <T> void sendToGame(String gameId, T message) {
+	public <T> void sendToGame(String topic, String gameId, T message) {
 		log.info("gameId = {}, message = {}", gameId, message);
-		simpMessagingTemplate.convertAndSend("/receive/game/"+gameId, message);
+		simpMessagingTemplate.convertAndSend("/receive/game/"+ topic +"/"+gameId, message);
 	}
 
 }

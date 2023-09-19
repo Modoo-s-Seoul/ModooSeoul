@@ -28,7 +28,7 @@ public class GameWebSocketController {
 		GameStartMessage gameStartMessage = gameService.gameStart(game);
 
 		// 게임 시작 가능한지 여부 전송
-		webSocketSendHandler.sendToGame(game.getId(), gameStartMessage);
+		webSocketSendHandler.sendToGame("start", game.getId(), gameStartMessage);
 
 	}
 

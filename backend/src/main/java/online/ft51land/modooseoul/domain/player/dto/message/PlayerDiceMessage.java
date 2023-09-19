@@ -4,14 +4,20 @@ import lombok.Builder;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 
 @Builder
-public record PlayerDiceMessage (
+public record PlayerDiceMessage(
 		Long first,
 		Long second,
-		Boolean isDouble
+		Boolean isDouble,
+		Long currentBoardId,
+		Boolean isSalary
 ) {
-	public static PlayerDiceMessage of(Long first, Long second, Player player) {
+	public static PlayerDiceMessage of(Long first, Long second, Player player, Boolean isSalary) {
 		return PlayerDiceMessage.builder()
-				.first(first).second(second).isDouble(player.getIsDouble())
-				.build();
+		                        .first(first)
+		                        .second(second)
+		                        .isDouble(player.getIsDouble())
+		                        .currentBoardId(player.getCurrentBoardId())
+								.isSalary(isSalary)
+		                        .build();
 	}
 }

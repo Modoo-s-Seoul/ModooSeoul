@@ -107,4 +107,8 @@ public class Player extends BaseEntity {
         this.dice = 0L;
         this.isDouble = false;
     }
+
+    public void playerMove(Long currentBoardId) {
+        this.currentBoardId = currentBoardId;
+    }
 }
