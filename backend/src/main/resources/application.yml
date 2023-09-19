@@ -14,17 +14,22 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
     database: mysql
     show-sql: true
+    defer-datasource-initialization: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   main:
     allow-bean-definition-overriding: true
+  sql:
+    init:
+      mode: always
 logging:
   level:
     org.hibernate.SQL: debug
+

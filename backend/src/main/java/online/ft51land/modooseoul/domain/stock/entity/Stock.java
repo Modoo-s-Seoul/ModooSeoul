@@ -1,4 +1,4 @@
-package online.ft51land.modooseoul.domain.test.entitiy;
+package online.ft51land.modooseoul.domain.stock.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,22 +7,17 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
+@Entity
 @NoArgsConstructor
-public class Test {
+public class Stock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long testId;
+    private Long id;
 
-    private String nickname;
+    private String name;
 
-    private String description;
-
-    public Test(String nickname, String description) {
-        this.nickname = nickname;
-        this.description = description;
-    }
+    private Long price;
 
 }
