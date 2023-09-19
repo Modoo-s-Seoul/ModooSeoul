@@ -5,8 +5,6 @@ import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequest;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
@@ -87,11 +85,5 @@ public class GameService {
 		gameRepository.save(game);
 	}
 
-	public PlayerNewsMessage chooseNews(Game game, PlayerNewsRequest playerNewsRequest) {
-		// game 에 저장된 뉴스 정보 가져와야 함
-		List<Long> news = game.getNews();
 
-		// 담아서 전해줄 메시지 객체
-		return (PlayerNewsMessage.of(news[playerNewsRequest.currentRound()][playerNewsRequest.newsIdx()]));
-	}
 }

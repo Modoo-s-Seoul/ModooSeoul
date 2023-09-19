@@ -2,9 +2,12 @@ package online.ft51land.modooseoul.domain.player.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequest;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
@@ -136,5 +139,13 @@ public class PlayerService {
 
         // 메세지 가공 후 리턴
         return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
+    }
+
+    public PlayerNewsMessage chooseNews(Game game, PlayerNewsRequest playerNewsRequest) {
+        // game 에 저장된 뉴스 정보 가져와야 함
+        News news = game.getNews();
+
+        // 담아서 전해줄 메시지 객체
+        return (PlayerNewsMessage.of(news[playerNewsRequest.currentRound()][playerNewsRequest.newsIdx()]));
     }
 }

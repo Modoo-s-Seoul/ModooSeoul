@@ -83,7 +83,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(player.getGameId());
 
 		// 메시지 가공
-		PlayerNewsMessage message = gameService.chooseNews(game, playerNewsRequest);
+		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequest);
 
 		// 메시지 전송
 		webSocketSendHandler.sendToPlayer("news", playerId, message);
