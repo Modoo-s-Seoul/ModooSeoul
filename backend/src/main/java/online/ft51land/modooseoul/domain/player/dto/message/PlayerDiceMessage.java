@@ -12,12 +12,13 @@ public record PlayerDiceMessage(
 		Boolean isSalary
 ) {
 	public static PlayerDiceMessage of(Long first, Long second, Player player, Boolean isSalary) {
-		return PlayerDiceMessage.builder()
-		                        .first(first)
-		                        .second(second)
-		                        .isDouble(player.getIsDouble())
-		                        .currentBoardId(player.getCurrentBoardId())
-								.isSalary(isSalary)
-		                        .build();
+		return PlayerDiceMessage
+				.builder()
+				.first(first)
+				.second(second)
+				.isDouble(player.getIsDouble())
+				.currentBoardId(player.getCurrentBoardId())
+				.isSalary(isSalary)
+				.build();
 	}
 }

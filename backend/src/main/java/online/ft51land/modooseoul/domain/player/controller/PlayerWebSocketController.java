@@ -6,11 +6,14 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequest;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -25,9 +28,7 @@ public class PlayerWebSocketController {
 	private final WebSocketSendHandler webSocketSendHandler;
 
 
-	/*
-		플레이어 참가
-	 */
+	// 플레이어 참가
 	@MessageMapping("/join/{gameId}")
 	public void playerJoin(@DestinationVariable String gameId) {
 		log.info("플레이어 참가");
@@ -56,9 +57,7 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("ready", player.getGameId(), message);
 	}
 
-	/*
-		주사위 굴리기
-	 */
+	// 주사위 굴리기
 	@MessageMapping("/roll/{playerId}")
 	public void playerRollDice(@DestinationVariable String playerId) {
 		log.info("주사위 굴리기 by {}", playerId);
@@ -70,5 +69,23 @@ public class PlayerWebSocketController {
 
 		// 데이터 전달
 		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
+	}
+
+	// 뉴스 선택
+	@MessageMapping("/news/{playerId}")
+	public void playerChooseNews(@DestinationVariable String playerId, @Payload PlayerNewsRequest playerNewsRequest) {
+		log.info("round: {}, news: {}", playerNewsRequest.currentRound(), playerNewsRequest.newsIdx());
+
+		// Player 가져오기
+		Player player = playerService.getPlayerById(playerId);
+
+		// Game 가져오기
+		Game game = gameService.getGameById(player.getGameId());
+
+		// 메시지 가공
+		PlayerNewsMessage message = gameService.chooseNews(game, playerNewsRequest);
+
+		// 메시지 전송
+		webSocketSendHandler.sendToPlayer("news", playerId, message);
 	}
 }

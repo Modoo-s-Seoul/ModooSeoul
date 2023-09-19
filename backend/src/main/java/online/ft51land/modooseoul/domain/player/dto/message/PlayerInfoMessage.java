@@ -9,9 +9,10 @@ public record PlayerInfoMessage(
 		Boolean isReady
 ) {
 	public static PlayerInfoMessage of(Player player){
-		return PlayerInfoMessage.builder()
-		                        .nickname(player.getNickname())
-		                        .isReady(player.getIsReady())
-		                        .build();
+		return PlayerInfoMessage
+				.builder()
+				.nickname(player.getNickname())
+				.isReady(player.getIsReady())
+				.build();
 	}
 }
