@@ -64,25 +64,14 @@ export const joinRoom = async (
   }
 };
 
-/**현재 방 채널 구독 */
-export const subscribeRoom = (
+/**대기방에서 구독된 채널들 끊기 */
+export const unsubscribeRoom = (
   socketClient: CompatClient | null,
+  playerId: string,
   gameId: string
 ) => {
   if (socketClient !== null) {
-    socketClient.subscribe(`/receive/game/${gameId}`, (msg) => {
-      const test = JSON.parse(msg.body);
-      console.log("subscribed!", test);
-    });
-  }
-};
-
-/**플레이어 준비 완료 */
-export const readyPlayer = (
-  socketClient: CompatClient | null,
-  playerId: string
-) => {
-  if (socketClient !== null) {
-    socketClient.send(`/send/ready/${playerId}`);
+    socketClient.unsubscribe(`/receive/game/join/${gameId}`);
+    socketClient.unsubscribe(`/receive/game/ready/${playerId}`);
   }
 };
