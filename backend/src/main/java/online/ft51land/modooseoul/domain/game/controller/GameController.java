@@ -28,8 +28,4 @@ public class GameController {
         return BaseResponseDto.ok(gameService.create());
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "Test success";
-    }
 }
