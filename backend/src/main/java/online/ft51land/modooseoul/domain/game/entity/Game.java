@@ -1,6 +1,8 @@
 package online.ft51land.modooseoul.domain.game.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import lombok.ToString;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -56,6 +59,7 @@ public class Game extends BaseEntity {
     @Column(name = "win_player_id")
     private String winPlayerId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "end_type")
     private EndType endType;
 
