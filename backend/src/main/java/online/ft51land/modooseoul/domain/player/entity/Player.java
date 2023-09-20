@@ -2,7 +2,6 @@ package online.ft51land.modooseoul.domain.player.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import java.util.List;
 @Getter
 @RedisHash(value = "player", timeToLive = 10000)
 @NoArgsConstructor //기본 생성자 생성
-@Table(name = "player")
 @ToString
 public class Player extends BaseEntity {
 

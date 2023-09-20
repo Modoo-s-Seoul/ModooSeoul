@@ -1,2 +1,4 @@
 .vscode
 backend/src/main/generated/online/ft51land/modooseoul/domain/test/entitiy/QTest.java
+backend/src/main/generated/online/ft51land/modooseoul/domain/news/entity/QNews.java
+backend/src/main/generated/online/ft51land/modooseoul/domain/stock/entity/QStock.java
