@@ -134,4 +134,6 @@ public class GameService {
         }
         game.setNews(news);
     }
+
+
 }
