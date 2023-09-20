@@ -67,3 +67,45 @@ insert into news (stock_id, description, news_type, percent) values(5,'준하건
 insert into news (stock_id, description, news_type, percent) values(5,'끊이지 않는 준하건설현장 사망사고…이번분기에만 4건','DECREASE',80);
 insert into news (stock_id, description, news_type, percent) values(5,'자원 공급 안정화, 준하건설주가 안정적으로 유지','MAINTAIN',0);
 -- news insert query end
+
+
+
+
+
+-- BOARD insert query start
+INSERT INTO board (id, board_type, `description`, special_name) VALUES ('1', 'SPECIAL', '월급 100만원 ~! 이곳을 통과 할 때마다 월급을 받아요 ! 정확하게 멈추면 본인의 땅에 건물을 추가로 지을 수 있어요 !', '출발지');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('2', '1950000', 'DISTRICT', '구로구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('3', '2137000', 'DISTRICT', '관악구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('4', '2332000', 'DISTRICT', '강서구');
+INSERT INTO board (id, board_type) VALUES ('5', 'CHANCE');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('6', '2969000', 'DISTRICT', '영등포구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('7', '2897000', 'DISTRICT', '양천구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('8', '3033000', 'DISTRICT', '동작구');
+
+INSERT INTO board (id, board_type, `description`, special_name) VALUES ('9', 'SPECIAL', '저런..!  감옥에서는 1분 행동이 금지되어 있어요! 차카게 살자구요', '감옥');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('10', '2036000', 'DISTRICT', '은평구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('11', '2602000', 'DISTRICT', '서대문구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('12', '2733000', 'DISTRICT', '종로구');
+INSERT INTO board (id, board_type) VALUES ('13', 'CHANCE');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('14', '2738000', 'DISTRICT', '중구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('15', '3290000', 'DISTRICT', '마포구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('16', '4002000', 'DISTRICT', '용산구');
+
+INSERT INTO board (id, board_type, `description`, special_name) VALUES ('17', 'SPECIAL', '서울 한복판에서 오일이 발견됐어요!! 통행료가 2배로 올라요!', 'FT OilLand');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('18', '1728000', 'DISTRICT', '도봉구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('19', '1938000', 'DISTRICT', '중랑구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('20', '1952000', 'DISTRICT', '강북구');
+INSERT INTO board (id, board_type) VALUES ('21', 'CHANCE');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('22', '2154000', 'DISTRICT', '노원구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('23', '2384000', 'DISTRICT', '동대문구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('24', '2437000', 'DISTRICT', '성북구');
+
+INSERT INTO board (id, board_type, `description`, special_name) VALUES ('25', 'SPECIAL', '지하철을 타고 원하는 곳으로 이동합니다! 출근길 지옥철을 조심하세요', '지하철');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('26', '2738000', 'DISTRICT', '강동구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('27', '3839000', 'DISTRICT', '성동구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('28', '3248000', 'DISTRICT', '광진구');
+INSERT INTO board (id, board_type) VALUES ('29', 'CHANCE');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('30', '3545000', 'DISTRICT', '송파구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('31', '4687000', 'DISTRICT', '서초구');
+INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000', 'DISTRICT', '강남구');
+-- BOARD insert query end
