@@ -32,7 +32,7 @@ public class GameWebSocketController {
 		Long messageNum = messageNumService.getMessageNumByGameId(gameId);
 
 		// 메시지 번호 가지고 오기 게임 시작 가능한지 여부 전송
-		webSocketSendHandler.sendToGame("start", game.getId(), messageNum, gameStartMessage);
+		webSocketSendHandler.sendToGame("start", game.getId(), gameStartMessage);
 
 	}
 

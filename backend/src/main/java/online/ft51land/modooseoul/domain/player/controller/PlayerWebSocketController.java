@@ -39,8 +39,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		// 메시지 가공 후 전송
-		webSocketSendHandler.sendToGame("join", gameId,
-				messageNumService.getMessageNumByGameId(gameId), playerService.getPlayersInfoForRoom(game));
+		webSocketSendHandler.sendToGame("join", gameId, playerService.getPlayersInfoForRoom(game));
 	}
 
 	// 플레이어 레디
@@ -56,8 +55,7 @@ public class PlayerWebSocketController {
 		List<PlayerInfoMessage> message = playerService.getPlayersInfoForRoom(gameService.getGameById(gameId));
 
 		// 보내기
-		webSocketSendHandler.sendToGame("ready", player.getGameId(),
-				messageNumService.getMessageNumByGameId(gameId),message);
+		webSocketSendHandler.sendToGame("ready", player.getGameId(),message);
 	}
 
 	/*
@@ -73,7 +71,6 @@ public class PlayerWebSocketController {
 		PlayerDiceMessage playerDiceMessage = playerService.rollDice(playerId);
 
 		// 데이터 전달
-		webSocketSendHandler.sendToGame("roll", player.getGameId(),
-				messageNumService.getMessageNumByGameId(player.getGameId()),playerDiceMessage);
+		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
 	}
 }
