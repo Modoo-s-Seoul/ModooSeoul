@@ -154,9 +154,16 @@ public class PlayerService {
 
     // 플레이어 방 나가기
     public void leaveGame(Game game, Player player) {
-        // 게임에서 플레이어 제외하고 갱신
+        // 게임에서 플레이어 제외
         game.getPlayers().remove(player.getId());
-        gameRepository.save(game);
+
+        // 만약 남은 플레이어가 없는 경우 방 삭제
+        if (game.getPlayers().isEmpty()) {
+            gameRepository.delete(game);
+        }
+        else {
+            gameRepository.save(game);
+        }
 
         // 플레이어 레포지토리에서 플레이어 제외
         playerRepository.delete(player);
