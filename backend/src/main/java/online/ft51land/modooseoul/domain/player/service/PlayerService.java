@@ -151,4 +151,14 @@ public class PlayerService {
         // 메시지 가공 후 리턴
         return PlayerNewsMessage.of(news);
     }
+
+    // 플레이어 방 나가기
+    public void leaveGame(Game game, Player player) {
+        // 게임에서 플레이어 제외하고 갱신
+        game.getPlayers().remove(player.getId());
+        gameRepository.save(game);
+
+        // 플레이어 레포지토리에서 플레이어 제외
+        playerRepository.delete(player);
+    }
 }
