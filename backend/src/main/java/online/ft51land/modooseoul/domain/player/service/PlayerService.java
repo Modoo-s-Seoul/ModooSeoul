@@ -2,9 +2,12 @@ package online.ft51land.modooseoul.domain.player.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
@@ -32,6 +35,7 @@ public class PlayerService {
                                .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
     }
 
+    // 방 참가 플레이어 정보 보내주기
     public List<PlayerInfoMessage> getPlayersInfoForRoom(Game game) {
         // Message 만들기
         List<PlayerInfoMessage> message = new ArrayList<>();
@@ -58,6 +62,7 @@ public class PlayerService {
         return readyPlayer;
     }
 
+    // 플레이어 참가
     public PlayerJoinResponseDto joinGame(PlayerJoinRequestDto playerJoinRequestDto) {
 
         // 1. 방이 존재하는지 확인
@@ -100,9 +105,7 @@ public class PlayerService {
         return PlayerJoinResponseDto.of(joinPlayer);
     }
 
-    /*
-        주사위 굴리기
-     */
+    // 주사위 굴리기
     public PlayerDiceMessage rollDice(String playerId) {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
@@ -136,6 +139,17 @@ public class PlayerService {
 
         // 메세지 가공 후 리턴
         return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
+    }
+
+    // 플레이어 뉴스 선택
+    public PlayerNewsMessage chooseNews(Game game, PlayerNewsRequestDto playerNewsRequestDto) {
+        // 해당 뉴스 내용 가져오기
+        Long currentRound = playerNewsRequestDto.currentRound();
+        Long cardIdx = playerNewsRequestDto.cardIdx();
+        News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
+
+        // 메시지 가공 후 리턴
+        return PlayerNewsMessage.of(news);
     }
 
     public void purchaseGround(Player player, Long groundPrice) {

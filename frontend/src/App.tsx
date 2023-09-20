@@ -1,11 +1,12 @@
 import "./App.css";
-import MonopolyBoard from "./pages/Board";
+import { Route, Routes } from "react-router-dom";
+import Board from "./pages/Board";
 import Lobby from "./pages/home/Lobby";
 import RandomMatch from "./pages/home/RandomMatch";
 import Room from "./pages/home/Room";
 import RoomCreate from "./pages/home/RoomCreate";
 import RoomInvite from "./pages/home/RoomInvite";
-import { Route, Routes } from "react-router-dom";
+import TestComponent from "./components/Dev/TestComponent";
 
 function App() {
   return (
@@ -18,7 +19,9 @@ function App() {
         <Route path="/home/invite/:pk" element={<RoomInvite />} />
         <Route path="/home/room" element={<Room />} />
         {/* 인게임 */}
-        <Route path="/game" element={<MonopolyBoard />} />
+        <Route path="/game" element={<Board />} />
+        {/* 컴포넌트 테스트 */}
+        <Route path="/test" element={<TestComponent />} />
       </Routes>
     </>
   );
