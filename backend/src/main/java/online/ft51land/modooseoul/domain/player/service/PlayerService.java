@@ -152,7 +152,25 @@ public class PlayerService {
         return PlayerNewsMessage.of(news);
     }
 
+    // 플레이어 방 나가기
+    public void leaveGame(Game game, Player player) {
+        // 게임에서 플레이어 제외
+        game.getPlayers().remove(player.getId());
+
+        // 만약 남은 플레이어가 없는 경우 방 삭제
+        if (game.getPlayers().isEmpty()) {
+            gameRepository.delete(game);
+        }
+        else {
+            gameRepository.save(game);
+        }
+
+        // 플레이어 레포지토리에서 플레이어 제외
+        playerRepository.delete(player);
+    }
+
     public void purchaseGround(Player player, Long groundPrice) {
         player.purchaseGround(groundPrice);
+        playerRepository.save(player);
     }
 }

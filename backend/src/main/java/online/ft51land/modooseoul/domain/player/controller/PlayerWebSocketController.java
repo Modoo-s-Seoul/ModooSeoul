@@ -84,6 +84,22 @@ public class PlayerWebSocketController {
 
 		// 데이터 전달
 		webSocketSendHandler.sendToPlayer("news", playerId, game.getId(), message);
+	}
 
+	// 플레이어 방 나가기
+	@MessageMapping("/leave/{playerId}")
+	public void playerLeaveGame(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		// 게임 나가는 로직 처리
+		playerService.leaveGame(game, player);
+
+		// 메시지 생성
+		List<PlayerInfoMessage> message = playerService.getPlayersInfoForRoom(game);
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("leave", game.getId(), message);
 	}
 }
