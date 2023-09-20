@@ -12,7 +12,7 @@ import CommonTurn from "../components/All/CommonTurn";
 import DiceRoll from "./DiceRoll";
 import "./Board.css";
 import { playerPosition, playerInfo } from "../interface/ingame";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
   first_money,
@@ -37,7 +37,18 @@ export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
   // 글로벌 변수들
-  const assetNames = ["Pink", "Blue", "Green", "Yellow"];
+
+  /**캐릭터 에셋 이름 */
+  const characterAssetNames = ["Pink", "Blue", "Green", "Yellow"];
+
+  /**캐릭터 에셋 주소 */
+  const characterAssetLocation = [
+    "assets/alienPink.png",
+    "assets/alienBlue.png",
+    "assets/alienGreen.png",
+    "assets/alienYellow.png",
+  ];
+
   const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
   const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
   colorPaletteTint;
@@ -62,11 +73,11 @@ export default function Board() {
   }
 
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
-  const [, setTRow] = useRecoilState(trowState); // 현재 턴 row
-  const [, setTCol] = useRecoilState(tcolState); // 현재 턴 col
-  const [, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
-  const [, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
-  const [, setDiceActive] = useRecoilState(diceActiveState); // 주사위 상태
+  const setTRow = useSetRecoilState(trowState); // 현재 턴 row
+  const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
+  const setDice1Value = useSetRecoilState(dice1State); // 첫번째 주사위 값
+  const setDice2Value = useSetRecoilState(dice2State); // 두번째 주사위 값
+  const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const [isRolling, setIsRolling] = useRecoilState(isRollingState); // 주사위 굴리기 버튼 활성화 상태
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [playerSprite, setPlayerSprite] = useState<Phaser.GameObjects.Image[]>(
@@ -81,7 +92,7 @@ export default function Board() {
   const [buildingSprite, setBuildingSprite] = useState<
     Phaser.GameObjects.Image[]
   >([]); //건물 스프라이트
-  const [, setBuildingInfo] = useRecoilState(builingInfoState); //건물 정보
+  const setBuildingInfo = useSetRecoilState(builingInfoState); //건물 정보
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<playerPosition[]>([]); // 플레이어 위치
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
@@ -124,10 +135,9 @@ export default function Board() {
     this.load.image("sampleBuilding", "assets/building.png");
     this.load.image("sampleShop", "assets/shop.png");
     // 캐릭터 에셋
-    this.load.image("Blue", "assets/alienBlue.png");
-    this.load.image("Green", "assets/alienGreen.png");
-    this.load.image("Pink", "assets/alienPink.png");
-    this.load.image("Yellow", "assets/alienYellow.png");
+    for (let i = 0; i < 4; i++) {
+      this.load.image(characterAssetNames[i], characterAssetLocation[i]);
+    }
     // 화살표
     for (let i = 0; i < 75; i++) {
       this.load.image(`locationframe_${i}`, `assets/location/${i}.png`);
@@ -205,7 +215,7 @@ export default function Board() {
       const newPlayer = this.add.image(
         config.scale.width / 2 + spritePosition[i][0],
         config.scale.height / 2 + spritePosition[i][1] - offset2,
-        assetNames[i]
+        characterAssetNames[i]
       );
       newPlayer.setScale(0.7, 0.7);
       // 위치조정
