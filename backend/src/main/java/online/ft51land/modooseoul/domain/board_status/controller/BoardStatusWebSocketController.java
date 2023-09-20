@@ -23,13 +23,13 @@ public class BoardStatusWebSocketController {
     private final WebSocketSendHandler webSocketSendHandler;
 
     @MessageMapping("/purchase/ground/{playerId}")
-    public void playerPurchaseGround(@DestinationVariable String playerId, @Payload BoardPurchaseRequestDto boardPurchaseRequestDto) {
+    public void playerPurchaseGround(@DestinationVariable String playerId) {
         log.info("땅 구매 by {}", playerId);
 
         Player player = playerService.getPlayerById(playerId);
 
         //땅 구매 로직 start
-        GroundPurchaseMessage groundPurchaseMessage = boardStatusService .purchaseGround(player,boardPurchaseRequestDto);
+        GroundPurchaseMessage groundPurchaseMessage = boardStatusService .purchaseGround(player);
 
         //데이터 전달
         webSocketSendHandler.sendToGame("purchase/ground",player.getGameId(),groundPurchaseMessage);

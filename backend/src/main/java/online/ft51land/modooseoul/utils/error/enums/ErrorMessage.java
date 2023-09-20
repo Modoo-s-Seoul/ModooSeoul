@@ -17,9 +17,8 @@ public enum ErrorMessage {
     GAME_NOT_FOUND(NOT_FOUND, "해당 방을 찾을 수 없습니다."),
     GAME_ALREADY_FULL(FORBIDDEN, "해당 방의 정원이 이미 가득 찼습니다."),
     GAME_ALREADY_START(FORBIDDEN,"이미 게임을 시작한 방입니다."),
-    DUPLICATE_PLAYER_NICKNAME(CONFLICT, "이미 사용 중인 닉네임입니다."),
-    GROUND_OWNER_ALREADY_HAVE(CONFLICT,"땅의 소유자가 있습니다."),
-    NEED_MORE_MONEY(CONFLICT,"구매할 돈이 부족합니다.");
+    DUPLICATE_PLAYER_NICKNAME(CONFLICT, "이미 사용 중인 닉네임입니다.");
+
 
     private final int code;
     private final String phrase;
