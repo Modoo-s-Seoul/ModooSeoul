@@ -136,16 +136,36 @@ export default function Room() {
                     )}
                     <div>
                       <img src="" alt="" />
-                      {index !== 0 &&
-                      ele.nickname === nickname &&
-                      !ele.isReady ? (
+                      {/* 
+                      if(방장){ -> curRoom~.nickname===nickname
+                        준비 완료 표시
+                      }
+                      else{
+                        if(준비 됨){
+                          준비 완료
+                        }
+                        else{
+                          if(본인){
+                            레디 버튼
+                          }
+                          else{
+                            준비 중...
+                          }
+                        }
+                      }
+                      */}
+                      {curRoomStatus[0].nickname === ele.nickname ? (
+                        <div>준비 완료!</div>
+                      ) : ele.isReady ? (
+                        <div>준비 완료!</div>
+                      ) : ele.nickname === nickname ? (
                         <button
                           onClick={() => readyPlayer(socketClient, playerId)}
                         >
                           레디
                         </button>
                       ) : (
-                        <div>준비 완료</div>
+                        <div>준비 중...</div>
                       )}
                     </div>
                   </div>
