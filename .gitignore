@@ -2,3 +2,5 @@
 backend/src/main/generated/online/ft51land/modooseoul/domain/test/entitiy/QTest.java
 backend/src/main/generated/online/ft51land/modooseoul/domain/news/entity/QNews.java
 backend/src/main/generated/online/ft51land/modooseoul/domain/stock/entity/QStock.java
+backend/src/main/generated/online/ft51land/modooseoul/domain/board/entity/QBoard.java
+backend/src/main/generated/online/ft51land/modooseoul/domain/building/entity/QBuilding.java
