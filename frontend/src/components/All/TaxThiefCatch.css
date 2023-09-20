@@ -1,0 +1,42 @@
+.thiefCatchContainer {
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.playerButtonsContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.playerSelectBtn {
+  margin: 5px;
+  background-color: bisque !important;
+  color: black !important;
+  font-size: 20px;
+}
+.reportBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 60px;
+  background-color: #756b19 !important;
+  color: #fff;
+  border: none;
+  border-radius: 200px !important;
+  font-weight: bold !important;
+  font-weight: 400 !important;
+  font-size: 30px;
+  transition: background-color 0.3s ease;
+  margin-top: 40px !important;
+}
+.reportBtn:hover {
+  background-color: #443e10 !important;
+}
+.selected {
+  background-color: rgb(187, 152, 108) !important;
+  font-weight: 600;
+}

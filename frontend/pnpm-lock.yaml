@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@cursorify/cursors':
+    specifier: ^0.0.39
+    version: 0.0.39
+  '@cursorify/react':
+    specifier: ^0.0.39
+    version: 0.0.39
   '@stomp/stompjs':
     specifier: ^7.0.0
     version: 7.0.0
@@ -301,6 +307,14 @@ packages:
       '@babel/helper-validator-identifier': 7.22.15
       to-fast-properties: 2.0.0
     dev: true
+
+  /@cursorify/cursors@0.0.39:
+    resolution: {integrity: sha512-CNdeRMfiLpmzVTk3L6pHLf3mzi8yib8Cnd5/HNxRb3E7rZnJf+H2jrRzAQe58JCdIfHFo3uPX4xpoBlJjUsnRQ==}
+    dev: false
+
+  /@cursorify/react@0.0.39:
+    resolution: {integrity: sha512-K4+Eb21hxypIb0KwU4qJS3STVBxO0x5iaYvWqW33ZZ8bpT8tpMIGgPFLyNrBbfkjARG9zncqCn0A5mGa+miTGA==}
+    dev: false
 
   /@esbuild/android-arm64@0.18.20:
     resolution: {integrity: sha512-Nz4rJcchGDtENV0eMKUNa6L12zz2zBDXuhj/Vjh18zGqB44Bi7MBMSXjgunJgjRhCmKOjnPuZp4Mb6OKqtMHLQ==}

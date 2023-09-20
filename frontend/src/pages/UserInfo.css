@@ -2,18 +2,20 @@
   position: fixed;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   /* color: white; */
   left: auto;
   width: 100vw;
+  height: 100vh;
 }
 
 .playerBox {
-  border: 1px solid green;
   min-height: 20vh;
   width: 20vw;
-  margin: auto;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  margin: 20px;
+  box-shadow: 1px 1px 10px black;
 }
 
 .activePlayer {
@@ -25,4 +27,27 @@
   color: #90dd9a;
   color: #909add;
   color: #dd9090;
+}
+
+.playerBox:nth-child(1) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.playerBox:nth-child(2) {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.playerBox:nth-child(3) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.playerBox:nth-child(4) {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

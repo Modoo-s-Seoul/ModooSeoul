@@ -18,7 +18,7 @@ export default function DiceRoll() {
 
   // 실제 주사위 값 설정
   const rollDice = () => {
-    console.log(diceone + " " + dicetwo);
+    console.log("주사위 값은 ", diceone + " " + dicetwo);
     setDiceOneClass("show-" + diceone);
     setDiceTwoClass("show-" + dicetwo);
   };
@@ -37,7 +37,6 @@ export default function DiceRoll() {
 
   useEffect(() => {
     if (diceActive === true) {
-      console.log("DiceActive");
       rollDiceReset();
       setTimeout(() => {
         rollDiceReset2();
@@ -50,10 +49,13 @@ export default function DiceRoll() {
 
   return (
     <div className="diceContainer">
-      <div className="flexContainer">
+      <div className="msgContainer">
         {isRolling && diceone == dicetwo && (
           <div className="doubleMsg">더블</div>
         )}
+        {isRolling && <div className="sumMsg">{diceone + dicetwo}</div>}
+      </div>
+      <div className="flexContainer">
         <div className="container">
           <div id="dice1" className={`dice dice-one ${diceOneClass}`}>
             <div id="dice-one-side-one" className="side one">
