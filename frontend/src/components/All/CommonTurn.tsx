@@ -3,17 +3,15 @@ import { useEffect, useState } from "react";
 import "./CommonTurn.css";
 import TaxThiefCatch from "./TaxThiefCatch";
 import CloseBtnCommon from "./CloseBtnCommon";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { isCommonTurnVisibleState, turnState } from "../../data/IngameData";
 import ClickBtn from "../Base/ClickBtn";
 
 export default function CommonTurn() {
   // 기본 인자
   const [timeCnt, setTimeCnt] = useState(5);
-  const [, setTurn] = useRecoilState(turnState);
-  const [, setCommonTurn] = useRecoilState(isCommonTurnVisibleState);
-  setTurn;
-  setCommonTurn;
+  const setTurn = useSetRecoilState(turnState);
+  const setCommonTurn = useSetRecoilState(isCommonTurnVisibleState);
 
   // 초측정
   useEffect(() => {
