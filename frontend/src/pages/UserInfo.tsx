@@ -15,7 +15,9 @@ export default function UserInfo() {
             key={index}
             className={`playerBox ${index === turn ? "activePlayer" : ""}`}
           >
-            <p style={{ color: `#${player.color}` }}>{player.name}</p>
+            <p style={{ color: `#${player.color}`, fontSize: "24px" }}>
+              {player.name}
+            </p>
             <p>{player.money}</p>
           </div>
         ))}

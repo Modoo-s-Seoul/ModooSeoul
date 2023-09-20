@@ -1,13 +1,14 @@
-.optionContainer{
-    width: 30vw;
-    margin-bottom: 50px;
+.optionContainer {
+  width: 30vw;
+  margin-bottom: 50px;
 }
-.optionBox{
-    display: flex;
-    width: 50%;
-    height: 50px;
-    background-color: bisque;
-    margin: auto;
-    justify-content: center;
-    align-items: center;
+.optionBox {
+  display: flex;
+  width: 50%;
+  height: 50px;
+  background-color: bisque;
+  margin: auto;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
 }

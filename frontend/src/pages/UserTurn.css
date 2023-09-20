@@ -2,20 +2,28 @@
   position: fixed;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  /* color: white; */
-  left: auto;
+
+  padding: 2vw;
   width: 60vw;
   height: 60vh;
-  left: 18vw;
-  top: 10vh;
-  background-color: rgb(233, 215, 176);
-  border: 2px solid rgb(0, 0, 0);
+  left: 50%;
+  top: 50%;
+  max-width: 400px;
+  max-height: 400px;
+  transform: translate(-50%, -50%) scale(0); /* 가운데 정렬 */
+
+  background-color: rgb(227, 217, 194);
   border-radius: 20px;
-  box-shadow: 5px 5px 50px rgb(255, 255, 255), -5px -5px 50px white;
-  padding: 2vw;
-  animation: fadeIn 0.5s ease-in-out, shake 1s ease;
+  box-shadow: 5px 5px 50px rgb(0, 0, 0), -5px -5px 50px rgb(0, 0, 0);
+  opacity: 0;
+  transition: opacity 4s ease, transform 4s ease;
+}
+.userTurnActive {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  transition: opacity 4s ease, transform 4s ease;
 }
 
 .eventBox {
@@ -26,46 +34,45 @@
   background-color: white;
 }
 
+.userTurnContainer {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.timeBar {
+  width: 100%;
+  height: 10px;
+  background-color: #907915; /* 타임 바의 배경색 */
+  border-radius: 10px;
+  position: relative;
+  animation: timer-animation 10s linear infinite; /* 60초 동안 애니메이션 반복 */
+}
+
+@keyframes timer-animation {
+  0% {
+    width: 100%; /* 초기 길이 */
+  }
+  90% {
+    background-color: rgb(196, 56, 56);
+  }
+  100% {
+    width: 0%; /* 0%까지 줄어듦 */
+    background-color: rgb(196, 56, 56);
+  }
+}
+.userturnBody {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .closeUserTurn {
   background-color: unset;
   border: unset;
   font-size: 24px;
   cursor: pointer;
+  color: rgb(176, 70, 70);
 }
 .closeUserTurn:hover {
   text-shadow: 1px 1px 10px rgb(118, 118, 118);
-}
-
-@keyframes fadeIn {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-5px);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(5px);
-  }
 }

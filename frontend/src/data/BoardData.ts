@@ -10,6 +10,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "start",
       sell: false,
+      index: 0,
+      player: null,
     },
     "0-1": {
       name: "서대문",
@@ -17,6 +19,8 @@ export const boardDataState = atom<BoardData>({
       cost: 12000,
       kind: "ground",
       sell: false,
+      index: 1,
+      player: null,
     },
     "0-2": {
       name: "마포",
@@ -24,6 +28,8 @@ export const boardDataState = atom<BoardData>({
       cost: 9000,
       kind: "ground",
       sell: false,
+      index: 2,
+      player: null,
     },
     "0-3": {
       name: "은평",
@@ -31,6 +37,8 @@ export const boardDataState = atom<BoardData>({
       cost: 11000,
       kind: "ground",
       sell: false,
+      index: 3,
+      player: null,
     },
     "0-4": {
       name: "황금열쇠",
@@ -38,6 +46,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "key",
       sell: false,
+      index: 4,
+      player: null,
     },
     "0-5": {
       name: "강서",
@@ -45,6 +55,8 @@ export const boardDataState = atom<BoardData>({
       cost: 13500,
       kind: "ground",
       sell: false,
+      index: 5,
+      player: null,
     },
     "0-6": {
       name: "구로",
@@ -52,6 +64,8 @@ export const boardDataState = atom<BoardData>({
       cost: 12000,
       kind: "ground",
       sell: false,
+      index: 6,
+      player: null,
     },
     "0-7": {
       name: "영등포",
@@ -59,6 +73,8 @@ export const boardDataState = atom<BoardData>({
       cost: 13000,
       kind: "ground",
       sell: false,
+      index: 7,
+      player: null,
     },
     "0-8": {
       name: "감옥",
@@ -66,6 +82,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "prison",
       sell: false,
+      index: 8,
+      player: null,
     },
     "1-8": {
       name: "용산",
@@ -73,6 +91,8 @@ export const boardDataState = atom<BoardData>({
       cost: 10500,
       kind: "ground",
       sell: false,
+      index: 10,
+      player: null,
     },
     "2-8": {
       name: "종로",
@@ -80,6 +100,8 @@ export const boardDataState = atom<BoardData>({
       cost: 11500,
       kind: "ground",
       sell: false,
+      index: 12,
+      player: null,
     },
     "3-8": {
       name: "노원",
@@ -87,6 +109,8 @@ export const boardDataState = atom<BoardData>({
       cost: 12500,
       kind: "ground",
       sell: false,
+      index: 14,
+      player: null,
     },
     "4-8": {
       name: "황금열쇠",
@@ -94,6 +118,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "key",
       sell: false,
+      index: 16,
+      player: null,
     },
     "5-8": {
       name: "도봉",
@@ -101,6 +127,8 @@ export const boardDataState = atom<BoardData>({
       cost: 14500,
       kind: "ground",
       sell: false,
+      index: 18,
+      player: null,
     },
     "6-8": {
       name: "성북",
@@ -108,6 +136,8 @@ export const boardDataState = atom<BoardData>({
       cost: 17000,
       kind: "ground",
       sell: false,
+      index: 20,
+      player: null,
     },
     "7-8": {
       name: "강북",
@@ -115,6 +145,8 @@ export const boardDataState = atom<BoardData>({
       cost: 17000,
       kind: "ground",
       sell: false,
+      index: 22,
+      player: null,
     },
     "8-8": {
       name: "oil",
@@ -122,6 +154,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "oil",
       sell: false,
+      index: 31,
+      player: null,
     },
     "8-7": {
       name: "성동",
@@ -129,6 +163,8 @@ export const boardDataState = atom<BoardData>({
       cost: 15000,
       kind: "ground",
       sell: false,
+      index: 30,
+      player: null,
     },
     "8-6": {
       name: "동대문",
@@ -136,6 +172,8 @@ export const boardDataState = atom<BoardData>({
       cost: 15000,
       kind: "ground",
       sell: false,
+      index: 29,
+      player: null,
     },
     "8-5": {
       name: "광진",
@@ -143,6 +181,8 @@ export const boardDataState = atom<BoardData>({
       cost: 15000,
       kind: "ground",
       sell: false,
+      index: 28,
+      player: null,
     },
     "8-4": {
       name: "황금열쇠",
@@ -150,6 +190,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "key",
       sell: false,
+      index: 27,
+      player: null,
     },
     "8-3": {
       name: "강동",
@@ -157,6 +199,8 @@ export const boardDataState = atom<BoardData>({
       cost: 13000,
       kind: "ground",
       sell: false,
+      index: 26,
+      player: null,
     },
     "8-2": {
       name: "여의도",
@@ -164,6 +208,8 @@ export const boardDataState = atom<BoardData>({
       cost: 12000,
       kind: "ground",
       sell: false,
+      index: 25,
+      player: null,
     },
     "8-1": {
       name: "중랑",
@@ -171,6 +217,8 @@ export const boardDataState = atom<BoardData>({
       cost: 11000,
       kind: "ground",
       sell: false,
+      index: 24,
+      player: null,
     },
     "8-0": {
       name: "지하철",
@@ -178,6 +226,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "subway",
       sell: false,
+      index: 23,
+      player: null,
     },
     "7-0": {
       name: "송파",
@@ -185,6 +235,8 @@ export const boardDataState = atom<BoardData>({
       cost: 10000,
       kind: "ground",
       sell: false,
+      index: 21,
+      player: null,
     },
     "6-0": {
       name: "관악",
@@ -192,6 +244,8 @@ export const boardDataState = atom<BoardData>({
       cost: 10000,
       kind: "ground",
       sell: false,
+      index: 19,
+      player: null,
     },
     "5-0": {
       name: "동작",
@@ -199,6 +253,8 @@ export const boardDataState = atom<BoardData>({
       cost: 10000,
       kind: "ground",
       sell: false,
+      index: 17,
+      player: null,
     },
     "4-0": {
       name: "황금열쇠",
@@ -206,6 +262,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "key",
       sell: false,
+      index: 15,
+      player: null,
     },
     "3-0": {
       name: "강남",
@@ -213,6 +271,8 @@ export const boardDataState = atom<BoardData>({
       cost: 10000,
       kind: "ground",
       sell: false,
+      index: 13,
+      player: null,
     },
     "2-0": {
       name: "국세청",
@@ -220,6 +280,8 @@ export const boardDataState = atom<BoardData>({
       cost: 0,
       kind: "tax",
       sell: false,
+      index: 11,
+      player: null,
     },
     "1-0": {
       name: "서초",
@@ -227,6 +289,8 @@ export const boardDataState = atom<BoardData>({
       cost: 11000,
       kind: "ground",
       sell: false,
+      index: 9,
+      player: null,
     },
   },
 });

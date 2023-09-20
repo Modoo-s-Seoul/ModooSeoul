@@ -17,15 +17,17 @@ export interface playerInfo {
 }
 
 /**보드의 칸 정보 */
-export interface SpaceInfo{
-    name: string;
-    price: number;
-    cost: number;
-    kind: string;
-    sell: boolean;
+export interface SpaceInfo {
+  name: string;
+  price: number;
+  cost: number;
+  kind: string;
+  sell: boolean;
+  index: number;
+  player: null | number;
 }
 
 /**칸의 좌표와 칸 정보가 매칭된 보드 정보 */
 export interface BoardData {
-  [key: string]:SpaceInfo;
+  [key: string]: SpaceInfo;
 }
