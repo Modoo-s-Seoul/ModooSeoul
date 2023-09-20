@@ -14,9 +14,6 @@ dependencies:
   '@stomp/stompjs':
     specifier: ^7.0.0
     version: 7.0.0
-  '@types/sockjs-client':
-    specifier: ^1.5.1
-    version: 1.5.1
   axios:
     specifier: ^1.5.0
     version: 1.5.0
@@ -40,9 +37,6 @@ dependencies:
     version: 1.6.1
 
 devDependencies:
-  '@tanstack/eslint-plugin-query':
-    specifier: ^4.34.1
-    version: 4.34.1(eslint@8.49.0)
   '@types/node':
     specifier: ^20.6.0
     version: 20.6.0
@@ -52,6 +46,12 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18.2.7
     version: 18.2.7
+  '@types/sockjs-client':
+    specifier: ^1.5.1
+    version: 1.5.1
+  '@types/stompjs':
+    specifier: ^2.3.5
+    version: 2.3.5
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.6.0
     version: 6.6.0(@typescript-eslint/parser@6.6.0)(eslint@8.49.0)(typescript@5.2.2)
@@ -631,14 +631,6 @@ packages:
     resolution: {integrity: sha512-fGdq4wPDnSV/KyOsjq4P+zLc8MFWC3lMmP5FBgLWKPJTYcuCbAIrnRGjB7q2jHZdYCOD5vxLuFoKIYLy5/u8Pw==}
     dev: false
 
-  /@tanstack/eslint-plugin-query@4.34.1(eslint@8.49.0):
-    resolution: {integrity: sha512-RflOwyXamuHhuMX5RL6wtKiVw9Hi5Hhiv9gW2/ICVc4omflB+GflrxwvQ+EWRKrSRv3C0YcR0UzRxuiZ4mLq7Q==}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      eslint: 8.49.0
-    dev: true
-
   /@types/json-schema@7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
     dev: true
@@ -675,7 +667,13 @@ packages:
 
   /@types/sockjs-client@1.5.1:
     resolution: {integrity: sha512-bmZM6A1GPdjF0bcuIUC+50hZEMGkzMsiG9by6X9U+7IZFOiPtz7MJ9h05FSpPVxlj4i+TzzoG3ESo1FJlbLb6A==}
-    dev: false
+    dev: true
+
+  /@types/stompjs@2.3.5:
+    resolution: {integrity: sha512-0WkL8RlB1uuZt8XJEdnwdFdV5RIFcQw9UhNQfTpiJYcjqC6QQpFqc5YcIrlH+K/843EGJVIaOFANjs7u7bmTlw==}
+    dependencies:
+      '@types/node': 20.6.0
+    dev: true
 
   /@typescript-eslint/eslint-plugin@6.6.0(@typescript-eslint/parser@6.6.0)(eslint@8.49.0)(typescript@5.2.2):
     resolution: {integrity: sha512-CW9YDGTQnNYMIo5lMeuiIG08p4E0cXrXTbcZ2saT/ETE7dWUrNxlijsQeU04qAAKkILiLzdQz+cGFxCJjaZUmA==}
