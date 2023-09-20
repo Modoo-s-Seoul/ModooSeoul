@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { joinRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/ClickBtn";
+import axios from "axios";
 
 /** 방 입장 컴포넌트 */
 export default function Invite() {
@@ -28,6 +29,7 @@ export default function Invite() {
 
     try {
       const joinResponse = await joinRoom(nickname, pk);
+      console.log(joinResponse);
 
       if (joinResponse.message === "success") {
         navigate(`/home/room`, {
@@ -43,8 +45,11 @@ export default function Invite() {
         return;
       }
     } catch (error) {
-      console.error("Error fetching Room Info");
-      throw error;
+      console.error("Error fetching Room Info", error);
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.phrase);
+        throw error;
+      }
     }
   };
 
