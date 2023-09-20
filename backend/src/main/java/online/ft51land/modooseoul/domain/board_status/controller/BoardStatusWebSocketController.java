@@ -24,7 +24,7 @@ public class BoardStatusWebSocketController {
 
     @MessageMapping("/purchase/ground/{playerId}")
     public void playerPurchaseGround(@DestinationVariable String playerId, @Payload BoardPurchaseRequestDto boardPurchaseRequestDto) {
-        log.info("땅&건물 구매 by {}", playerId);
+        log.info("땅 구매 by {}", playerId);
 
         Player player = playerService.getPlayerById(playerId);
 
