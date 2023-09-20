@@ -12,7 +12,7 @@ public class Board {
 
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "board_type", nullable = false)
