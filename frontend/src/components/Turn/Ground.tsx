@@ -196,19 +196,24 @@ export default function Ground() {
         )}
         {boardData[`${tRow}-${tCol}`].sell == true && (
           <>
-            <div className="buildingBuyContainer">
-              {["교육", "교통", "유통", "주거", "문화"].map((label, index) => (
-                <div
-                  key={index}
-                  className={`buildingBuyBox ${
-                    selectedNodes == index ? "buyActive" : ""
-                  }`}
-                  onClick={() => handleNodeClick(index)}
-                >
-                  {label}
-                </div>
-              ))}
-            </div>
+            {cntBuilding !== 3 && (
+              <div className="buildingBuyContainer">
+                {["교육", "교통", "유통", "주거", "문화"].map(
+                  (label, index) => (
+                    <div
+                      key={index}
+                      className={`buildingBuyBox ${
+                        selectedNodes == index ? "buyActive" : ""
+                      }`}
+                      onClick={() => handleNodeClick(index)}
+                    >
+                      {label}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+
             <div className="groundBtnContainer">
               <div onClick={sellGround}>
                 <ClickBtn

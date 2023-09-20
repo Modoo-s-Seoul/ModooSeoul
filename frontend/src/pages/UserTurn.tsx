@@ -14,17 +14,21 @@ import {
   isUserTurnVisibleState,
   tcolState,
   trowState,
+  turnState,
 } from "../data/IngameData";
 
 export default function UserTurn() {
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const boardData = useRecoilValue(boardDataState);
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]);
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
     isUserTurnVisibleState
   ); // 플레이어 턴 수행 가능 여부
 
+  turn;
+  setTurn;
   /** 턴 시간 제한 (작업을 위해 꺼둠) */
   useEffect(() => {
     // const timeoutMap: { [key: string]: number } = {
@@ -39,6 +43,7 @@ export default function UserTurn() {
     // const timeout = timeoutMap[turnData.kind] || 10000;
     // const timeoutId = setTimeout(() => {
     //   setIsUserTurnVisible(false);
+    //   setTurn(turn + 1)
     // }, timeout);
     // return () => clearTimeout(timeoutId);
   }, [turnData.kind, setIsUserTurnVisible]);
