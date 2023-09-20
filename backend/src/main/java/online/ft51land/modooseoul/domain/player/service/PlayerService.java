@@ -168,4 +168,9 @@ public class PlayerService {
         // 플레이어 레포지토리에서 플레이어 제외
         playerRepository.delete(player);
     }
+
+    public void purchaseGround(Player player, Long groundPrice) {
+        player.purchaseGround(groundPrice);
+        playerRepository.save(player);
+    }
 }

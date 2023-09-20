@@ -102,5 +102,4 @@ public class PlayerWebSocketController {
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("leave", game.getId(), message);
 	}
-
 }
