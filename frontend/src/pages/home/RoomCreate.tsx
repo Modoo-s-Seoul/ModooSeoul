@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { createRoom } from "../../api/RoomApi";
+import { createRoom, joinRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/ClickBtn";
 
@@ -13,7 +13,7 @@ export default function RoomCreate() {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setNickname(e.target.value);
+    setNickname(() => e.target.value);
   };
 
   /**방 생성 버튼 클릭 시 실행되는 함수 */
@@ -27,14 +27,21 @@ export default function RoomCreate() {
     // 필드가 모두 유효한 경우
     try {
       const roomInfo = await createRoom();
+      const joinResponse = await joinRoom(nickname, roomInfo.data.id);
 
-      navigate(`/home/room`, {
-        // 유저 닉네임, 방 id 다음 페이지에 넘기기
-        state: {
-          nickname: nickname,
-          roomId: roomInfo.data.id,
-        },
-      });
+      if (joinResponse.message === "success") {
+        navigate(`/home/room`, {
+          // 유저 닉네임, 방 id 다음 페이지에 넘기기
+          state: {
+            nickname: nickname,
+            gameId: roomInfo.data.id,
+            playerId: joinResponse.data.id,
+          },
+        });
+      } else {
+        window.alert(joinResponse.phrase); // 경고창 표시
+        return;
+      }
     } catch (error) {
       console.error("Error fetching Room Info");
       throw error;

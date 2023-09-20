@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Modal.css";
-import "./WebOption.css"
+import "./WebOption.css";
 
 export default function WebOption() {
   /** 옵션창 끄고 켜기 */
@@ -29,11 +29,15 @@ function WebOptionLoad({ onClose }: WebOptionLoadProps) {
     <div className="modalOverlay">
       <div className="modal">
         <div className="modalClose">
-          <div onClick={onClose}>✖</div>
+          <div onClick={onClose} style={{ cursor: "pointer" }}>
+            ✖
+          </div>
         </div>
         <h1>설정창</h1>
         <div className="optionContainer">
-          <div className="optionBox">배경음악 on/off</div>
+          <div className="optionBox" style={{ cursor: "pointer" }}>
+            배경음악 on/off
+          </div>
           <div></div>
         </div>
       </div>

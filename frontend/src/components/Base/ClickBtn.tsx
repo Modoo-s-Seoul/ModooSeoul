@@ -17,6 +17,7 @@ export default function CustomButton(props: CustomButtonProps) {
     width: `${width}px`,
     height: `${height}px`,
     fontSize: `${fontsize}px`,
+    cursor: "pointer",
   };
 
   return (

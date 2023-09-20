@@ -6,7 +6,11 @@ export default function BackBtn() {
   const navigate = useNavigate();
   return (
     <>
-      <button className="cta" onClick={() => navigate(-1)}>
+      <button
+        className="cta"
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate(-1)}
+      >
         <svg
           width="30px"
           height="30px"
