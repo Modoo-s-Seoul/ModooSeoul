@@ -29,7 +29,9 @@ export default function Room() {
 
   /**게임시작 */
   const handleStartGame = () => {
-    navigate(`/game`);
+    if (socketClient !== null) {
+      socketClient.send(`/send/start/${gameId}`);
+    }
   };
 
   /**방 참가 링크 복사 */
@@ -69,17 +71,33 @@ export default function Room() {
       socketClient.send(`/send/join/${gameId}`);
 
       // 준비 완료 시 갱신된 참가한 방의 정보를 알려주는 채널
-      socketClient.subscribe(`/receive/game/ready/${playerId}`, (msg) => {
+      socketClient.subscribe(`/receive/game/ready/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
-        const receivedData = message.data;
+        const receivedData = message;
+        console.log(receivedData);
         setRoomStatus(receivedData);
+      });
+
+      // 참가한 방의 게임 시작 가능 여부를 알려주는 채널
+      socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
+        const message = JSON.parse(msg.body);
+        console.log("Start Status:", message);
+        if (message.isStart === true) {
+          navigate(`/game`);
+        } else {
+          alert(message.message);
+        }
       });
     }
 
     return () => {
       unsubscribeRoom(socketClient, playerId, gameId);
     };
-  }, []);
+  }, [socketClient]);
+  /* 페이지 새로고침할 때마다 소켓도 재연결되어 소켓 클라이언트 객체가 null인 순간이 생기는데,
+  페이지가 마운트될 때 실행되도록 설정한 useEffect 훅 내부에 소켓 클라이언트 객체를 활용하는 코드가
+  존재하는 경우 해당 코드는 제대로 실행되지 않는다.
+  */
 
   useEffect(() => {
     console.log(curRoomStatus);
@@ -98,27 +116,35 @@ export default function Room() {
           <div className="roomBody">
             <h1>{curRoomStatus[0].nickname}의 Room</h1>
             <div className="playerCardContainer">
-              {curRoomStatus.map((ele) => {
+              {/*방장일 경우 방을 생성했기 때문에 준비 완료된 상태인 것으로 간주한다.  */}
+              {curRoomStatus.map((ele, index) => {
                 return (
+                  // 준비 완료된 상태인 경우 박스 테두리 색이 연두색으로 바뀐다.
                   <div
-                    className={`playerCard ${ele.isReady ? "ready" : ""}`}
+                    className={`playerCard ${
+                      ele.isReady || index == 0 ? "ready" : ""
+                    }`}
                     key={ele.nickname}
                   >
                     {ele.nickname === nickname ? (
                       <div style={{ backgroundColor: "red" }}>
-                        {ele.nickname}
+                        {`${index === 0 ? "👑" : ""} ${ele.nickname}`}
                       </div>
                     ) : (
-                      <div>{ele.nickname}</div>
+                      <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     )}
                     <div>
                       <img src="" alt="" />
-                      {ele.nickname === nickname && (
+                      {index !== 0 &&
+                      ele.nickname === nickname &&
+                      !ele.isReady ? (
                         <button
                           onClick={() => readyPlayer(socketClient, playerId)}
                         >
                           레디
                         </button>
+                      ) : (
+                        <div>준비 완료</div>
                       )}
                     </div>
                   </div>
@@ -126,14 +152,18 @@ export default function Room() {
               })}
             </div>
             <div className="clickBtnContainer">
-              <div onClick={handleStartGame}>
-                <ClickBtn
-                  width={200}
-                  height={80}
-                  fontsize={30}
-                  text={"게임 시작"}
-                />
-              </div>
+              {curRoomStatus[0].nickname === nickname ? (
+                <div onClick={handleStartGame}>
+                  <ClickBtn
+                    width={200}
+                    height={80}
+                    fontsize={30}
+                    text={"게임 시작"}
+                  />
+                </div>
+              ) : (
+                <div>방장이 게임 시작 버튼을 누르면 게임이 시작됩니다!</div>
+              )}
             </div>
           </div>
         )}
