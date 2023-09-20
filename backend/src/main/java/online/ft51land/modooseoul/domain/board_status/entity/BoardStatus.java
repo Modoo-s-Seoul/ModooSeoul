@@ -47,4 +47,7 @@ public class BoardStatus extends BaseEntity {
     private Long oil;
 
 
+    public void purchaseGround(String playerId) {
+        this.ownerId = playerId;
+    }
 }

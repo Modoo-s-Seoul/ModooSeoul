@@ -109,4 +109,9 @@ public class Player extends BaseEntity {
     public void playerMove(Long currentBoardId) {
         this.currentBoardId = currentBoardId;
     }
+
+
+    public void purchaseGround(Long groundPrice) {
+        this.cash -= groundPrice;
+    }
 }

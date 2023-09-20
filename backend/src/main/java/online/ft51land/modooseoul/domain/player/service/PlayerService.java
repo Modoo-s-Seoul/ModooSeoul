@@ -137,4 +137,8 @@ public class PlayerService {
         // 메세지 가공 후 리턴
         return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
     }
+
+    public void purchaseGround(Player player, Long groundPrice) {
+        player.purchaseGround(groundPrice);
+    }
 }
