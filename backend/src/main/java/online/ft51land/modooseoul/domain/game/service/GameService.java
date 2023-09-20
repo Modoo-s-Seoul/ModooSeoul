@@ -8,14 +8,19 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
+import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
+import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -23,6 +28,7 @@ import java.util.*;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final MessageNumRepository messageNumRepository;
 
     private final PlayerRepository playerRepository;
     private final PlayerService playerService;
@@ -36,6 +42,7 @@ public class GameService {
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
+        MessageNum messageNum = messageNumRepository.save(new MessageNum(game.getId()));
         return GameCreateResponseDto.of(game);
     }
 

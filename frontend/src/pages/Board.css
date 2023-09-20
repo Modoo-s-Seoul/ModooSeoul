@@ -12,14 +12,14 @@
   position: relative;
   padding: 5px 15px;
   color: #fff;
-  background-color: #f4d35e;
+  background-color: #2e2608;
   border: none;
   font-size: 20px;
   border-radius: 20px;
   box-shadow: 1px 3px #50514f;
   outline: none;
   transition: 0.3s;
-  top: 20vh;
+  top: 100px;
 }
 
 .rollDiceBtn:hover,

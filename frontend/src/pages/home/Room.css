@@ -25,6 +25,10 @@
   min-width: 100px;
 }
 
+.ready {
+  border: 3px solid greenyellow;
+}
+
 .crown {
 }
 

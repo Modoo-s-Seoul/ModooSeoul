@@ -1,21 +1,14 @@
-import { atom, selector } from "recoil";
-
-export const sample = atom<number>({
-  key: "sampleState",
-  default: 0,
-});
-
-export const sample2 = selector({
-  key: "sampleSelector",
-  get: ({ get }) => {
-    get;
-    return;
-  },
-});
+import { atom } from "recoil";
+import { RoomPlayerStatus } from "../interface/common";
 
 // 로비
 
 // 방 생성
+
+export const roomStatus = atom<RoomPlayerStatus[]>({
+  key: "roomStatus",
+  default: [],
+});
 
 // 랜덤 매칭
 
