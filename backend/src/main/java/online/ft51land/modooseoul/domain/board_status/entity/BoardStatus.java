@@ -1,11 +1,17 @@
 package online.ft51land.modooseoul.domain.board_status.entity;
 
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import online.ft51land.modooseoul.domain.board_status.entity.enums.BoardType;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.util.List;
 
+@Getter
+@RedisHash(value = "board_status", timeToLive = 10000) // Redis Repository 사용을 위한
+@AllArgsConstructor
 public class BoardStatus extends BaseEntity {
     /*
     *
