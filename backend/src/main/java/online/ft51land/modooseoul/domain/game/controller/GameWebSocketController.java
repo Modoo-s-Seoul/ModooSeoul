@@ -19,7 +19,7 @@ public class GameWebSocketController {
 	private final WebSocketSendHandler webSocketSendHandler;
 
 	@MessageMapping("/start/{gameId}")
-	public void gameStart(@DestinationVariable String gameId){
+	public void gameStart(@DestinationVariable String gameId) {
 		Game game = gameService.getGameById(gameId);
 
 		log.info("게임 시작 메시지 수령 by = {}", gameId);

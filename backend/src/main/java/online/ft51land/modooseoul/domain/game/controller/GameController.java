@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.utils.dto.response.BaseResponseDto;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +24,4 @@ public class GameController {
     public BaseResponseDto<GameCreateResponseDto> createGame(){
         return BaseResponseDto.ok(gameService.create());
     }
-
 }
