@@ -109,3 +109,14 @@ INSERT INTO  board (id, price, board_type, district_name) VALUES ('30', '3545000
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('31', '4687000', 'DISTRICT', '서초구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000', 'DISTRICT', '강남구');
 -- BOARD insert query end
+
+
+
+
+-- BUILDING insert query start
+INSERT INTO building (id, price, name) VALUES (1, '400', '교통');
+INSERT INTO building (id, price, name) VALUES (2, '200', '교육');
+INSERT INTO building (id, price, name) VALUES (3, '600', '유통');
+INSERT INTO building (id, price, name) VALUES (4, '500', '주거');
+INSERT INTO building (id, price, name) VALUES (5, '700', '문화');
+-- BUILDING insert query end
