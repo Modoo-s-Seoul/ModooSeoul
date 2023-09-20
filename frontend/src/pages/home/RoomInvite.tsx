@@ -9,13 +9,14 @@ import ClickBtn from "../../components/Base/ClickBtn";
 export default function Invite() {
   const [nickname, setNickname] = useState(""); // 유저 닉네임
   const navigate = useNavigate();
+  /**게임 ID */
   const { pk } = useParams();
 
   /**입력값 반영 함수 */
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setNickname(e.target.value);
+    setNickname(() => e.target.value);
   };
 
   /**방 참가 */
@@ -26,18 +27,19 @@ export default function Invite() {
     }
 
     try {
-      const roomInfo = await joinRoom(nickname, pk);
+      const joinResponse = await joinRoom(nickname, pk);
 
-      if (roomInfo.message === "success") {
+      if (joinResponse.message === "success") {
         navigate(`/home/room`, {
           // 유저 닉네임, 방 id 다음 페이지에 넘기기
           state: {
             nickname: nickname,
-            roomId: pk,
+            gameId: pk,
+            playerId: joinResponse.data.id,
           },
         });
       } else {
-        window.alert(roomInfo.phrase); // 경고창 표시
+        window.alert(joinResponse.phrase); // 경고창 표시
         return;
       }
     } catch (error) {
