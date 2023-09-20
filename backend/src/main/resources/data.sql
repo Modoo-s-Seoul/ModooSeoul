@@ -4,6 +4,7 @@ insert into stock (price, name) values(20000,'정원바이오');
 insert into stock (price, name) values(100000,'창희교육');
 insert into stock (price, name) values(6000,'안나패션');
 insert into stock (price, name) values(250000,'준하건설');
+insert into stock (price, name) values(0, '꽝');
 -- stock insert query end
 
 -- news insert query start
@@ -66,4 +67,17 @@ insert into news (stock_id, description, news_type, percent) values(5,'준하건
 insert into news (stock_id, description, news_type, percent) values(5,'준하건설, 인공지능 스마트홈 서비스 개발','INCREASE',40);
 insert into news (stock_id, description, news_type, percent) values(5,'끊이지 않는 준하건설현장 사망사고…이번분기에만 4건','DECREASE',80);
 insert into news (stock_id, description, news_type, percent) values(5,'자원 공급 안정화, 준하건설주가 안정적으로 유지','MAINTAIN',0);
+
+-- 6. 꽝
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+insert into news (stock_id, description, news_type, percent) values(6,'꽝','MAINTAIN',0);
+
 -- news insert query end

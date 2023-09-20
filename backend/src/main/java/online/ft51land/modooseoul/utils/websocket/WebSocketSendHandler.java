@@ -37,4 +37,7 @@ public class WebSocketSendHandler {
 				BaseMessage.baseMessage(num, message));
 	}
 
+	public <T> void sendToPlayer(String topic, String playerId, T message) {
+		simpMessagingTemplate.convertAndSend("/receive/" + topic + "/" + playerId, message);
+	}
 }
