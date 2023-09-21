@@ -107,7 +107,7 @@ public class BoardStatusService {
 
         //구매
         if(isPurchase) {
-            //player 현금 정보 업데이트
+            //player 돈 정보 업데이트
             player.purchaseBuilding(building.getPrice());
             playerRepository.save(player);
 
