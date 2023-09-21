@@ -106,6 +106,7 @@ export const playerPositionsState = atom<PlayerPosition[]>({
 export interface builingInfoType {
   player: number | null;
   sell: boolean;
+  industry: number;
 }
 
 /** 건물 정보 기록 */
@@ -145,13 +146,14 @@ export interface buildingChangeType {
   player: number | null;
   index: number;
   point: number;
+  industry: number;
   // sell: boolean;
 }
 
 /** 건물 변동 기록 */
 export const buildingChangeState = atom<buildingChangeType[]>({
   key: "buildingChangeState",
-  default: [{ player: null, index: -1, point: -1 }],
+  default: [{ player: null, index: -1, point: -1, industry: -1 }],
 });
 export interface defaultMatch {
   row: number;

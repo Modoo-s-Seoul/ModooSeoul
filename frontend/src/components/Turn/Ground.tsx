@@ -17,6 +17,8 @@ import CloseBtn from "./CloseBtn";
 
 export default function Ground() {
   const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
+  const [selectIndustry, setSelectIndustry] = useState(false); // 산업군 선택 토글
+  const [buildWhere, setBuildWhere] = useState(0); // 산업군 선택 토글
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
@@ -27,7 +29,7 @@ export default function Ground() {
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
   const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
-  const [cntBuilding, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
+  const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
 
   /** 건물 갯수 세기 */
   useEffect(() => {
@@ -67,17 +69,30 @@ export default function Ground() {
   /** 땅판매 */
   const sellGround = () => {
     // 보드 데이터 갱신
-    const newData = { ...boardData };
-    newData[`${tRow}-${tCol}`] = {
-      ...newData[`${tRow}-${tCol}`],
+    const newGroundData = { ...boardData };
+    newGroundData[`${tRow}-${tCol}`] = {
+      ...newGroundData[`${tRow}-${tCol}`],
       sell: false,
       player: null,
     };
-    setBoardData(newData);
+    setBoardData(newGroundData);
     // 땅 변동사항 업데이트
     setGroundChange([{ player: 6, index: turnData.index }]);
     // 땅 팔시 건물도 모두 매각
-
+    const newBuildingData = { ...builingData };
+    for (let i = 0; i < 3; i++) {
+      newBuildingData[turnData.index * 3 + i] = {
+        ...newBuildingData[turnData.index * 3 + i],
+        sell: false,
+        player: null,
+      };
+    }
+    setBuildingInfo(newBuildingData);
+    setBuildingChange([
+      { player: 6, index: turnData.index * 3, point: 0, industry: -1 },
+      { player: 6, index: turnData.index * 3, point: 1, industry: -1 },
+      { player: 6, index: turnData.index * 3, point: 2, industry: -1 },
+    ]);
     // // 땅 매각비용 발생
     const newPlayerData = [...playerData];
     newPlayerData[turn] = {
@@ -86,7 +101,7 @@ export default function Ground() {
     };
     setPlayerData(newPlayerData);
     // // 건물 매각비용 발생
-
+    setSelectIndustry(false);
     // 턴 종료
     // setIsUserTurnVisible(false);
   };
@@ -99,30 +114,27 @@ export default function Ground() {
     }
     setSelectedNodes(index);
   };
+  handleNodeClick;
 
   /** 건물 구매 */
-  const buyBuilding = () => {
+  const buyBuilding = (num: number) => {
     // 건물 데이터 갱신
-    // // 1. 지을수 있는 건물 위치 파악
-    let buildPoint = 0;
-    for (let i = 0; i < 3; i++) {
-      if (builingData[turnData.index * 3 + buildPoint].sell == false) {
-        break;
-      } else {
-        buildPoint = i;
-      }
-    }
-    // // 2. 해당위치 건물 데이터 변경
     const newData = { ...builingData };
-    newData[turnData.index * 3 + buildPoint] = {
-      ...newData[turnData.index * 3 + buildPoint],
+    newData[turnData.index * 3 + num] = {
+      ...newData[turnData.index * 3 + num],
       sell: true,
       player: turn,
+      industry: selectedNodes,
     };
     setBuildingInfo(newData);
     // 건물 변동 사항 업데이트
     setBuildingChange([
-      { player: turn, index: turnData.index * 3, point: buildPoint },
+      {
+        player: turn,
+        index: turnData.index * 3,
+        point: num,
+        industry: selectedNodes,
+      },
     ]);
     // 건물 건설 비용 발생
 
@@ -141,7 +153,9 @@ export default function Ground() {
     };
     setBuildingInfo(newData);
     // 건물 변동 사항 업데이트
-    setBuildingChange([{ player: 6, index: turnData.index * 3, point: num }]);
+    setBuildingChange([
+      { player: 6, index: turnData.index * 3, point: num, industry: -1 },
+    ]);
     // 턴 종료
     // setIsUserTurnVisible(false);
   };
@@ -183,20 +197,142 @@ export default function Ground() {
           <div className="timeBar"></div>
         </div>
         {/* 중단 - 본 내용 */}
-        <div className="userturnBody">
-          <div>위치 : {turnData.name}</div>
-          <div>가격 : {turnData.price}</div>
-          <div>통행료 : {turnData.cost}</div>
-        </div>
-        {/* 하단 - 기능 버튼 */}
-        {boardData[`${tRow}-${tCol}`].sell == false && (
-          <div onClick={buyGround}>
-            <ClickBtn height={50} width={180} fontsize={30} text={"땅 구매"} />
-          </div>
-        )}
-        {boardData[`${tRow}-${tCol}`].sell == true && (
-          <>
-            {cntBuilding !== 3 && (
+        <div className="groundBody">
+          <div className="groundTitle">{turnData.name}</div>
+          {/* <div>구매 : 턴 종료 / 판매 : 자유롭게 </div> */}
+          {boardData[`${tRow}-${tCol}`].sell && <div>시너지 효과 : 없음</div>}
+          {!selectIndustry && (
+            <>
+              <div className="groundSelectContainer">
+                {boardData[`${tRow}-${tCol}`].sell == false && (
+                  <>
+                    <div className="groundSelectBox">
+                      <div>땅</div>
+                      <div> {turnData.price}원</div>
+                    </div>
+                  </>
+                )}
+                {boardData[`${tRow}-${tCol}`].sell == true && (
+                  <>
+                    <div className="groundSelectBox">
+                      <div>부지 1</div>
+                      {builingData[turnData.index * 3 + 0].sell && (
+                        <div>
+                          산업 : {builingData[turnData.index * 3 + 0].industry}
+                        </div>
+                      )}
+                      {!builingData[turnData.index * 3 + 0].sell && (
+                        <div
+                          onClick={() => {
+                            setSelectIndustry(true);
+                            setBuildWhere(0);
+                            // buyBuilding(0);
+                          }}
+                        >
+                          <ClickBtn
+                            height={30}
+                            width={60}
+                            fontsize={18}
+                            text={"건물 짓기"}
+                          />
+                        </div>
+                      )}
+                      {builingData[turnData.index * 3 + 0].sell && (
+                        <div onClick={() => sellBuilding(0)}>
+                          <ClickBtn
+                            height={30}
+                            width={50}
+                            fontsize={18}
+                            text={"판매"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="groundSelectBox">
+                      <div>부지 2</div>
+                      {builingData[turnData.index * 3 + 1].sell && (
+                        <div>
+                          산업 : {builingData[turnData.index * 3 + 1].industry}
+                        </div>
+                      )}
+                      {!builingData[turnData.index * 3 + 1].sell && (
+                        <div
+                          onClick={() => {
+                            setSelectIndustry(true);
+                            setBuildWhere(1);
+                            // buyBuilding(1);
+                          }}
+                        >
+                          <ClickBtn
+                            height={30}
+                            width={60}
+                            fontsize={18}
+                            text={"건물 짓기"}
+                          />
+                        </div>
+                      )}
+                      {builingData[turnData.index * 3 + 1].sell && (
+                        <div onClick={() => sellBuilding(1)}>
+                          <ClickBtn
+                            height={30}
+                            width={50}
+                            fontsize={18}
+                            text={"판매"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="groundSelectBox">
+                      <div>부지 3</div>
+                      {builingData[turnData.index * 3 + 2].sell && (
+                        <div>
+                          산업 : {builingData[turnData.index * 3 + 2].industry}
+                        </div>
+                      )}
+                      {!builingData[turnData.index * 3 + 2].sell && (
+                        <div
+                          onClick={() => {
+                            setSelectIndustry(true);
+                            setBuildWhere(2);
+                            // buyBuilding(2);
+                          }}
+                        >
+                          <ClickBtn
+                            height={30}
+                            width={60}
+                            fontsize={18}
+                            text={"건물 짓기"}
+                          />
+                        </div>
+                      )}
+                      {builingData[turnData.index * 3 + 2].sell && (
+                        <div onClick={() => sellBuilding(2)}>
+                          <ClickBtn
+                            height={30}
+                            width={50}
+                            fontsize={18}
+                            text={"판매"}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+          {selectIndustry && (
+            <>
+              <div className="industryBtn">
+                <div
+                  onClick={() => {
+                    setSelectedNodes(-1);
+                    setSelectIndustry(false);
+                  }}
+                >
+                  ↜뒤로가기
+                </div>
+              </div>
               <div className="buildingBuyContainer">
                 {["교육", "교통", "유통", "주거", "문화"].map(
                   (label, index) => (
@@ -212,8 +348,27 @@ export default function Ground() {
                   )
                 )}
               </div>
-            )}
-
+            </>
+          )}
+          <div>예상 통행료 : {turnData.cost}원</div>
+        </div>
+        {/* 하단 - 기능 버튼 */}
+        {boardData[`${tRow}-${tCol}`].sell == false && (
+          <>
+            <div className="groundBtnContainer">
+              <div onClick={buyGround}>
+                <ClickBtn
+                  height={50}
+                  width={150}
+                  fontsize={30}
+                  text={"땅 구매"}
+                />
+              </div>
+            </div>
+          </>
+        )}
+        {boardData[`${tRow}-${tCol}`].sell == true && (
+          <>
             <div className="groundBtnContainer">
               <div onClick={sellGround}>
                 <ClickBtn
@@ -223,23 +378,20 @@ export default function Ground() {
                   text={"땅 판매"}
                 />
               </div>
-              {cntBuilding !== 0 && (
-                <div onClick={() => sellBuilding(0)}>
+              {selectIndustry && (
+                <div
+                  onClick={() => {
+                    if (selectedNodes == -1) {
+                      alert("산업군을 지정해주세요");
+                      return;
+                    }
+                    buyBuilding(buildWhere);
+                  }}
+                >
                   <ClickBtn
                     height={50}
                     width={120}
                     fontsize={25}
-                    text={"건물 판매"}
-                  />
-                </div>
-              )}
-
-              {cntBuilding !== 3 && (
-                <div onClick={buyBuilding}>
-                  <ClickBtn
-                    height={50}
-                    width={180}
-                    fontsize={30}
                     text={"건물 구매"}
                   />
                 </div>
