@@ -32,6 +32,7 @@ import {
 } from "../data/IngameData";
 import GameOption from "../components/Base/GameOption";
 import Music from "../components/Base/Music";
+import IngameModal from "../components/Base/IngameModal";
 
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
@@ -536,8 +537,12 @@ export default function Board() {
         <Music src="../../../public/music.mp3" />
         <GameOption />
         <UserInfo />
-        {isUserTurnVisible && <UserTurn />}
-        {isCommonTurnVisible && <CommonTurn />}
+        <IngameModal visible={isUserTurnVisible}>
+          {isUserTurnVisible && <UserTurn />}
+        </IngameModal>
+        <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+          {isCommonTurnVisible && <CommonTurn />}
+        </IngameModal>
         {!isUserTurnVisible && !isCommonTurnVisible && (
           <div className="diceContainer">
             <DiceRoll />

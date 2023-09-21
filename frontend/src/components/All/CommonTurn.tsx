@@ -9,7 +9,7 @@ import ClickBtn from "../Base/ClickBtn";
 
 export default function CommonTurn() {
   // 기본 인자
-  const [timeCnt, setTimeCnt] = useState(5);
+  const [timeCnt, setTimeCnt] = useState(3000000000000);
   const setTurn = useSetRecoilState(turnState);
   const setCommonTurn = useSetRecoilState(isCommonTurnVisibleState);
 
@@ -34,47 +34,45 @@ export default function CommonTurn() {
   return (
     <>
       <TaxThiefCatch />
-      <div className={"commonEventContainer"}>
-        <div className="commonTurnContainer">
-          {/* 상단 바 */}
-          <CloseBtnCommon />
-          <div className="commonTimer">{timeCnt}</div>
-          <div className="commonTimeBar"></div>
-          {/* 본문 */}
-          <div className={"commonBody"}>
-            {/* 주식 */}
-            <div className="commonStockGraph">
-              <div>주식 그래프</div>
-            </div>
-            <div className="commonTradingContainer">
-              <div className="commonTadingBox">
-                <div>주식 1</div>
-                <div className="twoBtnBox">
-                  <div className="stockValueBtn">-</div>
-                  <div>{` 갯수 `}</div>
-                  <div className="stockValueBtn">+</div>
-                </div>
-              </div>
-              <div className="commonTadingBox">
-                <div>주식 2</div>
-                <div className="twoBtnBox">
-                  <div className="stockValueBtn">-</div>
-                  <div>{` 갯수 `}</div>
-                  <div className="stockValueBtn">+</div>
-                </div>
-              </div>
-              <div className="commonTadingBox">
-                <div>주식 3</div>
-                <div className="twoBtnBox">
-                  <div className="stockValueBtn">-</div>
-                  <div>{` 갯수 `}</div>
-                  <div className="stockValueBtn">+</div>
-                </div>
-              </div>
-            </div>
-            <div>예상 보유 자산 : 10억</div>
-            <ClickBtn height={40} width={120} text="거래하기" fontsize={24} />
+      <div className="commonTurnContainer">
+        {/* 상단 바 */}
+        <CloseBtnCommon />
+        <div className="commonTimer">{timeCnt}</div>
+        <div className="commonTimeBar"></div>
+        {/* 본문 */}
+        <div className={"commonBody"}>
+          {/* 주식 */}
+          <div className="commonStockGraph">
+            <div>주식 그래프</div>
           </div>
+          <div className="commonTradingContainer">
+            <div className="commonTadingBox">
+              <div>주식 1</div>
+              <div className="twoBtnBox">
+                <div className="stockValueBtn">-</div>
+                <div>{` 갯수 `}</div>
+                <div className="stockValueBtn">+</div>
+              </div>
+            </div>
+            <div className="commonTadingBox">
+              <div>주식 2</div>
+              <div className="twoBtnBox">
+                <div className="stockValueBtn">-</div>
+                <div>{` 갯수 `}</div>
+                <div className="stockValueBtn">+</div>
+              </div>
+            </div>
+            <div className="commonTadingBox">
+              <div>주식 3</div>
+              <div className="twoBtnBox">
+                <div className="stockValueBtn">-</div>
+                <div>{` 갯수 `}</div>
+                <div className="stockValueBtn">+</div>
+              </div>
+            </div>
+          </div>
+          <div>예상 보유 자산 : 10억</div>
+          <ClickBtn height={40} width={120} text="거래하기" fontsize={24} />
         </div>
       </div>
     </>

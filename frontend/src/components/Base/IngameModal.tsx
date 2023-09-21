@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import "./IngameModal.css";
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
   width?: string;
   height?: string;
   visible?: boolean;
@@ -10,7 +10,7 @@ interface Props {
 
 export default function IngameModal({
   children,
-  width = "60vw",
+  width = "30vw",
   height = "60vh",
   visible = true,
 }: Props) {
