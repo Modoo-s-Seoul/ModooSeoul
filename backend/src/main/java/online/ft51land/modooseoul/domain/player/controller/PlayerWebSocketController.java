@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -52,7 +52,7 @@ public class PlayerWebSocketController {
 		String gameId = player.getGameId();
 
 		// 메시지 생성
-		List<PlayerInfoMessage> message = playerService.getPlayersInfoForRoom(gameService.getGameById(gameId));
+		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(gameService.getGameById(gameId));
 
 		// 보내기
 		webSocketSendHandler.sendToGame("ready", player.getGameId(),message);
@@ -97,7 +97,7 @@ public class PlayerWebSocketController {
 		playerService.leaveGame(game, player);
 
 		// 메시지 생성
-		List<PlayerInfoMessage> message = playerService.getPlayersInfoForRoom(game);
+		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(game);
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("leave", game.getId(), message);
