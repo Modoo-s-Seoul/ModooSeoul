@@ -133,6 +133,9 @@ public class PlayerService {
 
         // 월급 받았는지 안 받았는지 여부 저장
         Boolean isSalary = bef > aft;
+        if(bef > aft){
+            rolledPlayer.getSalary();
+        }
 
         // DB 갱신
         playerRepository.save(rolledPlayer);
