@@ -9,7 +9,7 @@ import {
   trowState,
   turnState,
 } from "../../data/IngameData";
-import ClickBtn from "../Base/ClickBtn";
+import ClickBtn from "../Base/CustomButton";
 import { boardDataState } from "../../data/BoardData";
 import { useEffect, useState } from "react";
 import "./Ground.css";

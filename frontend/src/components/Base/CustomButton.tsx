@@ -1,4 +1,4 @@
-import "./ClickBtn.css";
+import "./CustomButton.css";
 
 // Props 타입 정의
 interface CustomButtonProps {

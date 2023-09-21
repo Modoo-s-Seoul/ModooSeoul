@@ -5,7 +5,7 @@ import TaxThiefCatch from "./TaxThiefCatch";
 import CloseBtnCommon from "./CloseBtnCommon";
 import { useSetRecoilState } from "recoil";
 import { isCommonTurnVisibleState, turnState } from "../../data/IngameData";
-import ClickBtn from "../Base/ClickBtn";
+import ClickBtn from "../Base/CustomButton";
 
 export default function CommonTurn() {
   // 기본 인자
