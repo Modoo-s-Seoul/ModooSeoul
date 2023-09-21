@@ -42,8 +42,8 @@ public class PlayerService {
         List<String> players = game.getPlayers();
 
         for (String playerId : players) {
-            Player p = getPlayerById(playerId);
-            message.add(PlayerReadyInfoMessage.of(p));
+            Player player = getPlayerById(playerId);
+            message.add(PlayerReadyInfoMessage.of(player));
         }
         return message;
     }
