@@ -14,8 +14,15 @@ import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
 import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
+
+import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
+import online.ft51land.modooseoul.domain.player.entity.Player;
+import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -30,6 +37,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
     private final PlayerRepository playerRepository;
+
     private final NewsRepository newsRepository;
     private final BoardRepository boardRepository;
     private final BoardStatusRepository boardStatusRepository;
@@ -141,5 +149,15 @@ public class GameService {
             Collections.shuffle(news.get(i));
         }
         game.setNews(news);
+    }
+
+    public List<PlayerInGameInfoMessage> getPlayersInfo(List<Player> players) {
+        List<PlayerInGameInfoMessage> playersInfo = new ArrayList<>();
+
+        for (Player player : players) {
+            playersInfo.add(PlayerInGameInfoMessage.of(player));
+        }
+
+        return playersInfo;
     }
 }
