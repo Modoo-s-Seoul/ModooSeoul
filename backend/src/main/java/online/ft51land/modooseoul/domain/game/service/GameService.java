@@ -2,25 +2,25 @@ package online.ft51land.modooseoul.domain.game.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.board.entity.Board;
+import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
+import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
+import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
+import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
+import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
-import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -29,11 +29,11 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
-
     private final PlayerRepository playerRepository;
-    private final PlayerService playerService;
-
     private final NewsRepository newsRepository;
+    private final BoardRepository boardRepository;
+    private final BoardStatusRepository boardStatusRepository;
+
 
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
@@ -74,6 +74,7 @@ public class GameService {
         game.setBasicInfo(); // 방 기본 정보
         sequencePlayer(game); // 선 정하기
         setNews(game); // 뉴스 저장
+        setBoard(game);
         gameRepository.save(game);
 
         // 플레이어 초기 세팅
@@ -83,6 +84,16 @@ public class GameService {
         }
 
         return GameStartMessage.of(true, "게임 시작!");
+    }
+
+    private void setBoard(Game game) {
+        List<Board> boardList = boardRepository.findAll();
+
+        for(Board board : boardList){
+            boardStatusRepository.save(new BoardStatus(game.getId(), board));
+        }
+
+
     }
 
     /* 게임 선 세팅
