@@ -130,4 +130,8 @@ public class Player extends BaseEntity {
         this.estateMoney += buildingPrice;
         this.cash -= buildingPrice;
     }
+
+    public void getSalary() {
+        this.cash +=1000000;
+    }
 }
