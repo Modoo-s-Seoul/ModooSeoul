@@ -18,6 +18,7 @@ import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
 import CommonTurn from "../components/All/CommonTurn";
 import DiceRoll from "./DiceRoll";
+import IngameModal from "../components/Base/IngameModal";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -41,10 +42,6 @@ import {
   buildingChangeState,
   isCommonTurnVisibleState,
 } from "../data/IngameData";
-<<<<<<< frontend/src/pages/Board.tsx
-import IngameModal from "../components/Base/IngameModal";
-=======
->>>>>>> frontend/src/pages/Board.tsx
 
 ////////  게임 보드 /////////
 export default function Board() {

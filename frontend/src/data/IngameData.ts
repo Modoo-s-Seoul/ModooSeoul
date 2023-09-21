@@ -33,7 +33,7 @@ export const pNumState = atom<number>({
 /** 턴 정보 */
 export const turnState = atom<number>({
   key: "turnState",
-  default: 0,
+  default: -1,
 });
 
 /** 해당 턴 row값 */
@@ -46,6 +46,12 @@ export const trowState = atom<number>({
 export const tcolState = atom<number>({
   key: "tcolState",
   default: 0,
+});
+
+/** 뉴스 컴포넌트 활성화 */
+export const isNewsVisibleState = atom<boolean>({
+  key: "isUserTurnVisibleState",
+  default: false,
 });
 
 /** 플레이어 턴 컴포넌트 활성화 */

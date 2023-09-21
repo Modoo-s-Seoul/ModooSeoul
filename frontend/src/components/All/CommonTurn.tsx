@@ -9,7 +9,7 @@ import ClickBtn from "../Base/CustomButton";
 
 export default function CommonTurn() {
   // 기본 인자
-  const [timeCnt, setTimeCnt] = useState(3000000000000);
+  const [timeCnt, setTimeCnt] = useState(10);
   const setTurn = useSetRecoilState(turnState);
   const setCommonTurn = useSetRecoilState(isCommonTurnVisibleState);
 
@@ -22,7 +22,7 @@ export default function CommonTurn() {
         clearInterval(timer); // 타이머 정지
         // 0초일시 턴 넘기기 (비활성화)
         setCommonTurn(false);
-        setTurn(0);
+        setTurn(-1);
       }
     }, 1000);
     // 컴포넌트가 언마운트될 때 타이머 정리
