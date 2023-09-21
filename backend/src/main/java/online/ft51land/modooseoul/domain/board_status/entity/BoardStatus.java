@@ -64,4 +64,8 @@ public class BoardStatus extends BaseEntity {
     public void purchaseGround(String playerId) {
         this.ownerId = playerId;
     }
+
+    public void purchaseBuilding(Long buildingIdx, Long buildingId) {
+        this.buildings.add(Math.toIntExact(buildingIdx), buildingId);
+    }
 }

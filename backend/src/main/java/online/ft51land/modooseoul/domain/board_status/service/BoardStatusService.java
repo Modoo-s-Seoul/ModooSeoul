@@ -67,9 +67,9 @@ public class BoardStatusService {
     public BuildingPurchaseMessage purchaseBuilding(Player player, BuildingPurchaseRequestDto buildingPurchaseRequestDto) {
         boolean isStartPoint = false;
         boolean isPurchase = true;
+        String message = "";
         Long boardIdxForBuilding = player.getCurrentBoardId(); //건물 지을 땅 인덱스
 
-        String message = "";
 
         if(player.getCurrentBoardId() == 1) isStartPoint = true;
 
@@ -108,15 +108,11 @@ public class BoardStatusService {
         //구매
         if(isPurchase) {
             //player 현금 정보 업데이트
-//            player.purchaseBuilding(boardIdxForBuilding, buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId(),building.getPrice());
-
-            //player 부동산 List, 부동산 보유금 update
-
-
+            player.purchaseBuilding(building.getPrice());
             playerRepository.save(player);
 
             //board status 업데이트
-            boardStatus.purchaseGround(player.getId());
+            boardStatus.purchaseBuilding(buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId());
             boardStatusRepository.save(boardStatus);
 
             message = "건물 구매 성공";
