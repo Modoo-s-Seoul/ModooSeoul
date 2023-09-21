@@ -41,6 +41,10 @@ import {
   buildingChangeState,
   isCommonTurnVisibleState,
 } from "../data/IngameData";
+<<<<<<< frontend/src/pages/Board.tsx
+import IngameModal from "../components/Base/IngameModal";
+=======
+>>>>>>> frontend/src/pages/Board.tsx
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -563,8 +567,12 @@ export default function Board() {
         <Music src="../../../public/music.mp3" />
         <GameOption />
         <UserInfo />
-        {isUserTurnVisible && <UserTurn />}
-        {isCommonTurnVisible && <CommonTurn />}
+        <IngameModal visible={isUserTurnVisible}>
+          {isUserTurnVisible && <UserTurn />}
+        </IngameModal>
+        <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+          {isCommonTurnVisible && <CommonTurn />}
+        </IngameModal>
         {!isUserTurnVisible && !isCommonTurnVisible && (
           <div className="diceContainer">
             <DiceRoll />
