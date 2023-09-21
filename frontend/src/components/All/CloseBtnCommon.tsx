@@ -11,7 +11,7 @@ export default function CloseBtn() {
       <button
         onClick={() => {
           setIsCommonTurnVisible(false);
-          setTurn(0);
+          setTurn((prev) => prev + 1);
         }}
         className="closeUserTurn"
         style={{ cursor: "pointer" }}

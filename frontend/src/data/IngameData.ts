@@ -33,7 +33,7 @@ export const pNumState = atom<number>({
 /** 턴 정보 */
 export const turnState = atom<number>({
   key: "turnState",
-  default: -1,
+  default: 6,
 });
 
 /** 해당 턴 row값 */
@@ -50,7 +50,7 @@ export const tcolState = atom<number>({
 
 /** 뉴스 컴포넌트 활성화 */
 export const isNewsVisibleState = atom<boolean>({
-  key: "isUserTurnVisibleState",
+  key: "isNewsVisibleState",
   default: false,
 });
 

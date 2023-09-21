@@ -22,7 +22,7 @@ export default function CommonTurn() {
         clearInterval(timer); // 타이머 정지
         // 0초일시 턴 넘기기 (비활성화)
         setCommonTurn(false);
-        setTurn(-1);
+        setTurn((prev) => prev + 1);
       }
     }, 1000);
     // 컴포넌트가 언마운트될 때 타이머 정리
