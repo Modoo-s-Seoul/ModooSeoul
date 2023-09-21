@@ -1,6 +1,7 @@
 package online.ft51land.modooseoul.domain.board_status.dto.request;
 
-public record BoardPurchaseRequestDto(
+public record BuildingPurchaseRequestDto(
+        String boardId,
         String buildingIdx,
         String buildingId
 ) {
