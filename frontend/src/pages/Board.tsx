@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { CursorifyProvider } from "@cursorify/react";
-// import { PhingerCursor } from "@cursorify/cursors";
 import { EmojiCursor } from "../components/Base/EmojiCursor";
 import Phaser from "phaser";
 // import axios from "axios";
@@ -32,6 +31,7 @@ import {
   isCommonTurnVisibleState,
 } from "../data/IngameData";
 import GameOption from "../components/Base/GameOption";
+import Music from "../components/Base/Music";
 
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
@@ -75,8 +75,8 @@ export default function Board() {
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
-  const setDice1Value = useSetRecoilState(dice1State); // 첫번째 주사위 값
-  const setDice2Value = useSetRecoilState(dice2State); // 두번째 주사위 값
+  const [dice1, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
+  const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const [isRolling, setIsRolling] = useRecoilState(isRollingState); // 주사위 굴리기 버튼 활성화 상태
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -195,16 +195,16 @@ export default function Board() {
           // 스프라이트 리스트 추가
           setBuildingSprite((prevBuildingSprite) => [
             ...prevBuildingSprite,
+            sampleBuilding3,
             sampleBuilding,
             sampleBuilding2,
-            sampleBuilding3,
           ]);
           // 건물 정보 리스트 추가
           setBuildingInfo((prevBuildingInfo) => [
             ...prevBuildingInfo,
-            { player: null, sell: false, color: "default" },
-            { player: null, sell: false, color: "default" },
-            { player: null, sell: false, color: "default" },
+            { player: null, sell: false, industry: -1 },
+            { player: null, sell: false, industry: -1 },
+            { player: null, sell: false, industry: -1 },
           ]);
         }
       }
@@ -230,6 +230,7 @@ export default function Board() {
         },
       ]);
     }
+
     // 기타 에셋 첨부
     /** 1. 턴 플레이어 화살표 */
     const frameNames = [];
@@ -291,7 +292,6 @@ export default function Board() {
 
       const x = (newCol - newRow) * (tileSize / 2) + config.scale.width / 2;
       const y = (newCol + newRow) * (tileSize / 4) + config.scale.height / 2;
-
       playerSprite[turn].setPosition(
         x + PlayerPositions[turn].mx,
         y + PlayerPositions[turn].my
@@ -322,7 +322,15 @@ export default function Board() {
       if (Dice1 == Dice2) {
         alert("너무많은 더블... 감옥가자");
         // 캐릭터 감옥이동
-
+        const tileSize = globalTileSize;
+        const x = 8 * (tileSize / 2) + config.scale.width / 2;
+        const y = 8 * (tileSize / 4) + config.scale.height / 2;
+        playerSprite[turn].setPosition(
+          x + playerPositions[turn].mx,
+          y + playerPositions[turn].my
+        );
+        playerPositions[turn].row = 0;
+        playerPositions[turn].col = 8;
         // 기본 정보 재세팅
         setDoubleCnt(0);
         setIsRolling(false);
@@ -330,8 +338,8 @@ export default function Board() {
         return;
       }
     }
+    // 더블 맥스가 아닐시 정상 이동
     for (let i = 0; i < totalDice; i++) {
-      // eslint-disable-next-line no-loop-func
       setTimeout(() => {
         if (PlayerPositions[turn].row === 0 && PlayerPositions[turn].col < 8) {
           movePlayer(0, 1);
@@ -357,6 +365,7 @@ export default function Board() {
           setTimeout(() => {
             setIsUserTurnVisible(true);
             setIsRolling(false);
+            etcSprite[1].setAlpha(0);
             if (Dice1 !== Dice2) {
               // 더블이 아닐시
               setDoubleCnt(0);
@@ -374,50 +383,19 @@ export default function Board() {
   };
 
   /** 주사위 굴리기 함수 */
-  const rollDice = async () => {
+  const rollDice = () => {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
+    // (실제구현) 주사위값 변경 요청
 
     // 주사위 값 결정
     const Dice1 = Math.floor(Math.random() * 6) + 1;
     const Dice2 = Math.floor(Math.random() * 6) + 1;
     // const Dice1 = 1;
-    // const Dice2 = 2;
-
+    // const Dice2 = 1;
     setDiceActive(true);
     setDice1Value(Dice1);
     setDice2Value(Dice2);
-
-    const totalDice = Dice1 + Dice2;
-
-    // 도착지 깃발 위치 설정
-    let goRow = PlayerPositions[turn].row;
-    let goCol = PlayerPositions[turn].col;
-    for (let i = 0; i < totalDice; i++) {
-      if (goRow === 0 && goCol < 8) {
-        goCol += 1;
-      } else if (goCol === 8 && goRow < 8) {
-        goRow += 1;
-      } else if (goRow === 8 && goCol > 0) {
-        goCol -= 1;
-      } else if (goCol === 0 && goRow > 0) {
-        goRow -= 1;
-      }
-    }
-    await setTRow(goRow);
-    await setTCol(goCol);
-    const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
-    const y = (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
-    etcSprite[1].setPosition(x + 10, y - 220);
-    // 깃발 생성
-    setTimeout(() => {
-      etcSprite[1].setAlpha(1);
-    }, 1500);
-    // 주사위 수만큼 플레이어 이동
-    setTimeout(() => {
-      setPlayerDirection(totalDice, Dice1, Dice2);
-      setDiceActive(false);
-    }, 2000);
   };
 
   /**실수로 인한 창 닫기, 새로고침 방지 */
@@ -481,6 +459,8 @@ export default function Board() {
   /** 건물 정보 변경시 */
   useEffect(() => {
     if (buildingChange[0].player !== null && buildingChange[0].player !== 6) {
+      // 산업군별 이미지 변경
+
       // 색변경
       buildingSprite[buildingChange[0].index + buildingChange[0].point].setTint(
         colorPaletteTint[buildingChange[0].player]
@@ -491,14 +471,56 @@ export default function Board() {
       ].setAlpha(1);
     } else if (buildingChange[0].player === 6) {
       // 판매요청시
-      buildingSprite[buildingChange[0].index].clearTint();
-      buildingSprite[
-        buildingChange[0].index + buildingChange[0].point
-      ].setAlpha(0);
+      console.log("판매요청");
+      for (let i = 0; i < buildingChange.length; i++) {
+        buildingSprite[
+          buildingChange[i].index + buildingChange[i].point
+        ].clearTint();
+        buildingSprite[
+          buildingChange[i].index + buildingChange[i].point
+        ].setAlpha(0);
+      }
     }
   }, [buildingChange]);
 
   /** 유저 턴 구현 */
+  useEffect(() => {
+    // 주사위가 던져지고 나면
+    if (isRolling) {
+      console.log("주사위는 던져졌다.");
+      // 1. 도착지 깃발 위치 이동
+      let goRow = playerPositions[turn].row;
+      let goCol = playerPositions[turn].col;
+      for (let i = 0; i < dice1 + dice2; i++) {
+        if (goRow === 0 && goCol < 8) {
+          goCol += 1;
+        } else if (goCol === 8 && goRow < 8) {
+          goRow += 1;
+        } else if (goRow === 8 && goCol > 0) {
+          goCol -= 1;
+        } else if (goCol === 0 && goRow > 0) {
+          goRow -= 1;
+        }
+      }
+      setTRow(goRow);
+      setTCol(goCol);
+      const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
+      const y =
+        (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
+      etcSprite[1].setPosition(x + 10, y - 220);
+
+      // 1.5 깃발 생성
+      setTimeout(() => {
+        etcSprite[1].setAlpha(1);
+      }, 1500);
+
+      // 2. 주사위 값만큼 플레이이 이동 함수 실행
+      setTimeout(() => {
+        setPlayerDirection(dice1 + dice2, dice1, dice2);
+        setDiceActive(false);
+      }, 2000);
+    }
+  }, [isRolling, dice1, dice2]);
 
   /** 공통 턴 구현 */
   useEffect(() => {
@@ -511,6 +533,7 @@ export default function Board() {
   return (
     <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
       <div>
+        <Music src="../../../public/music.mp3" />
         <GameOption />
         <UserInfo />
         {isUserTurnVisible && <UserTurn />}
