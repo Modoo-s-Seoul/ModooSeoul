@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 // 게임관련
 import Phaser from "phaser";
 import GameOption from "../components/Base/GameOption";
-import Music from "../components/Base/Music";
 import { CursorifyProvider } from "@cursorify/react";
 import { EmojiCursor } from "../components/Base/EmojiCursor";
 // 웹소켓
@@ -40,7 +39,10 @@ import {
   groundChangeState,
   buildingChangeState,
   isCommonTurnVisibleState,
+  isLoadingVisibleState,
 } from "../data/IngameData";
+import { musicState } from "../data/CommonData";
+import Loading from "../components/Base/Loading";
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -81,7 +83,6 @@ export default function Board() {
       color: colorPalette[i - 1],
     });
   }
-
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
@@ -89,7 +90,17 @@ export default function Board() {
   const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const [isRolling, setIsRolling] = useRecoilState(isRollingState); // 주사위 굴리기 버튼 활성화 상태
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
+    isUserTurnVisibleState
+  ); // 플레이어 턴 수행 가능 여부
+  const [isCommonTurnVisible, setIsCommonTurnVisible] = useRecoilState(
+    isCommonTurnVisibleState
+  ); // 공통 턴 수행 가능 여부
+  const [loadingVisible, setLoadingVisible] = useRecoilState(
+    isLoadingVisibleState
+  ); // 로딩 페이지 토글
+
+  // 데이터 보관
   const [playerSprite, setPlayerSprite] = useState<Phaser.GameObjects.Image[]>(
     []
   ); //플레이어 스프라이트
@@ -98,19 +109,15 @@ export default function Board() {
     []
   ); //땅 스프라이트
   groundSprite;
-
   const [buildingSprite, setBuildingSprite] = useState<
     Phaser.GameObjects.Image[]
   >([]); //건물 스프라이트
   const setBuildingInfo = useSetRecoilState(builingInfoState); //건물 정보
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
-  const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
-    isUserTurnVisibleState
-  ); // 플레이어 턴 수행 가능 여부
-  const [isCommonTurnVisible, setIsCommonTurnVisible] = useRecoilState(
-    isCommonTurnVisibleState
-  ); // 공통 턴 수행 가능 여부
+
+  // 음악
+  const audio = useRecoilValue(musicState);
 
   // 웹소켓 기본인자
   const socketClient = useSocket();
@@ -168,6 +175,8 @@ export default function Board() {
     for (let i = 0; i < 47; i++) {
       this.load.image(`flagframe_${i}`, `assets/flag/${i}.png`);
     }
+    // 음악
+    this.load.audio("music", ["music.mp3"]);
   }
 
   /** phaser 에셋 생성 */
@@ -255,6 +264,10 @@ export default function Board() {
     }
 
     // 기타 에셋 첨부
+    /** 배경음악 */
+    // const music = this.sound.add("music");
+    // music.play();
+
     /** 1. 턴 플레이어 화살표 */
     const frameNames = [];
     for (let i = 0; i < 75; i++) {
@@ -300,6 +313,9 @@ export default function Board() {
     // 기타 에셋 추가
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, arrow]);
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
+
+    // 생성 완료후 - 로딩
+    setLoadingVisible(false);
   }
 
   /** 플레이어 이동 함수 */
@@ -448,6 +464,8 @@ export default function Board() {
     history.pushState(null, "", location.href);
     window.addEventListener("popstate", preventGoBack);
     // 전체화면
+    // 배경음악 재생
+    audio.play();
   }, []);
 
   /** 화살표 동기화 */
@@ -558,25 +576,27 @@ export default function Board() {
   /** 렌더링 부분 */
   return (
     <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
+      {loadingVisible && <Loading />}
       <div>
         <IngameWebSocket />
-        <Music src="../../../public/music.mp3" />
         <GameOption />
         <UserInfo />
         {isUserTurnVisible && <UserTurn />}
         {isCommonTurnVisible && <CommonTurn />}
-        {!isUserTurnVisible && !isCommonTurnVisible && (
+        {!loadingVisible && !isUserTurnVisible && !isCommonTurnVisible && (
           <div className="diceContainer">
             <DiceRoll />
             {!isRolling && (
-              <button
-                id="move-button"
-                className="rollDiceBtn"
-                onClick={rollDice}
-                style={{ cursor: "pointer" }}
-              >
-                주사위 굴리기
-              </button>
+              <div className="diceTimeBar">
+                <button
+                  id="move-button"
+                  className={`rollDiceBtn `}
+                  onClick={rollDice}
+                  style={{ cursor: "pointer" }}
+                >
+                  주사위 굴리기
+                </button>
+              </div>
             )}
           </div>
         )}

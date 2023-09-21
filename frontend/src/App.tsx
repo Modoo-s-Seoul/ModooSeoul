@@ -7,10 +7,12 @@ import Room from "./pages/home/Room";
 import RoomCreate from "./pages/home/RoomCreate";
 import RoomInvite from "./pages/home/RoomInvite";
 import TestComponent from "./components/Dev/TestComponent";
+import BackgroundMusic from "./components/Base/Music";
 
 function App() {
   return (
     <>
+      <BackgroundMusic />
       <Routes>
         {/* 홈 */}
         <Route path="/home" element={<Lobby />} />

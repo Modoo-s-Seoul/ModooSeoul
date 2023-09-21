@@ -9,6 +9,7 @@ import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/ClickBtn";
 import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
+import { handleFullScreen } from "../../components/Base/BaseFunc";
 
 /** 게임 대기룸 컴포넌트. 
   초대링크, 방생성을 통해서만 접근 가능*/
@@ -31,6 +32,7 @@ export default function Room() {
   const handleStartGame = () => {
     if (socketClient !== null) {
       socketClient.send(`/send/start/${gameId}`);
+      handleFullScreen();
     }
   };
 

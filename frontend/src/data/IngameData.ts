@@ -48,6 +48,12 @@ export const tcolState = atom<number>({
   default: 0,
 });
 
+/** 로딩 컴포넌트 활성화 */
+export const isLoadingVisibleState = atom<boolean>({
+  key: "isLoadingVisibleState",
+  default: true,
+});
+
 /** 플레이어 턴 컴포넌트 활성화 */
 export const isUserTurnVisibleState = atom<boolean>({
   key: "isUserTurnVisibleState",

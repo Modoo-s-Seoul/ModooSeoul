@@ -16,10 +16,10 @@
   border: none;
   font-size: 20px;
   border-radius: 20px;
-  box-shadow: 1px 3px #50514f;
+  /* box-shadow: 1px 3px #50514f; */
   outline: none;
   transition: 0.3s;
-  top: 100px;
+  /* top: 100px; */
 }
 
 .rollDiceBtn:hover,
@@ -27,5 +27,40 @@
   outline: none;
   background: #50514f;
   cursor: pointer;
+  /* transform: translateY(5px); */
+}
+
+@property --percentage {
+  initial-value: 0%;
+  inherits: false;
+  syntax: "<percentage>";
+}
+
+.diceTimeBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: conic-gradient(white var(--percentage), rgb(0, 196, 79) 0);
+  border-radius: 25px;
+  animation: timer 10s infinite linear;
+  transition: 0.3s;
+  opacity: 50;
+  width: 100px;
+  height: 48px;
+  margin: auto;
+  top: 100px;
+}
+.diceTimeBar:hover,
+.diceTimeBar:active {
+  outline: none;
+  /* background: #50514f; */
+  cursor: pointer;
   transform: translateY(5px);
+}
+
+@keyframes timer {
+  to {
+    --percentage: 100%;
+  }
 }
