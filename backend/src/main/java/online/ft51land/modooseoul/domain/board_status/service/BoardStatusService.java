@@ -67,22 +67,19 @@ public class BoardStatusService {
     public BuildingPurchaseMessage purchaseBuilding(Player player, BuildingPurchaseRequestDto buildingPurchaseRequestDto) {
         boolean isStartPoint = false;
         boolean isPurchase = true;
+        Long boardIdxForBuilding = player.getCurrentBoardId(); //건물 지을 땅 인덱스
+
         String message = "";
 
         if(player.getCurrentBoardId() == 1) isStartPoint = true;
 
-        //플레이어가 현재 시작점인지 체크, 시작점이 아니라면 현재위치에 지음, 시작점이라면 받아온 index로 지음
+        //플레이어가 현재 시작점인지 체크, 시작점이 아니라면 건물짓는 위치가 현재위치 시작점이라면 받아온 index로 지음
         if(isStartPoint) {
-
-
-        }
-
-        if(!isStartPoint) {
-
+            boardIdxForBuilding  = buildingPurchaseRequestDto.boardIdx();
         }
 
         //플레이어 땅인지 체크
-        String curBoardId = player.getGameId()+"@"+player.getCurrentBoardId();
+        String curBoardId = player.getGameId()+"@"+boardIdxForBuilding;
 
         BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
@@ -91,6 +88,12 @@ public class BoardStatusService {
         if(!boardStatus.getOwnerId().equals(player.getId())) {
             isPurchase = false;
             message = "플레이어의 땅이 아닙니다.";
+        }
+
+        //그 땅 그 위치에 건물이 이미 있는지 확인
+        if(boardStatus.getBuildings().get(Math.toIntExact(buildingPurchaseRequestDto.buildingIdx())) != 0L) {
+            isPurchase = false;
+            message = "이미 건물이 있는 위치입니다.";
         }
 
         //플레이어 자산으로 건물을 살 수 있는지 체크
@@ -105,7 +108,11 @@ public class BoardStatusService {
         //구매
         if(isPurchase) {
             //player 현금 정보 업데이트
-            player.purchaseBuilding(building.getPrice());
+//            player.purchaseBuilding(boardIdxForBuilding, buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId(),building.getPrice());
+
+            //player 부동산 List, 부동산 보유금 update
+
+
             playerRepository.save(player);
 
             //board status 업데이트
@@ -115,6 +122,6 @@ public class BoardStatusService {
             message = "건물 구매 성공";
         }
 
-        return(BuildingPurchaseMessage.of(isPurchase,message,11L,1L,1L,"id"));
+        return(BuildingPurchaseMessage.of(isPurchase,message,boardIdxForBuilding,buildingPurchaseRequestDto.buildingIdx(),buildingPurchaseRequestDto.buildingId(),player.getId()));
     }
 }

@@ -47,7 +47,7 @@ public class BoardStatus extends BaseEntity {
     @Column(name="owner_id")
     private String ownerId;
 
-    private List<String> buildings;
+    private List<Long> buildings;
 
     private Long synergy;
 
