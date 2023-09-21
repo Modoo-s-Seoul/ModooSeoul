@@ -3,6 +3,7 @@ package online.ft51land.modooseoul.domain.game.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
+import online.ft51land.modooseoul.domain.game.dto.message.GameTurnMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.messagenum.service.MessageNumService;
@@ -40,8 +41,15 @@ public class GameWebSocketController {
 		Long messageNum = messageNumService.getMessageNumByGameId(gameId);
 
 		// 메시지 번호 가지고 오기 게임 시작 가능한지 여부 전송
-		webSocketSendHandler.sendToGame("start", game.getId(), gameStartMessage);
+		webSocketSendHandler.sendToGame("start", gameId, gameStartMessage);
 
 	}
 
+	// 현재 턴 정보
+	@MessageMapping("/turn/{gameId}")
+	public void getTurnInfo(@DestinationVariable String gameId) {
+		Game game = gameService.getGameById(gameId);
+
+		webSocketSendHandler.sendToGame("turn", gameId, GameTurnMessage.of(game));
+	}
 }
