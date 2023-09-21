@@ -10,6 +10,7 @@ import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,8 +28,8 @@ public class Player extends BaseEntity {
     current_board_id : 현재 위치
     cash :  보유 현금
     stock_money: 주식 보유금
-    asset_money : 부동산 보유금
-    assets: 소유 부동산 List
+    estate_money : 부동산 보유금
+    estates: 소유 부동산 List
     tax: 미납금
     dice : 주사위
     already_double: 이미 더블했는지 여부
@@ -50,18 +51,18 @@ public class Player extends BaseEntity {
     @Column(name = "is_ready", nullable = false)
     private Boolean isReady;
 
-    @Column(name ="current_board_id")
-    private Long currentBoardId;
+    @Column(name ="current_board_idx")
+    private Long currentBoardIdx;
     
     private Long cash;
 
     @Column(name = "stock_money")
     private Long stockMoney;
 
-    @Column(name="asset_money")
-    private Long assetMoney;
+    @Column(name="estate_money")
+    private Long estateMoney;
 
-    private List assets;
+    private List<Long> estate;
 
     private Long tax;
 
@@ -99,19 +100,34 @@ public class Player extends BaseEntity {
         this.dice = dice;
     }
 
-    public void gameStart() {
-        this.currentBoardId = 0L;
-        this.cash = 1000L;
+    public void playerInit() {
+        this.cash = 10000000L; // 초기자금 1000만원
+        this.stockMoney = 0L;
+        this.estateMoney = 0L;
+        this.estate = new ArrayList<>();
+
+        this.currentBoardIdx = 0L;
         this.dice = 0L;
         this.isDouble = false;
+        this.selectStockId = 0L;
+
+        this.tax = 0L;
+        this.isArrested = false;
     }
 
     public void playerMove(Long currentBoardId) {
-        this.currentBoardId = currentBoardId;
+        this.currentBoardIdx = currentBoardId;
     }
 
 
     public void purchaseGround(Long groundPrice) {
+        this.estateMoney += groundPrice;
         this.cash -= groundPrice;
+        this.estate.add(this.currentBoardIdx);
+    }
+
+    public void purchaseBuilding(Long buildingPrice) {
+        this.estateMoney += buildingPrice;
+        this.cash -= buildingPrice;
     }
 }

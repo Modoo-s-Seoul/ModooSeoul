@@ -2,25 +2,32 @@ package online.ft51land.modooseoul.domain.game.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.board.entity.Board;
+import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
+import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
+import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
+import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
+import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
+
 import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
+import online.ft51land.modooseoul.domain.player.entity.Player;
+import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -29,11 +36,12 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
-
     private final PlayerRepository playerRepository;
-    private final PlayerService playerService;
 
     private final NewsRepository newsRepository;
+    private final BoardRepository boardRepository;
+    private final BoardStatusRepository boardStatusRepository;
+
 
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
@@ -46,21 +54,18 @@ public class GameService {
         return GameCreateResponseDto.of(game);
     }
 
-    public GameStartMessage gameStart(Game game) {
+    public GameStartMessage gameStart(Game game, List<Player> players) {
 
+        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
         // 게임 시작 가능 여부 확인
-        List<Player> players = new ArrayList<>();
         int readyCnt = 0;
 
-        for (String playerId : game.getPlayers()) {
-            Player player = playerService.getPlayerById(playerId);
-
+        for (Player player : players) {
+            log.info("player = {}", player);
             // 레디한 플레이어 몇 명인지 체크
             if (player.getIsReady()) {
                 readyCnt++;
             }
-
-            players.add(player);
         }
 
         // 방장만 있을 경우
@@ -77,15 +82,26 @@ public class GameService {
         game.setBasicInfo(); // 방 기본 정보
         sequencePlayer(game); // 선 정하기
         setNews(game); // 뉴스 저장
+        setBoard(game);
         gameRepository.save(game);
 
         // 플레이어 초기 세팅
         for (Player player : players) {
-            player.gameStart();
+            player.playerInit();
             playerRepository.save(player);
         }
 
         return GameStartMessage.of(true, "게임 시작!");
+    }
+
+    private void setBoard(Game game) {
+        List<Board> boardList = boardRepository.findAll();
+
+        for(Board board : boardList){
+            boardStatusRepository.save(new BoardStatus(game.getId(), board));
+        }
+
+
     }
 
     /* 게임 선 세팅
@@ -133,5 +149,15 @@ public class GameService {
             Collections.shuffle(news.get(i));
         }
         game.setNews(news);
+    }
+
+    public List<PlayerInGameInfoMessage> getPlayersInfo(List<Player> players) {
+        List<PlayerInGameInfoMessage> playersInfo = new ArrayList<>();
+
+        for (Player player : players) {
+            playersInfo.add(PlayerInGameInfoMessage.of(player));
+        }
+
+        return playersInfo;
     }
 }

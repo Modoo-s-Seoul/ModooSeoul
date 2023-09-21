@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
@@ -36,14 +36,14 @@ public class PlayerService {
     }
 
     // 방 참가 플레이어 정보 보내주기
-    public List<PlayerInfoMessage> getPlayersInfoForRoom(Game game) {
+    public List<PlayerReadyInfoMessage> getPlayersInfoForRoom(Game game) {
         // Message 만들기
-        List<PlayerInfoMessage> message = new ArrayList<>();
+        List<PlayerReadyInfoMessage> message = new ArrayList<>();
         List<String> players = game.getPlayers();
 
         for (String playerId : players) {
-            Player p = getPlayerById(playerId);
-            message.add(PlayerInfoMessage.of(p));
+            Player player = getPlayerById(playerId);
+            message.add(PlayerReadyInfoMessage.of(player));
         }
         return message;
     }
@@ -127,7 +127,7 @@ public class PlayerService {
         rolledPlayer.updateDice(one + two);
 
         // 어디로 이동했는지 저장
-        Long bef = rolledPlayer.getCurrentBoardId();
+        Long bef = rolledPlayer.getCurrentBoardIdx();
         Long aft = (bef + (one + two)) % 32;
         rolledPlayer.playerMove(aft);
 
@@ -167,10 +167,5 @@ public class PlayerService {
 
         // 플레이어 레포지토리에서 플레이어 제외
         playerRepository.delete(player);
-    }
-
-    public void purchaseGround(Player player, Long groundPrice) {
-        player.purchaseGround(groundPrice);
-        playerRepository.save(player);
     }
 }
