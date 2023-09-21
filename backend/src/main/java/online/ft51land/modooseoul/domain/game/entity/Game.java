@@ -76,7 +76,6 @@ public class Game extends BaseEntity {
     @Column(name = "message_num", nullable = false)
     private Long messageNum;
 
-
     @Builder
     public Game(){
         this.messageNum = 1L;
