@@ -10,7 +10,6 @@ import lombok.ToString;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
-import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -76,6 +75,9 @@ public class Game extends BaseEntity {
     @Column(name = "message_num", nullable = false)
     private Long messageNum;
 
+    @Column(name = "turn_info")
+    private Long turnInfo;
+
     @Builder
     public Game(){
         this.messageNum = 1L;
@@ -92,6 +94,7 @@ public class Game extends BaseEntity {
     public void setBasicInfo() {
         this.isStart = true;
         this.startTime = LocalDateTime.now();
+        this.turnInfo = 0L;
     }
 
     public void setSequencePlayer(List<String> players) {
