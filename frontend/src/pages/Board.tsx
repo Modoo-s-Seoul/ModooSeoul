@@ -1,15 +1,26 @@
 import { useEffect, useState, useRef } from "react";
+// 게임관련
+import Phaser from "phaser";
+import GameOption from "../components/Base/GameOption";
+import Music from "../components/Base/Music";
 import { CursorifyProvider } from "@cursorify/react";
 import { EmojiCursor } from "../components/Base/EmojiCursor";
-import Phaser from "phaser";
-// import axios from "axios";
-// import SockJS from "sockjs-client";
-// import StompJs from "@stomp/stompjs";
+// 웹소켓
+import IngameWebSocket from "../components/IngameWs/IngameWebSocket";
+import {
+  SendPlayerMessage,
+  // SendGameMessage,
+} from "../components/IngameWs/IngameSendFunction";
+import { useSocket } from "./SocketContext";
+import { useLocation } from "react-router-dom";
+// 컴포넌트 로드
 import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
 import CommonTurn from "../components/All/CommonTurn";
 import DiceRoll from "./DiceRoll";
+// css 로드
 import "./Board.css";
+// 데이터로드
 import { PlayerPosition, PlayerInfo } from "../interface/ingame";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -30,13 +41,18 @@ import {
   buildingChangeState,
   isCommonTurnVisibleState,
 } from "../data/IngameData";
-import GameOption from "../components/Base/GameOption";
-import Music from "../components/Base/Music";
 
+////////  게임 보드 /////////
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
   // 글로벌 변수들
+  const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
+  const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
+  colorPaletteTint;
+  const offset = 10; // 플레이어 위치 조정
+  const offset2 = 220; // y축 위치조정용 변수
+  const globalTileSize = 121; // 타일 크기및 간격
 
   /**캐릭터 에셋 이름 */
   const characterAssetNames = ["Pink", "Blue", "Green", "Yellow"];
@@ -49,12 +65,6 @@ export default function Board() {
     "assets/alienYellow.png",
   ];
 
-  const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
-  const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
-  colorPaletteTint;
-  const offset = 10; // 플레이어 위치 조정
-  const offset2 = 220; // y축 위치조정용 변수
-  const globalTileSize = 121; // 타일 크기및 간격
   // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
   const pNum = useRecoilValue(pNumState); // 플레이어 수
@@ -102,6 +112,18 @@ export default function Board() {
     isCommonTurnVisibleState
   ); // 공통 턴 수행 가능 여부
 
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const weblocation = useLocation();
+  let gameId = "test";
+  let playerId = "test";
+  gameId;
+  if (weblocation.state) {
+    gameId = weblocation.state.gameId;
+    playerId = weblocation.state.playerId;
+  }
+
+  /** 인게임 설정 */
   const config = {
     type: Phaser.AUTO,
     parent: "gameScreen",
@@ -120,7 +142,7 @@ export default function Board() {
     },
   };
 
-  // 플레이어 스프라이트 위치 조정
+  /** 플레이어 스프라이트 위치 조정 변수 */
   const spritePosition = [
     [-offset, -offset],
     [offset, -offset],
@@ -128,7 +150,7 @@ export default function Board() {
     [offset, offset],
   ];
 
-  // 에셋 불러오기
+  /** phaser 에셋 불러오기 */
   function preload(this: Phaser.Scene) {
     // 보드관련 에셋
     this.load.image("sampleTile", "assets/Polygon3.png");
@@ -148,6 +170,7 @@ export default function Board() {
     }
   }
 
+  /** phaser 에셋 생성 */
   function create(this: Phaser.Scene) {
     // 배경 생성
     const gradient = this.add.graphics();
@@ -387,6 +410,9 @@ export default function Board() {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
+    if (socketClient) {
+      SendPlayerMessage(socketClient, playerId, "send/roll");
+    }
 
     // 주사위 값 결정
     const Dice1 = Math.floor(Math.random() * 6) + 1;
@@ -487,7 +513,6 @@ export default function Board() {
   useEffect(() => {
     // 주사위가 던져지고 나면
     if (isRolling) {
-      console.log("주사위는 던져졌다.");
       // 1. 도착지 깃발 위치 이동
       let goRow = playerPositions[turn].row;
       let goCol = playerPositions[turn].col;
@@ -530,9 +555,11 @@ export default function Board() {
     }
   }, [turn]);
 
+  /** 렌더링 부분 */
   return (
     <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
       <div>
+        <IngameWebSocket />
         <Music src="../../../public/music.mp3" />
         <GameOption />
         <UserInfo />
