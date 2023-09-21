@@ -94,7 +94,7 @@ export default function Board() {
   >([]); //건물 스프라이트
   const setBuildingInfo = useSetRecoilState(builingInfoState); //건물 정보
   buildingSprite;
-  const [PlayerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
+  const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
     isUserTurnVisibleState
   ); // 플레이어 턴 수행 가능 여부
@@ -283,23 +283,23 @@ export default function Board() {
   const movePlayer = (rowOffset: number, colOffset: number) => {
     // 기본인자
     const tileSize = globalTileSize;
-    const newRow = PlayerPositions[turn].row + rowOffset;
-    const newCol = PlayerPositions[turn].col + colOffset;
+    const newRow = playerPositions[turn].row + rowOffset;
+    const newCol = playerPositions[turn].col + colOffset;
 
     if (newRow >= 0 && newRow < 9 && newCol >= 0 && newCol < 9) {
-      PlayerPositions[turn].row = newRow;
-      PlayerPositions[turn].col = newCol;
+      playerPositions[turn].row = newRow;
+      playerPositions[turn].col = newCol;
 
       const x = (newCol - newRow) * (tileSize / 2) + config.scale.width / 2;
       const y = (newCol + newRow) * (tileSize / 4) + config.scale.height / 2;
       playerSprite[turn].setPosition(
-        x + PlayerPositions[turn].mx,
-        y + PlayerPositions[turn].my
+        x + playerPositions[turn].mx,
+        y + playerPositions[turn].my
       );
       // 화살표 같이 이동
       etcSprite[0].setPosition(
-        x + PlayerPositions[turn].mx,
-        y + PlayerPositions[turn].my - 35
+        x + playerPositions[turn].mx,
+        y + playerPositions[turn].my - 35
       );
       // 플레이어 좌우반전 구현
       if (newRow !== 0) {
@@ -341,21 +341,21 @@ export default function Board() {
     // 더블 맥스가 아닐시 정상 이동
     for (let i = 0; i < totalDice; i++) {
       setTimeout(() => {
-        if (PlayerPositions[turn].row === 0 && PlayerPositions[turn].col < 8) {
+        if (playerPositions[turn].row === 0 && playerPositions[turn].col < 8) {
           movePlayer(0, 1);
         } else if (
-          PlayerPositions[turn].col === 8 &&
-          PlayerPositions[turn].row < 8
+          playerPositions[turn].col === 8 &&
+          playerPositions[turn].row < 8
         ) {
           movePlayer(1, 0);
         } else if (
-          PlayerPositions[turn].row === 8 &&
-          PlayerPositions[turn].col > 0
+          playerPositions[turn].row === 8 &&
+          playerPositions[turn].col > 0
         ) {
           movePlayer(0, -1);
         } else if (
-          PlayerPositions[turn].col === 0 &&
-          PlayerPositions[turn].row > 0
+          playerPositions[turn].col === 0 &&
+          playerPositions[turn].row > 0
         ) {
           movePlayer(-1, 0);
         }
@@ -428,14 +428,14 @@ export default function Board() {
   useEffect(() => {
     if (etcSprite[0] && turn !== pNum) {
       etcSprite[0].setAlpha(1);
-      const goRow = PlayerPositions[turn].row;
-      const goCol = PlayerPositions[turn].col;
+      const goRow = playerPositions[turn].row;
+      const goCol = playerPositions[turn].col;
       const x = (goCol - goRow) * (globalTileSize / 2) + config.scale.width / 2;
       const y =
         (goCol + goRow) * (globalTileSize / 4) + config.scale.height / 2;
       etcSprite[0].setPosition(
-        x + PlayerPositions[turn].mx,
-        y + PlayerPositions[turn].my - 35
+        x + playerPositions[turn].mx,
+        y + playerPositions[turn].my - 35
       );
       // 깃발 숨기기
       etcSprite[1].setAlpha(0);
