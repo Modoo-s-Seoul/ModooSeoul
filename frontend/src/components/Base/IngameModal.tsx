@@ -8,6 +8,7 @@ interface Props {
   visible?: boolean;
 }
 
+/**인게임 모달창 템플릿 */
 export default function IngameModal({
   children,
   width = "30vw",
