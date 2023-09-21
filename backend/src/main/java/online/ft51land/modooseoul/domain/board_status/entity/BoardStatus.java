@@ -47,7 +47,7 @@ public class BoardStatus extends BaseEntity {
     @Column(name="owner_id")
     private String ownerId;
 
-    private List<String> buildings;
+    private List<Long> buildings;
 
     private Long synergy;
 
@@ -63,5 +63,9 @@ public class BoardStatus extends BaseEntity {
     }
     public void purchaseGround(String playerId) {
         this.ownerId = playerId;
+    }
+
+    public void purchaseBuilding(Long buildingIdx, Long buildingId) {
+        this.buildings.add(Math.toIntExact(buildingIdx), buildingId);
     }
 }

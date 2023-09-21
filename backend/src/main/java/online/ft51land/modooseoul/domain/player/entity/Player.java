@@ -123,4 +123,9 @@ public class Player extends BaseEntity {
     public void purchaseGround(Long groundPrice) {
         this.cash -= groundPrice;
     }
+
+    public void purchaseBuilding(Long buildingPrice) {
+        this.estateMoney += buildingPrice;
+        this.cash -= buildingPrice;
+    }
 }
