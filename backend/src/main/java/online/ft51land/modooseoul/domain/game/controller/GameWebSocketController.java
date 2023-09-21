@@ -7,6 +7,7 @@ import online.ft51land.modooseoul.domain.game.dto.message.GameTurnMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.messagenum.service.MessageNumService;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
@@ -51,5 +52,19 @@ public class GameWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		webSocketSendHandler.sendToGame("turn", gameId, GameTurnMessage.of(game));
+	}
+
+	@MessageMapping("/playersInfo/{gameId}")
+	public void getPlayersInfo(@DestinationVariable String gameId) {
+		Game game = gameService.getGameById(gameId);
+		List<Player> players = new ArrayList<>();
+
+		for (String playerId : game.getPlayers()) {
+			players.add(playerService.getPlayerById(playerId));
+		}
+
+		List<PlayerInGameInfoMessage> message = gameService.getPlayersInfo(players);
+
+		webSocketSendHandler.sendToGame("playersInfo", gameId, message);
 	}
 }
