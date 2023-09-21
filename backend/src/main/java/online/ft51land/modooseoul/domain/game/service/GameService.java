@@ -10,19 +10,19 @@ import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
+import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
+import online.ft51land.modooseoul.domain.game_stock.repository.GameStockRepository;
 import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
 import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
 
-import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
-import online.ft51land.modooseoul.domain.player.entity.Player;
-import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 
+import online.ft51land.modooseoul.domain.stock.entity.Stock;
+import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,8 @@ public class GameService {
     private final NewsRepository newsRepository;
     private final BoardRepository boardRepository;
     private final BoardStatusRepository boardStatusRepository;
+    private final GameStockRepository gameStockRepository;
+    private final StockRepository stockRepository;
 
 
     public Game getGameById(String gameId) {
@@ -81,7 +83,9 @@ public class GameService {
         // 방 초기 세팅
         game.setBasicInfo(); // 방 기본 정보
         sequencePlayer(game); // 선 정하기
+        setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
+        setGameStocks(game); // 주식 초기값 저장
         setBoard(game);
         gameRepository.save(game);
 
@@ -100,8 +104,36 @@ public class GameService {
         for(Board board : boardList){
             boardStatusRepository.save(new BoardStatus(game.getId(), board));
         }
+    }
 
+    // 주식 세팅
+    public void setGameStocks(Game game) {
+        List<Long> stocksIds = game.getStocks();
+        for (Long stockId : stocksIds) {
+            Stock stock = stockRepository
+                    .findById(stockId)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
+            GameStock gameStock = new GameStock(stock, game.getId());
+            log.info("stock id = {}", gameStock.getId());
+            log.info("stock price = {}", gameStock.getStocksPrice());
+            gameStockRepository.save(gameStock);
+        }
+    }
 
+    public void setRandomStocks(Game game) {
+        // random generator
+        Random random = new Random();
+
+        // 주식 5개 중에 3개 뽑아서 game.stock 에 저장
+        Set<Long> selectedIdx = new HashSet<>();
+        List<Long> selectedId = new ArrayList<>();
+        while (selectedIdx.size() < 3) {
+            Long num = random.nextLong(5) + 1;
+            if (selectedIdx.add(num)) {
+                selectedId.add(num);
+            }
+        }
+        game.setStocks(selectedId);
     }
 
     /* 게임 선 세팅
@@ -116,24 +148,12 @@ public class GameService {
     public void setNews(Game game) {
         // 최종 저장본
         List<List<News>> news = new ArrayList<>();
-
-        // random generator
-        Random random = new Random();
-
-        // 주식 5개 중에 3개 뽑기
-        Set<Long> selectedIdx = new HashSet<>();
-        List<Long> selectedId = new ArrayList<>();
-        while (selectedIdx.size() < 3) {
-            Long num = random.nextLong(5) + 1;
-            if (selectedIdx.add(num)) {
-                selectedId.add(num);
-            }
-        }
+        List<Long> stockIds = game.getStocks();
 
         // 선정된 주식들 일단 섞어서 저장
         // 행렬 뒤집히기 전에 리스트
         List<List<News>> befTranspose = new ArrayList<>();
-        for (Long StockId : selectedId) {
+        for (Long StockId : stockIds) {
             List<News> newsListByStockId = newsRepository.findByStockId(StockId);
             Collections.shuffle(newsListByStockId);
             befTranspose.add(newsListByStockId);
@@ -159,5 +179,9 @@ public class GameService {
         }
 
         return playersInfo;
+    }
+
+    public void startRound(Game game) {
+        game.roundStart();
     }
 }
