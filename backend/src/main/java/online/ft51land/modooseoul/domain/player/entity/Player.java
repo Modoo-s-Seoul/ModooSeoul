@@ -28,8 +28,8 @@ public class Player extends BaseEntity {
     current_board_id : 현재 위치
     cash :  보유 현금
     stock_money: 주식 보유금
-    asset_money : 부동산 보유금
-    assets: 소유 부동산 List
+    estate_money : 부동산 보유금
+    estates: 소유 부동산 List
     tax: 미납금
     dice : 주사위
     already_double: 이미 더블했는지 여부
@@ -59,10 +59,10 @@ public class Player extends BaseEntity {
     @Column(name = "stock_money")
     private Long stockMoney;
 
-    @Column(name="asset_money")
-    private Long assetMoney;
+    @Column(name="estate_money")
+    private Long estateMoney;
 
-    private List assets;
+    private List estate;
 
     private Long tax;
 
@@ -103,8 +103,8 @@ public class Player extends BaseEntity {
     public void playerInit() {
         this.cash = 10000000L; // 초기자금 1000만원
         this.stockMoney = 0L;
-        this.assetMoney = 0L;
-        this.assets = new ArrayList<>();
+        this.estateMoney = 0L;
+        this.estate = new ArrayList<>();
 
         this.currentBoardId = 0L;
         this.dice = 0L;
