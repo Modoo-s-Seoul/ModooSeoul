@@ -10,6 +10,7 @@ import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -99,11 +100,19 @@ public class Player extends BaseEntity {
         this.dice = dice;
     }
 
-    public void gameStart() {
+    public void playerInit() {
+        this.cash = 10000000L; // 초기자금 1000만원
+        this.stockMoney = 0L;
+        this.assetMoney = 0L;
+        this.assets = new ArrayList<>();
+
         this.currentBoardId = 0L;
-        this.cash = 1000L;
         this.dice = 0L;
         this.isDouble = false;
+        this.selectStockId = 0L;
+
+        this.tax = 0L;
+        this.isArrested = false;
     }
 
     public void playerMove(Long currentBoardId) {

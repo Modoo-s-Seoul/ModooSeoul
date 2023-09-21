@@ -46,21 +46,18 @@ public class GameService {
         return GameCreateResponseDto.of(game);
     }
 
-    public GameStartMessage gameStart(Game game) {
+    public GameStartMessage gameStart(Game game, List<Player> players) {
 
+        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
         // 게임 시작 가능 여부 확인
-        List<Player> players = new ArrayList<>();
         int readyCnt = 0;
 
-        for (String playerId : game.getPlayers()) {
-            Player player = playerService.getPlayerById(playerId);
-
+        for (Player player : players) {
+            log.info("player = {}", player);
             // 레디한 플레이어 몇 명인지 체크
             if (player.getIsReady()) {
                 readyCnt++;
             }
-
-            players.add(player);
         }
 
         // 방장만 있을 경우
@@ -81,7 +78,7 @@ public class GameService {
 
         // 플레이어 초기 세팅
         for (Player player : players) {
-            player.gameStart();
+            player.playerInit();
             playerRepository.save(player);
         }
 
