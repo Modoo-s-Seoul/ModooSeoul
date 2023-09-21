@@ -30,7 +30,7 @@ public class BoardStatusService {
         String message = "";
 
         //현재 플레이어가 위치한 땅이 소유자가 없는지 한번 더 체크
-        String curBoardId = player.getGameId()+"@"+player.getCurrentBoardId();
+        String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
 
         BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
@@ -39,7 +39,7 @@ public class BoardStatusService {
         if(player.getCash() < boardStatus.getPrice()) {
 
             isPurchase = false;
-            message = "구매할 돈이 부족합니다.";
+            message = "구매할 현금이 부족합니다.";
         }
 
         if(boardStatus.getOwnerId() != null) {
@@ -50,7 +50,7 @@ public class BoardStatusService {
 
         //구매
         if(isPurchase) {
-            //player 현금 정보 업데이트
+            //player 정보(현금, 소유 부동산) 업데이트
             player.purchaseGround(boardStatus.getPrice());
             playerRepository.save(player);
 
@@ -58,20 +58,20 @@ public class BoardStatusService {
             boardStatus.purchaseGround(player.getId());
             boardStatusRepository.save(boardStatus);
 
-            message = "구매 성공";
+            message = "땅 구매 성공";
         }
 
-        return (GroundPurchaseMessage.of(isPurchase, message, player.getCurrentBoardId(), player.getId()));
+        return (GroundPurchaseMessage.of(isPurchase, message, player.getCurrentBoardIdx(), player.getId()));
     }
 
     public BuildingPurchaseMessage purchaseBuilding(Player player, BuildingPurchaseRequestDto buildingPurchaseRequestDto) {
         boolean isStartPoint = false;
         boolean isPurchase = true;
         String message = "";
-        Long boardIdxForBuilding = player.getCurrentBoardId(); //건물 지을 땅 인덱스
+        Long boardIdxForBuilding = player.getCurrentBoardIdx(); //건물 지을 땅 인덱스
 
 
-        if(player.getCurrentBoardId() == 1) isStartPoint = true;
+        if(player.getCurrentBoardIdx() == 1) isStartPoint = true;
 
         //플레이어가 현재 시작점인지 체크, 시작점이 아니라면 건물짓는 위치가 현재위치 시작점이라면 받아온 index로 지음
         if(isStartPoint) {
@@ -102,7 +102,7 @@ public class BoardStatusService {
 
         if(player.getCash() < building.getPrice()) {
             isPurchase = false;
-            message = "구매할 돈이 부족합니다.";
+            message = "구매할 현금이 부족합니다.";
         }
 
         //구매
