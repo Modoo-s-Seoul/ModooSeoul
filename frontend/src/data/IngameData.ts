@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { playerInfo } from "../interface/ingame";
+import { PlayerPosition, PlayerInfo } from "../interface/ingame";
 
 /*
 export const sample = atom<number>({
@@ -91,19 +91,13 @@ export const isRollingState = atom<boolean>({
 });
 
 /** 플레이어 정보 기록 */
-export const playerDataState = atom<playerInfo[]>({
+export const playerDataState = atom<PlayerInfo[]>({
   key: "playerDataState",
   default: [],
 });
-export interface playerPosition {
-  row: number;
-  col: number;
-  mx: number;
-  my: number;
-}
 
 /** 플레이어 위치 기록 */
-export const playerPositionsState = atom<playerPosition[]>({
+export const playerPositionsState = atom<PlayerPosition[]>({
   key: "playerPositionsState",
   default: [],
 });

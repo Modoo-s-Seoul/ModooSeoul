@@ -1,5 +1,5 @@
 /**플레이어의 필드 내 위치 정보 */
-export interface playerPosition {
+export interface PlayerPosition {
   /**추상적 좌표값 */
   row: number;
   col: number;
@@ -10,7 +10,7 @@ export interface playerPosition {
 }
 
 /**플레이어의 게임 내 정보 */
-export interface playerInfo {
+export interface PlayerInfo {
   name: string;
   money: number;
   color: string;

@@ -60,6 +60,14 @@ export default function PM() {
           >
             인게임 이동
           </button>
+          <button
+            onClick={() => {
+              navigate(`/test`);
+            }}
+            style={{ margin: "5px" }}
+          >
+            컴포넌트 테스트
+          </button>
         </div>
       </div>
       <div style={{ marginTop: "50px" }} />

@@ -1,12 +1,16 @@
 package online.ft51land.modooseoul.domain.game.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -55,12 +59,13 @@ public class Game extends BaseEntity {
     @Column(name = "win_player_id")
     private String winPlayerId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "end_type")
     private EndType endType;
 
     private List<Long> stocks;
 
-    private List<Long> news;
+    private List<News> news; //
 
     @Column(name = "current_round")
     private Long currentRound;
@@ -85,12 +90,22 @@ public class Game extends BaseEntity {
         return this.players;
     }
 
-    public void gameStart() {
+    public void setBasicInfo() {
         this.isStart = true;
         this.startTime = LocalDateTime.now();
     }
 
-    public void sequencePlayer(List<String> players) {
+    public void setSequencePlayer(List<String> players) {
         this.players = players;
+    }
+
+    public void setNews(List<List<News>> news) {
+        // 뉴스는 4 * 10 으로 저장되어 있음.
+        // news[(라운드 - 1) * 4 + (카드번호 - 1)]
+        // 3라운드 3번카드 뽑았다면, news[3 * 4 + (3 - 1)] 하면 됨.
+        this.news = new ArrayList<>();
+        for (List<News> newsList : news) {
+            this.news.addAll(newsList);
+        }
     }
 }
