@@ -63,7 +63,7 @@ export default function Room() {
       socketClient.subscribe(`/receive/game/join/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         console.log("Room Status:", message);
-        const receivedData = message.message;
+        const receivedData = message.data;
         setRoomStatus(receivedData);
       });
 
@@ -73,7 +73,7 @@ export default function Room() {
       // 준비 완료 시 갱신된 참가한 방의 정보를 알려주는 채널
       socketClient.subscribe(`/receive/game/ready/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
-        const receivedData = message.message;
+        const receivedData = message.data;
         console.log("Ready Status", receivedData);
         setRoomStatus(receivedData);
       });
@@ -81,12 +81,19 @@ export default function Room() {
       // 참가한 방의 게임 시작 가능 여부를 알려주는 채널
       socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
-        const receivedData = message.message;
+        const receivedData = message.data;
         console.log("Start Status:", receivedData);
         if (receivedData.isStart === true) {
-          navigate(`/game`);
+          navigate(`/game`, {
+            // 유저 닉네임, 방 id 다음 페이지에 넘기기
+            state: {
+              nickname: nickname,
+              gameId: gameId,
+              playerId: playerId,
+            },
+          });
         } else {
-          alert(receivedData.message);
+          alert(receivedData.data);
         }
       });
     }
