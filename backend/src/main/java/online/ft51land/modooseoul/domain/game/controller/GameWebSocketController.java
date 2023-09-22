@@ -58,7 +58,7 @@ public class GameWebSocketController {
 	@MessageMapping("pass/{gameId}")
 	public void passTurn(@DestinationVariable String gameId ){
 		Game game = gameService.getGameById(gameId);
-		gameService.passTrun(game);
+		gameService.passTurn(game);
 		webSocketSendHandler.sendToGame("pass", gameId, GameTurnMessage.of(game));
 	}
 
