@@ -190,6 +190,7 @@ public class GameService {
     }
 
     public List<GameStock> setNextRoundStockPrice(Game game) {
+        int passFlag = 0;
         List<GameStock> gameStocks = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
 
@@ -199,17 +200,22 @@ public class GameService {
 
             // 꽝일 경우 그냥 넘김
             if (news.getStock().getId() == 6) {
+                passFlag = 1;
                 continue;
             }
 
-            // 해당 뉴스에 해당하는 주식 가져오기
+            // 주식 가져오기
             GameStock gameStock = gameStockRepository
-                    .findById(game.getId() + "@" + news.getStock().getId())
+                    .findById(game.getId() + "@" + game.getStocks().get(i - passFlag))
                     .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
 
+            Long price = gameStock.getStockPrice(); // 전 라운드 가격
+            if (game.getCurrentRound() == 1) {
+                gameStocks.add(gameStock);
+                continue;
+            }
             NewsType newsType = news.getNewsType(); // 증감 여부
             Long percent = news.getPercent(); // 퍼센트
-            Long price = gameStock.getStocksPrice(); // 전 라운드 가격
 
             // 계산
             long calPrice = price * percent / 100; // maintain 은 percent 0이라 ㄱㅊ

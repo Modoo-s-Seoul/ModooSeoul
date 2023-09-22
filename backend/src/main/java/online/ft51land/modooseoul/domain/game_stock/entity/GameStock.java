@@ -15,15 +15,19 @@ public class GameStock {
 	@Id
 	String id;
 
-	@Column(name = "stocksPrice")
-	Long stocksPrice;
+	@Column(name = "stock_price")
+	Long stockPrice;
+
+	@Column(name = "stock_name")
+	String stockName;
 
 	public GameStock(Stock stock, String gameId) {
 		this.id = gameId + "@" + stock.getId();
-		this.stocksPrice = stock.getPrice();
+		this.stockPrice = stock.getPrice();
+		this.stockName = stock.getName();
 	}
 
-	public void setStocksPrice(Long stocksPrice) {
-		this.stocksPrice = stocksPrice;
+	public void setStocksPrice(Long stockPrice) {
+		this.stockPrice = stockPrice;
 	}
 }
