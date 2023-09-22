@@ -74,8 +74,8 @@ public class Player extends BaseEntity {
     @Column(name = "is_arrested")
     private Boolean isArrested;
 
-    @Column(name = "select_stock_id")
-    private Long selectStockId;
+    @Column(name = "select_news_id")
+    private Long selectNewsId;
 
     @Column(name = "reportee_player_id")
     private Long reporteePlayerId;
@@ -109,7 +109,7 @@ public class Player extends BaseEntity {
         this.currentBoardIdx = 0L;
         this.dice = 0L;
         this.isDouble = false;
-        this.selectStockId = 0L;
+        this.selectNewsId = 0L;
 
         this.tax = 0L;
         this.isArrested = false;
@@ -129,5 +129,9 @@ public class Player extends BaseEntity {
     public void purchaseBuilding(Long buildingPrice) {
         this.estateMoney += buildingPrice;
         this.cash -= buildingPrice;
+    }
+
+    public void getSalary() {
+        this.cash +=1000000;
     }
 }
