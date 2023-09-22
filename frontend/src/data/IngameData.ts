@@ -1,5 +1,13 @@
 import { atom } from "recoil";
-import { PlayerPosition, PlayerInfo } from "../interface/ingame";
+import {
+  PlayerPosition,
+  PlayerInfo,
+  defaultMatch,
+  groundChangeType,
+  builingInfoType,
+  groundInfoType,
+  buildingChangeType,
+} from "../interface/ingame";
 
 /*
 export const sample = atom<number>({
@@ -16,7 +24,7 @@ export const sample2 = selector({
 });
 */
 
-// (임시) 게임 데이터
+// 게임 전체
 
 /** 더블 중첩 횟수 */
 export const doubleCntState = atom<number>({
@@ -28,6 +36,12 @@ export const doubleCntState = atom<number>({
 export const pNumState = atom<number>({
   key: "pNumState",
   default: 4,
+});
+
+/** 라운드 정보 */
+export const roundState = atom<number>({
+  key: "roundState",
+  default: 0,
 });
 
 /** 턴 정보 */
@@ -108,25 +122,11 @@ export const playerPositionsState = atom<PlayerPosition[]>({
   default: [],
 });
 
-/** (타입) 건물 정보 기록 */
-export interface builingInfoType {
-  player: number | null;
-  sell: boolean;
-  industry: number;
-}
-
 /** 건물 정보 기록 */
 export const builingInfoState = atom<builingInfoType[]>({
   key: "builingInfoState",
   default: [],
 });
-
-/** (타입) 땅 정보 기록 */
-export interface groundInfoType {
-  player: number | null;
-  sell: boolean;
-  color: string;
-}
 
 /** 땅 정보 기록 */
 export const groundInfoState = atom<groundInfoType[]>({
@@ -134,37 +134,17 @@ export const groundInfoState = atom<groundInfoType[]>({
   default: [],
 });
 
-/** (타입) 땅 변동 기록 */
-export interface groundChangeType {
-  player: number | null;
-  index: number;
-  // sell: boolean;
-}
-
 /** 땅 변동 기록 */
 export const groundChangeState = atom<groundChangeType[]>({
   key: "groundChangeState",
   default: [{ player: null, index: -1 }],
 });
 
-/** (타입) 건물 변동 기록 */
-export interface buildingChangeType {
-  player: number | null;
-  index: number;
-  point: number;
-  industry: number;
-  // sell: boolean;
-}
-
 /** 건물 변동 기록 */
 export const buildingChangeState = atom<buildingChangeType[]>({
   key: "buildingChangeState",
   default: [{ player: null, index: -1, point: -1, industry: -1 }],
 });
-export interface defaultMatch {
-  row: number;
-  col: number;
-}
 
 /** 보드판 위치 정보 */
 export const matchPosition = atom<defaultMatch[]>({
@@ -205,6 +185,9 @@ export const matchPosition = atom<defaultMatch[]>({
   ],
 });
 
-// 게임 전체
-
 // 플레이어 개인
+
+export const selectedNewsState = atom<string>({
+  key: "selectedNewsState",
+  default: "",
+});

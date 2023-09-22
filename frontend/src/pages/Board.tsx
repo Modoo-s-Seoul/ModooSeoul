@@ -8,8 +8,8 @@ import { EmojiCursor } from "../components/Base/EmojiCursor";
 // 웹소켓
 import IngameWebSocket from "../components/IngameWs/IngameWebSocket";
 import {
-  SendPlayerMessage,
-  // SendGameMessage,
+  sendPlayerMessage,
+  // sendGameMessage,
 } from "../components/IngameWs/IngameSendFunction";
 import { useSocket } from "./SocketContext";
 import { useLocation } from "react-router-dom";
@@ -415,7 +415,7 @@ export default function Board() {
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
     if (socketClient) {
-      SendPlayerMessage(socketClient, playerId, "send/roll");
+      sendPlayerMessage(socketClient, playerId, "send/roll");
     }
 
     // 주사위 값 결정
