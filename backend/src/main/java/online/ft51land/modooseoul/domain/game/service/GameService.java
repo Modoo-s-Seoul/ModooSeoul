@@ -7,6 +7,7 @@ import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
+import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
@@ -177,18 +178,19 @@ public class GameService {
         return playersInfo;
     }
 
-    public void startRound(Game game) {
-        log.info("game = {}", game);
-        log.info("round 호출");
-        log.info("round -> {}", game.getCurrentRound());
+    public GameRoundStartMessage startRound(Game game) {
         game.roundStart(game.getCurrentRound() + 1);
 
         // 주식 가격 변동
-        setNextRoundStockPrice(game);
+        List<GameStock> gameStocks = setNextRoundStockPrice(game);
         gameRepository.save(game);
+
+        // 메시지 가공
+        return GameRoundStartMessage.of(game, gameStocks);
     }
 
-    public void setNextRoundStockPrice(Game game) {
+    public List<GameStock> setNextRoundStockPrice(Game game) {
+        List<GameStock> gameStocks = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
 
             // 지금 라운드의 모든 뉴스들 가져오기
@@ -223,6 +225,9 @@ public class GameService {
             // gameStock 에 저장
             gameStock.setStocksPrice(price);
             gameStockRepository.save(gameStock);
+
+            gameStocks.add(gameStock);
         }
+        return gameStocks;
     }
 }

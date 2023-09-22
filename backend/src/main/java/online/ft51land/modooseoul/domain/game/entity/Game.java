@@ -128,6 +128,6 @@ public class Game extends BaseEntity {
 
 	public void roundStart(Long currentRound) {
 		this.currentRound = currentRound;
-		this.turnInfo = 0L;
+		this.turnInfo = this.getPlayers().size() + 1L;
 	}
 }

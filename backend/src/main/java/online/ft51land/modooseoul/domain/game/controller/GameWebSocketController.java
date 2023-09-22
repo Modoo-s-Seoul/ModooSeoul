@@ -2,6 +2,7 @@ package online.ft51land.modooseoul.domain.game.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTurnMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
@@ -10,6 +11,8 @@ import online.ft51land.modooseoul.domain.messagenum.service.MessageNumService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
+import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
+import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -38,8 +41,6 @@ public class GameWebSocketController {
 
 		// 게임 시작 가능 여부 반환
 		GameStartMessage gameStartMessage = gameService.gameStart(game, players);
-
-		Long messageNum = messageNumService.getMessageNumByGameId(gameId);
 
 		// 메시지 번호 가지고 오기 게임 시작 가능한지 여부 전송
 		webSocketSendHandler.sendToGame("start", gameId, gameStartMessage);
@@ -70,15 +71,17 @@ public class GameWebSocketController {
 
 	@MessageMapping("/roundStart/{gameId}")
 	public void startRound(@DestinationVariable String gameId) {
+		// game 객체 생성
 		Game game = gameService.getGameById(gameId);
 
-		gameService.startRound(game);
-	}
+		// 예외 처리
+		if (game.getTurnInfo() != game.getPlayers().size()) {
+			throw new BusinessException(ErrorMessage.INTERVAL_SERVER_ERROR);
+		}
 
-	@MessageMapping("/test/{gameId}")
-	public void test(@DestinationVariable String gameId) {
-		Game game = gameService.getGameById(gameId);
-		gameService.startRound(game);
-		webSocketSendHandler.sendToGame("test", gameId, game.getCurrentRound());
+		GameRoundStartMessage message = gameService.startRound(game);
+
+		webSocketSendHandler.sendToGame("roundStart", gameId, message);
+
 	}
 }
