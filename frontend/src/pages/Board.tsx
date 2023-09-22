@@ -7,8 +7,8 @@ import { EmojiCursor } from "../components/Base/EmojiCursor";
 // 웹소켓
 import IngameWebSocket from "../components/IngameWs/IngameWebSocket";
 import {
-  SendPlayerMessage,
-  // SendGameMessage,
+  sendPlayerMessage,
+  // sendGameMessage,
 } from "../components/IngameWs/IngameSendFunction";
 import { useSocket } from "./SocketContext";
 import { useLocation } from "react-router-dom";
@@ -17,6 +17,8 @@ import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
 import CommonTurn from "../components/All/CommonTurn";
 import DiceRoll from "./DiceRoll";
+import IngameModal from "../components/Base/IngameModal";
+import News from "../components/All/News";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -40,6 +42,7 @@ import {
   buildingChangeState,
   isCommonTurnVisibleState,
   isLoadingVisibleState,
+  isNewsVisibleState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import Loading from "../components/Base/Loading";
@@ -119,6 +122,7 @@ export default function Board() {
 
   // 음악
   const audio = useRecoilValue(musicState);
+  const [isNewsVisible, setIsNewsVisible] = useRecoilState(isNewsVisibleState); // 공통 턴 수행 가능 여부
 
   // 웹소켓 기본인자
   const socketClient = useSocket();
@@ -428,7 +432,7 @@ export default function Board() {
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
     if (socketClient) {
-      SendPlayerMessage(socketClient, playerId, "send/roll");
+      sendPlayerMessage(socketClient, playerId, "send/roll");
     }
 
     // 주사위 값 결정
@@ -467,11 +471,12 @@ export default function Board() {
     // 전체화면
     // 배경음악 재생
     audio.play();
+    setTurn(pNum + 1);
   }, []);
 
   /** 화살표 동기화 */
   useEffect(() => {
-    if (etcSprite[0] && turn !== pNum) {
+    if (etcSprite[0] && turn < pNum) {
       etcSprite[0].setAlpha(1);
       const goRow = playerPositions[turn].row;
       const goCol = playerPositions[turn].col;
@@ -484,7 +489,7 @@ export default function Board() {
       );
       // 깃발 숨기기
       etcSprite[1].setAlpha(0);
-    } else if (etcSprite[0] && turn === pNum) {
+    } else if (etcSprite[0] && turn >= pNum) {
       etcSprite[0].setAlpha(0);
     }
   }, [turn]);
@@ -571,7 +576,15 @@ export default function Board() {
     if (turn === pNum) {
       console.log("공통턴 띄워라");
       setIsCommonTurnVisible(true);
+    } else if (turn === pNum + 1) {
+      console.log("뉴스 띄워라");
+      setIsNewsVisible(true);
     }
+  }, [turn]);
+
+  useEffect(() => {
+    console.log(isNewsVisible);
+    console.log(turn);
   }, [turn]);
 
   /** 렌더링 부분 */
@@ -605,6 +618,16 @@ export default function Board() {
             )}
           </div>
         )}
+        <IngameModal visible={isUserTurnVisible}>
+          {isUserTurnVisible && <UserTurn />}
+        </IngameModal>
+        <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+          {isCommonTurnVisible && <CommonTurn />}
+        </IngameModal>
+        {/* <IngameModal width="85vw" height="70vh" visible={isNewsVisible}> */}
+        <IngameModal width="5vw" height="5vh" visible={isNewsVisible}>
+          {isNewsVisible && <News />}
+        </IngameModal>
         <div ref={game} className="GameScreen" id="gameScreen" />
       </div>
     </CursorifyProvider>

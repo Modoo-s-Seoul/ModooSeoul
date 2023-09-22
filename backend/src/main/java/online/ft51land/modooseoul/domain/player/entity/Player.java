@@ -51,8 +51,8 @@ public class Player extends BaseEntity {
     @Column(name = "is_ready", nullable = false)
     private Boolean isReady;
 
-    @Column(name ="current_board_id")
-    private Long currentBoardId;
+    @Column(name ="current_board_idx")
+    private Long currentBoardIdx;
     
     private Long cash;
 
@@ -62,7 +62,7 @@ public class Player extends BaseEntity {
     @Column(name="estate_money")
     private Long estateMoney;
 
-    private List estate;
+    private List<Long> estate;
 
     private Long tax;
 
@@ -74,8 +74,8 @@ public class Player extends BaseEntity {
     @Column(name = "is_arrested")
     private Boolean isArrested;
 
-    @Column(name = "select_stock_id")
-    private Long selectStockId;
+    @Column(name = "select_news_id")
+    private Long selectNewsId;
 
     @Column(name = "reportee_player_id")
     private Long reporteePlayerId;
@@ -106,26 +106,32 @@ public class Player extends BaseEntity {
         this.estateMoney = 0L;
         this.estate = new ArrayList<>();
 
-        this.currentBoardId = 0L;
+        this.currentBoardIdx = 0L;
         this.dice = 0L;
         this.isDouble = false;
-        this.selectStockId = 0L;
+        this.selectNewsId = 0L;
 
         this.tax = 0L;
         this.isArrested = false;
     }
 
     public void playerMove(Long currentBoardId) {
-        this.currentBoardId = currentBoardId;
+        this.currentBoardIdx = currentBoardId;
     }
 
 
     public void purchaseGround(Long groundPrice) {
+        this.estateMoney += groundPrice;
         this.cash -= groundPrice;
+        this.estate.add(this.currentBoardIdx);
     }
 
     public void purchaseBuilding(Long buildingPrice) {
         this.estateMoney += buildingPrice;
         this.cash -= buildingPrice;
+    }
+
+    public void getSalary() {
+        this.cash +=1000000;
     }
 }

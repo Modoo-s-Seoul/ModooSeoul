@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { joinRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
-import ClickBtn from "../../components/Base/ClickBtn";
+import ClickBtn from "../../components/Base/CustomButton";
 import axios from "axios";
 
 /** 방 입장 컴포넌트 */

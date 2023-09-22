@@ -2,7 +2,7 @@ import { useState, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createRoom, joinRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
-import ClickBtn from "../../components/Base/ClickBtn";
+import ClickBtn from "../../components/Base/CustomButton";
 
 /** 게임 방생성 컴포넌트 */
 export default function RoomCreate() {

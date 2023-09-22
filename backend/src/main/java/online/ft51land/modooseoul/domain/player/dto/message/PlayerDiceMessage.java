@@ -8,7 +8,7 @@ public record PlayerDiceMessage(
 		Long first,
 		Long second,
 		Boolean isDouble,
-		Long currentBoardId,
+		Long currentBoardIdx,
 		Boolean isSalary
 ) {
 	public static PlayerDiceMessage of(Long first, Long second, Player player, Boolean isSalary) {
@@ -16,7 +16,7 @@ public record PlayerDiceMessage(
 		                        .first(first)
 		                        .second(second)
 		                        .isDouble(player.getIsDouble())
-		                        .currentBoardId(player.getCurrentBoardId())
+		                        .currentBoardIdx(player.getCurrentBoardIdx())
 								.isSalary(isSalary)
 		                        .build();
 	}

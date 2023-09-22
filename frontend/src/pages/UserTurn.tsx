@@ -9,7 +9,7 @@ import Start from "../components/Turn/Start";
 import Subway from "../components/Turn/Subway";
 import Tax from "../components/Turn/Tax";
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   isUserTurnVisibleState,
   tcolState,
@@ -23,9 +23,7 @@ export default function UserTurn() {
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const boardData = useRecoilValue(boardDataState);
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]);
-  const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
-    isUserTurnVisibleState
-  ); // 플레이어 턴 수행 가능 여부
+  const setIsUserTurnVisible = useSetRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
 
   turn;
   setTurn;
@@ -43,7 +41,7 @@ export default function UserTurn() {
     // const timeout = timeoutMap[turnData.kind] || 10000;
     // const timeoutId = setTimeout(() => {
     //   setIsUserTurnVisible(false);
-    //   setTurn(turn + 1)
+    //   setTurn(turn + 1);
     // }, timeout);
     // return () => clearTimeout(timeoutId);
   }, [turnData.kind, setIsUserTurnVisible]);
@@ -51,19 +49,13 @@ export default function UserTurn() {
   return (
     <>
       {/* Event Board */}
-      <div
-        className={`eventContainer ${
-          isUserTurnVisible ? "userTurnActive" : ""
-        }`}
-      >
-        {turnData.kind === "ground" && <Ground />}
-        {turnData.kind === "key" && <Key />}
-        {turnData.kind === "start" && <Start />}
-        {turnData.kind === "subway" && <Subway />}
-        {turnData.kind === "prison" && <Prison />}
-        {turnData.kind === "oil" && <Oil />}
-        {turnData.kind === "tax" && <Tax />}
-      </div>
+      {turnData.kind === "ground" && <Ground />}
+      {turnData.kind === "key" && <Key />}
+      {turnData.kind === "start" && <Start />}
+      {turnData.kind === "subway" && <Subway />}
+      {turnData.kind === "prison" && <Prison />}
+      {turnData.kind === "oil" && <Oil />}
+      {turnData.kind === "tax" && <Tax />}
     </>
   );
 }

@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import { roomStatus } from "../../data/CommonData";
 import { unsubscribeRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
-import ClickBtn from "../../components/Base/ClickBtn";
+import ClickBtn from "../../components/Base/CustomButton";
 import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
 import { handleFullScreen } from "../../components/Base/BaseFunc";

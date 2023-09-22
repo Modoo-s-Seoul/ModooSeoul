@@ -127,12 +127,15 @@ public class PlayerService {
         rolledPlayer.updateDice(one + two);
 
         // 어디로 이동했는지 저장
-        Long bef = rolledPlayer.getCurrentBoardId();
+        Long bef = rolledPlayer.getCurrentBoardIdx();
         Long aft = (bef + (one + two)) % 32;
         rolledPlayer.playerMove(aft);
 
         // 월급 받았는지 안 받았는지 여부 저장
         Boolean isSalary = bef > aft;
+        if(bef > aft){
+            rolledPlayer.getSalary();
+        }
 
         // DB 갱신
         playerRepository.save(rolledPlayer);
@@ -167,10 +170,5 @@ public class PlayerService {
 
         // 플레이어 레포지토리에서 플레이어 제외
         playerRepository.delete(player);
-    }
-
-    public void purchaseGround(Player player, Long groundPrice) {
-        player.purchaseGround(groundPrice);
-        playerRepository.save(player);
     }
 }

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useSocket } from "../../pages/SocketContext";
 import { useLocation } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { selectedNewsState } from "../../data/IngameData";
 
 export default function IngameWebSocket() {
   // 게임 정보
@@ -14,6 +16,9 @@ export default function IngameWebSocket() {
   }
   /**웹소켓 클라이언트 */
   const socketClient = useSocket();
+
+  // 세팅할 데이터들
+  const setSelectedNews = useSetRecoilState(selectedNewsState); // 뉴스
 
   /** 초기구독 */
   useEffect(() => {
@@ -127,11 +132,13 @@ export default function IngameWebSocket() {
 
       //// 개별 구독 ////
       // 구독 1. 뉴스 선택
-      socketClient.subscribe(``, (msg) => {
+      socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         console.log("Ingame Sub 1 select news:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
+        setSelectedNews(receivedData);
       });
+
       // 구독 2. 땅 판매
       socketClient.subscribe(``, (msg) => {
         const res = JSON.parse(msg.body);

@@ -3,27 +3,29 @@
 import { CompatClient } from "@stomp/stompjs";
 
 /** playerId로 요청 */
-export const SendPlayerMessage = (
+export const sendPlayerMessage = (
   socketClient: CompatClient,
   playerId: string,
-  endpoint: string
+  endpoint: string,
+  body?: string
 ) => {
   console.log("Player Send 요청들어옴", `/${endpoint}/${playerId}`);
 
   if (socketClient !== null) {
-    socketClient.send(`/${endpoint}/${playerId}`);
+    socketClient.send(`/${endpoint}/${playerId}`, {}, body);
   }
 };
 
 /** gameId로 요청 */
-export function SendGameMessage(
+export function sendGameMessage(
   socketClient: CompatClient,
   gameId: string,
-  endpoint: string
+  endpoint: string,
+  body?: string
 ) {
   console.log("Game Send 요청들어옴", `/${endpoint}/${gameId}`);
 
   if (socketClient !== null) {
-    socketClient.send(`/${endpoint}/${gameId}`);
+    socketClient.send(`/${endpoint}/${gameId}`, {}, body);
   }
 }
