@@ -160,6 +160,12 @@ public class PlayerService {
         Long cardIdx = playerNewsRequestDto.cardIdx();
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
+        //뉴스 턴 넘기기
+        if(game.getTurnInfo() == game.getPlayers().size()+1){
+            game.passTurn();
+            gameRepository.save(game);
+        }
+
         // 메시지 가공 후 리턴
         return PlayerNewsMessage.of(news);
     }
@@ -179,14 +185,5 @@ public class PlayerService {
 
         // 플레이어 레포지토리에서 플레이어 제외
         playerRepository.delete(player);
-    }
-
-    public Long passTurn (Player player){
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
-
-        Long nextTurn = game.passTurn();
-        gameRepository.save(game);
-        return nextTurn;
     }
 }

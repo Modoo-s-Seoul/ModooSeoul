@@ -94,7 +94,7 @@ public class Game extends BaseEntity {
 	public void setBasicInfo() {
 		this.isStart = true;
 		this.startTime = LocalDateTime.now();
-		this.turnInfo = 0L;
+		this.turnInfo = Long.valueOf(this.players.size()+1);
 	}
 
 	public void setSequencePlayer(List<String> players) {
@@ -131,6 +131,9 @@ public class Game extends BaseEntity {
 
 
 	public Long passTurn() {
+		if(this.players.size() + 1 == this.turnInfo){
+			return this.turnInfo = 0L;
+		}
 		return ++this.turnInfo;
 	}
 }
