@@ -186,4 +186,9 @@ public class GameService {
     public void startRound(Game game) {
         game.roundStart();
     }
+
+    public void passTurn(Game game) {
+        game.passTurn();
+        gameRepository.save(game);
+    }
 }
