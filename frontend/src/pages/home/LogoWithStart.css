@@ -1,0 +1,43 @@
+.logoStartContainer {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.logoStartContainer img {
+  width: 70%;
+  animation: LogoAnimation 3s ease infinite alternate;
+}
+
+.logoStartBtn {
+  font-size: 10vw;
+  width: 30vw;
+  background-color: rgb(105, 207, 94);
+  color: aliceblue;
+  text-shadow: 1px 1px 1px rgb(7, 67, 9);
+  border-radius: 10vw;
+  transition: background-color 0.3s ease, transform 0.3s ease, width 0.3s ease,
+    height 0.3s ease;
+}
+.logoStartBtn:hover {
+  background-color: rgb(7, 67, 9);
+  transform: scale(1.05);
+}
+
+.startLink {
+  text-decoration: none;
+  color: unset;
+}
+
+@keyframes LogoAnimation {
+  0% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}
