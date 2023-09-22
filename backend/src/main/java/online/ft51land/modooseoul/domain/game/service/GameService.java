@@ -62,6 +62,7 @@ public class GameService {
         // 게임 시작 가능 여부 확인
         int readyCnt = 0;
 
+
         for (Player player : players) {
             log.info("player = {}", player);
             // 레디한 플레이어 몇 명인지 체크
@@ -90,8 +91,9 @@ public class GameService {
         gameRepository.save(game);
 
         // 플레이어 초기 세팅
-        for (Player player : players) {
-            player.playerInit();
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            player.playerInit(Long.valueOf(i));
             playerRepository.save(player);
         }
 

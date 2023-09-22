@@ -36,7 +36,8 @@ public class Player extends BaseEntity {
     is_arrested: 검거 여부
     select_stock_id: 확인한 뉴스의 종목
     reportee_player_id : 피고자(신고를 당한 사람)
-
+    turn_num : 본인 턴 번호 0 ~ 4
+    is_bankrupt :  파산여부
 
      */
     @Id
@@ -53,7 +54,7 @@ public class Player extends BaseEntity {
 
     @Column(name ="current_board_idx")
     private Long currentBoardIdx;
-    
+
     private Long cash;
 
     @Column(name = "stock_money")
@@ -80,6 +81,12 @@ public class Player extends BaseEntity {
     @Column(name = "reportee_player_id")
     private Long reporteePlayerId;
 
+    @Column(name ="turn_num")
+    private Long turnNum;
+
+    @Column(name ="is_bankrupt")
+    private Boolean isBankrupt;
+
     @Builder
     public Player(String nickname, String gameId){
         this.nickname = nickname;
@@ -100,7 +107,7 @@ public class Player extends BaseEntity {
         this.dice = dice;
     }
 
-    public void playerInit() {
+    public void playerInit(Long turnNum) {
         this.cash = 10000000L; // 초기자금 1000만원
         this.stockMoney = 0L;
         this.estateMoney = 0L;
@@ -114,6 +121,9 @@ public class Player extends BaseEntity {
         this.tax = 0L;
         this.isArrested = false;
         this.estates = new ArrayList<>();
+        this.isBankrupt = false;
+
+        this.turnNum = turnNum;
     }
 
     public void playerMove(Long currentBoardId) {

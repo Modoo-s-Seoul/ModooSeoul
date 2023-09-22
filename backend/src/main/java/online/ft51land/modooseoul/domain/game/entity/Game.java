@@ -128,4 +128,9 @@ public class Game extends BaseEntity {
 		this.currentRound = this.currentRound + 1;
 		this.turnInfo = 0L;
 	}
+
+
+	public Long passTurn() {
+		return ++this.turnInfo;
+	}
 }
