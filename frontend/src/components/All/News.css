@@ -1,0 +1,7 @@
+.newsPageContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.newsCardContainer {
+}

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import IngameBox from "../Base/IngameBox";
 import { turnState, isNewsVisibleState } from "../../data/IngameData";
+import { sendPlayerMessage } from "../IngameWs/IngameSendFunction";
+import { selectedNewsState } from "../../data/IngameData";
 
 export default function News() {
   // 기본 인자
-  const [timeCnt, setTimeCnt] = useState(2);
+  const [timeCnt, setTimeCnt] = useState(5); // 시간 제한 5초
   const setTurn = useSetRecoilState(turnState);
   const setNews = useSetRecoilState(isNewsVisibleState);
 
@@ -27,8 +30,10 @@ export default function News() {
   }, [timeCnt]);
   return (
     <>
-      <div>{timeCnt}</div>
-      <div>News!</div>
+      <div className="newsPageContainer">
+        <div>{timeCnt}</div>
+        <div>News!</div>
+      </div>
     </>
   );
 }

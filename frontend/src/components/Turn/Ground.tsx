@@ -14,6 +14,7 @@ import { boardDataState } from "../../data/BoardData";
 import { useEffect, useState } from "react";
 import "./Ground.css";
 import CloseBtn from "./CloseBtn";
+import TimeBar from "../All/Timebar";
 
 export default function Ground() {
   const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
@@ -194,7 +195,7 @@ export default function Ground() {
         {/* 상단 - 닫기 버튼 */}
         <div>
           <CloseBtn />
-          <div className="timeBar"></div>
+          <TimeBar duration={10} />
         </div>
         {/* 중단 - 본 내용 */}
         <div className="groundBody">

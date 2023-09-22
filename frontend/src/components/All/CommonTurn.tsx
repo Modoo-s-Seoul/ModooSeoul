@@ -6,6 +6,7 @@ import CloseBtnCommon from "./CloseBtnCommon";
 import { useSetRecoilState } from "recoil";
 import { isCommonTurnVisibleState, turnState } from "../../data/IngameData";
 import ClickBtn from "../Base/CustomButton";
+import TimeBar from "./Timebar";
 
 export default function CommonTurn() {
   // 기본 인자
@@ -38,7 +39,7 @@ export default function CommonTurn() {
         {/* 상단 바 */}
         <CloseBtnCommon />
         <div className="commonTimer">{timeCnt}</div>
-        <div className="commonTimeBar"></div>
+        <TimeBar duration={60} />
         {/* 본문 */}
         <div className={"commonBody"}>
           {/* 주식 */}
