@@ -37,6 +37,7 @@ public class WebSocketSendHandler {
 	}
 
 	public <T> void sendToPlayer(String topic, String playerId, String gameId, T message) {
+		log.info("playerId = {}, gameId = {}, message = {}",playerId, gameId, message);
 		//받은 방번호로 메시지 넘버를 찾아와서
 		MessageNum messageNum = messageNumRepository.findById(gameId)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
