@@ -2,7 +2,10 @@ package online.ft51land.modooseoul.domain.player.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
+import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
@@ -28,6 +31,7 @@ public class PlayerService {
 
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final BoardStatusRepository boardStatusRepository;
 
     // playerId 로 Player 객체 얻어오는 메서드
     public Player getPlayerById(String playerId) {
@@ -188,5 +192,27 @@ public class PlayerService {
         Long nextTurn = game.passTurn();
         gameRepository.save(game);
         return nextTurn;
+    }
+
+    public PlayerArrivalBoardMessage<?> arrivalBoardInfo(Player player) {
+
+        String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
+
+        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        //지역구 - 빈땅
+        //플레이어의 아이디랑 현재 플레이어 위치한 보드의 ownerId가 같으면
+        if(player.getId().equals(boardStatus.getOwnerId())) {
+            return PlayerArrivalBoardMessage.of("zz","zz");
+        }
+        //지역구 - 내땅
+        //지역구 - 남땅
+        //찬스카드
+        //특수칸 - 시작점
+        //특수칸 - 감옥
+        //특수칸 - 오일랜드
+        //특수칸 - 지하철
+        //특수칸 - 국세청
+        return PlayerArrivalBoardMessage.of("zz","zz");
     }
 }
