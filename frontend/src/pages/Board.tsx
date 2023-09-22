@@ -16,14 +16,14 @@ import { useLocation } from "react-router-dom";
 // 컴포넌트 로드
 import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
-import CommonTurn from "../components/All/CommonTurn";
+import CommonTurn from "../components/CommonTurn/CommonTurn";
 import DiceRoll from "./DiceRoll";
 import IngameModal from "../components/Base/IngameModal";
-import News from "../components/All/News";
+import News from "../components/CommonTurn/News";
 // css 로드
 import "./Board.css";
 // 데이터로드
-import { PlayerPosition, PlayerInfo } from "../interface/ingame";
+import { PlayerPosition, PlayerData } from "../interface/ingame";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
@@ -32,6 +32,7 @@ import {
   dice1State,
   dice2State,
   diceActiveState,
+  playerInfoState,
   playerDataState,
   isUserTurnVisibleState,
   isRollingState,
@@ -74,8 +75,9 @@ export default function Board() {
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
-  const playerDeafaults: PlayerInfo[] = [];
-  const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  const playerDeafaults: PlayerData[] = [];
+  const [playerInfo, setPlayerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
+  const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
   playerData;
   for (let i = 1; i <= pNum; i++) {
     playerDeafaults.push({
@@ -119,13 +121,6 @@ export default function Board() {
   // 웹소켓 기본인자
   const socketClient = useSocket();
   const weblocation = useLocation();
-  let gameId = "test";
-  let playerId = "test";
-  gameId;
-  if (weblocation.state) {
-    gameId = weblocation.state.gameId;
-    playerId = weblocation.state.playerId;
-  }
 
   /** 인게임 설정 */
   const config = {
@@ -415,7 +410,7 @@ export default function Board() {
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
     if (socketClient) {
-      sendPlayerMessage(socketClient, playerId, "send/roll");
+      sendPlayerMessage(socketClient, playerInfo.playerId, "send/roll");
     }
 
     // 주사위 값 결정
@@ -442,15 +437,26 @@ export default function Board() {
   /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
+    if (weblocation.state) {
+      setPlayerInfo({
+        gameId: weblocation.state.gameId,
+        playerId: weblocation.state.playerId,
+      });
+    }
+    console.log("플레이어 고유 정보입니다", playerInfo);
     setPlayerData(playerDeafaults);
     console.log("플레이어 시작 정보입니다", playerDeafaults);
+
+    // 보드 세팅
     if (game.current) {
       new Phaser.Game(config);
     }
-    // 디폴트 기능 억제
+
+    // 새로고침, 뒤로가기 기능 억제
     window.addEventListener("beforeunload", preventRefresh);
     history.pushState(null, "", location.href);
     window.addEventListener("popstate", preventGoBack);
+
     // 전체화면
     setTurn(pNum + 1);
   }, []);
@@ -597,8 +603,12 @@ export default function Board() {
         <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
           {isCommonTurnVisible && <CommonTurn />}
         </IngameModal>
-        {/* <IngameModal width="85vw" height="70vh" visible={isNewsVisible}> */}
-        <IngameModal width="5vw" height="5vh" visible={isNewsVisible}>
+        <IngameModal
+          width="60vw"
+          height="30vh"
+          maxWidth="600px"
+          visible={isNewsVisible}
+        >
           {isNewsVisible && <News />}
         </IngameModal>
         <div ref={game} className="GameScreen" id="gameScreen" />
