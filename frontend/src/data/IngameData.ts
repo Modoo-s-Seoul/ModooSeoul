@@ -1,7 +1,8 @@
 import { atom } from "recoil";
 import {
-  PlayerPosition,
   PlayerInfo,
+  PlayerPosition,
+  PlayerData,
   defaultMatch,
   groundChangeType,
   builingInfoType,
@@ -116,8 +117,14 @@ export const isRollingState = atom<boolean>({
   default: false,
 });
 
-/** 플레이어 정보 기록 */
-export const playerDataState = atom<PlayerInfo[]>({
+/** 플레이어 고유 정보 기록 */
+export const playerInfoState = atom<PlayerInfo>({
+  key: "playerInfoState",
+  default: { gameId: "", playerId: "" },
+});
+
+/** 플레이어 인게임 정보 기록 */
+export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
   default: [],
 });
@@ -195,5 +202,5 @@ export const matchPosition = atom<defaultMatch[]>({
 
 export const selectedNewsState = atom<string>({
   key: "selectedNewsState",
-  default: "",
+  default: "뉴스",
 });
