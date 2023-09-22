@@ -39,7 +39,6 @@ public class GameWebSocketController {
 		// 게임 시작 가능 여부 반환
 		GameStartMessage gameStartMessage = gameService.gameStart(game, players);
 
-		Long messageNum = messageNumService.getMessageNumByGameId(gameId);
 
 		// 메시지 번호 가지고 오기 게임 시작 가능한지 여부 전송
 		webSocketSendHandler.sendToGame("start", gameId, gameStartMessage);
@@ -52,6 +51,15 @@ public class GameWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		webSocketSendHandler.sendToGame("turn", gameId, GameTurnMessage.of(game));
+	}
+
+
+	// 턴 종료
+	@MessageMapping("pass/{gameId}")
+	public void passTurn(@DestinationVariable String gameId ){
+		Game game = gameService.getGameById(gameId);
+		gameService.passTrun(game);
+		webSocketSendHandler.sendToGame("pass", gameId, GameTurnMessage.of(game));
 	}
 
 	@MessageMapping("/playersInfo/{gameId}")

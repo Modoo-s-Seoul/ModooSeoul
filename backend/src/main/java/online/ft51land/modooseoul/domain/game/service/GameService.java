@@ -186,4 +186,9 @@ public class GameService {
     public void startRound(Game game) {
         game.roundStart();
     }
+
+    public void passTrun(Game game) {
+        Long nextTrun = game.passTurn();
+        gameRepository.save(game);
+    }
 }
