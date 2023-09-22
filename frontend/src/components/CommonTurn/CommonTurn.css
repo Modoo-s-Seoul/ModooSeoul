@@ -81,14 +81,6 @@
   height: 100px;
 }
 
-.commonTimeBar {
-  width: 80%;
-  height: 10px;
-  background-color: #907915; /* 타임 바의 배경색 */
-  border-radius: 10px;
-  position: relative;
-  animation: timer-animation 60s linear infinite; /* 60초 동안 애니메이션 반복 */
-}
 .commonTimer {
   font-size: 40px;
 }
@@ -105,17 +97,4 @@
   margin-left: 10px;
   margin-right: 10px;
   font-size: 50px;
-}
-
-@keyframes timer-animation {
-  0% {
-    width: 100%; /* 초기 길이 */
-  }
-  90% {
-    background-color: rgb(196, 56, 56);
-  }
-  100% {
-    width: 0%; /* 0%까지 줄어듦 */
-    background-color: rgb(196, 56, 56);
-  }
 }

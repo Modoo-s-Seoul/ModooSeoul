@@ -4,12 +4,18 @@ import "./CommonTurn.css";
 import TaxThiefCatch from "./TaxThiefCatch";
 import CloseBtnCommon from "./CloseBtnCommon";
 import { useSetRecoilState } from "recoil";
-import { isCommonTurnVisibleState, turnState } from "../../data/IngameData";
+import {
+  roundState,
+  isCommonTurnVisibleState,
+  turnState,
+} from "../../data/IngameData";
 import ClickBtn from "../Base/CustomButton";
+import TimeBar from "../Base/TimeBar";
 
 export default function CommonTurn() {
   // 기본 인자
   const [timeCnt, setTimeCnt] = useState(10);
+  const setRound = useSetRecoilState(roundState);
   const setTurn = useSetRecoilState(turnState);
   const setCommonTurn = useSetRecoilState(isCommonTurnVisibleState);
 
@@ -23,6 +29,7 @@ export default function CommonTurn() {
         // 0초일시 턴 넘기기 (비활성화)
         setCommonTurn(false);
         setTurn((prev) => prev + 1);
+        setRound((prev) => prev + 1);
       }
     }, 1000);
     // 컴포넌트가 언마운트될 때 타이머 정리
@@ -38,7 +45,7 @@ export default function CommonTurn() {
         {/* 상단 바 */}
         <CloseBtnCommon />
         <div className="commonTimer">{timeCnt}</div>
-        <div className="commonTimeBar"></div>
+        <TimeBar duration={60} />
         {/* 본문 */}
         <div className={"commonBody"}>
           {/* 주식 */}
