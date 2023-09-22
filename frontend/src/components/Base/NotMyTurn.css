@@ -1,0 +1,26 @@
+.notMyTurnContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.notMyTurnText {
+  font-size: 12vw; /* 초기 글자 크기 */
+  color: rgb(161, 36, 36); /* 글자 색상 */
+  animation: scaleText 2s infinite alternate; /* 애니메이션 적용 */
+}
+
+@keyframes scaleText {
+  0% {
+    font-size: 11.5vw; /* 초기 크기 */
+  }
+  100% {
+    font-size: 12.5vw; /* 크게 만들기 */
+  }
+}

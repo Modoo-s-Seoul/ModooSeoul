@@ -43,6 +43,7 @@ import {
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import Loading from "../components/Base/Loading";
+import NotMyTurn from "../components/Base/NotMyTurn";
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -576,11 +577,15 @@ export default function Board() {
   /** 렌더링 부분 */
   return (
     <CursorifyProvider cursor={<EmojiCursor />} delay={1} opacity={1}>
-      {loadingVisible && <Loading />}
       <div>
+        {/* 로딩 */}
+        {loadingVisible && <Loading />}
+        {!loadingVisible && <NotMyTurn />}
+        {/* 기본 세팅 */}
         <IngameWebSocket />
         <GameOption />
         <UserInfo />
+        {/* 인게임 내부 */}
         {isUserTurnVisible && <UserTurn />}
         {isCommonTurnVisible && <CommonTurn />}
         {!loadingVisible && !isUserTurnVisible && !isCommonTurnVisible && (
