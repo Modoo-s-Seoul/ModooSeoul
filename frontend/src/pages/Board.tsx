@@ -28,6 +28,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
   first_money,
+  roundState,
   turnState,
   dice1State,
   dice2State,
@@ -87,6 +88,7 @@ export default function Board() {
     });
   }
 
+  const [round, setRound] = useRecoilState(roundState); // 현재 라운드
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
@@ -446,6 +448,7 @@ export default function Board() {
     console.log("플레이어 고유 정보입니다", playerInfo);
     setPlayerData(playerDeafaults);
     console.log("플레이어 시작 정보입니다", playerDeafaults);
+    setRound((prev) => prev + 1);
 
     // 보드 세팅
     if (game.current) {
