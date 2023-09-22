@@ -7,9 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
-import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -39,75 +39,93 @@ public class Game extends BaseEntity {
     message_num : 메시지 번호
      */
 
-    @Id
-    private String id;
+	@Id
+	private String id;
 
-//    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
-    private List<String> players;
+	//    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
+	private List<String> players;
 
 
-    @Column(name = "is_start", nullable = false)
-    private Boolean isStart;
+	@Column(name = "is_start", nullable = false)
+	private Boolean isStart;
 
-    @Column(name = "start_time")
-    private LocalDateTime startTime;
+	@Column(name = "start_time")
+	private LocalDateTime startTime;
 
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+	@Column(name = "end_time")
+	private LocalDateTime endTime;
 
-    @Column(name = "win_player_id")
-    private String winPlayerId;
+	@Column(name = "win_player_id")
+	private String winPlayerId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "end_type")
-    private EndType endType;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "end_type")
+	private EndType endType;
 
-    private List<Long> stocks;
+	private List<Long> stocks;
 
-    private List<News> news; //
+	private List<News> news;
 
-    @Column(name = "current_round")
-    private Long currentRound;
+	@Column(name = "current_round")
+	private Long currentRound;
 
-    @Column(name = "sum_money")
-    private Long sumMoney;
+	@Column(name = "sum_money")
+	private Long sumMoney;
 
-    @Column(name = "message_num", nullable = false)
-    private Long messageNum;
+	@Column(name = "message_num", nullable = false)
+	private Long messageNum;
 
-    @Column(name = "turn_info")
-    private Long turnInfo;
+	@Column(name = "turn_info")
+	private Long turnInfo;
 
-    @Builder
-    public Game(){
-        this.messageNum = 1L;
-        this.isStart = false;
-        this.players = new ArrayList<>();
-        this.createdDate = LocalDateTime.now();
-    }
+	@Builder
+	public Game() {
+		this.messageNum = 1L;
+		this.isStart = false;
+		this.players = new ArrayList<>();
+		this.createdDate = LocalDateTime.now();
+	}
 
-    public List<String> addPlayer(Player player){
-        this.players.add(player.getId());
-        return this.players;
-    }
+	public List<String> addPlayer(Player player) {
+		this.players.add(player.getId());
+		return this.players;
+	}
 
-    public void setBasicInfo() {
-        this.isStart = true;
-        this.startTime = LocalDateTime.now();
-        this.turnInfo = 0L;
-    }
+	public void setBasicInfo() {
+		this.isStart = true;
+		this.startTime = LocalDateTime.now();
+		this.turnInfo = 0L;
+	}
 
-    public void setSequencePlayer(List<String> players) {
-        this.players = players;
-    }
+	public void setSequencePlayer(List<String> players) {
+		this.players = players;
+	}
 
-    public void setNews(List<List<News>> news) {
-        // 뉴스는 4 * 10 으로 저장되어 있음.
-        // news[(라운드 - 1) * 4 + (카드번호 - 1)]
-        // 3라운드 3번카드 뽑았다면, news[3 * 4 + (3 - 1)] 하면 됨.
-        this.news = new ArrayList<>();
-        for (List<News> newsList : news) {
-            this.news.addAll(newsList);
-        }
-    }
+	public void setNews(List<List<News>> news) {
+		// 뉴스는 4 * 10 으로 저장되어 있음.
+		// news[(라운드 - 1) * 4 + (카드번호 - 1)]
+		// 3라운드 3번카드 뽑았다면, news[3 * 4 + (3 - 1)] 하면 됨.
+		this.news = new ArrayList<>();
+		for (List<News> newsList : news) {
+			this.news.addAll(newsList);
+		}
+	}
+
+	public void setStocks(List<Long> stocks) {
+		this.stocks = stocks;
+	}
+
+	// stock 리스트 조회 시에 실제 game stock 에 사용되는 id 반환
+	public List<String> getGameStocks() {
+		List<String> stockIds = new ArrayList<>();
+		for (Long stockId : this.stocks) {
+			stockIds.add(this.id + "@" + stockId);
+		}
+		return stockIds;
+	}
+
+	public void roundStart() {
+		this.currentRound = this.currentRound + 1;
+		this.turnInfo = 0L;
+	}
 }
