@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Getter
 @RedisHash(value = "game", timeToLive = 10000) // Redis Repository 사용을 위한
 @AllArgsConstructor
@@ -86,15 +88,15 @@ public class Game extends BaseEntity {
 		this.createdDate = LocalDateTime.now();
 	}
 
-	public List<String> addPlayer(Player player) {
+	public void addPlayer(Player player) {
 		this.players.add(player.getId());
-		return this.players;
 	}
 
 	public void setBasicInfo() {
 		this.isStart = true;
 		this.startTime = LocalDateTime.now();
 		this.turnInfo = 0L;
+		this.currentRound = 0L;
 	}
 
 	public void setSequencePlayer(List<String> players) {
@@ -116,7 +118,7 @@ public class Game extends BaseEntity {
 	}
 
 	// stock 리스트 조회 시에 실제 game stock 에 사용되는 id 반환
-	public List<String> getGameStocks() {
+	public List<String> getGameStockIds() {
 		List<String> stockIds = new ArrayList<>();
 		for (Long stockId : this.stocks) {
 			stockIds.add(this.id + "@" + stockId);
@@ -124,8 +126,8 @@ public class Game extends BaseEntity {
 		return stockIds;
 	}
 
-	public void roundStart() {
-		this.currentRound = this.currentRound + 1;
+	public void roundStart(Long currentRound) {
+		this.currentRound = currentRound;
 		this.turnInfo = 0L;
 	}
 }

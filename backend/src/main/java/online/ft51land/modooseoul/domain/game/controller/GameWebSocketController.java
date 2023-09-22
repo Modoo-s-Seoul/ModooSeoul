@@ -74,4 +74,11 @@ public class GameWebSocketController {
 
 		gameService.startRound(game);
 	}
+
+	@MessageMapping("/test/{gameId}")
+	public void test(@DestinationVariable String gameId) {
+		Game game = gameService.getGameById(gameId);
+		gameService.startRound(game);
+		webSocketSendHandler.sendToGame("test", gameId, game.getCurrentRound());
+	}
 }
