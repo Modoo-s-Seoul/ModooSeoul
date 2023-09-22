@@ -14,7 +14,7 @@ import { boardDataState } from "../../data/BoardData";
 import { useEffect, useState } from "react";
 import "./Ground.css";
 import CloseBtn from "./CloseBtn";
-import TimeBar from "../All/Timebar";
+import TimeBar from "../Base/TimeBar";
 
 export default function Ground() {
   const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부

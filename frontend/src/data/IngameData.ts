@@ -196,5 +196,5 @@ export const matchPosition = atom<defaultMatch[]>({
 
 export const selectedNewsState = atom<string>({
   key: "selectedNewsState",
-  default: "",
+  default: "뉴스",
 });

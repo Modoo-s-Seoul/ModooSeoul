@@ -1,7 +1,58 @@
 .newsPageContainer {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 5%;
+  padding-bottom: 5%;
 }
 
 .newsCardContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.newsCard {
+  width: 15vh;
+  height: 15vh;
+  border: 3px solid rgb(117, 117, 117);
+  background-color: rgb(236, 226, 215);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.newsCard:hover {
+  border: 3px solid rgb(0, 0, 0);
+  background-color: rgb(223, 202, 180);
+}
+
+.newsCardFade {
+  opacity: 0 !important;
+  transform: translate(0%, 0%) scale(0) !important;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.selectedNews {
+  position: fixed;
+  opacity: 0;
+}
+
+.showSelectedNews {
+  animation: fadeIn 0.5s ease-in-out 0.5s forwards; /* 1초 대기 후 fadeIn 애니메이션 적용 */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1; /* 최종적으로 투명도를 1로 설정하여 나타나게 함 */
+  }
 }
