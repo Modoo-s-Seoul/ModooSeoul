@@ -6,7 +6,7 @@ import CloseBtnCommon from "./CloseBtnCommon";
 import { useSetRecoilState } from "recoil";
 import { isCommonTurnVisibleState, turnState } from "../../data/IngameData";
 import ClickBtn from "../Base/CustomButton";
-import TimeBar from "./Timebar";
+import TimeBar from "../Base/TimeBar";
 
 export default function CommonTurn() {
   // 기본 인자

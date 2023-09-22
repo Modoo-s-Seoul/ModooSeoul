@@ -6,7 +6,7 @@ export default function TimeBar({ duration }: { duration: number }) {
       <div
         className="testTimeBar"
         style={{
-          animation: `timer-animation ${duration}s linear infinite`,
+          animation: `timer-animation ${duration}s linear`,
         }}
       ></div>
     </>

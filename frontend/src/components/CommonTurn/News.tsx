@@ -4,6 +4,8 @@ import IngameBox from "../Base/IngameBox";
 import { turnState, isNewsVisibleState } from "../../data/IngameData";
 import { sendPlayerMessage } from "../IngameWs/IngameSendFunction";
 import { selectedNewsState } from "../../data/IngameData";
+import TimeBar from "../Base/TimeBar";
+import "./News.css";
 
 export default function News() {
   // 기본 인자
@@ -14,7 +16,7 @@ export default function News() {
   // 초측정
   useEffect(() => {
     const timer = setInterval(() => {
-      if (timeCnt > 0) {
+      if (timeCnt > 1) {
         setTimeCnt(timeCnt - 1);
       } else {
         clearInterval(timer); // 타이머 정지
@@ -31,7 +33,8 @@ export default function News() {
   return (
     <>
       <div className="newsPageContainer">
-        <div>{timeCnt}</div>
+        <TimeBar duration={5} />
+        {timeCnt}
         <div>News!</div>
       </div>
     </>
