@@ -201,18 +201,38 @@ public class PlayerService {
         BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
         //지역구 - 빈땅
-        //플레이어의 아이디랑 현재 플레이어 위치한 보드의 ownerId가 같으면
-        if(player.getId().equals(boardStatus.getOwnerId())) {
-            return PlayerArrivalBoardMessage.of("zz","zz");
+        if(boardStatus.getOwnerId() == null && boardStatus.getBoardType().equals("DISTRICT")) {
+            return PlayerArrivalBoardMessage.of("빈 땅",boardStatus);
         }
         //지역구 - 내땅
+        if(player.getId().equals(boardStatus.getOwnerId())) {
+            return PlayerArrivalBoardMessage.of("플레이어 소유 땅",boardStatus);
+        }
         //지역구 - 남땅
+        if(boardStatus.getOwnerId() == null && !player.getId().equals(boardStatus.getOwnerId())) {
+            return PlayerArrivalBoardMessage.of("다른 플레이어 소유 땅",boardStatus);
+        }
         //찬스카드
+        if(boardStatus.getBoardType().equals("CHANCE")) {
+            return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
+        }
         //특수칸 - 시작점
+        if(boardStatus.getSpecialName().equals("출발지")) {
+            return PlayerArrivalBoardMessage.of("출발지 도착",boardStatus);
+        }
         //특수칸 - 감옥
+        if(boardStatus.getSpecialName().equals("감옥")) {
+            return PlayerArrivalBoardMessage.of("감옥 도착",boardStatus);
+        }
         //특수칸 - 오일랜드
+        if(boardStatus.getSpecialName().equals("FT OilLand")) {
+            return PlayerArrivalBoardMessage.of("오일랜드 도착",boardStatus);
+        }
         //특수칸 - 지하철
-        //특수칸 - 국세청
-        return PlayerArrivalBoardMessage.of("zz","zz");
+        if(boardStatus.getSpecialName().equals("지하철")) {
+            return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
+        }
+        //특수칸 - 국세청 board 업데이트 되면 만들기
+        return PlayerArrivalBoardMessage.of("모르는땅 도착",boardStatus);
     }
 }
