@@ -30,11 +30,19 @@ export default function PM() {
           </button>
           <button
             onClick={() => {
-              navigate(`/home`);
+              navigate(`/`);
             }}
             style={{ margin: "5px" }}
           >
             홈 이동
+          </button>
+          <button
+            onClick={() => {
+              navigate(`/home`);
+            }}
+            style={{ margin: "5px" }}
+          >
+            로비 이동
           </button>
           <button
             onClick={() => {

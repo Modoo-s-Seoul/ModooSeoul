@@ -41,10 +41,10 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  background: conic-gradient(white var(--percentage), rgb(0, 196, 79) 0);
+  background: conic-gradient(white var(--percentage), var(--dice--bar2) 0);
   border-radius: 25px;
   animation: timer 10s infinite linear;
-  transition: 0.3s;
+  transition: 0.3s ease;
   opacity: 50;
   width: 100px;
   height: 48px;
@@ -62,5 +62,11 @@
 @keyframes timer {
   to {
     --percentage: 100%;
+  }
+  0% {
+    --dice--bar2: rgb(86, 188, 100);
+  }
+  100% {
+    --dice--bar2: rgb(221, 69, 69);
   }
 }

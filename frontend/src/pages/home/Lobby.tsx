@@ -13,17 +13,21 @@ export default function Lobby() {
           <div className="lobbyHeaderBtnContainer">
             <WebInfo />
             <WebOption />
-            <div className="lobbyHeaderBtn">나가기</div>
+            <div className="lobbyHeaderBtn" style={{ cursor: "pointer" }}>
+              나가기
+            </div>
           </div>
         </div>
         {/* 바디부분 - 기능 이동키 */}
         <div className="title">모두의 서울</div>
         <div className="lobbyBtnContainer">
           <Link to={"/home/create"} className="customLink">
-            <div className="lobbyBtn">방 생성</div>
+            <div className="lobbyBtn" style={{ cursor: "pointer" }}>
+              방 생성
+            </div>
           </Link>
           <Link to={"/home/random"} className="customLink">
-            <div className="lobbyBtn">
+            <div className="lobbyBtn" style={{ cursor: "pointer" }}>
               <div>랜덤 매칭</div>
             </div>
           </Link>

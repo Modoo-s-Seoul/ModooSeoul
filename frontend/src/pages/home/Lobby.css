@@ -44,7 +44,7 @@
 }
 
 .lobbyBtn:hover {
-  background-color: #71725b;
+  background-color: var(--secondary-color);
 }
 .lobbyBtn:active {
 }

@@ -21,5 +21,5 @@ export const roomStatus = atom<RoomPlayerStatus[]>({
 // 배경음악
 export const musicState = atom<HTMLAudioElement>({
   key: "musicState",
-  default: new Audio("../../public/music.mp3"),
+  default: new Audio("../../public/music2.mp3"),
 });
