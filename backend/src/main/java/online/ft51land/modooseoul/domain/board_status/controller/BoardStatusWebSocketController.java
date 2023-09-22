@@ -33,7 +33,7 @@ public class BoardStatusWebSocketController {
         GroundPurchaseMessage groundPurchaseMessage = boardStatusService .purchaseGround(player);
 
         //데이터 전달
-        webSocketSendHandler.sendToGame("purchase/ground",player.getGameId(),groundPurchaseMessage);
+        webSocketSendHandler.sendToGame("purchase/ground", player.getGameId(),groundPurchaseMessage);
     }
 
     @MessageMapping("/purchase/building/{playerId}")

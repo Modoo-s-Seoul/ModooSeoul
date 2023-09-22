@@ -11,13 +11,17 @@
   z-index: 10;
   right: 20px;
   top: 50vh;
-  background-color: bisque;
+  background-color: var(--btn-color);
   border-radius: 5px;
   font-size: 17px;
   cursor: pointer;
   box-shadow: 2px 2px 2px black;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  transition: 0.3s ease;
 }
 .GameOptionBtn:hover {
+  background-color: var(--btn--hover-color);
 }
 .GameOptionContainer {
   z-index: 9;

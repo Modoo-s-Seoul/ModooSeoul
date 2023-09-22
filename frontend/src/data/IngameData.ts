@@ -63,6 +63,12 @@ export const tcolState = atom<number>({
   default: 0,
 });
 
+/** 로딩 컴포넌트 활성화 */
+export const isLoadingVisibleState = atom<boolean>({
+  key: "isLoadingVisibleState",
+  default: true,
+});
+
 /** 뉴스 컴포넌트 활성화 */
 export const isNewsVisibleState = atom<boolean>({
   key: "isNewsVisibleState",

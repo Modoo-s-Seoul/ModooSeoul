@@ -110,6 +110,15 @@ public class PlayerService {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
 
+        Game game = gameRepository.findById(rolledPlayer.getGameId())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+        // 턴 정보 확인
+        if(rolledPlayer.getTurnNum() != game.getTurnInfo()){
+            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
         Long one = diceRoller.nextLong(6) + 1;
@@ -170,5 +179,14 @@ public class PlayerService {
 
         // 플레이어 레포지토리에서 플레이어 제외
         playerRepository.delete(player);
+    }
+
+    public Long passTurn (Player player){
+        Game game = gameRepository.findById(player.getGameId())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+        Long nextTurn = game.passTurn();
+        gameRepository.save(game);
+        return nextTurn;
     }
 }
