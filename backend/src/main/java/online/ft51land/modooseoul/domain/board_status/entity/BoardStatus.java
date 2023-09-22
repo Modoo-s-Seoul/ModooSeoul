@@ -1,18 +1,22 @@
 package online.ft51land.modooseoul.domain.board_status.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import online.ft51land.modooseoul.domain.board.entity.Board;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 
-import java.util.List;
 
 @Getter
 @RedisHash(value = "board_status", timeToLive = 10000) // Redis Repository 사용을 위한
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class BoardStatus extends BaseEntity {
     /*
     *
@@ -28,6 +32,7 @@ public class BoardStatus extends BaseEntity {
     * oil : 오일 수치
     * */
 
+    @Id
     private String id;
 
     @Column(name="board_type")
@@ -47,7 +52,7 @@ public class BoardStatus extends BaseEntity {
     @Column(name="owner_id")
     private String ownerId;
 
-    private List<Long> buildings;
+    private int[] buildings;
 
     private Long synergy;
 
@@ -60,12 +65,17 @@ public class BoardStatus extends BaseEntity {
         this.description = board.getDescription();
         this.districtName = board.getDistrictName();
         this.price = board.getPrice();
+        this.buildings = new int[4];
     }
     public void purchaseGround(String playerId) {
         this.ownerId = playerId;
     }
 
     public void purchaseBuilding(Long buildingIdx, Long buildingId) {
-        this.buildings.add(Math.toIntExact(buildingIdx), buildingId);
+        this.buildings[Math.toIntExact(buildingIdx)] = Math.toIntExact(buildingId);
+    }
+
+    public void saveBuilding(int[] buildings) {
+        this.buildings = buildings;
     }
 }

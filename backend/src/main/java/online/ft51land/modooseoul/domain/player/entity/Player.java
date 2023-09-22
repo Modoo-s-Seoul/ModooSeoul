@@ -62,7 +62,7 @@ public class Player extends BaseEntity {
     @Column(name="estate_money")
     private Long estateMoney;
 
-    private List<Long> estate;
+    private List<Long> estates;
 
     private Long tax;
 
@@ -104,7 +104,7 @@ public class Player extends BaseEntity {
         this.cash = 10000000L; // 초기자금 1000만원
         this.stockMoney = 0L;
         this.estateMoney = 0L;
-        this.estate = new ArrayList<>();
+        this.estates = new ArrayList<>();
 
         this.currentBoardIdx = 0L;
         this.dice = 0L;
@@ -113,6 +113,7 @@ public class Player extends BaseEntity {
 
         this.tax = 0L;
         this.isArrested = false;
+        this.estates = new ArrayList<>();
     }
 
     public void playerMove(Long currentBoardId) {
@@ -123,7 +124,7 @@ public class Player extends BaseEntity {
     public void purchaseGround(Long groundPrice) {
         this.estateMoney += groundPrice;
         this.cash -= groundPrice;
-        this.estate.add(this.currentBoardIdx);
+        this.estates.add(this.currentBoardIdx);
     }
 
     public void purchaseBuilding(Long buildingPrice) {
@@ -133,5 +134,9 @@ public class Player extends BaseEntity {
 
     public void getSalary() {
         this.cash +=1000000;
+    }
+
+    public void saveEstates(List<Long> estates) {
+        this.estates = estates;
     }
 }
