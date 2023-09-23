@@ -1,0 +1,15 @@
+.closeContainer {
+    width: 30vw;
+    margin-bottom: 50px;
+  }
+  .closeBox {
+    display: flex;
+    width: 50%;
+    height: 50px;
+    background-color: rgb(242, 108, 93);
+    margin: auto;
+    margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  
