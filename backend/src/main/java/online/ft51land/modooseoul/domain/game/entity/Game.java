@@ -80,12 +80,16 @@ public class Game extends BaseEntity {
 	@Column(name = "turn_info")
 	private Long turnInfo;
 
+	@Column(name="pass_player_cnt")
+	private Long passPlayerCnt;
+
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
 		this.isStart = false;
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
+		this.passPlayerCnt = 0L;
 	}
 
 	public void addPlayer(Player player) {
@@ -129,10 +133,24 @@ public class Game extends BaseEntity {
 	public void roundStart(Long currentRound) {
 		this.currentRound = currentRound;
 		this.turnInfo = this.getPlayers().size() + 1L;
+		this.passPlayerCnt = 0L;
+	}
+
+	public Long addPassPlayerCnt(){
+		Long cnt = ++this.passPlayerCnt;
+		if(this.passPlayerCnt == this.players.size()){
+			// 정원이 4명일때 4명다 동의하면 0으로 바꾸주고 4 리턴
+			this.passPlayerCnt = 0L;
+		}
+		return cnt;
 	}
 
 
 	public Long passTurn() {
+		if(this.players.size() + 1 == this.turnInfo){
+			return this.turnInfo = 0L;
+		}
 		return ++this.turnInfo;
 	}
+
 }
