@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 @Slf4j
 @Getter
@@ -83,6 +84,8 @@ public class Game extends BaseEntity {
 	@Column(name="pass_player_cnt")
 	private Long passPlayerCnt;
 
+	private Boolean isExpiredTimer;
+
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
@@ -90,6 +93,7 @@ public class Game extends BaseEntity {
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
 		this.passPlayerCnt = 0L;
+		this.isExpiredTimer = true;
 	}
 
 	public void addPlayer(Player player) {
@@ -151,6 +155,13 @@ public class Game extends BaseEntity {
 			return this.turnInfo = 0L;
 		}
 		return ++this.turnInfo;
+	}
+
+	public void startTimer(){
+		this.isExpiredTimer = false;
+	}
+	public void expiredTimer(){
+		this.isExpiredTimer = true;
 	}
 
 }

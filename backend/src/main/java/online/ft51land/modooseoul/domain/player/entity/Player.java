@@ -12,6 +12,8 @@ import org.springframework.data.redis.core.RedisHash;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Getter
 @RedisHash(value = "player", timeToLive = 10000)
@@ -149,4 +151,6 @@ public class Player extends BaseEntity {
     public void saveEstates(List<Long> estates) {
         this.estates = estates;
     }
+
+
 }

@@ -8,6 +8,7 @@ import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
+import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
@@ -27,6 +28,8 @@ import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -241,6 +244,37 @@ public class GameService {
 
     public void passTurn(Game game) {
         game.passTurn();
+        gameRepository.save(game);
+    }
+
+    public void startTimer(Game game, Long time) {
+
+        Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                // game에 타이머가 종료 됐는지 확인하는 boolean을 두고 확인 한다음 종료가 안됐으면 메시지 보내기
+                if(!game.getIsExpiredTimer()){ //타이머가 만료가 안되어 있는 상태이면 방금 만료됐다고 알려줘야함
+                    log.info("{} 방에서 타이머 만료 : {}", game.getId(), LocalDateTime.now() );
+                }
+
+            }
+
+        };
+
+        game.startTimer();
+        gameRepository.save(game);
+
+        log.info("{} 방에서 타이머 시작 : {}", game.getId(), LocalDateTime.now() );
+
+        timer.schedule(task, time*1000*60);
+
+    }
+
+
+    public void expiredTimer(Game game) {
+        game.expiredTimer();
         gameRepository.save(game);
     }
 }
