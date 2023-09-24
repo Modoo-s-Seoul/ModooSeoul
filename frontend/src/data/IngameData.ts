@@ -204,3 +204,9 @@ export const selectedNewsState = atom<string>({
   key: "selectedNewsState",
   default: "뉴스",
 });
+
+/** 감옥 여부 */
+export const isPrisonState = atom<boolean>({
+  key: "isPrisonState",
+  default: false,
+});
