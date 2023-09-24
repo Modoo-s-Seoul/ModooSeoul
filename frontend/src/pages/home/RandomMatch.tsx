@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import BackBtn from "../../components/Base/BackBtn";
-import GameRules from "../../data/GameRule.ts";
+import { useEffect, useState } from 'react';
+import BackBtn from '../../components/Base/BackBtn';
+import GameRules from '../../data/GameRule.ts';
 
 /** 랜덤매치용 컴포넌트 */
 export default function RandomMatch() {
@@ -24,7 +24,7 @@ export default function RandomMatch() {
   }, [seconds]);
   return (
     <>
-      <div>
+      <div className="roomContainer">
         <div className="roomHeader">
           <BackBtn />
         </div>
