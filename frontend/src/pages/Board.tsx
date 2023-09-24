@@ -18,6 +18,7 @@ import CommonTurn from "../components/CommonTurn/CommonTurn";
 import DiceRoll from "./DiceRoll";
 import IngameModal from "../components/Base/IngameModal";
 import News from "../components/CommonTurn/News/News";
+import NewsCheck from "../components/CommonTurn/News/NewsCheckBtn";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -663,6 +664,7 @@ export default function Board() {
       >
         {isNewsVisible && <News />}
       </IngameModal>
+      <NewsCheck />
       <div ref={game} className="GameScreen" id="gameScreen" />
     </div>
   );

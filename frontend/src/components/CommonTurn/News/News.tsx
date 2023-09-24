@@ -59,7 +59,7 @@ export default function News() {
   return (
     <>
       <div className="newsPageContainer">
-        <div>뉴스를 선택하세요!</div>
+        <h1>뉴스를 선택하세요!</h1>
         <TimeBar duration={3} />
         <div className="newsCardContainer">
           {cards.map((ele, index) => {
@@ -74,7 +74,7 @@ export default function News() {
             );
           })}
           <div className={`selectedNews ${selected ? "showSelectedNews" : ""}`}>
-            {selectedNews}
+            <h2>{selectedNews}</h2>
           </div>
         </div>
       </div>
