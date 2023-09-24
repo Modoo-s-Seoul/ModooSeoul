@@ -48,7 +48,7 @@ function WebOptionLoad({ onClose }: WebOptionLoadProps) {
             ✖
           </div>
         </div>
-        <h1>설정창</h1>
+        <h1>옵션</h1>
         <div className="optionContainer">
           <div
             className="optionBox"
