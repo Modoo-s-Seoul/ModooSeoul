@@ -1,6 +1,6 @@
 // import React from 'react';
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -8,18 +8,18 @@ export default function NotFound() {
     <>
       <div
         style={{
-          height: "50vh",
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-          minHeight: "300px",
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          minHeight: '300px',
         }}
       >
         <div
           style={{
             // marginTop: "auto",
-            fontSize: "70px",
-            fontWeight: "700",
+            fontSize: '10vw',
+            fontWeight: '700',
           }}
         >
           404
@@ -27,18 +27,18 @@ export default function NotFound() {
         <div
           style={{
             // marginTop: "auto",
-            fontSize: "30px",
-            fontWeight: "700",
+            fontSize: '4vw',
+            fontWeight: '700',
           }}
         >
           Not Found
         </div>
         <div
           style={{
-            width: "200px",
-            marginLeft: "auto",
-            marginRight: "auto",
-            fontSize: "12px",
+            width: '200px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontSize: '1.2vw',
           }}
         >
           <hr />
@@ -48,12 +48,12 @@ export default function NotFound() {
           </div>
           <hr />
           <div
-            style={{ textDecorationLine: "underline" }}
+            style={{ textDecorationLine: 'underline' }}
             onClick={() => {
               navigate(`/`);
             }}
           >
-            {" "}
+            {' '}
             {`Go to Homepage ⇀`}
           </div>
         </div>
