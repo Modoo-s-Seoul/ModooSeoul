@@ -17,7 +17,7 @@ import UserTurn from "./UserTurn";
 import CommonTurn from "../components/CommonTurn/CommonTurn";
 import DiceRoll from "./DiceRoll";
 import IngameModal from "../components/Base/IngameModal";
-import News from "../components/CommonTurn/News";
+import News from "../components/CommonTurn/News/News";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -90,7 +90,7 @@ export default function Board() {
       color: colorPalette[i - 1],
     });
   }
-  
+
   const [round, setRound] = useRecoilState(roundState); // 현재 라운드
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
@@ -649,21 +649,21 @@ export default function Board() {
             )}
           </div>
         )}
-        <IngameModal visible={isUserTurnVisible}>
-          {isUserTurnVisible && <UserTurn />}
-        </IngameModal>
-        <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
-          {isCommonTurnVisible && <CommonTurn />}
-        </IngameModal>
-        <IngameModal
-          width="60vw"
-          height="30vh"
-          maxWidth="600px"
-          visible={isNewsVisible}
-        >
-          {isNewsVisible && <News />}
-        </IngameModal>
-        <div ref={game} className="GameScreen" id="gameScreen" />
-      </div>
+      <IngameModal visible={isUserTurnVisible}>
+        {isUserTurnVisible && <UserTurn />}
+      </IngameModal>
+      <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+        {isCommonTurnVisible && <CommonTurn />}
+      </IngameModal>
+      <IngameModal
+        width="60vw"
+        height="30vh"
+        maxWidth="600px"
+        visible={isNewsVisible}
+      >
+        {isNewsVisible && <News />}
+      </IngameModal>
+      <div ref={game} className="GameScreen" id="gameScreen" />
+    </div>
   );
 }

@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { useSocket } from "../../pages/SocketContext";
+import { useSocket } from "../../../pages/SocketContext";
 import {
   roundState,
   turnState,
   isNewsVisibleState,
   playerInfoState,
-} from "../../data/IngameData";
-import { sendPlayerMessage } from "../IngameWs/IngameSendFunction";
-import { selectedNewsState } from "../../data/IngameData";
-import TimeBar from "../Base/TimeBar";
+} from "../../../data/IngameData";
+import { sendPlayerMessage } from "../../IngameWs/IngameSendFunction";
+import { selectedNewsState } from "../../../data/IngameData";
+import TimeBar from "../../Base/TimeBar";
 import "./News.css";
 
 export default function News() {
   // 기본 인자
   const socketClient = useSocket();
-  const [timeCnt, setTimeCnt] = useState(3); // 시간 제한 5초
+  const [timeCnt, setTimeCnt] = useState(10); // 시간 제한 5초
   const cards = [1, 2, 3, 4];
   const [selected, setSelected] = useState(false);
   const playerInfo = useRecoilValue(playerInfoState); // 플레이어 고유 정보
