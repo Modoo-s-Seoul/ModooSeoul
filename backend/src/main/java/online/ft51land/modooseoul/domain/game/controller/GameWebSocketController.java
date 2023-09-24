@@ -53,6 +53,15 @@ public class GameWebSocketController {
 		webSocketSendHandler.sendToGame("turn", gameId, GameTurnMessage.of(game));
 	}
 
+
+	// 턴 종료
+	@MessageMapping("pass/{gameId}")
+	public void passTurn(@DestinationVariable String gameId ){
+		Game game = gameService.getGameById(gameId);
+		gameService.passTurn(game);
+		webSocketSendHandler.sendToGame("pass", gameId, GameTurnMessage.of(game));
+	}
+
 	@MessageMapping("/playersInfo/{gameId}")
 	public void getPlayersInfo(@DestinationVariable String gameId) {
 		Game game = gameService.getGameById(gameId);

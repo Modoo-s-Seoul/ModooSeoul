@@ -238,4 +238,9 @@ public class GameService {
         }
         return gameStocks;
     }
+
+    public void passTurn(Game game) {
+        game.passTurn();
+        gameRepository.save(game);
+    }
 }
