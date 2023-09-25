@@ -73,3 +73,9 @@ export interface buildingChangeType {
   industry: number;
   // sell: boolean;
 }
+
+/** (타입) 주식 변동 기록 */
+export interface stockChangeType {
+  stockName: string;
+  stockPrice: number[];
+}

@@ -8,6 +8,7 @@ import {
   builingInfoType,
   groundInfoType,
   buildingChangeType,
+  stockChangeType,
 } from "../interface/ingame";
 
 /*
@@ -195,6 +196,19 @@ export const matchPosition = atom<defaultMatch[]>({
     { row: 3, col: 0 },
     { row: 2, col: 0 },
     { row: 1, col: 0 },
+  ],
+});
+
+/**게임 내의 모든 주식 종목들의 가격 기록 */
+export const stockState = atom<stockChangeType[]>({
+  key: "stockState",
+  default: [
+    { stockName: "OO전자", stockPrice: [] },
+    { stockName: "ㅁㅁ건설", stockPrice: [] },
+    { stockName: "XX바이오", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
   ],
 });
 
