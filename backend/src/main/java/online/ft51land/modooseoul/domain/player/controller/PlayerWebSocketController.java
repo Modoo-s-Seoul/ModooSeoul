@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
@@ -71,6 +72,11 @@ public class PlayerWebSocketController {
 
 		// 데이터 전달
 		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
+
+		//땅 도착 데이터 전달
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
+		webSocketSendHandler.sendToGame("arriveBoardInfo", player.getGameId(),playerArrivalBoardMessage);
+
 	}
 
 	// 뉴스 선택하기
