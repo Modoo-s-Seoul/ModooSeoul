@@ -20,6 +20,7 @@ import online.ft51land.modooseoul.domain.news.entity.enums.NewsType;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
 
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 
@@ -184,12 +185,19 @@ public class GameService {
         return playersInfo;
     }
 
-    public GameRoundStartMessage startRound(Game game) {
+    public GameRoundStartMessage startRound(Game game, List<Player> players) {
         game.roundStart(game.getCurrentRound() + 1);
 
         // 주식 가격 변동
         List<GameStock> gameStocks = setNextRoundStockPrice(game);
         gameRepository.save(game);
+
+        // 감옥에서 빠져나옴
+        for (Player player : players) {
+            if (player.getIsPrisoned()) {
+                player.setIsPrisoned(false);
+            }
+        }
 
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
@@ -241,5 +249,11 @@ public class GameService {
             gameStocks.add(gameStock);
         }
         return gameStocks;
+    }
+
+    public PlayerPrisonMessage setPlayerIsPrisoned(Player player) {
+        player.setIsPrisoned(true);
+
+	    return PlayerPrisonMessage.of(player);
     }
 }

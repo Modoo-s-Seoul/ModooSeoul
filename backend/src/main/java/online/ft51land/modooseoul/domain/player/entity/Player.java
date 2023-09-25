@@ -38,7 +38,7 @@ public class Player extends BaseEntity {
     reportee_player_id : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
-
+    is_prisoned :  감금여부
      */
     @Id
     private String id;
@@ -87,6 +87,9 @@ public class Player extends BaseEntity {
     @Column(name ="is_bankrupt")
     private Boolean isBankrupt;
 
+    @Column(name = "is_prisoned")
+    private Boolean isPrisoned;
+
     @Builder
     public Player(String nickname, String gameId){
         this.nickname = nickname;
@@ -122,6 +125,7 @@ public class Player extends BaseEntity {
         this.isArrested = false;
         this.estates = new ArrayList<>();
         this.isBankrupt = false;
+        this.isPrisoned = false;
 
         this.turnNum = turnNum;
     }
@@ -148,5 +152,9 @@ public class Player extends BaseEntity {
 
     public void saveEstates(List<Long> estates) {
         this.estates = estates;
+    }
+
+    public void setIsPrisoned(Boolean isPrisoned) {
+        this.isPrisoned = isPrisoned;
     }
 }
