@@ -1,19 +1,22 @@
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 // import { ipAddress } from "../../api/RoomApi";
-import { useSocket } from '../SocketContext';
-import { useRecoilState } from 'recoil';
-import { roomStatus } from '../../data/CommonData';
-import { unsubscribeRoom } from '../../api/RoomApi';
-import BackBtn from '../../components/Base/BackBtn';
-import ClickBtn from '../../components/Base/CustomButton';
-import './Room.css';
-import { CompatClient } from '@stomp/stompjs';
-import { handleFullScreen } from '../../components/Base/BaseFunc';
+import { useSocket } from "../SocketContext";
+import { useRecoilState } from "recoil";
+import { alertModalState, roomStatus } from "../../data/CommonData";
+import { unsubscribeRoom } from "../../api/RoomApi";
+import BackBtn from "../../components/Base/BackBtn";
+import ClickBtn from "../../components/Base/CustomButton";
+import "./Room.css";
+import { CompatClient } from "@stomp/stompjs";
+import { handleFullScreen } from "../../components/Base/BaseFunc";
+import { AlertModal } from "../../components/Base/AlertModal";
 
 /** 게임 대기룸 컴포넌트. 
   초대링크, 방생성을 통해서만 접근 가능*/
 export default function Room() {
+  const [alertMsg, setAlertMsg] = useState(""); // alert modal
+  const [alertVisible, setAlertVisible] = useRecoilState(alertModalState);
   /**웹소켓 클라이언트 */
   const socketClient = useSocket();
   const navigate = useNavigate();
@@ -44,11 +47,15 @@ export default function Room() {
     navigator.clipboard
       .writeText(gameUrl)
       .then(() => {
-        alert('링크가 클립보드에 복사되었습니다.');
+        setAlertMsg("링크가 클립보드에 복사되었습니다.");
+        setAlertVisible(true);
+        // alert("링크가 클립보드에 복사되었습니다.");
       })
       .catch((error) => {
-        console.error('링크 복사 실패:', error);
-        alert('링크 복사에 실패했습니다.');
+        console.error("링크 복사 실패:", error);
+        setAlertMsg("링크 복사에 실패했습니다.");
+        setAlertVisible(true);
+        // alert("링크 복사에 실패했습니다.");
       });
   };
 
@@ -64,7 +71,7 @@ export default function Room() {
       // 참가한 방의 정보를 알려주는 채널
       socketClient.subscribe(`/receive/game/join/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
-        console.log('Room Status:', message);
+        console.log("Room Status:", message);
         const receivedData = message.data;
         setRoomStatus(receivedData);
       });
@@ -76,7 +83,7 @@ export default function Room() {
       socketClient.subscribe(`/receive/game/ready/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         const receivedData = message.data;
-        console.log('Ready Status', receivedData);
+        console.log("Ready Status", receivedData);
         setRoomStatus(receivedData);
       });
 
@@ -84,7 +91,7 @@ export default function Room() {
       socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         const receivedData = message.data;
-        console.log('Start Status:', receivedData);
+        console.log("Start Status:", receivedData);
         if (receivedData.isStart === true) {
           navigate(`/game`, {
             // 유저 닉네임, 방 id 다음 페이지에 넘기기
@@ -95,7 +102,9 @@ export default function Room() {
             },
           });
         } else {
-          alert(receivedData.data);
+          setAlertMsg(receivedData.data);
+          setAlertVisible(true);
+          // alert(receivedData.data);
         }
       });
     }
@@ -110,11 +119,12 @@ export default function Room() {
   */
 
   useEffect(() => {
-    console.log('Current Room Status', curRoomStatus);
+    console.log("Current Room Status", curRoomStatus);
   }, [curRoomStatus]);
 
   return (
     <>
+      {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
         <div className="roomHeader">
           <BackBtn />
@@ -132,16 +142,16 @@ export default function Room() {
                   // 준비 완료된 상태인 경우 박스 테두리 색이 연두색으로 바뀐다.
                   <div
                     className={`playerCard ${
-                      ele.isReady || index == 0 ? 'ready' : ''
+                      ele.isReady || index == 0 ? "ready" : ""
                     }`}
                     key={ele.nickname}
                   >
                     {ele.nickname === nickname ? (
-                      <div style={{ backgroundColor: 'red' }}>
-                        {`${index === 0 ? '👑' : ''} ${ele.nickname}`}
+                      <div style={{ backgroundColor: "red" }}>
+                        {`${index === 0 ? "👑" : ""} ${ele.nickname}`}
                       </div>
                     ) : (
-                      <div>{`${index === 0 ? '👑' : ''} ${ele.nickname}`}</div>
+                      <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     )}
                     <div>
                       <img src="" alt="" />
@@ -188,7 +198,7 @@ export default function Room() {
                     width={200}
                     height={80}
                     fontsize={30}
-                    text={'게임 시작'}
+                    text={"게임 시작"}
                   />
                 </div>
               ) : (

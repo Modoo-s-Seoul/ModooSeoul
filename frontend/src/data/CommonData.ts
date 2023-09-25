@@ -4,7 +4,6 @@ import { RoomPlayerStatus } from "../interface/common";
 // 로비
 
 // 방 생성
-
 export const roomStatus = atom<RoomPlayerStatus[]>({
   key: "roomStatus",
   default: [],
@@ -22,4 +21,10 @@ export const roomStatus = atom<RoomPlayerStatus[]>({
 export const musicState = atom<HTMLAudioElement>({
   key: "musicState",
   default: new Audio("../../public/music2.mp3"),
+});
+
+// etc
+export const alertModalState = atom<boolean>({
+  key: "alertModalState",
+  default: false,
 });
