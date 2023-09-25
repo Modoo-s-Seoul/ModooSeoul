@@ -31,6 +31,7 @@ export interface SpaceInfo {
   sell: boolean;
   index: number;
   player: null | number;
+  oil: boolean;
 }
 
 /**(타입) 칸의 좌표와 칸 정보가 매칭된 보드 정보 */
