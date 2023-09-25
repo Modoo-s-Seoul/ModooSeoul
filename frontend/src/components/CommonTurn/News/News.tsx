@@ -67,6 +67,7 @@ export default function News() {
               <div
                 className={`newsCard ${selected ? "newsCardFade" : ""}`}
                 key={index}
+                style={{ cursor: "pointer" }}
                 onClick={() => getNews(ele)}
               >
                 {ele}
