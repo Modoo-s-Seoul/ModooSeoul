@@ -7,6 +7,7 @@ import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
+import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
@@ -15,6 +16,7 @@ import online.ft51land.modooseoul.domain.game_stock.repository.GameStockReposito
 import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
 import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
+import online.ft51land.modooseoul.domain.news.entity.enums.NewsType;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
 
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
@@ -52,7 +54,7 @@ public class GameService {
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
-        MessageNum messageNum = messageNumRepository.save(new MessageNum(game.getId()));
+        messageNumRepository.save(new MessageNum(game.getId()));
         return GameCreateResponseDto.of(game);
     }
 
@@ -116,8 +118,6 @@ public class GameService {
                     .findById(stockId)
                     .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
             GameStock gameStock = new GameStock(stock, game.getId());
-            log.info("stock id = {}", gameStock.getId());
-            log.info("stock price = {}", gameStock.getStocksPrice());
             gameStockRepository.save(gameStock);
         }
     }
@@ -167,6 +167,7 @@ public class GameService {
             news.add(new ArrayList<>());
             for (int j = 0; j < 4; j++) {
                 news.get(i).add(befTranspose.get(j).get(i));
+
             }
             Collections.shuffle(news.get(i));
         }
@@ -183,7 +184,62 @@ public class GameService {
         return playersInfo;
     }
 
-    public void startRound(Game game) {
-        game.roundStart();
+    public GameRoundStartMessage startRound(Game game) {
+        game.roundStart(game.getCurrentRound() + 1);
+
+        // 주식 가격 변동
+        List<GameStock> gameStocks = setNextRoundStockPrice(game);
+        gameRepository.save(game);
+
+        // 메시지 가공
+        return GameRoundStartMessage.of(game, gameStocks);
+    }
+
+    public List<GameStock> setNextRoundStockPrice(Game game) {
+        int passFlag = 0;
+        List<GameStock> gameStocks = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+
+            // 지금 라운드의 모든 뉴스들 가져오기
+            News news = game.getNews().
+                    get((int)((game.getCurrentRound() - 1) * 4 + i));
+
+            // 꽝일 경우 그냥 넘김
+            if (news.getStock().getId() == 6) {
+                passFlag = 1;
+                continue;
+            }
+
+            // 주식 가져오기
+            GameStock gameStock = gameStockRepository
+                    .findById(game.getId() + "@" + game.getStocks().get(i - passFlag))
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
+
+            Long price = gameStock.getStockPrice(); // 전 라운드 가격
+            if (game.getCurrentRound() == 1) {
+                gameStocks.add(gameStock);
+                continue;
+            }
+            NewsType newsType = news.getNewsType(); // 증감 여부
+            Long percent = news.getPercent(); // 퍼센트
+
+            // 계산
+            long calPrice = price * percent / 100; // maintain 은 percent 0이라 ㄱㅊ
+            // 감소일 땐 -1 곱해주기
+            if (newsType.equals(NewsType.DECREASE)) {
+                calPrice *= (-1);
+            }
+            price += calPrice;
+
+            // 100밑의 자리 버림
+            price = (price / 100) * 100;
+
+            // gameStock 에 저장
+            gameStock.setStocksPrice(price);
+            gameStockRepository.save(gameStock);
+
+            gameStocks.add(gameStock);
+        }
+        return gameStocks;
     }
 }
