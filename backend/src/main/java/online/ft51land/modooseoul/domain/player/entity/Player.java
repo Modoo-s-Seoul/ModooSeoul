@@ -156,6 +156,7 @@ public class Player extends BaseEntity {
 
     public void setIsPrisoned(Boolean isPrisoned) {
         this.isPrisoned = isPrisoned;
+    }
 
     public void payToll(Long toll) {
         this.cash -= toll;
@@ -175,7 +176,5 @@ public class Player extends BaseEntity {
         this.cash = 0L;
         this.stockMoney = 0L;
         this.estateMoney = 0L;
-
-
     }
 }
