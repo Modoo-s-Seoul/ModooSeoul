@@ -73,7 +73,8 @@ public class BoardStatus extends BaseEntity {
         this.ownerId = playerId;
     }
 
-    public void purchaseBuilding(Long buildingIdx, Long buildingId) {
+    public void purchaseBuilding(Long buildingIdx, Long buildingId, Long buildingPrice) {
+        this.price += buildingPrice;
         this.buildings[Math.toIntExact(buildingIdx)] = Math.toIntExact(buildingId);
     }
 

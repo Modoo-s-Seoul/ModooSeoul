@@ -140,7 +140,7 @@ public class BoardStatusService {
                 playerRepository.save(player);
 
                 //board status 업데이트
-                boardStatus.purchaseBuilding(buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId());
+                boardStatus.purchaseBuilding(buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId(),building.getPrice());
                 boardStatusRepository.save(boardStatus);
 
                 message = "건물 구매 성공";
