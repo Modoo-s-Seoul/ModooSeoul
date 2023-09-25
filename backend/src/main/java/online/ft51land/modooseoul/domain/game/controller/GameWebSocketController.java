@@ -66,7 +66,7 @@ public class GameWebSocketController {
 		webSocketSendHandler.sendToGame("pass", gameId, GameTurnMessage.of(game));
 	}
 
-	@MessageMapping("/playersInfo/{gameId}")
+	@MessageMapping("/players-info/{gameId}")
 	public void getPlayersInfo(@DestinationVariable String gameId) {
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
@@ -77,7 +77,7 @@ public class GameWebSocketController {
 
 		List<PlayerInGameInfoMessage> message = gameService.getPlayersInfo(players);
 
-		webSocketSendHandler.sendToGame("playersInfo", gameId, message);
+		webSocketSendHandler.sendToGame("players-info", gameId, message);
 	}
 
 	@MessageMapping("/roundStart/{gameId}")
