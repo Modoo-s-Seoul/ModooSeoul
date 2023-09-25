@@ -119,7 +119,7 @@ public class PlayerService {
                 .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
 
         // 턴 정보 확인
-        if(rolledPlayer.getTurnNum() != game.getTurnInfo()){
+        if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
             // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
             throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
         }
@@ -142,7 +142,7 @@ public class PlayerService {
 
         // 어디로 이동했는지 저장
         Long bef = rolledPlayer.getCurrentBoardIdx();
-        Long aft = (bef + (one + two)) % 32;
+        Long aft = (bef + (one + two)) % 32 + 1; // 1 ~ 32
         rolledPlayer.playerMove(aft);
 
         // 월급 받았는지 안 받았는지 여부 저장
