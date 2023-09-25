@@ -59,8 +59,8 @@ export default function News() {
   return (
     <>
       <div className="newsPageContainer">
-        <h1>뉴스를 선택하세요!</h1>
-        <TimeBar duration={3} />
+        <div className="newsPageTitle">뉴스를 선택하세요!</div>
+        <TimeBar duration={10} />
         <div className="newsCardContainer">
           {cards.map((ele, index) => {
             return (

@@ -5,8 +5,12 @@
   align-items: center;
   width: 5vh;
   height: 5vh;
-  bottom: 20px;
-  right: 50vw;
+  min-width: 50px;
+  min-height: 50px;
+  right: 20px;
+  top: 55vh;
+  /* bottom: 10px;
+  right: 50vw; */
   background-color: rgb(0, 140, 255);
   border-radius: 5px;
   font-size: 17px;
@@ -14,7 +18,7 @@
   color: white;
   text-shadow: 1px 1px 1px black;
   transition: 0.3s ease;
-  transform: translate(50%, 0);
+  /* transform: translate(50%, 0); */
   opacity: 0;
 }
 

@@ -660,6 +660,7 @@ export default function Board() {
         width="60vw"
         height="30vh"
         maxWidth="600px"
+        minHeight="200px"
         visible={isNewsVisible}
       >
         {isNewsVisible && <News />}

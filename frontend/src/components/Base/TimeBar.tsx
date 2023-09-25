@@ -4,7 +4,7 @@ export default function TimeBar({ duration }: { duration: number }) {
   return (
     <>
       <div
-        className="testTimeBar"
+        className="timeBar"
         style={{
           animation: `timer-animation ${duration}s linear`,
         }}
