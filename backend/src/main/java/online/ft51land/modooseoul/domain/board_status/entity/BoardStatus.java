@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 
 @Getter
-@RedisHash(value = "board_status", timeToLive = 10000) // Redis Repository 사용을 위한
+@RedisHash(value = "board_status") // Redis Repository 사용을 위한
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

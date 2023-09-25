@@ -6,21 +6,21 @@ import online.ft51land.modooseoul.domain.board.entity.Board;
 import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
-import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
+import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
 import online.ft51land.modooseoul.domain.game_stock.repository.GameStockRepository;
+import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
+import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.entity.enums.NewsType;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
-
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-
 import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
@@ -35,6 +35,7 @@ import java.util.*;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final MessageNumRepository messageNumRepository;
     private final PlayerRepository playerRepository;
 
     private final NewsRepository newsRepository;
@@ -44,6 +45,7 @@ public class GameService {
     private final StockRepository stockRepository;
 
 
+
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
                              .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
@@ -51,6 +53,7 @@ public class GameService {
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
+        messageNumRepository.save(new MessageNum(game.getId()));
         return GameCreateResponseDto.of(game);
     }
 
@@ -237,5 +240,21 @@ public class GameService {
             gameStocks.add(gameStock);
         }
         return gameStocks;
+    }
+
+    public void passTurn(Game game) {
+        game.passTurn();
+        gameRepository.save(game);
+    }
+
+    public void startTimer(Game game) {
+        game.startTimer();
+        gameRepository.save(game);
+    }
+
+
+    public void expiredTimer(Game game) {
+        game.expiredTimer();
+        gameRepository.save(game);
     }
 }

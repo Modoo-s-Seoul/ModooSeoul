@@ -8,7 +8,7 @@ import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
-@RedisHash(value = "game_stock", timeToLive = 10000) // Redis Repository 사용을 위한
+@RedisHash(value = "game_stock") // Redis Repository 사용을 위한
 @NoArgsConstructor
 public class GameStock {
 

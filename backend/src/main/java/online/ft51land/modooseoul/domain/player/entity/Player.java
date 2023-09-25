@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@RedisHash(value = "player", timeToLive = 10000)
+@RedisHash(value = "player")
 @NoArgsConstructor //기본 생성자 생성
 @ToString
 public class Player extends BaseEntity {

@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Getter
-@RedisHash(value = "game", timeToLive = 10000) // Redis Repository 사용을 위한
+@RedisHash(value = "game") // Redis Repository 사용을 위한
 @AllArgsConstructor
 @ToString
 public class Game extends BaseEntity {
@@ -39,6 +39,9 @@ public class Game extends BaseEntity {
     current_round : 현재 라운드
     sum_money : 플레이어 총 자산
     message_num : 메시지 번호
+    turn_info : 턴정보
+    passPlayerCnt : 공통 턴에서 넘어가기를 희망하는 플레이어의 수
+    isTimerActivated : 타이머 활성화 여부
      */
 
 	@Id
@@ -80,12 +83,19 @@ public class Game extends BaseEntity {
 	@Column(name = "turn_info")
 	private Long turnInfo;
 
+	@Column(name="pass_player_cnt")
+	private Long passPlayerCnt;
+
+	private Boolean isTimerActivated;
+
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
 		this.isStart = false;
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
+		this.passPlayerCnt = 0L;
+		this.isTimerActivated = true;
 	}
 
 	public void addPlayer(Player player) {
@@ -95,8 +105,8 @@ public class Game extends BaseEntity {
 	public void setBasicInfo() {
 		this.isStart = true;
 		this.startTime = LocalDateTime.now();
-		this.turnInfo = 0L;
 		this.currentRound = 0L;
+		this.turnInfo = Long.valueOf(this.players.size()+1);
 	}
 
 	public void setSequencePlayer(List<String> players) {
@@ -129,10 +139,31 @@ public class Game extends BaseEntity {
 	public void roundStart(Long currentRound) {
 		this.currentRound = currentRound;
 		this.turnInfo = this.getPlayers().size() + 1L;
+		this.passPlayerCnt = 0L;
+	}
+
+	public Long addPassPlayerCnt(){
+		Long cnt = ++this.passPlayerCnt;
+		if(this.passPlayerCnt == this.players.size()){
+			// 정원이 4명일때 4명다 동의하면 0으로 바꾸주고 4 리턴
+			this.passPlayerCnt = 0L;
+		}
+		return cnt;
 	}
 
 
 	public Long passTurn() {
+		if(this.players.size() + 1 == this.turnInfo){
+			return this.turnInfo = 0L;
+		}
 		return ++this.turnInfo;
 	}
+
+	public void startTimer(){
+		this.isTimerActivated = true;
+	}
+	public void expiredTimer(){
+		this.isTimerActivated = false;
+	}
+
 }

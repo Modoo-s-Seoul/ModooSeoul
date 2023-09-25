@@ -1,15 +1,21 @@
-import { ChangeEvent, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { joinRoom } from '../../api/RoomApi';
-import BackBtn from '../../components/Base/BackBtn';
-import ClickBtn from '../../components/Base/CustomButton';
-import axios from 'axios';
+import { ChangeEvent, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { joinRoom } from "../../api/RoomApi";
+import BackBtn from "../../components/Base/BackBtn";
+import ClickBtn from "../../components/Base/CustomButton";
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { AlertModal } from "../../components/Base/AlertModal";
+import { alertModalState } from "../../data/CommonData";
 
 /** 방 입장 컴포넌트 */
 export default function Invite() {
-  const [nickname, setNickname] = useState(''); // 유저 닉네임
+  const [nickname, setNickname] = useState(""); // 유저 닉네임
   const navigate = useNavigate();
+  const [alertMsg, setAlertMsg] = useState(""); // alert modal
+  const [alertVisible, setAlertVisible] = useRecoilState(alertModalState);
+
   /**게임 ID */
   const { pk } = useParams();
 
@@ -22,8 +28,10 @@ export default function Invite() {
 
   /**방 참가 */
   const handelGoGame = async () => {
-    if (nickname === '') {
-      window.alert('닉네임을 입력하세요.'); // 경고창 표시
+    if (nickname === "") {
+      setAlertMsg("닉네임을 입력하세요.");
+      setAlertVisible(true);
+      // window.alert("닉네임을 입력하세요."); // 경고창 표시
       return;
     }
 
@@ -31,7 +39,7 @@ export default function Invite() {
       const joinResponse = await joinRoom(nickname, pk);
       console.log(joinResponse);
 
-      if (joinResponse.message === 'success') {
+      if (joinResponse.message === "success") {
         navigate(`/home/room`, {
           // 유저 닉네임, 방 id 다음 페이지에 넘기기
           state: {
@@ -41,13 +49,17 @@ export default function Invite() {
           },
         });
       } else {
-        window.alert(joinResponse.phrase); // 경고창 표시
+        setAlertMsg(joinResponse.phrase);
+        setAlertVisible(true);
+        // window.alert(joinResponse.phrase); // 경고창 표시
         return;
       }
     } catch (error) {
-      console.error('Error fetching Room Info', error);
+      console.error("Error fetching Room Info", error);
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data.phrase);
+        setAlertMsg(error.response?.data.phrase);
+        setAlertVisible(true);
+        // alert(error.response?.data.phrase);
         throw error;
       }
     }
@@ -55,6 +67,7 @@ export default function Invite() {
 
   return (
     <>
+      {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
         <div className="roomHeader">
           <BackBtn />
@@ -62,7 +75,7 @@ export default function Invite() {
         <div>
           <h1>방 입장하기</h1>
           <div className="roomInput">
-            <div>닉네임</div>{' '}
+            <div>닉네임</div>{" "}
             <input
               type="text"
               name="nickname"
@@ -71,7 +84,7 @@ export default function Invite() {
             />
           </div>
           <div className="clickBtnContainer" onClick={handelGoGame}>
-            <ClickBtn width={120} height={60} fontsize={21} text={'방 참가'} />
+            <ClickBtn width={120} height={60} fontsize={21} text={"방 참가"} />
           </div>
         </div>
       </div>
