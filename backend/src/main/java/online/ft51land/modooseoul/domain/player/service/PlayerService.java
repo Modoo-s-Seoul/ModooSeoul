@@ -160,6 +160,15 @@ public class PlayerService {
         Long cardIdx = playerNewsRequestDto.cardIdx();
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
+        // 뉴스 턴 넘기기
+        if(game.addPassPlayerCnt() == game.getPlayers().size()){
+            // 패스한 인원이 플레이어 정원이랑 같으면 턴 증가
+            // 모든 인원이 뉴스를 뽑기 전까지는 플레이어수 +1 턴으로 있다가 모든 인원이 뉴스를 뽑으면 턴 증가
+            game.passTurn();
+        }
+        gameRepository.save(game);
+
+
         // 메시지 가공 후 리턴
         return PlayerNewsMessage.of(news);
     }
@@ -181,12 +190,4 @@ public class PlayerService {
         playerRepository.delete(player);
     }
 
-    public Long passTurn (Player player){
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
-
-        Long nextTurn = game.passTurn();
-        gameRepository.save(game);
-        return nextTurn;
-    }
 }
