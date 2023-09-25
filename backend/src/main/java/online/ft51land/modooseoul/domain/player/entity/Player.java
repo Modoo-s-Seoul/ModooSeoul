@@ -150,5 +150,25 @@ public class Player extends BaseEntity {
         this.estates = estates;
     }
 
+    public void payToll(Long toll) {
+        this.cash -= toll;
+    }
 
+    public void receiveToll(Long toll) {
+        this.cash += toll;
+    }
+
+    public void sellStock() {
+        this.cash += this.stockMoney;
+        this.stockMoney = 0L;
+    }
+
+    public void bankrupt() {
+        this.isBankrupt = true;
+        this.cash = 0L;
+        this.stockMoney = 0L;
+        this.estateMoney = 0L;
+
+
+    }
 }
