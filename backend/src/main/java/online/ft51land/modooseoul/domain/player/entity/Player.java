@@ -115,7 +115,7 @@ public class Player extends BaseEntity {
         this.estateMoney = 0L;
         this.estates = new ArrayList<>();
 
-        this.currentBoardIdx = 0L;
+        this.currentBoardIdx = 1L;
         this.dice = 0L;
         this.isDouble = false;
         this.selectNewsId = 0L;

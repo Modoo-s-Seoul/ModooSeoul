@@ -14,6 +14,8 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
 import online.ft51land.modooseoul.domain.game_stock.repository.GameStockRepository;
+import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
+import online.ft51land.modooseoul.domain.messagenum.repository.MessageNumRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.news.entity.enums.NewsType;
 import online.ft51land.modooseoul.domain.news.repository.NewsRepository;
@@ -38,6 +40,7 @@ import java.util.*;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final MessageNumRepository messageNumRepository;
     private final PlayerRepository playerRepository;
 
     private final NewsRepository newsRepository;
@@ -54,6 +57,7 @@ public class GameService {
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
+        messageNumRepository.save(new MessageNum(game.getId()));
         return GameCreateResponseDto.of(game);
     }
 
