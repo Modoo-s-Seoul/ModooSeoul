@@ -15,7 +15,7 @@ import "./News.css";
 export default function News() {
   // 기본 인자
   const socketClient = useSocket();
-  const [timeCnt, setTimeCnt] = useState(10); // 시간 제한 5초
+  const [timeCnt, setTimeCnt] = useState(5); // 시간 제한 5초
   const cards = [1, 2, 3, 4];
   const [selected, setSelected] = useState(false);
   const playerInfo = useRecoilValue(playerInfoState); // 플레이어 고유 정보
