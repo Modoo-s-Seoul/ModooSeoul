@@ -1,6 +1,6 @@
-import { useState } from "react";
-import "./Modal.css";
-import "./WebInfo.css";
+import { useState } from 'react';
+import './Modal.css';
+import './WebInfo.css';
 
 export default function WebInfo() {
   /** 인포창 끄고 켜기 */
@@ -11,8 +11,12 @@ export default function WebInfo() {
 
   return (
     <>
-      <div className="lobbyHeaderBtn" onClick={toggleWebInfo}>
-        정보
+      <div
+        className="lobbyHeaderBtn"
+        onClick={toggleWebInfo}
+        style={{ cursor: 'pointer' }}
+      >
+        게임설명
       </div>
       {isWebInfoVisible && <WebInfoLoad onClose={toggleWebInfo} />}
     </>
@@ -29,61 +33,47 @@ export function WebInfoLoad({ onClose }: WebInfoLoadProps) {
     <div className="modalOverlay">
       <div className="modal">
         <div className="modalClose">
-          <div style={{ cursor: "pointer" }} onClick={onClose}>
+          <div style={{ cursor: 'pointer' }} onClick={onClose}>
             ✖
           </div>
         </div>
-        <h1>게임 설명</h1>
+        <h1>"모두의 서울" 게임설명</h1>
         <div className="infoContainer">
           <div className="infoBox">
-            <div>1</div>
-            <img src="" alt="" />
+            <div className="infoSubTitle">서울을 기반으로 한 부루마블</div>
+            <img src="/assets/rule1.png" alt="" />
             <div className="infoTxt">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Asperiores doloribus commodi nam dolor voluptatibus ullam
-              inventore quibusdam excepturi quia molestias temporibus suscipit
-              quaerat voluptates sequi, ab deserunt quos minus exercitationem!
-              Aut, delectus. At a libero perferendis voluptatibus sed, sequi
-              sint dolorum doloribus consectetur nisi maxime aspernatur quo non
-              magnam, error incidunt eaque. Veritatis, quasi quaerat. Voluptate
-              incidunt aut quos facilis, alias temporibus asperiores laudantium
-              eligendi molestiae obcaecati consequuntur libero dicta iusto non.
-              Nihil similique repudiandae esse aspernatur alias ab neque
-              deserunt dolorum rerum fugit, quas repellat non?!
+              <div className="infoRuleTitle">부루마블 게임 (2~4인)</div>
+              <div>
+                "모두의 서울"은 서울을 기반으로한 전략보드 게임입니다.
+              </div>{' '}
+              <div>주사위를 굴려 땅을 이동해 부동산 자산을 늘리고</div>
+              <div>매 라운드 주식을 통해 자본금을 늘려가보세요!</div>
+              <p></p>
+              <p></p>
             </div>
           </div>
           <div className="infoBox">
-            <div>2</div>
-            <img src="" alt="" />
+            <div className="infoSubTitle">뉴스를 확인하고 주식시장을 예측</div>
+            <img src="/assets/rule2.png" alt="" />
             <div className="infoTxt">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Asperiores doloribus commodi nam dolor voluptatibus ullam
-              inventore quibusdam excepturi quia molestias temporibus suscipit
-              quaerat voluptates sequi, ab deserunt quos minus exercitationem!
-              Aut, delectus. At a libero perferendis voluptatibus sed, sequi
-              sint dolorum doloribus consectetur nisi maxime aspernatur quo non
-              magnam, error incidunt eaque. Veritatis, quasi quaerat. Voluptate
-              incidunt aut quos facilis, alias temporibus asperiores laudantium
-              eligendi molestiae obcaecati consequuntur libero dicta iusto non.
-              Nihil similique repudiandae esse aspernatur alias ab neque
-              deserunt dolorum rerum fugit, quas repellat non?!
+              <div className="infoRuleTitle">모두의 서울만의 특별한 규칙 1</div>
+              <div>라운드가 시작마다 주어지는 뉴스를 통해</div>
+              <div>주식시장의 변동을 예측해보세요.</div>
+              <div>주식시장은 라운드가 끝날때 열리니</div>
+              <div>자본금을 잘 분배해서 턴을 결정해야겠죠?</div>
             </div>
           </div>
           <div className="infoBox">
-            <div>3</div>
-            <img src="" alt="" />
+            <div className="infoSubTitle">납세는 필수! 탈세범을 잡아라</div>
+            <img src="/assets/rule3.png" alt="" />
             <div className="infoTxt">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Asperiores doloribus commodi nam dolor voluptatibus ullam
-              inventore quibusdam excepturi quia molestias temporibus suscipit
-              quaerat voluptates sequi, ab deserunt quos minus exercitationem!
-              Aut, delectus. At a libero perferendis voluptatibus sed, sequi
-              sint dolorum doloribus consectetur nisi maxime aspernatur quo non
-              magnam, error incidunt eaque. Veritatis, quasi quaerat. Voluptate
-              incidunt aut quos facilis, alias temporibus asperiores laudantium
-              eligendi molestiae obcaecati consequuntur libero dicta iusto non.
-              Nihil similique repudiandae esse aspernatur alias ab neque
-              deserunt dolorum rerum fugit, quas repellat non?!
+              <div className="infoRuleTitle">모두의 서울만의 특별한 규칙 2</div>
+              <div>모두의 서울에는 경제 활동에 대한 세금이 발생합니다.</div>
+              <div>세금을 납부하지 않는 플레이어들도 있을텐데요</div>
+              <div>라운드가 끝날때마다 탈세범을 지목할 수 있습니다.</div>
+              <div>천인공노할 탈세범을 잡아 혼내주시기 바랍니다.</div>
+              <div>물론 잘못된 지목에는 대가가 따르겠죠?</div>
             </div>
           </div>
         </div>

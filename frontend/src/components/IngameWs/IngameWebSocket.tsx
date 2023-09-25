@@ -136,7 +136,7 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         console.log("Ingame Sub 1 select news:", res);
         const receivedData = res.data;
-        setSelectedNews(receivedData);
+        setSelectedNews(receivedData.description);
       });
 
       // 구독 2. 땅 판매

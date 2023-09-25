@@ -4,7 +4,7 @@ import { CompatClient } from "@stomp/stompjs";
 
 /** playerId로 요청 */
 export const sendPlayerMessage = (
-  socketClient: CompatClient,
+  socketClient: CompatClient | null,
   playerId: string,
   endpoint: string,
   body?: string

@@ -9,8 +9,14 @@ export interface PlayerPosition {
   my: number;
 }
 
-/**(타입) 플레이어의 게임 내 정보 */
+/**(타입) 플레이어 고유 정보 */
 export interface PlayerInfo {
+  gameId: string;
+  playerId: string;
+}
+
+/**(타입) 플레이어의 게임 내 정보 */
+export interface PlayerData {
   name: string;
   money: number;
   color: string;

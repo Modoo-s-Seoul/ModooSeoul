@@ -1,14 +1,32 @@
+.roomContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+  height: 100vh;
+}
 .roomHeader {
   display: flex;
-  justify-content: space-between;
-  width: 90vw;
-  margin: auto;
-  margin-top: 5vh;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  /* margin: auto; */
 }
 .roomHeaderBtn {
+  margin-left: 80vw;
+}
+.roomTitle{
+  font-size: 5vw;
 }
 .roomInput {
   margin: 10px;
+  font-size: 2vw;
+}
+.roomInput input{
+  width: 20vw;
+  /* height: 5vh; */
 }
 .roomHeaderBtn:hover {
   text-shadow: 1px 1px 1px black;
@@ -33,6 +51,10 @@
 }
 
 .roomBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* roomCreate */

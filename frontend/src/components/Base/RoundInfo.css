@@ -1,0 +1,87 @@
+.roundInfoContainer {
+  position: fixed;
+  /* top: 6vh; */
+  left: 25vw;
+  width: 50vw;
+  /* height: 5vh; */
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  z-index: 1;
+  margin: auto;
+  text-align: center;
+  background-color: rgb(172, 218, 218);
+  border: 3px solid rgb(218, 255, 253);
+  border-radius: 10vw;
+  animation: appear 1s ease-in-out;
+}
+.roundInfoInnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  width: 90%;
+}
+
+.roundInfoText {
+  font-size: 2vw; /* 초기 글자 크기 */
+  color: rgb(255, 255, 255); /* 글자 색상 */
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
+  /* animation: scaleText 2s infinite alternate; */
+}
+.selectorContainer {
+  height: 20px;
+  display: flex;
+  justify-content: space-around;
+  flex: 1;
+}
+.selectorInnerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 80%;
+  margin: auto;
+}
+.selectorBox {
+  font-size: 1.5vw;
+  color: rgb(22, 113, 102);
+  position: relative;
+}
+
+.selectorActive {
+  color: black;
+  font-weight: 700;
+  text-shadow: 1px 1px 1px white;
+}
+.selectorTopArrow::before {
+  content: "";
+  position: absolute;
+  top: -10px; /* 위로 이동하여 텍스트 위에 표시 */
+  left: 50%; /* 가운데로 정렬 */
+  transform: translateX(-50%); /* 수평 가운데 정렬 */
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent; /* 삼각형 모양 만들기 */
+  border-right: 8px solid transparent;
+  border-top: 12px solid rgb(235, 133, 133); /* 빨간색으로 지정 */
+  z-index: 2; /* 다른 내용 위에 표시하기 위해 */
+  animation: bounce 2s infinite alternate;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-5px); /* 위로 5px 이동 */
+  }
+}
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1; /* 최종 투명도 설정 */
+  }
+}

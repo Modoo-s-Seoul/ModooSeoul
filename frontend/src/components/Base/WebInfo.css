@@ -1,26 +1,36 @@
-.infoContainer{
-    display: flex;
-    justify-content: space-between;
+.infoContainer {
+  display: flex;
+  justify-content: space-between;
 }
-.infoBox{
-    width: 30vw;
-    height: 70vh;
-    /* border: 1px solid black; */
-    box-shadow: 1px 1px 10px rgb(101, 101, 101), -1px -1px 10px rgb(118, 118, 118);
-    background-color: rgb(255, 226, 201);
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.infoBox {
+  width: 30vw;
+  height: 70vh;
+  /* border: 1px solid black; */
+  box-shadow: 1px 1px 10px rgb(101, 101, 101), -1px -1px 10px rgb(118, 118, 118);
+  background-color: rgb(255, 226, 201);
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.infoBox img{
-    background-color: rgb(159, 202, 188);
-    width: 90%;
-    height: 40%;
+.infoBox img {
+  background-color: rgb(159, 202, 188);
+  width: 90%;
+  height: 40%;
+  border: 3px solid black;
+  object-fit: cover;
 }
-.infoTxt{
-    margin: auto;
-    padding: 20px;
-    color: rgb(0, 0, 0);
-    font-weight: 200;
+.infoTxt {
+  margin: auto;
+  padding: 20px;
+  color: rgb(0, 0, 0);
+  font-weight: 200;
+}
+.infoSubTitle {
+  font-size: 32px;
+  margin: 20px;
+}
+.infoRuleTitle {
+  font-size: 27px;
+  margin: 20px;
 }

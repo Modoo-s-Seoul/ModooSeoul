@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./Modal.css";
 import "./WebOption.css";
+import { musicState } from "../../data/CommonData";
+import { useRecoilValue } from "recoil";
 
 export default function WebOption() {
   /** 옵션창 끄고 켜기 */
@@ -11,7 +13,11 @@ export default function WebOption() {
 
   return (
     <>
-      <div className="lobbyHeaderBtn" onClick={toggleWebOption}>
+      <div
+        className="lobbyHeaderBtn"
+        onClick={toggleWebOption}
+        style={{ cursor: "pointer" }}
+      >
         옵션
       </div>
       {isWebOptionVisible && <WebOptionLoad onClose={toggleWebOption} />}
@@ -25,6 +31,15 @@ interface WebOptionLoadProps {
 }
 /** 토글로 커지는 옵션창 */
 function WebOptionLoad({ onClose }: WebOptionLoadProps) {
+  // 배경음악 on / off
+  const audio = useRecoilValue(musicState);
+  const toggleMusic = () => {
+    if (audio.paused) {
+      audio.play(); // 음악이 꺼져있을 때 켜기
+    } else {
+      audio.pause(); // 음악이 켜져있을 때 끄기
+    }
+  };
   return (
     <div className="modalOverlay">
       <div className="modal">
@@ -33,9 +48,13 @@ function WebOptionLoad({ onClose }: WebOptionLoadProps) {
             ✖
           </div>
         </div>
-        <h1>설정창</h1>
+        <h1>옵션</h1>
         <div className="optionContainer">
-          <div className="optionBox" style={{ cursor: "pointer" }}>
+          <div
+            className="optionBox"
+            style={{ cursor: "pointer" }}
+            onClick={toggleMusic}
+          >
             배경음악 on/off
           </div>
           <div></div>
