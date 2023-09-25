@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @NoArgsConstructor //기본 생성자 생성
-@RedisHash(value = "message_num", timeToLive = 10000)
+@RedisHash(value = "message_num")
 @ToString
 public class MessageNum {
 

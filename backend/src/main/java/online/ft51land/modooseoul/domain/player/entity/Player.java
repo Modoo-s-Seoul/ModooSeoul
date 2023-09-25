@@ -16,7 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @Getter
-@RedisHash(value = "player", timeToLive = 10000)
+@RedisHash(value = "player")
 @NoArgsConstructor //기본 생성자 생성
 @ToString
 public class Player extends BaseEntity {
