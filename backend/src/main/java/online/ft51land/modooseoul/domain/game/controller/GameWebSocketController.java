@@ -11,7 +11,6 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.messagenum.service.MessageNumService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
@@ -20,8 +19,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,8 +111,8 @@ public class GameWebSocketController {
 		//이미 만료되어 있는 타이머 이면 무응답
 	}
 
-	@MessageMapping("/timer-cancle/{gameId}")
-	public void timerCancle(@DestinationVariable String gameId){
+	@MessageMapping("/timer-cancel/{gameId}")
+	public void timerCancel(@DestinationVariable String gameId){
 		
 		Game game = gameService.getGameById(gameId);
 
