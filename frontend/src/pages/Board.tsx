@@ -12,12 +12,13 @@ import {
 import { useSocket } from './SocketContext';
 import { useLocation } from 'react-router-dom';
 // 컴포넌트 로드
-import UserInfo from './UserInfo';
-import UserTurn from './UserTurn';
-import CommonTurn from '../components/CommonTurn/CommonTurn';
-import DiceRoll from './DiceRoll';
-import IngameModal from '../components/Base/IngameModal';
-import News from '../components/CommonTurn/News';
+import UserInfo from "./UserInfo";
+import UserTurn from "./UserTurn";
+import CommonTurn from "../components/CommonTurn/CommonTurn";
+import DiceRoll from "./DiceRoll";
+import IngameModal from "../components/Base/IngameModal";
+import News from "../components/CommonTurn/News/News";
+import NewsCheck from "../components/CommonTurn/News/NewsCheckBtn";
 // css 로드
 import './Board.css';
 // 데이터로드
@@ -662,10 +663,12 @@ export default function Board() {
         width="60vw"
         height="30vh"
         maxWidth="600px"
+        minHeight="200px"
         visible={isNewsVisible}
       >
         {isNewsVisible && <News />}
       </IngameModal>
+      <NewsCheck />
       <div ref={game} className="GameScreen" id="gameScreen" />
     </div>
   );

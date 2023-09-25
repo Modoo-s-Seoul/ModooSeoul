@@ -9,6 +9,11 @@
   padding-bottom: 5%;
 }
 
+.newsPageTitle {
+  font-size: 40px;
+  margin-top: 10px;
+}
+
 .newsCardContainer {
   display: flex;
   justify-content: space-around;
