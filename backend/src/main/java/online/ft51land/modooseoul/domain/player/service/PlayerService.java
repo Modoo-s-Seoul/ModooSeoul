@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.player.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
@@ -13,6 +14,7 @@ import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
+import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.domain.game.entity.Game;
@@ -195,8 +197,10 @@ public class PlayerService {
         return nextTurn;
     }
 
-    public PlayerArrivalBoardMessage<?> arrivalBoardInfo(Player player) {
+    @Transactional
+    public PlayerArrivalBoardMessage<?> arrivalBoardInfo(String playerId) {
 
+        Player player = getPlayerById(playerId);
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
 
         BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
@@ -211,12 +215,24 @@ public class PlayerService {
         }
         //지역구 - 남땅
         if(!player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
-            return PlayerArrivalBoardMessage.of("다른 플레이어 소유 땅",boardStatus);
+            tollPayment(boardStatus, playerId, boardStatus.getOwnerId());
+            PlayerPayResponseDto playerPayResponseDto = PlayerPayResponseDto.of(boardStatus,getPlayerById(playerId),getPlayerById(boardStatus.getOwnerId()));
+            return PlayerArrivalBoardMessage.of("다른 플레이어 소유 땅",playerPayResponseDto);
         }
         //찬스카드
         if(boardStatus.getBoardType() == BoardType.CHANCE) {
             return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
         }
+
+        if(boardStatus.getBoardType() == BoardType.SPECIAL) {
+            return specialBoard(boardStatus);
+        }
+
+        return null;
+    }
+
+    @Transactional
+    public PlayerArrivalBoardMessage<BoardStatus> specialBoard(BoardStatus boardStatus) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("출발지 도착",boardStatus);
@@ -234,6 +250,43 @@ public class PlayerService {
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
-        return PlayerArrivalBoardMessage.of("모르는땅 도착",boardStatus);
+        return null;
+    }
+
+    @Transactional
+    public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
+        //통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
+        Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
+        Player payPlayer = getPlayerById(playerId);
+        Player ownerPlayer = getPlayerById(ownerId);
+
+        if(toll > payPlayer.getCash()+payPlayer.getStockMoney()) {
+            //파산 경우
+            if(payPlayer.getEstates() != null) {
+                for (Long estate : payPlayer.getEstates()) {
+                    BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
+                            .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+                    sellBoard.resetBoard();
+                }
+            }
+            payPlayer.bankrupt();
+            playerRepository.save(payPlayer);
+            ownerPlayer.receiveToll(toll);
+            playerRepository.save(ownerPlayer);
+
+            return;
+        }
+
+        if(toll <= payPlayer.getCash()+payPlayer.getStockMoney() && payPlayer.getCash() < toll) {
+            //현금 + 주식몰수한 돈으로 해결 가능한 경우
+            //나중에 플레이어 주식 redis 삭제
+            payPlayer.sellStock();
+        }
+
+        //통행료 지불
+        payPlayer.payToll(toll);
+        ownerPlayer.receiveToll(toll);
+        playerRepository.save(payPlayer);
+        playerRepository.save(ownerPlayer);
     }
 }

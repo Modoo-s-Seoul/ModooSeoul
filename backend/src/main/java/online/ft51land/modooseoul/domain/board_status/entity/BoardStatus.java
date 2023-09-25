@@ -65,6 +65,8 @@ public class BoardStatus extends BaseEntity {
         this.description = board.getDescription();
         this.districtName = board.getDistrictName();
         this.price = board.getPrice();
+        this.synergy = 1L;
+        this.oil = 1L;
         this.buildings = new int[4];
     }
     public void purchaseGround(String playerId) {
@@ -77,5 +79,12 @@ public class BoardStatus extends BaseEntity {
 
     public void saveBuilding(int[] buildings) {
         this.buildings = buildings;
+    }
+
+    public void resetBoard() {
+        this.synergy = 1L;
+        this.oil = 1L;
+        this.buildings = new int[4];
+        this.ownerId = null;
     }
 }
