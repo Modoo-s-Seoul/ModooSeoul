@@ -9,7 +9,6 @@ import online.ft51land.modooseoul.domain.game.dto.message.GameTurnMessage;
 import online.ft51land.modooseoul.domain.game.dto.request.GameStartTimerRequestDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
-import online.ft51land.modooseoul.domain.messagenum.service.MessageNumService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
@@ -19,8 +18,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Slf4j
 @Controller
@@ -29,7 +31,6 @@ public class GameWebSocketController {
 
 	private final GameService gameService;
 	private final PlayerService playerService;
-	private final MessageNumService messageNumService;
 	private final WebSocketSendHandler webSocketSendHandler;
 
 	@MessageMapping("/start/{gameId}")
@@ -99,29 +100,46 @@ public class GameWebSocketController {
 	public void startTimer(@DestinationVariable String gameId, @Payload GameStartTimerRequestDto gameStartTimerRequestDto){
 		Game game = gameService.getGameById(gameId);
 
+		Timer timer = new Timer();
 
-		gameService.startTimer(game, gameStartTimerRequestDto.time());
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() { // 지정한 시간만큼 타이머가 돌았을때 실행하는 함수
+				// game에 타이머가 종료 됐는지 확인하는 boolean을 두고 확인
+				Game timerGame = gameService.getGameById(gameId);
 
-		if(!game.getIsExpiredTimer()){
-			// 이제 만료된 타이머 이면 리턴
-			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(true));
-			gameService.expiredTimer(game);
-		}
+				if(timerGame.getIsTimerActivated()){  //타이머가 활성화 되어 있으면
+					gameService.expiredTimer(timerGame); //만료시키고
+					// 메시지 보냄
+					webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(timerGame.getIsTimerActivated()));
+					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}", timerGame.getId(), LocalDateTime.now() );
+				}
+				//타이머를 비활성화 시킨 후 타이머가 만료되는 경우 무응답
 
-		//이미 만료되어 있는 타이머 이면 무응답
+			}
+		};
+
+		log.info("{} 방에서 타이머 시작 : {}", game.getId(), LocalDateTime.now() );
+
+		// 타이머 isExpiredTimer
+		gameService.startTimer(game);
+		timer.schedule(task, gameStartTimerRequestDto.seconds()*1000);
+
+		webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated()));
+
 	}
 
 	@MessageMapping("/timer-cancel/{gameId}")
 	public void timerCancel(@DestinationVariable String gameId){
-		
+
 		Game game = gameService.getGameById(gameId);
 
-		//타이머가 다 완료되지 않았는데 끝내는 경우
-		if(!game.getIsExpiredTimer()){
-			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(true));
+		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
+		if(game.getIsTimerActivated()){
 			gameService.expiredTimer(game);
+			webSocketSendHandler.sendToGame("timer-cancel", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated()));
 		}
 
-		// 이미 만료되어 있는 경우
+		// 이미 만료되어 있는 경우 무응답
 	}
 }

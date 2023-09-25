@@ -18,11 +18,10 @@ import org.springframework.data.redis.core.RedisHash;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimerTask;
 
 @Slf4j
 @Getter
-@RedisHash(value = "game", timeToLive = 10000) // Redis Repository 사용을 위한
+@RedisHash(value = "game") // Redis Repository 사용을 위한
 @AllArgsConstructor
 @ToString
 public class Game extends BaseEntity {
@@ -40,6 +39,9 @@ public class Game extends BaseEntity {
     current_round : 현재 라운드
     sum_money : 플레이어 총 자산
     message_num : 메시지 번호
+    turn_info : 턴정보
+    passPlayerCnt : 공통 턴에서 넘어가기를 희망하는 플레이어의 수
+    isTimerActivated : 타이머 활성화 여부
      */
 
 	@Id
@@ -84,7 +86,7 @@ public class Game extends BaseEntity {
 	@Column(name="pass_player_cnt")
 	private Long passPlayerCnt;
 
-	private Boolean isExpiredTimer;
+	private Boolean isTimerActivated;
 
 	@Builder
 	public Game() {
@@ -93,7 +95,7 @@ public class Game extends BaseEntity {
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
 		this.passPlayerCnt = 0L;
-		this.isExpiredTimer = true;
+		this.isTimerActivated = true;
 	}
 
 	public void addPlayer(Player player) {
@@ -158,10 +160,10 @@ public class Game extends BaseEntity {
 	}
 
 	public void startTimer(){
-		this.isExpiredTimer = false;
+		this.isTimerActivated = true;
 	}
 	public void expiredTimer(){
-		this.isExpiredTimer = true;
+		this.isTimerActivated = false;
 	}
 
 }

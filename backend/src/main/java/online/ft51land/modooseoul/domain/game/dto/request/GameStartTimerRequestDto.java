@@ -4,5 +4,5 @@ import lombok.Builder;
 
 @Builder
 public record GameStartTimerRequestDto(
-		Long time
+		Long seconds
 ) { }
