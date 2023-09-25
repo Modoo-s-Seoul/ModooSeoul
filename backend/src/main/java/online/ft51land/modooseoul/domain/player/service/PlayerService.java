@@ -2,6 +2,7 @@ package online.ft51land.modooseoul.domain.player.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
@@ -201,35 +202,35 @@ public class PlayerService {
         BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
         //지역구 - 빈땅
-        if(boardStatus.getOwnerId() == null && boardStatus.getBoardType().equals("DISTRICT")) {
+        if(boardStatus.getOwnerId() == null && boardStatus.getBoardType() == BoardType.DISTRICT) {
             return PlayerArrivalBoardMessage.of("빈 땅",boardStatus);
         }
         //지역구 - 내땅
-        if(player.getId().equals(boardStatus.getOwnerId())) {
+        if(player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
             return PlayerArrivalBoardMessage.of("플레이어 소유 땅",boardStatus);
         }
         //지역구 - 남땅
-        if(boardStatus.getOwnerId() == null && !player.getId().equals(boardStatus.getOwnerId())) {
+        if(!player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
             return PlayerArrivalBoardMessage.of("다른 플레이어 소유 땅",boardStatus);
         }
         //찬스카드
-        if(boardStatus.getBoardType().equals("CHANCE")) {
+        if(boardStatus.getBoardType() == BoardType.CHANCE) {
             return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
         }
         //특수칸 - 시작점
-        if(boardStatus.getSpecialName().equals("출발지")) {
+        if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("출발지 도착",boardStatus);
         }
         //특수칸 - 감옥
-        if(boardStatus.getSpecialName().equals("감옥")) {
+        if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("감옥 도착",boardStatus);
         }
         //특수칸 - 오일랜드
-        if(boardStatus.getSpecialName().equals("FT OilLand")) {
+        if(boardStatus.getSpecialName().equals("FT OilLand") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("오일랜드 도착",boardStatus);
         }
         //특수칸 - 지하철
-        if(boardStatus.getSpecialName().equals("지하철")) {
+        if(boardStatus.getSpecialName().equals("지하철") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
