@@ -28,6 +28,7 @@ import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -104,6 +105,13 @@ public class GameService {
             player.playerInit(Long.valueOf(i));
             playerRepository.save(player);
         }
+
+        // 플레이어 주식 보드 세팅
+        for (Player player : players) {
+            StockBoard stockBoard = new StockBoard(player.getId());
+            stockBoard.stockBoardinit(game);
+        }
+        log.info("주식보드 세팅 완료");
 
         return GameStartMessage.of(true, "게임 시작!");
     }
