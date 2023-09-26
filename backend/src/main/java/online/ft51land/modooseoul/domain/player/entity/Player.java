@@ -158,7 +158,7 @@ public class Player extends BaseEntity {
         this.isPrisoned = isPrisoned;
     }
 
-    public void setNextRound(Boolean isPrisoned, Long stockMoney) {
+    public void setNextRound(Long stockMoney) {
         this.setIsPrisoned(false);
         this.stockMoney = stockMoney;
     }
@@ -174,6 +174,14 @@ public class Player extends BaseEntity {
     public void sellAllStock() {
         this.cash += this.stockMoney;
         this.stockMoney = 0L;
+    }
+
+    public void tradeStock(Long totalPrice) {
+        // totalPrice 가 음수면 판매
+        this.stockMoney += totalPrice;
+
+        // 현금에 반영
+        this.cash -= totalPrice;
     }
 
     public void bankrupt() {

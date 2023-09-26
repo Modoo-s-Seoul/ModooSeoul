@@ -97,7 +97,7 @@ public class GameService {
         sequencePlayer(game); // 선 정하기
         setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
-        setGameStocks(game); // 주식 초기값 저장
+        List<GameStock> gameStocks = setGameStocks(game); // 주식 초기값 저장
         setBoard(game);
         gameRepository.save(game);
 
@@ -128,15 +128,18 @@ public class GameService {
     }
 
     // 주식 세팅
-    public void setGameStocks(Game game) {
+    public List<GameStock> setGameStocks(Game game) {
         List<Long> stocksIds = game.getStocks();
+        List<GameStock> gameStocks = new ArrayList<>();
         for (Long stockId : stocksIds) {
             Stock stock = stockRepository
                     .findById(stockId)
                     .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
             GameStock gameStock = new GameStock(stock, game.getId());
+            gameStocks.add(gameStock);
             gameStockRepository.save(gameStock);
         }
+        return  gameStocks;
     }
 
     public void setRandomStocks(Game game) {
@@ -210,6 +213,7 @@ public class GameService {
                     .findById(player.getId() + "@stockBoard")
                     .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
             stockBoard.nextRound(player);
+            stockBoardRepository.save(stockBoard);
         }
 
         // 주식 가격 변동
@@ -219,9 +223,8 @@ public class GameService {
         // 플레이어 다음 라운드 세팅
         for (Player player : players) {
             Long stockMoney = getNextRoundPlayerStockMoney(player);
-            if (player.getIsPrisoned()) {
-                player.setNextRound(false, stockMoney);
-            }
+            player.setNextRound(stockMoney);
+            playerRepository.save(player);
         }
 
         // 메시지 가공
@@ -235,6 +238,7 @@ public class GameService {
         StockBoard stockBoard = stockBoardRepository
                 .findById(player.getId() + "@stockBoard")
                 .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+
 
         for (int i = 0; i < stockBoard.getGameStockIds().size(); i++) {
             // 주식보드에 있는 게임 주식 아이디를 이용해서 게임주식 가져오기

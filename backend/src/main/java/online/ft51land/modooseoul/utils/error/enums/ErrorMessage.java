@@ -21,7 +21,8 @@ public enum ErrorMessage {
     GAME_ALREADY_FULL(FORBIDDEN, "해당 방의 정원이 이미 가득 찼습니다."),
     GAME_ALREADY_START(FORBIDDEN,"이미 게임을 시작한 방입니다."),
     DUPLICATE_PLAYER_NICKNAME(CONFLICT, "이미 사용 중인 닉네임입니다."),
-    BAD_SEQUENCE_REQUEST(BAD_REQUEST, "잘못된 순서의 요청입니다.");
+    BAD_SEQUENCE_REQUEST(BAD_REQUEST, "잘못된 순서의 요청입니다."),
+    CANNOT_BUY_STOCK(FORBIDDEN, "보유한 현금이 부족합니다.");
 
 
 
