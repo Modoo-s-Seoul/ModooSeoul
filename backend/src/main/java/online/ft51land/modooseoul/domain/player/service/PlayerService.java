@@ -167,12 +167,6 @@ public class PlayerService {
         Long cardIdx = playerNewsRequestDto.cardIdx();
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
-        // 뉴스 턴 넘기기
-        if(game.addPassPlayerCnt() == game.getPlayers().size()){
-            // 패스한 인원이 플레이어 정원이랑 같으면 턴 증가
-            // 모든 인원이 뉴스를 뽑기 전까지는 플레이어수 +1 턴으로 있다가 모든 인원이 뉴스를 뽑으면 턴 증가
-            game.passTurn();
-        }
         gameRepository.save(game);
 
 
@@ -297,5 +291,29 @@ public class PlayerService {
         ownerPlayer.receiveToll(toll);
         playerRepository.save(payPlayer);
         playerRepository.save(ownerPlayer);
+    }
+
+    public Long playerActionFinish(Player player, Game game){
+        /**
+         * 패스를 요청한 플레이어의 isFinish 확인
+         * isPass가 false 이면 true 로 바꾸기
+         * Game의 playerPasscnt 증가
+         *
+         */
+
+        // 공통턴이 아닐때 pass 요청을 하면 에러
+        if(game.getTurnInfo() < game.getPlayers().size()){
+          throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+        if(!player.getIsFinish()){
+            player.finish();
+            game.addFinishPlayerCnt();
+
+            playerRepository.save(player);
+            gameRepository.save(game);
+        }
+
+        return game.getFinishedPlayerCnt();
     }
 }

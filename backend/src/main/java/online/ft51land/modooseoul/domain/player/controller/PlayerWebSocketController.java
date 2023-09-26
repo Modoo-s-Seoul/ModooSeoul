@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
+import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
+import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -84,13 +82,37 @@ public class PlayerWebSocketController {
 	public void playerChooseNews(@DestinationVariable String playerId, @Payload PlayerNewsRequestDto playerNewsRequestDto) {
 
 		// game 객체 생성
-		Game game = gameService.getGameById(playerService.getPlayerById(playerId).getGameId());
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+		
+		//뉴스를 뽑기전 뉴스를 이미 뽑은 플레이어의 수
+		Long beforeCnt = game.getFinishedPlayerCnt();
+
+		// 뉴스를 뽑은 플레이어의 수
+		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
+
+		// 뽑기 전과 뽑은 후가 같다면 이미 전에 뉴스를 요청하고 또 요청한거라 예외처리
+		if(beforeCnt == finishPlayerCnt){
+			throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+		}
 
 		// 뉴스 데이터 가공
 		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequestDto);
 
 		// 데이터 전달
 		webSocketSendHandler.sendToPlayer("news", playerId, game.getId(), message);
+
+		//----------------------뉴스 전달은 끝
+
+		//----------------------플레이어가 뉴스를 모두 뽑았는지 확인
+		if(finishPlayerCnt == gameService.getPlayingPlayerCnt(game)){
+			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+		}
+
+		Game resultGame = gameService.getGameById(player.getGameId());
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerPassMessage.of(resultGame));
 	}
 
 	// 플레이어 방 나가기
@@ -122,4 +144,30 @@ public class PlayerWebSocketController {
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("prison", player.getGameId(), message);
 	}
+
+
+
+	// 공통 턴에서 자기 행동 완료
+	@MessageMapping("/action-finish/{playerId}")
+	public void playerActionFinish(@DestinationVariable String playerId){
+
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		// 패스를 요청한 플레이어 isPass 값 변경
+		// 패스한 플레이어 수 증가
+		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
+
+		// 모두가 턴 넘길 준비가 되어 있다면
+		if(finishPlayerCnt == gameService.getPlayingPlayerCnt(game)){
+			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+		}
+
+		Game resultGame = gameService.getGameById(player.getGameId());
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerFinishMessage.of(resultGame));
+	}
+
+
 }

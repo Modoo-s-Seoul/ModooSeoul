@@ -271,4 +271,30 @@ public class GameService {
         game.expiredTimer();
         gameRepository.save(game);
     }
+
+    public void playersActionFinish(Game game) {
+        // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+        List<Player> playerList = playerRepository.findAllByGameId(game.getId());
+
+        for (Player player : playerList ){
+            player.finishInit();
+            playerRepository.save(player);
+        }
+
+        expiredTimer(game);
+        passTurn(game);
+    }
+
+    // 플레이에 참여하고 있는 플레이어의 수 -> 파산하지 않은 플레이어의 수
+    public Long getPlayingPlayerCnt(Game game) {
+        List<Player> players= playerRepository.findAllByGameId(game.getId());
+        Long cnt = 0L;
+        for (Player player:players ){
+            if(!player.getIsBankrupt()){
+                cnt ++;
+            }
+        }
+        return cnt;
+    }
+
 }

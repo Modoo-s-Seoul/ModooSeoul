@@ -114,13 +114,17 @@ public class GameWebSocketController {
 				Game timerGame = gameService.getGameById(gameId);
 
 				if(timerGame.getIsTimerActivated()){  //타이머가 활성화 되어 있으면
-					gameService.expiredTimer(timerGame); //만료시키고
+					/**  TODO : action을 완료하지 못한 플레이어 찾아서 완료 시켜주기
+					 *  뉴스 같은 경우는 서버에서 임시로 정해주는 게 아니라서 타이머가 만료가 되어버리면 게임이 진행이 안된다.
+ 					 */
+
+					gameService.playersActionFinish(timerGame); // game 에 해당하는 모든 player actionfinish init  , 타이머 종료 , 턴 넘기기
+
 					// 메시지 보냄
-					webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(timerGame.getIsTimerActivated()));
+					webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(timerGame.getIsTimerActivated(), timerGame.getTurnInfo()));
 					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}", timerGame.getId(), LocalDateTime.now() );
 				}
 				//타이머를 비활성화 시킨 후 타이머가 만료되는 경우 무응답
-
 			}
 		};
 
@@ -128,9 +132,9 @@ public class GameWebSocketController {
 
 		// 타이머 isExpiredTimer
 		gameService.startTimer(game);
-		timer.schedule(task, gameStartTimerRequestDto.seconds()*1000);
+		timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
 
-		webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated()));
+		webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
 
 	}
 
@@ -142,9 +146,13 @@ public class GameWebSocketController {
 		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
 		if(game.getIsTimerActivated()){
 			gameService.expiredTimer(game);
-			webSocketSendHandler.sendToGame("timer-cancel", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated()));
+			// TODO : 다음 턴으로 넘어가는지 생각해보고 넘어가면 passTurn 해야함 / 지금은 타이머 만료까지만 되어 있음
+			webSocketSendHandler.sendToGame("timer-cancel", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
 		}
 
 		// 이미 만료되어 있는 경우 무응답
 	}
+
+
+
 }

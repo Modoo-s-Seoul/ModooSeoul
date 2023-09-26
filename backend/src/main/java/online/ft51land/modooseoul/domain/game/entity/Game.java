@@ -40,7 +40,7 @@ public class Game extends BaseEntity {
     sum_money : 플레이어 총 자산
     message_num : 메시지 번호
     turn_info : 턴정보
-    passPlayerCnt : 공통 턴에서 넘어가기를 희망하는 플레이어의 수
+    finishedPlayerCnt : 공통 턴에서 본인의 행동을 완료한 플레이어의 수
     isTimerActivated : 타이머 활성화 여부
      */
 
@@ -83,8 +83,8 @@ public class Game extends BaseEntity {
 	@Column(name = "turn_info")
 	private Long turnInfo;
 
-	@Column(name="pass_player_cnt")
-	private Long passPlayerCnt;
+	@Column(name="finished_player_cnt")
+	private Long finishedPlayerCnt;
 
 	private Boolean isTimerActivated;
 
@@ -94,7 +94,7 @@ public class Game extends BaseEntity {
 		this.isStart = false;
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
-		this.passPlayerCnt = 0L;
+		this.finishedPlayerCnt = 0L;
 		this.isTimerActivated = true;
 	}
 
@@ -139,16 +139,15 @@ public class Game extends BaseEntity {
 	public void roundStart(Long currentRound) {
 		this.currentRound = currentRound;
 		this.turnInfo = this.getPlayers().size() + 1L;
-		this.passPlayerCnt = 0L;
+		this.finishedPlayerCnt = 0L;
 	}
 
-	public Long addPassPlayerCnt(){
-		Long cnt = ++this.passPlayerCnt;
-		if(this.passPlayerCnt == this.players.size()){
+	public Long addFinishPlayerCnt(){
+		if(this.finishedPlayerCnt == this.players.size()){
 			// 정원이 4명일때 4명다 동의하면 0으로 바꾸주고 4 리턴
-			this.passPlayerCnt = 0L;
+			this.finishedPlayerCnt = 0L;
 		}
-		return cnt;
+		return ++this.finishedPlayerCnt;
 	}
 
 
