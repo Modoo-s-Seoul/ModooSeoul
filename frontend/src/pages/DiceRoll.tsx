@@ -10,6 +10,7 @@ import {
   isNewsVisibleState,
   isOilActiveState,
   isRollingState,
+  isSubwayActiveState,
   isUserTurnVisibleState,
 } from "../data/IngameData";
 interface diceRollProps {
@@ -28,6 +29,7 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   const loadingVisible = useRecoilValue(isLoadingVisibleState); // 로딩 페이지 토글
   const isOilActive = useRecoilValue(isOilActiveState); // 오일 토글
   const isNewsVisible = useRecoilValue(isNewsVisibleState); // 공통 턴 수행 가능 여부
+  const isSubwayActive = useRecoilValue(isSubwayActiveState); // 공통 턴 수행 가능 여부
 
   // 실제 주사위 값 설정
   const rollDice = () => {
@@ -66,7 +68,8 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
         !isUserTurnVisible &&
         !isCommonTurnVisible &&
         !isOilActive &&
-        !isNewsVisible && (
+        !isNewsVisible &&
+        !isSubwayActive && (
           <div className="diceContainer">
             <div className="diceContainer">
               <div className="msgContainer">

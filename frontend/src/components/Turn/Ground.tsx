@@ -178,13 +178,17 @@ export default function Ground() {
       const takePlayer = turnData.player;
       if (turnData.sell && turnData.player !== turn) {
         // 통행료 지불
-        const row = matchPos[oilLand].row;
-        const col = matchPos[oilLand].col;
         let cost = turnData.cost;
-        if (tRow == row && tCol == col) {
-          // 오일랜드 반영
-          cost = cost * 2;
+        if (oilLand !== -1) {
+          const row = matchPos[oilLand].row;
+          const col = matchPos[oilLand].col;
+          if (tRow == row && tCol == col) {
+            // 오일랜드 반영
+            const newCost = cost * 2;
+            cost = newCost;
+          }
         }
+
         console.log(givePlayer, "가", takePlayer, "에게", cost);
         const newPlayerData = playerData.map((playerInfo, index) => {
           if (index === givePlayer) {
