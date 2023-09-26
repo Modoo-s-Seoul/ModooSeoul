@@ -7,6 +7,9 @@ export interface PlayerPosition {
   /**스프라이트가 위치할 실제 좌표값 */
   mx: number;
   my: number;
+
+  /** 지하철 여부 */
+  subway: boolean;
 }
 
 /**(타입) 플레이어 고유 정보 */
@@ -30,6 +33,7 @@ export interface SpaceInfo {
   kind: string;
   sell: boolean;
   index: number;
+  order: number;
   player: null | number;
   oil: boolean;
 }
@@ -73,4 +77,12 @@ export interface buildingChangeType {
   point: number;
   industry: number;
   // sell: boolean;
+}
+
+/** (타입) 지하철 변동 기록 */
+export interface subwayChangeType {
+  player: number | null;
+  row: number | null;
+  col: number | null;
+  move: boolean;
 }

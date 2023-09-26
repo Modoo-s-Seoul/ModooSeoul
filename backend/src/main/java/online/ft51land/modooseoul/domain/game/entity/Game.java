@@ -165,4 +165,9 @@ public class Game extends BaseEntity {
 		this.isTimerActivated = false;
 	}
 
+	public void setEndGame(EndType endType, String winPlayerId) {
+		this.endType = endType;
+		this.winPlayerId = winPlayerId;
+		this.endTime = LocalDateTime.now();
+	}
 }

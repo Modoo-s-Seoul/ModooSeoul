@@ -19,6 +19,11 @@ import DiceRoll from "./DiceRoll";
 import IngameModal from "../components/Base/IngameModal";
 import News from "../components/CommonTurn/News/News";
 import NewsCheck from "../components/CommonTurn/News/NewsCheckBtn";
+import Loading from "../components/Base/Loading";
+import NotMyTurn from "../components/Base/NotMyTurn";
+import RoundInfo from "../components/Base/RoundInfo";
+import OilSelectBtn from "../components/Turn/OilSelectBtn";
+import SubwaySelectBtn from "../components/Turn/SubwaySelectBtn";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -48,12 +53,10 @@ import {
   isOilActiveState,
   matchPosition,
   oilLandState,
+  isSubwayState,
+  isSubwayActiveState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
-import Loading from "../components/Base/Loading";
-import NotMyTurn from "../components/Base/NotMyTurn";
-import RoundInfo from "../components/Base/RoundInfo";
-import OilSelectBtn from "../components/Turn/OilSelectBtn";
 import { boardDataState } from "../data/BoardData";
 
 ////////  게임 보드 /////////
@@ -88,6 +91,7 @@ export default function Board() {
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
+  const subwayChange = useRecoilValue(isSubwayState); // 지하철 변동
   const playerDeafaults: PlayerData[] = [];
   const [playerInfo, setPlayerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
@@ -100,7 +104,7 @@ export default function Board() {
     });
   }
 
-  const [round, setRound] = useRecoilState(roundState); // 현재 라운드
+  const setRound = useSetRecoilState(roundState); // 현재 라운드
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
@@ -118,7 +122,10 @@ export default function Board() {
     isLoadingVisibleState
   ); // 로딩 페이지 토글
   const isOilActive = useRecoilValue(isOilActiveState); // 오일 토글
-  const setOilLand = useSetRecoilState(oilLandState);
+  const setOilLand = useSetRecoilState(oilLandState); // 오일 위치
+  const [isSubwayActive, setIsSubwayActive] =
+    useRecoilState(isSubwayActiveState); // 지하철 토글
+  const setIsSubway = useSetRecoilState(isSubwayState); // 지하철 변동
 
   // 데이터 보관
   const [boardData] = useRecoilState(boardDataState); // 보드데이터
@@ -286,6 +293,7 @@ export default function Board() {
           col: 0,
           mx: spritePosition[i][0],
           my: spritePosition[i][1] - offset2,
+          subway: false,
         },
       ]);
     }
@@ -466,6 +474,41 @@ export default function Board() {
       }, i * 200);
     }
   };
+  /** 지하철용 이동 함수 */
+  const movePlayerSubway = (totalDice: number) => {
+    if (totalDice === 0) {
+      etcSprite[1].setAlpha(0);
+      playerPositions[turn].subway = false;
+      setTurn(turn + 1);
+    }
+    for (let i = 0; i < totalDice; i++) {
+      setTimeout(() => {
+        if (playerPositions[turn].row === 0 && playerPositions[turn].col < 8) {
+          movePlayer(0, 1);
+        } else if (
+          playerPositions[turn].col === 8 &&
+          playerPositions[turn].row < 8
+        ) {
+          movePlayer(1, 0);
+        } else if (
+          playerPositions[turn].row === 8 &&
+          playerPositions[turn].col > 0
+        ) {
+          movePlayer(0, -1);
+        } else if (
+          playerPositions[turn].col === 0 &&
+          playerPositions[turn].row > 0
+        ) {
+          movePlayer(-1, 0);
+        }
+        if (i === totalDice - 1) {
+          etcSprite[1].setAlpha(0);
+          playerPositions[turn].subway = false;
+          setTurn(turn + 1);
+        }
+      }, i * 200);
+    }
+  };
 
   /** 주사위 굴리기 함수 */
   const rollDice = (): void => {
@@ -477,10 +520,8 @@ export default function Board() {
     }
 
     // 주사위 값 결정
-    // const Dice1 = Math.floor(Math.random() * 6) + 1;
-    // const Dice2 = Math.floor(Math.random() * 6) + 1;
-    const Dice1 = 2;
-    const Dice2 = 8;
+    const Dice1 = Math.floor(Math.random() * 6) + 1;
+    const Dice2 = Math.floor(Math.random() * 6) + 1;
     setDiceActive(true);
     setDice1Value(Dice1);
     setDice2Value(Dice2);
@@ -516,10 +557,10 @@ export default function Board() {
         playerId: weblocation.state.playerId,
       });
     }
-    console.log("플레이어 고유 정보입니다", playerInfo);
     setPlayerData(playerDeafaults);
-    console.log("플레이어 시작 정보입니다", playerDeafaults);
     setRound((prev) => prev + 1);
+    console.log("플레이어 고유 정보입니다", playerInfo);
+    console.log("플레이어 시작 정보입니다", playerDeafaults);
 
     // 보드 세팅
     if (game.current) {
@@ -665,24 +706,74 @@ export default function Board() {
     setIsUserTurnVisible(false);
 
     if (turn === pNum) {
-      console.log("공통턴");
+      // 공통턴 띄우기
       setIsCommonTurnVisible(true);
     } else if (turn === pNum + 1) {
-      console.log("뉴스");
+      // 뉴스턴 띄우기
       setIsNewsVisible(true);
+    } else if (turn < pNum) {
+      // 지하철 이동 띄우기
+      if (playerPositions[turn].subway == true) {
+        setIsSubwayActive(true);
+      }
     }
   }, [turn]);
 
-  /** 지하철 선택시 */
-  useEffect(() => {}, []);
+  /** 지하철 변동감지 */
+  useEffect(() => {
+    const how = subwayChange[0].player;
+    if (subwayChange[0].move == true) {
+      // 이동 구현
+      const goIndex =
+        boardData[`${subwayChange[0].row}-${subwayChange[0].col}`].order;
+      const totalMove = (goIndex - 25 + 32) % 32;
+      console.log(
+        "지하철로 인한 이동 구현",
+        boardData[`${subwayChange[0].row}-${subwayChange[0].col}`],
+        subwayChange[0].row,
+        subwayChange[0].col,
+        goIndex,
+        totalMove
+      );
+      movePlayerSubway(totalMove);
+      return;
+    }
+    if (how !== null) {
+      playerPositions[how].subway = true;
+    }
+  }, [subwayChange]);
+  /** 지하철 이동 구현 */
+  useEffect(() => {
+    if (isSubwayActive) {
+      console.log("지하철 이벤트 실행");
+      // 클릭이벤트 구현
+      for (let i = 0; i < matchPos.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        groundSprite[i].setInteractive();
+        groundSprite[i].on("pointerdown", () => {
+          const x = (col - row) * (globalTileSize / 2) + config.scale.width / 2;
+          const y =
+            (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+          etcSprite[1].setPosition(x + 10, y - 220);
+          etcSprite[1].setAlpha(1);
+          setIsSubway([{ player: turn, row: row, col: col, move: false }]);
+        });
+      }
+    } else if (backgroundSprite[0]) {
+      console.log("지하철 이벤트 원복");
+      // 클릭이벤트 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        groundSprite[i].removeInteractive();
+      }
+    }
+  }, [isSubwayActive]);
 
   /** 오일랜드 선택시 */
   useEffect(() => {
     if (isOilActive) {
-      backgroundSprite[0].clear();
       // 투명화
       for (let i = 0; i < matchPos.length; i++) {
-        console.log(i);
         const row = matchPos[i].row;
         const col = matchPos[i].col;
         if (boardData[`${row}-${col}`].player !== turn) {
@@ -702,6 +793,25 @@ export default function Board() {
         }
       }
     } else if (backgroundSprite[0]) {
+      // 투명 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(1);
+        } else {
+          // 클릭이벤트 원복
+          groundSprite[i].removeInteractive();
+        }
+      }
+    }
+  }, [isOilActive]);
+
+  /** 배경 변경 이벤트 (오일랜드, 지하철) */
+  useEffect(() => {
+    if (isOilActive || isSubwayActive) {
+      backgroundSprite[0].clear();
+    } else if (backgroundSprite[0]) {
       backgroundSprite[0].fillGradientStyle(
         0xadd8e6,
         0xadd8e6,
@@ -715,16 +825,8 @@ export default function Board() {
         config.scale.width,
         config.scale.height
       );
-      // 투명 원복
-      for (let i = 0; i < groundSprite.length; i++) {
-        const row = matchPos[i].row;
-        const col = matchPos[i].col;
-        if (boardData[`${row}-${col}`].player !== turn) {
-          groundSprite[i].setAlpha(1);
-        }
-      }
     }
-  }, [isOilActive]);
+  }, [isOilActive, isSubwayActive]);
 
   /** 렌더링 부분 */
   return (
@@ -739,6 +841,7 @@ export default function Board() {
       <GameOption />
       <UserInfo />
       <OilSelectBtn />
+      <SubwaySelectBtn />
 
       {/* 주사위 */}
       <DiceRoll rollDiceInBoard={rollDice} />
@@ -773,14 +876,12 @@ export default function Board() {
         <input
           type="number"
           onChange={(e) => {
-            console.log(e.target.value);
             setDevDice1(Number(e.target.value));
           }}
         />
         <input
           type="number"
           onChange={(e) => {
-            console.log(e.target.value);
             setDevDice2(Number(e.target.value));
           }}
         />

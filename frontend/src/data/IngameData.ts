@@ -8,6 +8,7 @@ import {
   builingInfoType,
   groundInfoType,
   buildingChangeType,
+  subwayChangeType,
 } from "../interface/ingame";
 
 /*
@@ -227,4 +228,10 @@ export const selectedNewsState = atom<string>({
 export const isPrisonState = atom<boolean>({
   key: "isPrisonState",
   default: false,
+});
+
+/** 지하철 변동감지 */
+export const isSubwayState = atom<subwayChangeType[]>({
+  key: "isSubwayState",
+  default: [{ player: null, row: 0, col: 0, move: false }],
 });

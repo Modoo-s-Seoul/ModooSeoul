@@ -42,6 +42,7 @@ export default function OilSelectBtn() {
       {isOilActive && (
         <>
           <div className="oilSelectDoneContainer">
+            <div className="oilSelectText">적용할 칸을 고르세요</div>
             <div className="oilTimeBar">
               <button
                 className="oilSelectDoneBtn"

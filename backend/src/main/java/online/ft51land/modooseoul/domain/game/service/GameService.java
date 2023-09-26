@@ -1,15 +1,18 @@
 package online.ft51land.modooseoul.domain.game.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.Board;
 import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
+import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
 import online.ft51land.modooseoul.domain.game_stock.repository.GameStockRepository;
@@ -22,6 +25,7 @@ import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMess
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
@@ -29,16 +33,18 @@ import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class GameService {
 
+    private final PlayerService playerService;
+
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
     private final PlayerRepository playerRepository;
-
     private final NewsRepository newsRepository;
     private final BoardRepository boardRepository;
     private final BoardStatusRepository boardStatusRepository;
@@ -271,6 +277,36 @@ public class GameService {
         game.expiredTimer();
         gameRepository.save(game);
     }
+
+    @Transactional
+    public GameEndMessage endGame(Game game, EndType endType) {
+        List<Player> players = convertToPlayerList(game.getPlayers());
+        game.setEndGame(endType,players.get(0).getId());
+        gameRepository.save(game);
+        return GameEndMessage.of(players);
+    }
+
+    private List<Player> convertToPlayerList(List<String> players) {
+        List<Player> sortedPlayers = new ArrayList<>();
+
+        for (String playerId : players) {
+            Player player = playerService.getPlayerById(playerId);
+            sortedPlayers.add(player);
+        }
+        return  sortToMoney(sortedPlayers);
+    }
+
+    private List<Player> sortToMoney(List<Player> players) {
+        return players.stream()
+                .sorted((player1, player2) -> {
+                    long totalMoney1 = player1.getCash() + player1.getEstateMoney() + player1.getStockMoney();
+                    long totalMoney2 = player2.getCash() + player2.getEstateMoney() + player2.getStockMoney();
+
+                    return Long.compare(totalMoney2, totalMoney1);
+                })
+                .collect(Collectors.toList());
+    }
+
 
     public void playersActionFinish(Game game) {
         // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
