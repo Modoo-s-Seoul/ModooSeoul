@@ -84,17 +84,9 @@ public class PlayerWebSocketController {
 		// game 객체 생성
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
-		
-		//뉴스를 뽑기전 뉴스를 이미 뽑은 플레이어의 수
-		Long beforeCnt = game.getFinishedPlayerCnt();
 
 		// 뉴스를 뽑은 플레이어의 수
 		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
-
-		// 뽑기 전과 뽑은 후가 같다면 이미 전에 뉴스를 요청하고 또 요청한거라 예외처리
-		if(beforeCnt == finishPlayerCnt){
-			throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-		}
 
 		// 뉴스 데이터 가공
 		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequestDto);

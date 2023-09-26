@@ -306,13 +306,18 @@ public class PlayerService {
           throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
         }
 
-        if(!player.getIsFinish()){
-            player.finish();
-            game.addFinishPlayerCnt();
-
-            playerRepository.save(player);
-            gameRepository.save(game);
+        // 이미 행동을 완료한 플레이어가 다시 완료 했을 경우 예외 처리
+        if(player.getIsFinish()){
+            throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
         }
+
+
+        player.finish();
+        game.addFinishPlayerCnt();
+
+        playerRepository.save(player);
+        gameRepository.save(game);
+
 
         return game.getFinishedPlayerCnt();
     }
