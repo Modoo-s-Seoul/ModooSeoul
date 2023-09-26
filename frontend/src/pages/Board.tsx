@@ -104,7 +104,7 @@ export default function Board() {
     });
   }
 
-  const [round, setRound] = useRecoilState(roundState); // 현재 라운드
+  const setRound = useSetRecoilState(roundState); // 현재 라운드
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
