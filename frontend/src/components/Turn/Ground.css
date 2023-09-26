@@ -1,0 +1,69 @@
+.buildingBuyContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.buildingBuyBox {
+  width: 15%;
+  height: 60%;
+  border: 3px solid rgb(117, 117, 117);
+  background-color: rgb(236, 226, 215);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buyActive {
+  border: 3px solid rgb(0, 0, 0);
+  background-color: rgb(223, 202, 180);
+}
+
+.groundBtnContainer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.groundSelectContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+  width: 100%;
+  flex: 1;
+}
+
+.groundSelectBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: auto;
+  width: 30%;
+  height: 80%;
+  border: 1px solid rgb(0, 0, 0);
+}
+
+.groundTitle {
+  font-size: 40px;
+  margin-top: 10px;
+}
+
+.groundBody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* flex: 1; */
+}
+
+.industryBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,65 @@
+.eventContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  padding: 2vw;
+  width: 60vw;
+  height: 60vh;
+  left: 50%;
+  top: 50%;
+  max-width: 400px;
+  max-height: 400px;
+  transform: translate(-50%, -50%) scale(0); /* 가운데 정렬 */
+
+  background-color: rgb(227, 217, 194);
+  border-radius: 20px;
+  box-shadow: 5px 5px 50px rgb(0, 0, 0), -5px -5px 50px rgb(0, 0, 0);
+  opacity: 0;
+  transition: opacity 4s ease, transform 4s ease;
+}
+.userTurnActive {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  transition: opacity 4s ease, transform 4s ease;
+}
+
+.eventBox {
+  border: 1px solid green;
+  min-height: 20vh;
+  width: 20vw;
+  margin: auto;
+  background-color: white;
+}
+
+.userTurnContainer {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.userturnBody {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.userTurnTitle {
+  font-size: 3vw;
+}
+
+.closeUserTurn {
+  background-color: unset;
+  border: unset;
+  font-size: 24px;
+  cursor: pointer;
+  color: rgb(176, 70, 70);
+}
+.closeUserTurn:hover {
+  text-shadow: 1px 1px 10px rgb(118, 118, 118);
+}
+
+.userTurnFooter {
+  display: flex;
+}

@@ -1,0 +1,63 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 70vh;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.container {
+  margin: 100px 20px 0px 20px;
+  width: 200px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.header {
+  text-align: center;
+  flex: 1;
+  border: 1px solid black;
+}
+
+.content {
+  flex: 9;
+  display: flex;
+  border: 1px solid black;
+}
+
+.content_nickname {
+  flex: 2;
+  border: 1px solid black;
+}
+
+.content_message {
+  border: 1px solid black;
+  flex: 5;
+}
+
+.input_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input_wrap > input {
+  margin: 5px;
+}
+
+.create_button {
+  top: 30%;
+  left: 45%;
+}
+
+.join_button {
+  top: 30%;
+  left: 55%;
+}
+
+.send_button {
+  top: 30%;
+  left: 50%;
+}
