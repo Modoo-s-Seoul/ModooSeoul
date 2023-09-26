@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.stock_board.entity.enums.StockProfitType;
 import org.springframework.data.mongodb.repository.CountQuery;
 import org.springframework.data.redis.core.RedisHash;
@@ -53,6 +54,9 @@ public class StockBoard {
 	@Column(name = "stock_moneys")
 	private List<Long> stockMoneys;
 
+	@Column(name = "stock_purchase_amounts")
+	private List<Long> stockPurchaseAmounts;
+
 	public StockBoard(String playerId) {
 		this.id = playerId + "@stockBoard";
 		this.playerId = playerId;
@@ -62,6 +66,7 @@ public class StockBoard {
 		this.averagePurchases = new ArrayList<>();
 		this.stockAmounts = new ArrayList<>();
 		this.stockMoneys = new ArrayList<>();
+		this.stockPurchaseAmounts = new ArrayList<>();
 	}
 
 	public void stockBoardinit(Game game) {
@@ -70,6 +75,20 @@ public class StockBoard {
 			this.averagePurchases.add(0L);
 			this.stockAmounts.add(0L);
 			this.stockMoneys.add(0L);
+			this.stockPurchaseAmounts.add(0L);
 		}
+	}
+
+	public void nextRound(Player player) {
+		Long margin = player.getStockMoney() - this.prevStockMoney;
+
+		if (margin < 0) // 손실
+			this.stockProfitType = StockProfitType.LOSS;
+		else if (margin > 0) // 이득
+			this.stockProfitType = StockProfitType.PROFIT;
+		else // 유지
+			this.stockProfitType = StockProfitType.HOLD;
+
+		this.prevStockMoney = player.getStockMoney();
 	}
 }

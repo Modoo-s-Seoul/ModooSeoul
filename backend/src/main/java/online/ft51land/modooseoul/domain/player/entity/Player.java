@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -157,6 +158,11 @@ public class Player extends BaseEntity {
         this.isPrisoned = isPrisoned;
     }
 
+    public void setNextRound(Boolean isPrisoned, Long stockMoney) {
+        this.setIsPrisoned(false);
+        this.stockMoney = stockMoney;
+    }
+
     public void payToll(Long toll) {
         this.cash -= toll;
     }
@@ -165,7 +171,7 @@ public class Player extends BaseEntity {
         this.cash += toll;
     }
 
-    public void sellStock() {
+    public void sellAllStock() {
         this.cash += this.stockMoney;
         this.stockMoney = 0L;
     }

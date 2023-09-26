@@ -11,6 +11,7 @@ import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMess
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -85,6 +86,7 @@ public class GameWebSocketController {
 		log.info("gameId -> {}",gameId);
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
+		List<StockBoard> stockBoards = new ArrayList<>();
 
 		for (String playerId : game.getPlayers()) {
 			players.add(playerService.getPlayerById(playerId));
