@@ -79,7 +79,7 @@ public class GameWebSocketController {
 		webSocketSendHandler.sendToGame("players-info", gameId, message);
 	}
 
-	@MessageMapping("/roundStart/{gameId}")
+	@MessageMapping("/round-start/{gameId}")
 	public void startRound(@DestinationVariable String gameId) {
 		// game, players 객체 생성
 		log.info("gameId -> {}",gameId);
