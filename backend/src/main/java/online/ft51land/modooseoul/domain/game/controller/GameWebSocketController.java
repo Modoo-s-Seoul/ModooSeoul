@@ -159,8 +159,5 @@ public class GameWebSocketController {
 			Player player = playerService.getPlayerById(playerId);
 			webSocketSendHandler.sendToPlayer("free-action", playerId, gameId, PlayerPrisonMessage.of(player));
 		}
-
-		// 턴 넘기기
-		gameService.passTurn(game);
 	}
 }
