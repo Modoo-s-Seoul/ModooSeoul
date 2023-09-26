@@ -4,11 +4,13 @@ import lombok.Builder;
 
 @Builder
 public record GameTimerExpireMessage(
-		Boolean isTimerActivated
+		Boolean isTimerActivated,
+        Long turnInfo
 ) {
-    public static GameTimerExpireMessage of(boolean isTimerActivated) {
+    public static GameTimerExpireMessage of(boolean isTimerActivated, Long turnInfo) {
         return GameTimerExpireMessage.builder()
                 .isTimerActivated(isTimerActivated)
+                .turnInfo(turnInfo)
                 .build();
     }
 }
