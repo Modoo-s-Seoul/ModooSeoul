@@ -1,14 +1,23 @@
-.GameScreen {
-  z-index: 2;
+.oilBody {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
-.diceContainer {
+.oilSelectBtn {
+  display: flex;
+  margin: auto;
+}
+
+.oilSelectDoneContainer {
   position: fixed;
   width: auto;
   width: 100%;
   top: 50vh;
-  /* background-color: #d90429; */
 }
-.rollDiceBtn {
+
+.oilSelectDoneBtn {
   position: relative;
   padding: 5px 15px;
   color: #fff;
@@ -20,10 +29,11 @@
   outline: none;
   transition: 0.3s;
   /* top: 100px; */
+  width: 90px;
 }
 
-.rollDiceBtn:hover,
-.rollDiceBtn:active {
+.oilSelectDoneBtn:hover,
+.oilSelectDoneBtn:active {
   outline: none;
   background: #50514f;
   cursor: pointer;
@@ -36,7 +46,7 @@
   syntax: "<percentage>";
 }
 
-.diceTimeBar {
+.oilTimeBar {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,8 +61,8 @@
   margin: auto;
   top: 100px;
 }
-.diceTimeBar:hover,
-.diceTimeBar:active {
+.oilTimeBar:hover,
+.oilTimeBar:active {
   outline: none;
   /* background: #50514f; */
   cursor: pointer;
@@ -69,14 +79,4 @@
   100% {
     --dice--bar2: rgb(221, 69, 69);
   }
-}
-
-/* 개발자용 */
-.devContainer {
-  position: fixed;
-  left: 1%;
-  top: 30%;
-}
-.devContainer input {
-  width: 50px;
 }

@@ -87,6 +87,18 @@ export const isCommonTurnVisibleState = atom<boolean>({
   default: false,
 });
 
+/** 공통 턴 컴포넌트 활성화 */
+export const isOilActiveState = atom<boolean>({
+  key: "isOilActiveState",
+  default: false,
+});
+
+/** 공통 턴 컴포넌트 활성화 */
+export const isSubwayActiveState = atom<boolean>({
+  key: "isSubwayActiveState",
+  default: false,
+});
+
 /** 초기자금 */
 export const first_money = atom<number>({
   key: "first_money",
@@ -159,6 +171,12 @@ export const buildingChangeState = atom<buildingChangeType[]>({
   default: [{ player: null, index: -1, point: -1, industry: -1 }],
 });
 
+/** 오일랜드 위치 */
+export const oilLandState = atom<number>({
+  key: "oilLandState",
+  default: -1,
+});
+
 /** 보드판 위치 정보 */
 export const matchPosition = atom<defaultMatch[]>({
   key: "matchPosition",
@@ -172,29 +190,29 @@ export const matchPosition = atom<defaultMatch[]>({
     { row: 0, col: 6 },
     { row: 0, col: 7 },
     { row: 0, col: 8 },
-    { row: 1, col: 8 },
-    { row: 2, col: 8 },
-    { row: 3, col: 8 },
-    { row: 4, col: 8 },
-    { row: 5, col: 8 },
-    { row: 6, col: 8 },
-    { row: 7, col: 8 },
-    { row: 8, col: 8 },
-    { row: 8, col: 7 },
-    { row: 8, col: 6 },
-    { row: 8, col: 5 },
-    { row: 8, col: 4 },
-    { row: 8, col: 3 },
-    { row: 8, col: 2 },
-    { row: 8, col: 1 },
-    { row: 8, col: 0 },
-    { row: 7, col: 0 },
-    { row: 6, col: 0 },
-    { row: 5, col: 0 },
-    { row: 4, col: 0 },
-    { row: 3, col: 0 },
-    { row: 2, col: 0 },
     { row: 1, col: 0 },
+    { row: 1, col: 8 },
+    { row: 2, col: 0 },
+    { row: 2, col: 8 },
+    { row: 3, col: 0 },
+    { row: 3, col: 8 },
+    { row: 4, col: 0 },
+    { row: 4, col: 8 },
+    { row: 5, col: 0 },
+    { row: 5, col: 8 },
+    { row: 6, col: 0 },
+    { row: 6, col: 8 },
+    { row: 7, col: 0 },
+    { row: 7, col: 8 },
+    { row: 8, col: 0 },
+    { row: 8, col: 1 },
+    { row: 8, col: 2 },
+    { row: 8, col: 3 },
+    { row: 8, col: 4 },
+    { row: 8, col: 5 },
+    { row: 8, col: 6 },
+    { row: 8, col: 7 },
+    { row: 8, col: 8 },
   ],
 });
 

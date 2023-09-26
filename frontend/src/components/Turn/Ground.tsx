@@ -4,6 +4,8 @@ import {
   builingInfoState,
   groundChangeState,
   isUserTurnVisibleState,
+  matchPosition,
+  oilLandState,
   playerDataState,
   tcolState,
   trowState,
@@ -17,20 +19,27 @@ import CloseBtn from "./CloseBtn";
 import TimeBar from "../Base/TimeBar";
 
 export default function Ground() {
+  // 자체 인자
   const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
   const [selectIndustry, setSelectIndustry] = useState(false); // 산업군 선택 토글
+  const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
+  const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
+
+  // 기본 인자
   const [buildWhere, setBuildWhere] = useState(0); // 산업군 선택 토글
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  const matchPos = useRecoilValue(matchPosition);
+
+  // 데이터
   const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
-  const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
-  const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
+  const oilLand = useRecoilValue(oilLandState); // 오일랜드 위치
 
   /** 건물 갯수 세기 */
   useEffect(() => {
@@ -169,7 +178,13 @@ export default function Ground() {
       const takePlayer = turnData.player;
       if (turnData.sell && turnData.player !== turn) {
         // 통행료 지불
-        const cost = turnData.cost;
+        const row = matchPos[oilLand].row;
+        const col = matchPos[oilLand].col;
+        let cost = turnData.cost;
+        if (tRow == row && tCol == col) {
+          // 오일랜드 반영
+          cost = cost * 2;
+        }
         console.log(givePlayer, "가", takePlayer, "에게", cost);
         const newPlayerData = playerData.map((playerInfo, index) => {
           if (index === givePlayer) {
