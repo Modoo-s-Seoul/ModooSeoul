@@ -66,7 +66,7 @@ public class GameWebSocketController {
 		webSocketSendHandler.sendToGame("pass-turn", gameId, GameTurnMessage.of(game));
 	}
 
-	@MessageMapping("/playersInfo/{gameId}")
+	@MessageMapping("/players-info/{gameId}")
 	public void getPlayersInfo(@DestinationVariable String gameId) {
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
@@ -77,20 +77,25 @@ public class GameWebSocketController {
 
 		List<PlayerInGameInfoMessage> message = gameService.getPlayersInfo(players);
 
-		webSocketSendHandler.sendToGame("playersInfo", gameId, message);
+		webSocketSendHandler.sendToGame("players-info", gameId, message);
 	}
 
 	@MessageMapping("/roundStart/{gameId}")
 	public void startRound(@DestinationVariable String gameId) {
-		// game 객체 생성
+		// game, players 객체 생성
 		Game game = gameService.getGameById(gameId);
+		List<Player> players = new ArrayList<>();
+
+		for (String playerId : game.getPlayers()) {
+			players.add(playerService.getPlayerById(playerId));
+		}
 
 //		// 예외 처리
 //		if (game.getTurnInfo() != game.getPlayers().size()) {
 //			throw new BusinessException(ErrorMessage.INTERVAL_SERVER_ERROR);
 //		}
 
-		GameRoundStartMessage message = gameService.startRound(game);
+		GameRoundStartMessage message = gameService.startRound(game, players);
 
 		webSocketSendHandler.sendToGame("roundStart", gameId, message);
 

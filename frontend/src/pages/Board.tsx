@@ -1,16 +1,16 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from "react";
 // 게임관련
-import Phaser from 'phaser';
-import GameOption from '../components/Base/GameOption';
+import Phaser from "phaser";
+import GameOption from "../components/Base/GameOption";
 
 // 웹소켓
-import IngameWebSocket from '../components/IngameWs/IngameWebSocket';
+import IngameWebSocket from "../components/IngameWs/IngameWebSocket";
 import {
   sendPlayerMessage,
   // sendGameMessage,
-} from '../components/IngameWs/IngameSendFunction';
-import { useSocket } from './SocketContext';
-import { useLocation } from 'react-router-dom';
+} from "../components/IngameWs/IngameSendFunction";
+import { useSocket } from "./SocketContext";
+import { useLocation } from "react-router-dom";
 // 컴포넌트 로드
 import UserInfo from "./UserInfo";
 import UserTurn from "./UserTurn";
@@ -20,10 +20,10 @@ import IngameModal from "../components/Base/IngameModal";
 import News from "../components/CommonTurn/News/News";
 import NewsCheck from "../components/CommonTurn/News/NewsCheckBtn";
 // css 로드
-import './Board.css';
+import "./Board.css";
 // 데이터로드
-import { PlayerPosition, PlayerData } from '../interface/ingame';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { PlayerPosition, PlayerData } from "../interface/ingame";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
   first_money,
@@ -45,18 +45,23 @@ import {
   isCommonTurnVisibleState,
   isLoadingVisibleState,
   isNewsVisibleState,
-} from '../data/IngameData';
-import { musicState } from '../data/CommonData';
-import Loading from '../components/Base/Loading';
-import NotMyTurn from '../components/Base/NotMyTurn';
-import RoundInfo from '../components/Base/RoundInfo';
+  isOilActiveState,
+  matchPosition,
+  oilLandState,
+} from "../data/IngameData";
+import { musicState } from "../data/CommonData";
+import Loading from "../components/Base/Loading";
+import NotMyTurn from "../components/Base/NotMyTurn";
+import RoundInfo from "../components/Base/RoundInfo";
+import OilSelectBtn from "../components/Turn/OilSelectBtn";
+import { boardDataState } from "../data/BoardData";
 
 ////////  게임 보드 /////////
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
   // 글로벌 변수들
-  const colorPalette = ['dd9090', '909add', '90dd9a', 'dddc90'];
+  const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
   const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
   colorPaletteTint;
   const offset = 10; // 플레이어 위치 조정
@@ -64,15 +69,18 @@ export default function Board() {
   const globalTileSize = 144; // 타일 크기및 간격
 
   /**캐릭터 에셋 이름 */
-  const characterAssetNames = ['Pink', 'Blue', 'Green', 'Yellow'];
+  const characterAssetNames = ["Pink", "Blue", "Green", "Yellow"];
 
   /**캐릭터 에셋 주소 */
   const characterAssetLocation = [
-    'assets/alienPink.png',
-    'assets/alienBlue.png',
-    'assets/alienGreen.png',
-    'assets/alienYellow.png',
+    "assets/alienPink.png",
+    "assets/alienBlue.png",
+    "assets/alienGreen.png",
+    "assets/alienYellow.png",
   ];
+  // 개발자용
+  const [devDice1, setDevDice1] = useState<number>(0);
+  const [devDice2, setDevDice2] = useState<number>(0);
 
   // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
@@ -109,8 +117,15 @@ export default function Board() {
   const [loadingVisible, setLoadingVisible] = useRecoilState(
     isLoadingVisibleState
   ); // 로딩 페이지 토글
+  const isOilActive = useRecoilValue(isOilActiveState); // 오일 토글
+  const setOilLand = useSetRecoilState(oilLandState);
 
   // 데이터 보관
+  const [boardData] = useRecoilState(boardDataState); // 보드데이터
+  const matchPos = useRecoilValue(matchPosition); // 매칭데이터
+  const [backgroundSprite, setBackgroundSprite] = useState<
+    Phaser.GameObjects.Graphics[]
+  >([]); //기타 스프라이트
   const [playerSprite, setPlayerSprite] = useState<Phaser.GameObjects.Image[]>(
     []
   ); //플레이어 스프라이트
@@ -137,7 +152,7 @@ export default function Board() {
   /** 인게임 설정 */
   const config = {
     type: Phaser.AUTO,
-    parent: 'gameScreen',
+    parent: "gameScreen",
     // transparent: true, //배경 투명하게 설정
 
     // 캔버스 크기 창 크기에 따라 자동 맞춤되는 옵션
@@ -164,9 +179,9 @@ export default function Board() {
   /** phaser 에셋 불러오기 */
   function preload(this: Phaser.Scene) {
     // 보드관련 에셋
-    this.load.image('sampleTile', 'assets/Polygon3.png');
-    this.load.image('sampleBuilding', 'assets/building.png');
-    this.load.image('sampleShop', 'assets/shop.png');
+    this.load.image("sampleTile", "assets/Polygon3.png");
+    this.load.image("sampleBuilding", "assets/building.png");
+    this.load.image("sampleShop", "assets/shop.png");
     // 캐릭터 에셋
     for (let i = 0; i < 4; i++) {
       this.load.image(characterAssetNames[i], characterAssetLocation[i]);
@@ -179,8 +194,12 @@ export default function Board() {
     for (let i = 0; i < 47; i++) {
       this.load.image(`flagframe_${i}`, `assets/flag/${i}.png`);
     }
+    // 오일 이펙트
+    for (let i = 0; i < 25; i++) {
+      this.load.image(`oilframe_${i}`, `assets/oil/${i}.png`);
+    }
     // 음악
-    this.load.audio('music', ['music.mp3']);
+    this.load.audio("music", ["music.mp3"]);
   }
 
   /** phaser 에셋 생성 */
@@ -189,6 +208,10 @@ export default function Board() {
     const gradient = this.add.graphics();
     gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
     gradient.fillRect(0, 0, config.scale.width, config.scale.height);
+    setBackgroundSprite((prevBackgroundSprite) => [
+      ...prevBackgroundSprite,
+      gradient,
+    ]);
 
     // 보드 생성
     const tileSize = globalTileSize;
@@ -201,7 +224,7 @@ export default function Board() {
 
           // 폴리곤
           const sampleTile = this.add
-            .image(x, y, 'sampleTile')
+            .image(x, y, "sampleTile")
             .setOrigin(0.5, 3.35);
           sampleTile.setScale(1, 1);
           setGroundSprite((prevGroundSprite) => [
@@ -212,19 +235,19 @@ export default function Board() {
 
           // 디폴트 건물 1
           const sampleBuilding = this.add
-            .image(x, y, 'sampleBuilding')
+            .image(x, y, "sampleBuilding")
             .setOrigin(0.4, 8);
           sampleBuilding.setScale(0.2, 0.2);
           sampleBuilding.setAlpha(0);
           // 디폴트 건물 2
           const sampleBuilding2 = this.add
-            .image(x, y, 'sampleBuilding')
+            .image(x, y, "sampleBuilding")
             .setOrigin(-0.45, 7.5);
           sampleBuilding2.setScale(0.2, 0.2);
           sampleBuilding2.setAlpha(0);
           // 디폴트 건물 3
           const sampleBuilding3 = this.add
-            .image(x, y, 'sampleBuilding')
+            .image(x, y, "sampleBuilding")
             .setOrigin(1.2, 7.5);
           sampleBuilding3.setScale(0.2, 0.2);
           sampleBuilding3.setAlpha(0);
@@ -268,10 +291,6 @@ export default function Board() {
     }
 
     // 기타 에셋 첨부
-    /** 배경음악 */
-    // const music = this.sound.add("music");
-    // music.play();
-
     /** 1. 턴 플레이어 화살표 */
     const frameNames = [];
     for (let i = 0; i < 75; i++) {
@@ -279,7 +298,7 @@ export default function Board() {
     }
     // 애니메이션 생성
     this.anims.create({
-      key: 'locationAnimation', // 애니메이션 키(key)
+      key: "locationAnimation", // 애니메이션 키(key)
       frames: frameNames, // 프레임들의 배열
       frameRate: 30, // 재생 속도 (프레임/초)
       repeat: -1, // -1로 설정하면 무한 반복
@@ -288,11 +307,11 @@ export default function Board() {
     const arrow = this.add.sprite(
       config.scale.width / 2 - offset,
       config.scale.height / 2 - offset - offset2 - 35,
-      'locationframe_0' // 처음 프레임을 설정
+      "locationframe_0" // 처음 프레임을 설정
     );
     arrow.setScale(0.025, 0.025);
     arrow.setAlpha(0.8);
-    arrow.anims.play('locationAnimation'); // 애니메이션 재생
+    arrow.anims.play("locationAnimation"); // 애니메이션 재생
     /** 2. 도착지 깃발 */
     const frameNamesFlag = [];
     for (let i = 0; i < 46; i++) {
@@ -300,7 +319,7 @@ export default function Board() {
     }
     // 애니메이션 생성
     this.anims.create({
-      key: 'flagAnimation', // 애니메이션 키(key)
+      key: "flagAnimation", // 애니메이션 키(key)
       frames: frameNamesFlag, // 프레임들의 배열
       frameRate: 80, // 재생 속도 (프레임/초)
       repeat: -1, // -1로 설정하면 무한 반복
@@ -309,14 +328,37 @@ export default function Board() {
     const flag = this.add.sprite(
       config.scale.width / 2 + 10,
       config.scale.height / 2 - offset2 - 20,
-      'flagframe_0' // 처음 프레임을 설정
+      "flagframe_0" // 처음 프레임을 설정
     );
     flag.setScale(0.1, 0.1);
     flag.setAlpha(0);
-    flag.anims.play('flagAnimation'); // 애니메이션 재생
+    flag.anims.play("flagAnimation"); // 애니메이션 재생
+    /** 3. 오일 이펙트 */
+    const frameNamesOil = [];
+    for (let i = 0; i < 25; i++) {
+      frameNamesOil.push({ key: `oilframe_${i}` });
+    }
+    // 애니메이션 생성
+    this.anims.create({
+      key: "oilAnimation", // 애니메이션 키(key)
+      frames: frameNamesOil, // 프레임들의 배열
+      frameRate: 25, // 재생 속도 (프레임/초)
+      repeat: -1, // -1로 설정하면 무한 반복
+    });
+    // 애니메이션을 스프라이트에 할당
+    const oileffect = this.add.sprite(
+      config.scale.width / 2,
+      config.scale.height / 2 - offset2 - 10,
+      "oilframe_0" // 처음 프레임을 설정
+    );
+    oileffect.setScale(0.3, 0.3);
+    oileffect.setAlpha(0);
+    oileffect.anims.play("oilAnimation"); // 애니메이션 재생
+
     // 기타 에셋 추가
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, arrow]);
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
+    setEtcSprite((prevEtcSprite) => [...prevEtcSprite, oileffect]);
 
     // 생성 완료후 - 로딩
     setLoadingVisible(false);
@@ -363,7 +405,7 @@ export default function Board() {
     // 더블 맥스 처리
     if (doubleCnt > 1) {
       if (Dice1 == Dice2) {
-        alert('너무많은 더블... 감옥가자');
+        alert("너무많은 더블... 감옥가자");
         // 캐릭터 감옥이동
         const tileSize = globalTileSize;
         const x = 8 * (tileSize / 2) + config.scale.width / 2;
@@ -426,33 +468,43 @@ export default function Board() {
   };
 
   /** 주사위 굴리기 함수 */
-  const rollDice = () => {
+  const rollDice = (): void => {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
     if (socketClient) {
-      sendPlayerMessage(socketClient, playerInfo.playerId, 'send/roll');
+      sendPlayerMessage(socketClient, playerInfo.playerId, "send/roll");
     }
 
     // 주사위 값 결정
     // const Dice1 = Math.floor(Math.random() * 6) + 1;
     // const Dice2 = Math.floor(Math.random() * 6) + 1;
     const Dice1 = 2;
-    const Dice2 = 6;
+    const Dice2 = 8;
     setDiceActive(true);
     setDice1Value(Dice1);
     setDice2Value(Dice2);
   };
 
+  /** 주사위 굴리기 함수(개발자용) */
+  const rollDiceDev = () => {
+    if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
+    setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
+
+    setDiceActive(true);
+    setDice1Value(Number(devDice1));
+    setDice2Value(Number(devDice2));
+  };
+
   /**실수로 인한 창 닫기, 새로고침 방지 */
   const preventRefresh = (e: BeforeUnloadEvent) => {
     e.preventDefault();
-    e.returnValue = ''; // 빈 문자열을 반환하여 경고 메시지를 표시
+    e.returnValue = ""; // 빈 문자열을 반환하여 경고 메시지를 표시
   };
 
   /**실수로 인한 뒤로가기 방지 */
   const preventGoBack = () => {
-    history.pushState(null, '', location.href);
+    history.pushState(null, "", location.href);
   };
 
   /** 기본 useEffect */
@@ -464,9 +516,9 @@ export default function Board() {
         playerId: weblocation.state.playerId,
       });
     }
-    console.log('플레이어 고유 정보입니다', playerInfo);
+    console.log("플레이어 고유 정보입니다", playerInfo);
     setPlayerData(playerDeafaults);
-    console.log('플레이어 시작 정보입니다', playerDeafaults);
+    console.log("플레이어 시작 정보입니다", playerDeafaults);
     setRound((prev) => prev + 1);
 
     // 보드 세팅
@@ -475,9 +527,9 @@ export default function Board() {
     }
 
     // 새로고침, 뒤로가기 기능 억제
-    window.addEventListener('beforeunload', preventRefresh);
-    history.pushState(null, '', location.href);
-    window.addEventListener('popstate', preventGoBack);
+    window.addEventListener("beforeunload", preventRefresh);
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", preventGoBack);
 
     // 전체화면
 
@@ -557,7 +609,7 @@ export default function Board() {
       ].setAlpha(1);
     } else if (buildingChange[0].player === 6) {
       // 판매요청시
-      console.log('판매요청');
+      console.log("판매요청");
       for (let i = 0; i < buildingChange.length; i++) {
         buildingSprite[
           buildingChange[i].index + buildingChange[i].point
@@ -609,17 +661,70 @@ export default function Board() {
 
   /** 공통 턴 구현 */
   useEffect(() => {
+    // 유저턴 언로드
+    setIsUserTurnVisible(false);
+
     if (turn === pNum) {
-      console.log('공통턴 띄워라');
+      console.log("공통턴");
       setIsCommonTurnVisible(true);
     } else if (turn === pNum + 1) {
-      console.log('뉴스 띄워라');
+      console.log("뉴스");
       setIsNewsVisible(true);
     }
   }, [turn]);
 
   /** 지하철 선택시 */
   useEffect(() => {}, []);
+
+  /** 오일랜드 선택시 */
+  useEffect(() => {
+    if (isOilActive) {
+      backgroundSprite[0].clear();
+      // 투명화
+      for (let i = 0; i < matchPos.length; i++) {
+        console.log(i);
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(0.1);
+        } else {
+          // 클릭이벤트 넣기
+          groundSprite[i].setInteractive();
+          groundSprite[i].on("pointerdown", () => {
+            const x =
+              (col - row) * (globalTileSize / 2) + config.scale.width / 2;
+            const y =
+              (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+            etcSprite[2].setPosition(x, y - offset2 - 10);
+            etcSprite[2].setAlpha(1);
+            setOilLand(i);
+          });
+        }
+      }
+    } else if (backgroundSprite[0]) {
+      backgroundSprite[0].fillGradientStyle(
+        0xadd8e6,
+        0xadd8e6,
+        0x87ceeb,
+        0x87ceeb,
+        1
+      );
+      backgroundSprite[0].fillRect(
+        0,
+        0,
+        config.scale.width,
+        config.scale.height
+      );
+      // 투명 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(1);
+        }
+      }
+    }
+  }, [isOilActive]);
 
   /** 렌더링 부분 */
   return (
@@ -628,37 +733,27 @@ export default function Board() {
       {loadingVisible && <Loading />}
       {!loadingVisible && <NotMyTurn />}
       {!loadingVisible && <RoundInfo />}
+
       {/* 기본 세팅 */}
       <IngameWebSocket />
       <GameOption />
       <UserInfo />
-      {/* 인게임 내부 */}
-      {!loadingVisible &&
-        !isUserTurnVisible &&
-        !isCommonTurnVisible &&
-        !isNewsVisible && (
-          <div className="diceContainer">
-            <DiceRoll />
-            {!isRolling && (
-              <div className="diceTimeBar">
-                <button
-                  id="move-button"
-                  className={`rollDiceBtn `}
-                  onClick={rollDice}
-                  style={{ cursor: 'pointer' }}
-                >
-                  주사위 굴리기
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+      <OilSelectBtn />
+
+      {/* 주사위 */}
+      <DiceRoll rollDiceInBoard={rollDice} />
+
+      {/* 유저턴 */}
       <IngameModal visible={isUserTurnVisible}>
         {isUserTurnVisible && <UserTurn />}
       </IngameModal>
+
+      {/* 공통턴 */}
       <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
         {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
+
+      {/* 뉴스턴 */}
       <IngameModal
         width="60vw"
         height="30vh"
@@ -669,7 +764,42 @@ export default function Board() {
         {isNewsVisible && <News />}
       </IngameModal>
       <NewsCheck />
+
+      {/* Phaser 게임구현 */}
       <div ref={game} className="GameScreen" id="gameScreen" />
+
+      {/* 개발자용 */}
+      <div className="devContainer">
+        <input
+          type="number"
+          onChange={(e) => {
+            console.log(e.target.value);
+            setDevDice1(Number(e.target.value));
+          }}
+        />
+        <input
+          type="number"
+          onChange={(e) => {
+            console.log(e.target.value);
+            setDevDice2(Number(e.target.value));
+          }}
+        />
+        <button onClick={rollDiceDev}>굴리기</button>
+        <button
+          onClick={() => {
+            setTurn((turn + pNum + 1) % (pNum + 2));
+          }}
+        >
+          턴 하나 뒤로
+        </button>
+        <button
+          onClick={() => {
+            setTurn((turn + 1) % (pNum + 2));
+          }}
+        >
+          턴 하나 앞으로
+        </button>
+      </div>
     </div>
   );
 }

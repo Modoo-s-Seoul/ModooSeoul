@@ -65,17 +65,27 @@ public class BoardStatus extends BaseEntity {
         this.description = board.getDescription();
         this.districtName = board.getDistrictName();
         this.price = board.getPrice();
+        this.synergy = 1L;
+        this.oil = 1L;
         this.buildings = new int[4];
     }
     public void purchaseGround(String playerId) {
         this.ownerId = playerId;
     }
 
-    public void purchaseBuilding(Long buildingIdx, Long buildingId) {
+    public void purchaseBuilding(Long buildingIdx, Long buildingId, Long buildingPrice) {
+        this.price += buildingPrice;
         this.buildings[Math.toIntExact(buildingIdx)] = Math.toIntExact(buildingId);
     }
 
     public void saveBuilding(int[] buildings) {
         this.buildings = buildings;
+    }
+
+    public void resetBoard() {
+        this.synergy = 1L;
+        this.oil = 1L;
+        this.buildings = new int[4];
+        this.ownerId = null;
     }
 }

@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
@@ -70,6 +72,11 @@ public class PlayerWebSocketController {
 
 		// 데이터 전달
 		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
+
+		//땅 도착 데이터 전달
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
+		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
 	}
 
 	// 뉴스 선택하기
@@ -101,5 +108,18 @@ public class PlayerWebSocketController {
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("leave", game.getId(), message);
+	}
+
+	// 감옥에 들어갔을 경우
+	@MessageMapping("/prison/{playerId}")
+	public void playerisPrisoned(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+
+		// 감옥 갇히는 로직 처리하고 메시지 생성
+		PlayerPrisonMessage message = gameService.setPlayerIsPrisoned(player);
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("prison", player.getGameId(), message);
 	}
 }
