@@ -1,0 +1,86 @@
+.roomContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+  height: 100vh;
+}
+.roomHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  /* margin: auto; */
+}
+.roomHeaderBtn {
+  margin-left: 80vw;
+}
+.roomTitle{
+  font-size: 5vw;
+}
+.roomInput {
+  margin: 10px;
+  font-size: 2vw;
+}
+.roomInput input{
+  width: 20vw;
+  /* height: 5vh; */
+}
+.roomHeaderBtn:hover {
+  text-shadow: 1px 1px 1px black;
+}
+
+.playerCardContainer {
+  display: flex;
+  justify-content: space-around;
+  height: 40vh;
+}
+.playerCard {
+  border: 3px solid black;
+  width: 20vw;
+  min-width: 100px;
+}
+
+.ready {
+  border: 3px solid greenyellow;
+}
+
+.crown {
+}
+
+.roomBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* roomCreate */
+.selectPlayerContainer {
+  display: flex;
+  justify-content: center;
+}
+.selectPlayerBtn {
+  width: 60px;
+  height: 30px;
+  border: 1px solid rgb(183, 162, 120);
+  border-radius: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  margin: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.selectPlayerBtn:hover {
+  background-color: rgb(183, 162, 120);
+  color: white !important;
+}
+.selectActive {
+  background-color: rgb(149, 133, 99) !important;
+  color: white !important;
+}

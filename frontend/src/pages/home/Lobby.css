@@ -1,0 +1,87 @@
+.lobbyContainer{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  margin: auto;
+  width: 100vw;
+  height: 100vh;
+  min-width: 500px;
+  min-height: 300px;
+
+}
+.lobbyHeader {
+  /* margin-top: 10vh; */
+}
+.lobbyBody{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+}
+.lobbyImg {
+  width: 30vw !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  font-size: 70px;
+  font-weight: 400;
+  text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white,
+    1px 1px 0 white;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+.lobbyHeaderBtnContainer {
+  display: flex;
+  justify-content: space-around;
+  width: 250px;
+  margin-right: 50px;
+  margin-left: auto;
+  margin-top: 5vh;
+}
+.lobbyHeaderBtn {
+  /* background-color: aqua; */
+  font-size: 30px;
+}
+.lobbyHeaderBtn:hover {
+  text-shadow: 1px 1px 1px black;
+}
+.lobbyBtnContainer {
+  display: flex;
+  justify-content: space-around;
+  height: 40vh;
+  align-items: center;
+}
+.lobbyBtn {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+
+  width: 25vw;
+  height: 100%;
+  border-radius: 2vw;
+
+  font-size: 3vw;
+  text-shadow: 1px 1px 5px black;
+  text-align: center;
+
+  color: aliceblue;
+  background-color: var(--primary-color);
+
+  transition: 0.3s ease;
+}
+.customLink{
+  display: flex;
+  height: 70%;
+  align-items: center;
+  justify-content: center;
+}
+.lobbyBtn:hover {
+  background-color: var(--secondary-color);
+  font-size : 4.5vw;
+}
+.lobbyBtn:active {
+}

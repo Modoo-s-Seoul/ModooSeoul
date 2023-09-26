@@ -1,0 +1,53 @@
+.playerContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* color: white; */
+  left: auto;
+  width: 100vw;
+  height: 100vh;
+}
+
+.playerBox {
+  min-height: 20vh;
+  width: 20vw;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  margin: 20px;
+  box-shadow: 1px 1px 10px black;
+}
+
+.activePlayer {
+  border: 10px solid rgb(128, 23, 0); /* 턴에 해당하는 플레이어에게 굵은 보더 스타일 */
+}
+
+.sample {
+  color: #dddc90;
+  color: #90dd9a;
+  color: #909add;
+  color: #dd9090;
+}
+
+.playerBox:nth-child(1) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.playerBox:nth-child(2) {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.playerBox:nth-child(3) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.playerBox:nth-child(4) {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}

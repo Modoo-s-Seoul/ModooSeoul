@@ -1,0 +1,36 @@
+version: '3'
+services:
+  spring:
+    container_name: spring
+    build:
+      context: ./backend
+    restart: always
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
+    ports:
+      - '8080:8080'
+    network_mode: host
+  nginx:
+    container_name: nginx
+    build:
+      context: ./frontend
+    restart: always
+    volumes:
+      - ../certbot/conf:/etc/letsencrypt
+      - ../certbot/www:/var/www/certbot
+    ports:
+      - '80:80'
+      - '443:443'
+    network_mode: host
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_service
+    volumes:
+      - ../certbot/conf:/etc/letsencrypt
+      - ../certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

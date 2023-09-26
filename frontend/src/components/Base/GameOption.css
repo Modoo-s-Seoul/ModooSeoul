@@ -1,0 +1,50 @@
+.GameOptionBtnContainer {
+  display: flex;
+}
+.GameOptionBtn {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  z-index: 10;
+  right: 20px;
+  top: 50vh;
+  background-color: var(--btn-color);
+  border-radius: 5px;
+  font-size: 17px;
+  cursor: pointer;
+  box-shadow: 2px 2px 2px black;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  transition: 0.3s ease;
+}
+.GameOptionBtn:hover {
+  background-color: var(--btn--hover-color);
+}
+.GameOptionContainer {
+  z-index: 9;
+}
+
+.exitBox {
+  display: flex;
+  width: 50%;
+  height: 50px;
+  background-color: rgb(242, 108, 93);
+  margin: auto;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.explainBox {
+  display: flex;
+  width: 50%;
+  height: 50px;
+  background-color: bisque;
+  margin: auto;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+}
