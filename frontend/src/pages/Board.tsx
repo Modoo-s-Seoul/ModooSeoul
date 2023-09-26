@@ -24,6 +24,7 @@ import NotMyTurn from "../components/Base/NotMyTurn";
 import RoundInfo from "../components/Base/RoundInfo";
 import OilSelectBtn from "../components/Turn/OilSelectBtn";
 import SubwaySelectBtn from "../components/Turn/SubwaySelectBtn";
+import StartSelectBtn from "../components/Turn/StartSelectBtn";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -55,6 +56,10 @@ import {
   oilLandState,
   isSubwayState,
   isSubwayActiveState,
+  isStartActiveState,
+  startMsgNumState,
+  srowState,
+  scolState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
@@ -108,6 +113,8 @@ export default function Board() {
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
+  const setSRow = useSetRecoilState(srowState); // 시작점 선택 row
+  const setSCol = useSetRecoilState(scolState); // 시작점 선택 col
   const [dice1, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
   const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
@@ -126,6 +133,8 @@ export default function Board() {
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글
   const setIsSubway = useSetRecoilState(isSubwayState); // 지하철 변동
+  const isStartActive = useRecoilValue(isStartActiveState); // 시작점 토글
+  const [, setStartNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
 
   // 데이터 보관
   const [boardData] = useRecoilState(boardDataState); // 보드데이터
@@ -140,7 +149,6 @@ export default function Board() {
   const [groundSprite, setGroundSprite] = useState<Phaser.GameObjects.Image[]>(
     []
   ); //땅 스프라이트
-  groundSprite;
   const [buildingSprite, setBuildingSprite] = useState<
     Phaser.GameObjects.Image[]
   >([]); //건물 스프라이트
@@ -807,9 +815,50 @@ export default function Board() {
     }
   }, [isOilActive]);
 
-  /** 배경 변경 이벤트 (오일랜드, 지하철) */
+  /** 시작점 선택시 */
   useEffect(() => {
-    if (isOilActive || isSubwayActive) {
+    if (isStartActive) {
+      // 투명화
+      for (let i = 0; i < matchPos.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(0.1);
+        } else {
+          // 클릭이벤트 넣기
+          groundSprite[i].setInteractive();
+          groundSprite[i].on("pointerdown", () => {
+            const x =
+              (col - row) * (globalTileSize / 2) + config.scale.width / 2;
+            const y =
+              (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+            etcSprite[1].setPosition(x + 10, y - 220);
+            etcSprite[1].setAlpha(1);
+            console.log("선택은", row, col);
+            setSRow(row);
+            setSCol(col);
+            setStartNum(1);
+          });
+        }
+      }
+    } else if (backgroundSprite[0]) {
+      // 투명 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(1);
+        } else {
+          // 클릭이벤트 원복
+          groundSprite[i].removeInteractive();
+        }
+      }
+    }
+  }, [isStartActive]);
+
+  /** 배경 변경 이벤트 (오일랜드, 지하철, 시작점) */
+  useEffect(() => {
+    if (isOilActive || isSubwayActive || isStartActive) {
       backgroundSprite[0].clear();
     } else if (backgroundSprite[0]) {
       backgroundSprite[0].fillGradientStyle(
@@ -826,7 +875,7 @@ export default function Board() {
         config.scale.height
       );
     }
-  }, [isOilActive, isSubwayActive]);
+  }, [isOilActive, isSubwayActive, isStartActive]);
 
   /** 렌더링 부분 */
   return (
@@ -842,6 +891,7 @@ export default function Board() {
       <UserInfo />
       <OilSelectBtn />
       <SubwaySelectBtn />
+      <StartSelectBtn />
 
       {/* 주사위 */}
       <DiceRoll rollDiceInBoard={rollDice} />

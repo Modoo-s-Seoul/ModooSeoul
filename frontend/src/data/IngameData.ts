@@ -64,6 +64,18 @@ export const tcolState = atom<number>({
   default: 0,
 });
 
+/** 시작점 선택 row값 */
+export const srowState = atom<number>({
+  key: "srowState",
+  default: 0,
+});
+
+/** 시작점 선택 col값 */
+export const scolState = atom<number>({
+  key: "scolState",
+  default: 0,
+});
+
 /** 로딩 컴포넌트 활성화 */
 export const isLoadingVisibleState = atom<boolean>({
   key: "isLoadingVisibleState",
@@ -88,15 +100,21 @@ export const isCommonTurnVisibleState = atom<boolean>({
   default: false,
 });
 
-/** 공통 턴 컴포넌트 활성화 */
+/** 오일선택 활성화 */
 export const isOilActiveState = atom<boolean>({
   key: "isOilActiveState",
   default: false,
 });
 
-/** 공통 턴 컴포넌트 활성화 */
+/** 지하철선택 활성화 */
 export const isSubwayActiveState = atom<boolean>({
   key: "isSubwayActiveState",
+  default: false,
+});
+
+/** 시작점선택 활성화 */
+export const isStartActiveState = atom<boolean>({
+  key: "isStartActiveState",
   default: false,
 });
 
@@ -178,6 +196,12 @@ export const oilLandState = atom<number>({
   default: -1,
 });
 
+/** 시작점 선택순서 */
+export const startMsgNumState = atom<number>({
+  key: "startMsgNumState",
+  default: 0,
+});
+
 /** 보드판 위치 정보 */
 export const matchPosition = atom<defaultMatch[]>({
   key: "matchPosition",
@@ -215,6 +239,18 @@ export const matchPosition = atom<defaultMatch[]>({
     { row: 8, col: 7 },
     { row: 8, col: 8 },
   ],
+});
+
+/** 모달 메세지 토글 */
+export const isModalMsgActiveState = atom<boolean>({
+  key: "isModalMsgActiveState",
+  default: false,
+});
+
+/** 모달 메세지 토글 */
+export const modalMsgState = atom<string>({
+  key: "modalMsgState",
+  default: "",
 });
 
 // 플레이어 개인

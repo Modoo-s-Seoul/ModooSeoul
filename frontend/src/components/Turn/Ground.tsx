@@ -26,7 +26,7 @@ export default function Ground() {
   const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
 
   // 기본 인자
-  const [buildWhere, setBuildWhere] = useState(0); // 산업군 선택 토글
+  const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
@@ -124,7 +124,6 @@ export default function Ground() {
     }
     setSelectedNodes(index);
   };
-  handleNodeClick;
 
   /** 건물 구매 */
   const buyBuilding = (num: number) => {

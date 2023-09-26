@@ -10,6 +10,7 @@ import {
   isNewsVisibleState,
   isOilActiveState,
   isRollingState,
+  isStartActiveState,
   isSubwayActiveState,
   isUserTurnVisibleState,
 } from "../data/IngameData";
@@ -28,8 +29,9 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   const isCommonTurnVisible = useRecoilValue(isCommonTurnVisibleState); // 공통 턴 수행 가능 여부
   const loadingVisible = useRecoilValue(isLoadingVisibleState); // 로딩 페이지 토글
   const isOilActive = useRecoilValue(isOilActiveState); // 오일 토글
-  const isNewsVisible = useRecoilValue(isNewsVisibleState); // 공통 턴 수행 가능 여부
-  const isSubwayActive = useRecoilValue(isSubwayActiveState); // 공통 턴 수행 가능 여부
+  const isNewsVisible = useRecoilValue(isNewsVisibleState); // 뉴스 턴 여부
+  const isSubwayActive = useRecoilValue(isSubwayActiveState); // 지하철 턴 여부
+  const isStartActive = useRecoilValue(isStartActiveState); // 시작점 턴 여부
 
   // 실제 주사위 값 설정
   const rollDice = () => {
@@ -66,6 +68,7 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
     <>
       {!loadingVisible &&
         !isUserTurnVisible &&
+        !isStartActive &&
         !isCommonTurnVisible &&
         !isOilActive &&
         !isNewsVisible &&
