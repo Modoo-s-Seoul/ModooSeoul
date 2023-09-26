@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
-import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.stock_board.entity.enums.StockProfitType;
 import org.springframework.data.redis.core.RedisHash;

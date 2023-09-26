@@ -3,7 +3,6 @@ package online.ft51land.modooseoul.domain.stock_board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
-import online.ft51land.modooseoul.domain.game_stock.repository.GameStockRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.domain.stock_board.dto.message.StockBoardMessage;
@@ -14,7 +13,6 @@ import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +23,6 @@ public class StockBoardService {
 
 	private final PlayerRepository playerRepository;
 	private final StockBoardRepository stockBoardRepository;
-	private final GameStockRepository gameStockRepository;
 
 	public int getIdxByName(String stockName, List<GameStock> gameStocks) {
 		for (int i = 0; i < gameStocks.size(); i++) {
@@ -38,11 +35,11 @@ public class StockBoardService {
 
 	public StockBoardMessage purchaseStock(Player player, StockBoardRequestDto stockBoardRequestDto, List<GameStock> gameStocks) {
 		// 해당 주식 가격 가져오기
-		String name = stockBoardRequestDto.getStockName();
+		String name = stockBoardRequestDto.stockName();
 		int idx = getIdxByName(name, gameStocks);
 		GameStock gameStock = gameStocks.get(idx);
 		Long price = gameStock.getStockPrice();
-		Long amount = stockBoardRequestDto.getStockAmount();
+		Long amount = stockBoardRequestDto.stockAmount();
 
 		// 사려고 하는 총 금액
 		Long totalPrice = price * amount;
