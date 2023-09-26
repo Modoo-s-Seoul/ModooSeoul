@@ -114,7 +114,6 @@ public class Player extends BaseEntity {
         this.cash = 10000000L; // 초기자금 1000만원
         this.stockMoney = 0L;
         this.estateMoney = 0L;
-        this.estates = new ArrayList<>();
 
         this.currentBoardIdx = 1L;
         this.dice = 0L;
