@@ -1,14 +1,14 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   tcolState,
   trowState,
   isPrisonState,
   turnState,
   isUserTurnVisibleState,
-} from '../../data/IngameData';
-import { useEffect, useState } from 'react';
-import { boardDataState } from '../../data/BoardData';
-import './Prison.css';
+} from "../../data/IngameData";
+import { useEffect, useState } from "react";
+import { boardDataState } from "../../data/BoardData";
+import "./Prison.css";
 
 /** 감옥칸 */
 export default function Prison() {
@@ -18,7 +18,7 @@ export default function Prison() {
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   const setIsPrison = useSetRecoilState(isPrisonState); // 감옥 반영
   // 시간 제한 인자
-  const [timeCnt, setTimeCnt] = useState(5);
+  const [timeCnt, setTimeCnt] = useState(3);
   const setTurn = useSetRecoilState(turnState);
   const setUserTurn = useSetRecoilState(isUserTurnVisibleState);
 
@@ -51,7 +51,7 @@ export default function Prison() {
 
   return (
     <>
-      <div className={'userTurnContainer'}>
+      <div className={"userTurnContainer"}>
         {/* 중단 - 본 내용 */}
         <div className="prisonBody">
           <div className="userTurnTitle">{turnData.name}</div>

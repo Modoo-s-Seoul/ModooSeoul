@@ -1,23 +1,24 @@
-.oilBody {
+.subwayBody {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-.oilSelectBtn {
+
+.subwaySelectBtn {
   display: flex;
   margin: auto;
 }
 
-.oilSelectDoneContainer {
+.subwaySelectDoneContainer {
   position: fixed;
   width: auto;
   width: 100%;
   top: 50vh;
 }
 
-.oilSelectDoneBtn {
+.subwaySelectDoneBtn {
   position: relative;
   padding: 5px 15px;
   color: #fff;
@@ -32,14 +33,14 @@
   width: 90px;
 }
 
-.oilSelectDoneBtn:hover,
-.oilSelectDoneBtn:active {
+.subwaySelectDoneBtn:hover,
+.subwaySelectDoneBtn:active {
   outline: none;
   background: #50514f;
   cursor: pointer;
   /* transform: translateY(5px); */
 }
-.oilSelectText {
+.subwaySelectText {
   color: white;
   position: relative;
   top: 80px;
@@ -51,7 +52,7 @@
   syntax: "<percentage>";
 }
 
-.oilTimeBar {
+.subwayTimeBar {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,8 +67,8 @@
   margin: auto;
   top: 100px;
 }
-.oilTimeBar:hover,
-.oilTimeBar:active {
+.subwayTimeBar:hover,
+.subwayTimeBar:active {
   outline: none;
   /* background: #50514f; */
   cursor: pointer;
