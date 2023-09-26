@@ -112,7 +112,7 @@ public class PlayerWebSocketController {
 		Game resultGame = gameService.getGameById(player.getGameId());
 
 		// 메시지 전송
-		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerPassMessage.of(resultGame));
+		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerFinishMessage.of(resultGame));
 	}
 
 	// 플레이어 방 나가기
