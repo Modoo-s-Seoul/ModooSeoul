@@ -102,7 +102,7 @@ public class GameWebSocketController {
 		}
 
 		GameRoundStartMessage gameRoundStartMessage = gameService.startRound(game, players);
-		webSocketSendHandler.sendToGame("roundStart", gameId, gameRoundStartMessage);
+		webSocketSendHandler.sendToGame("round-start", gameId, gameRoundStartMessage);
 	}
 
 	@MessageMapping("/timer/{gameId}")
