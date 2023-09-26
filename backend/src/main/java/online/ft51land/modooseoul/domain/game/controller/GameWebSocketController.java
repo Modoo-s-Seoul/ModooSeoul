@@ -2,12 +2,10 @@ package online.ft51land.modooseoul.domain.game.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.ft51land.modooseoul.domain.game.dto.message.GameRoundStartMessage;
-import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
-import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
-import online.ft51land.modooseoul.domain.game.dto.message.GameTurnMessage;
+import online.ft51land.modooseoul.domain.game.dto.message.*;
 import online.ft51land.modooseoul.domain.game.dto.request.GameStartTimerRequestDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
@@ -81,9 +79,10 @@ public class GameWebSocketController {
 		webSocketSendHandler.sendToGame("players-info", gameId, message);
 	}
 
-	@MessageMapping("/roundStart/{gameId}")
+	@MessageMapping("/round-start/{gameId}")
 	public void startRound(@DestinationVariable String gameId) {
 		// game, players 객체 생성
+		log.info("gameId -> {}",gameId);
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
 
@@ -96,10 +95,14 @@ public class GameWebSocketController {
 //			throw new BusinessException(ErrorMessage.INTERVAL_SERVER_ERROR);
 //		}
 
-		GameRoundStartMessage message = gameService.startRound(game, players);
+		if(game.getCurrentRound() >= 10) {
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.END_OF_TURN);
+			webSocketSendHandler.sendToGame("end", gameId, gameEndMessage);
+			return;
+		}
 
-		webSocketSendHandler.sendToGame("roundStart", gameId, message);
-
+		GameRoundStartMessage gameRoundStartMessage = gameService.startRound(game, players);
+		webSocketSendHandler.sendToGame("round-start", gameId, gameRoundStartMessage);
 	}
 
 	@MessageMapping("/timer/{gameId}")
