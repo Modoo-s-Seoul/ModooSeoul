@@ -1,5 +1,6 @@
 import IngameModal from "../Base/IngameModal";
 import CommonTurn from "../CommonTurn/CommonTurn";
+import TaxThiefCatch from "../CommonTurn/TaxThiefCatch";
 
 import { isCommonTurnVisibleState } from "../../data/IngameData";
 import { useRecoilState } from "recoil";
@@ -21,6 +22,7 @@ export default function TestComponent() {
       <IngameModal visible={isCommonTurnVisible}>
         {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
+      <TaxThiefCatch />
     </>
   );
 }

@@ -42,13 +42,13 @@ export default function StockTrade() {
           >
             {/*종목 선택 칸 */}
             <div className="selectStock">
-              <div className="stockContainerTitle">종목 선택</div>
-              <div className="stockSelectContainer">
+              <div className="modalBaseTitle">종목 선택</div>
+              <div className="modalBaseBody">
                 {stocks.map((ele, index) => {
                   return (
                     <div
                       key={index}
-                      className="stockButton"
+                      className="modalBaseButton"
                       onClick={() => handleContainer(ele)}
                       style={{ cursor: "pointer" }}
                     >
@@ -67,10 +67,8 @@ export default function StockTrade() {
                 style={{ cursor: "pointer" }}
                 onClick={() => handleContainer()}
               ></img>
-              <div className="stockContainerTitle">
-                {currentStock?.stockName}
-              </div>
-              <div className="stockTradeContainer">
+              <div className="modalBaseTitle">{currentStock?.stockName}</div>
+              <div className="modalBaseBody">
                 <Chart />
                 <div className="stockTradeBox">
                   <div className="tradeButtonContainer">
@@ -115,12 +113,14 @@ export default function StockTrade() {
                           </div>
                           주
                         </div>
-                        <CustomButton
-                          baseColor="#848484"
-                          hoverColor="#ff0e0e"
-                          text="사자"
-                          fontsize={30}
-                        />
+                        <div style={{ marginTop: "5%" }}>
+                          <CustomButton
+                            baseColor="#848484"
+                            hoverColor="#ff0e0e"
+                            text="사자"
+                            fontsize={30}
+                          />
+                        </div>
                       </div>
                       <div className="sellStock">
                         <div
@@ -135,12 +135,14 @@ export default function StockTrade() {
                           </div>
                           주
                         </div>
-                        <CustomButton
-                          baseColor="#848484"
-                          hoverColor="#1d33ff"
-                          text="팔자"
-                          fontsize={30}
-                        />
+                        <div style={{ marginTop: "5%" }}>
+                          <CustomButton
+                            baseColor="#848484"
+                            hoverColor="#1d33ff"
+                            text="팔자"
+                            fontsize={30}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
