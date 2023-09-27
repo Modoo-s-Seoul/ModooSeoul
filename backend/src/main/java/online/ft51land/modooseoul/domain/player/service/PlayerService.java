@@ -270,6 +270,7 @@ public class PlayerService {
                     BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
                             .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
                     sellBoard.resetBoard();
+                    boardStatusRepository.save(sellBoard);
                 }
             }
             payPlayer.bankrupt();
