@@ -155,6 +155,7 @@ public class Game extends BaseEntity {
 		if(this.players.size() + 1 == this.turnInfo){
 			return this.turnInfo = 0L;
 		}
+		this.finishedPlayerCnt = 0L;
 		return ++this.turnInfo;
 	}
 
