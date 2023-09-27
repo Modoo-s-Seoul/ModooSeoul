@@ -5,6 +5,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  Tooltip,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -19,7 +20,13 @@ export default function Chart() {
    * 따라서 번들 최적화를 위해 이런 귀찮은 짓을 해야한다.
    * 필요한 구성 요소들을 안들고 오면 차트가 제대로 안나온다.
    */
-  ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip
+  );
 
   const options = {
     responsive: true,
