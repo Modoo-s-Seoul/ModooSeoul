@@ -770,10 +770,6 @@ export default function Board() {
       }
     } else if (backgroundSprite[0]) {
       console.log("지하철 이벤트 원복");
-      // 클릭이벤트 원복
-      for (let i = 0; i < groundSprite.length; i++) {
-        groundSprite[i].removeInteractive();
-      }
     }
   }, [isSubwayActive]);
 
@@ -807,11 +803,6 @@ export default function Board() {
         const col = matchPos[i].col;
         if (boardData[`${row}-${col}`].player !== turn) {
           groundSprite[i].setAlpha(1);
-        } else {
-          // 클릭이벤트 원복
-          for (let i = 0; i < groundSprite.length; i++) {
-            groundSprite[i].removeInteractive();
-          }
         }
       }
     }
@@ -850,17 +841,12 @@ export default function Board() {
         const col = matchPos[i].col;
         if (boardData[`${row}-${col}`].player !== turn) {
           groundSprite[i].setAlpha(1);
-        } else {
-          // 클릭이벤트 원복
-          for (let i = 0; i < groundSprite.length; i++) {
-            groundSprite[i].removeInteractive();
-          }
         }
       }
     }
   }, [isStartActive]);
 
-  /** 배경 변경 이벤트 (오일랜드, 지하철, 시작점) */
+  /** 변경 이벤트 (오일랜드, 지하철, 시작점) */
   useEffect(() => {
     if (isOilActive || isSubwayActive || isStartActive) {
       backgroundSprite[0].clear();
@@ -878,6 +864,10 @@ export default function Board() {
         config.scale.width,
         config.scale.height
       );
+      // 클릭이벤트 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        groundSprite[i].removeAllListeners("pointerdown");
+      }
     }
   }, [isOilActive, isSubwayActive, isStartActive]);
 
