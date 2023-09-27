@@ -347,4 +347,13 @@ public class PlayerService {
         return PlayerTaxMessage.of(player);
     }
 
+    public PlayerReportMessage reportPlayer(Player player, String nickname) {
+
+        player.setReporteePlayerName(nickname);
+
+        playerRepository.save(player);
+
+        return PlayerReportMessage.of(player);
+
+    }
 }
