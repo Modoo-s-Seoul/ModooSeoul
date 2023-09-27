@@ -6,7 +6,7 @@ import online.ft51land.modooseoul.domain.board_status.entity.enums.PurchaseMessa
 @Builder
 public record BuildingPurchaseMessage(
         Boolean isPurchase,
-        PurchaseMessage purchaseMessage,
+        String message,
         Long boardIdx,
         Long buildingIdx,
         Long buildingId,
@@ -15,7 +15,7 @@ public record BuildingPurchaseMessage(
     public static BuildingPurchaseMessage of(Boolean isPurchase,PurchaseMessage purchaseMessage, Long boardIdx, Long buildingIdx, Long buildingId, String playerId) {
         return BuildingPurchaseMessage.builder()
                 .isPurchase(isPurchase)
-                .purchaseMessage(purchaseMessage)
+                .message(purchaseMessage.getMessage())
                 .boardIdx(boardIdx)
                 .buildingIdx(buildingIdx)
                 .buildingId(buildingId)
