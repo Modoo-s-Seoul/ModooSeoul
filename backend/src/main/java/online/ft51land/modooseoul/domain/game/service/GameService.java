@@ -97,7 +97,7 @@ public class GameService {
         sequencePlayer(game); // 선 정하기
         setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
-        List<GameStock> gameStocks = setGameStocks(game); // 주식 초기값 저장
+        setGameStocks(game); // 주식 초기값 저장
         setBoard(game);
         gameRepository.save(game);
 
@@ -128,18 +128,15 @@ public class GameService {
     }
 
     // 주식 세팅
-    public List<GameStock> setGameStocks(Game game) {
+    public void setGameStocks(Game game) {
         List<Long> stocksIds = game.getStocks();
-        List<GameStock> gameStocks = new ArrayList<>();
         for (Long stockId : stocksIds) {
             Stock stock = stockRepository
                     .findById(stockId)
                     .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
             GameStock gameStock = new GameStock(stock, game.getId());
-            gameStocks.add(gameStock);
             gameStockRepository.save(gameStock);
         }
-        return  gameStocks;
     }
 
     public void setRandomStocks(Game game) {
