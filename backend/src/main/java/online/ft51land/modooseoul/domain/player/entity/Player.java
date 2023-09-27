@@ -119,7 +119,6 @@ public class Player extends BaseEntity {
         this.cash = 10000000L; // 초기자금 1000만원
         this.stockMoney = 0L;
         this.estateMoney = 0L;
-        this.estates = new ArrayList<>();
 
         this.currentBoardIdx = 1L;
         this.dice = 0L;
@@ -164,6 +163,11 @@ public class Player extends BaseEntity {
         this.isPrisoned = isPrisoned;
     }
 
+    public void setNextRound(Long stockMoney) {
+        this.setIsPrisoned(false);
+        this.stockMoney = stockMoney;
+    }
+
     public void payToll(Long toll) {
         this.cash -= toll;
     }
@@ -172,9 +176,17 @@ public class Player extends BaseEntity {
         this.cash += toll;
     }
 
-    public void sellStock() {
+    public void sellAllStock() {
         this.cash += this.stockMoney;
         this.stockMoney = 0L;
+    }
+
+    public void tradeStock(Long totalPrice) {
+        // totalPrice 가 음수면 판매
+        this.stockMoney += totalPrice;
+
+        // 현금에 반영
+        this.cash -= totalPrice;
     }
 
     public void bankrupt() {
