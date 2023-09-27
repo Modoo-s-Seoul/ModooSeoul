@@ -9,6 +9,7 @@ import {
   isLoadingVisibleState,
   isNewsVisibleState,
   isOilActiveState,
+  isPlayerMoveState,
   isRollingState,
   isStartActiveState,
   isSubwayActiveState,
@@ -23,6 +24,7 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   const dicetwo = useRecoilValue(dice2State);
   const isRolling = useRecoilValue(isRollingState);
   const diceActive = useRecoilValue(diceActiveState);
+  const isPlayerMove = useRecoilValue(isPlayerMoveState);
   const [diceOneClass, setDiceOneClass] = useState("");
   const [diceTwoClass, setDiceTwoClass] = useState("");
   const isUserTurnVisible = useRecoilValue(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
@@ -67,6 +69,7 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   return (
     <>
       {!loadingVisible &&
+        !isPlayerMove &&
         !isUserTurnVisible &&
         !isStartActive &&
         !isCommonTurnVisible &&

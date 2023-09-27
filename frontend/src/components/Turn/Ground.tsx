@@ -2,6 +2,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   buildingChangeState,
   builingInfoState,
+  doubleCntState,
   groundChangeState,
   isUserTurnVisibleState,
   matchPosition,
@@ -29,6 +30,7 @@ export default function Ground() {
   const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
+  const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   const matchPos = useRecoilValue(matchPosition);
@@ -202,7 +204,9 @@ export default function Ground() {
         });
         setPlayerData(newPlayerData);
         setIsUserTurnVisible(!isUserTurnVisibleState);
-        setTurn(turn + 1);
+        if (doubleCnt == 0) {
+          setTurn(turn + 1);
+        }
       }
     }
   }, [isUserTurnVisibleState]);

@@ -60,6 +60,7 @@ import {
   startMsgNumState,
   srowState,
   scolState,
+  isPlayerMoveState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
@@ -111,6 +112,7 @@ export default function Board() {
 
   const setRound = useSetRecoilState(roundState); // 현재 라운드
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const setIsPlayerMove = useSetRecoilState(isPlayerMoveState);
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
   const setSRow = useSetRecoilState(srowState); // 시작점 선택 row
@@ -492,6 +494,7 @@ export default function Board() {
     }
     // 클릭 이동시
     for (let i = 0; i < totalDice; i++) {
+      setIsPlayerMove(true);
       setTimeout(() => {
         if (playerPositions[turn].row === 0 && playerPositions[turn].col < 8) {
           movePlayer(0, 1);
@@ -519,7 +522,7 @@ export default function Board() {
             setTRow(playerPositions[turn].row);
             setTCol(playerPositions[turn].col);
             setIsUserTurnVisible(true);
-            setIsRolling(false);
+            setIsPlayerMove(false);
           }, 500);
         }
       }, i * 200);
@@ -528,6 +531,7 @@ export default function Board() {
 
   /** 주사위 굴리기 함수 */
   const rollDice = (): void => {
+    if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
@@ -545,6 +549,7 @@ export default function Board() {
 
   /** 주사위 굴리기 함수(개발자용) */
   const rollDiceDev = () => {
+    if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
 

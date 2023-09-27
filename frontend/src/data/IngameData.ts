@@ -26,12 +26,18 @@ export const sample2 = selector({
 });
 */
 
-// 게임 전체
+//// 게임 전체
 
 /** 더블 중첩 횟수 */
 export const doubleCntState = atom<number>({
   key: "doubleCntState",
   default: 0,
+});
+
+/** 플레이어 이동 토글 */
+export const isPlayerMoveState = atom<boolean>({
+  key: "isPlayerMoveState",
+  default: false,
 });
 
 /** 플레이어 수 */
@@ -253,8 +259,7 @@ export const modalMsgState = atom<string>({
   default: "",
 });
 
-// 플레이어 개인
-
+//// 플레이어 개인
 export const selectedNewsState = atom<string>({
   key: "selectedNewsState",
   default: "뉴스",
