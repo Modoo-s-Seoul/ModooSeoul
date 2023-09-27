@@ -1,0 +1,37 @@
+/* NoLandMessage 컴포넌트에 애니메이션 효과를 적용하는 CSS */
+
+.noLandMessage {
+  position: absolute;
+  bottom: 10px; /* 하단에서 시작 */
+  left: 50%;
+  transform: translateX(-50%); /* 가운데 정렬 */
+
+  background-color: rgba(0, 0, 0, 0.8); /* 배경 색상 및 투명도 설정 */
+  color: white; /* 텍스트 색상 */
+  padding: 10px 20px; /* 내용 여백 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  opacity: 0; /* 처음에는 투명 */
+  animation: fadeInUp 1s ease-in-out, fadeOutUp 1s 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px); /* 시작 위치와 투명도 설정 */
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0); /* 끝 위치와 투명도 설정 */
+  }
+}
+
+@keyframes fadeOutUp {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0); /* 시작 위치와 투명도 설정 */
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px); /* 끝 위치와 투명도 설정 */
+  }
+}

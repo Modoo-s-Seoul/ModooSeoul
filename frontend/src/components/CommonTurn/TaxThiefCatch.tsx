@@ -1,8 +1,13 @@
 import { useState } from "react";
 import "../Base/Modal.css";
 import "./TaxThiefCatch.css";
-import { useRecoilValue } from "recoil";
-import { playerDataState } from "../../data/IngameData";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  isModalMsgActiveState,
+  modalMsgState,
+  playerDataState,
+} from "../../data/IngameData";
+import MessageModal from "../Base/MessageModal";
 
 export default function TaxThiefCatch() {
   /** 세금 도둑창 끄고 켜기 */
@@ -30,12 +35,15 @@ function TaxCatchRoom({ onClose }: TaxCatchLoadProps) {
   // 기본 인자
   const playerData = useRecoilValue(playerDataState); //
   const [selectedPlayer, setSelectedPlayer] = useState(6);
+  const setModalMsg = useSetRecoilState(modalMsgState);
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState);
   // 리폿버튼 누를시
   const handleReport = () => {
     if (selectedPlayer !== 6) {
       console.log("선택한 플레이어:", selectedPlayer);
     } else if (selectedPlayer == 6) {
-      alert("플레이어를 선택하세요.");
+      setModalMsg("플레이어를 선택하세요.");
+      setIsModalMsgActive(true);
     }
   };
   return (
@@ -67,6 +75,7 @@ function TaxCatchRoom({ onClose }: TaxCatchLoadProps) {
               </button>
             ))}
           </div>
+          <MessageModal />
           <button className="reportBtn" onClick={handleReport}>
             신고하기
           </button>
