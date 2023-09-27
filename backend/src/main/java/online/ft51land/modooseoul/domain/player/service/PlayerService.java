@@ -6,19 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
+import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.game.entity.Game;
-import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -167,18 +167,29 @@ public class PlayerService {
         Long cardIdx = playerNewsRequestDto.cardIdx();
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
-        // 뉴스 턴 넘기기
-        if(game.addPassPlayerCnt() == game.getPlayers().size()){
-            // 패스한 인원이 플레이어 정원이랑 같으면 턴 증가
-            // 모든 인원이 뉴스를 뽑기 전까지는 플레이어수 +1 턴으로 있다가 모든 인원이 뉴스를 뽑으면 턴 증가
-            game.passTurn();
-        }
         gameRepository.save(game);
 
 
         // 메시지 가공 후 리턴
         return PlayerNewsMessage.of(news);
     }
+
+
+    public PlayerNewsMessage autoPlayerChooseNews(Game game, String playerId) {
+        Player player = getPlayerById(playerId);
+
+        if(!player.getIsFinish()) { // 뉴스를 뽑지 않았다면
+            Random random = new Random();
+            random.setSeed(System.currentTimeMillis());
+            Long cardIdx = random.nextLong(4)+1;
+            PlayerNewsMessage message  = chooseNews(game, PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
+            return  message;
+        }
+
+        return  null;
+    }
+
+
 
     // 플레이어 방 나가기
     public void leaveGame(Game game, Player player) {
@@ -276,6 +287,7 @@ public class PlayerService {
                     BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
                             .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
                     sellBoard.resetBoard();
+                    boardStatusRepository.save(sellBoard);
                 }
             }
             payPlayer.bankrupt();
@@ -289,7 +301,7 @@ public class PlayerService {
         if(toll <= payPlayer.getCash()+payPlayer.getStockMoney() && payPlayer.getCash() < toll) {
             //현금 + 주식몰수한 돈으로 해결 가능한 경우
             //나중에 플레이어 주식 redis 삭제
-            payPlayer.sellStock();
+            payPlayer.sellAllStock();
         }
 
         //통행료 지불
@@ -298,4 +310,34 @@ public class PlayerService {
         playerRepository.save(payPlayer);
         playerRepository.save(ownerPlayer);
     }
+
+    public Long playerActionFinish(Player player, Game game){
+        /**
+         * 패스를 요청한 플레이어의 isFinish 확인
+         * isPass가 false 이면 true 로 바꾸기
+         * Game의 playerPasscnt 증가
+         *
+         */
+
+        // 공통턴이 아닐때 pass 요청을 하면 에러
+        if(game.getTurnInfo() < game.getPlayers().size()){
+          throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+        // 이미 행동을 완료한 플레이어가 다시 완료 했을 경우 예외 처리
+        if(player.getIsFinish()){
+            throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+
+        player.finish();
+        game.addFinishPlayerCnt();
+
+        playerRepository.save(player);
+        gameRepository.save(game);
+
+
+        return game.getFinishedPlayerCnt();
+    }
+
 }

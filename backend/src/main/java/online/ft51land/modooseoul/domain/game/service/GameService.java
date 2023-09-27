@@ -28,6 +28,8 @@ import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
+import online.ft51land.modooseoul.domain.stock_board.repository.StockBoardRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,7 @@ public class GameService {
     private final BoardStatusRepository boardStatusRepository;
     private final GameStockRepository gameStockRepository;
     private final StockRepository stockRepository;
+    private final StockBoardRepository stockBoardRepository;
 
 
 
@@ -104,6 +107,14 @@ public class GameService {
             player.playerInit(Long.valueOf(i));
             playerRepository.save(player);
         }
+
+        // 플레이어 주식 보드 세팅
+        for (Player player : players) {
+            StockBoard stockBoard = new StockBoard(player.getId());
+            stockBoard.stockBoardinit(game);
+            stockBoardRepository.save(stockBoard);
+        }
+        log.info("주식보드 세팅 완료");
 
         return GameStartMessage.of(true, "게임 시작!");
     }
@@ -193,19 +204,52 @@ public class GameService {
     public GameRoundStartMessage startRound(Game game, List<Player> players) {
         game.roundStart(game.getCurrentRound() + 1);
 
+        // 전라운드 주식 보유금 저장 (가격 변동 후 주식 보유금은 player 객체에 넣음)
+        for (Player player : players) {
+            StockBoard stockBoard = stockBoardRepository
+                    .findById(player.getId() + "@stockBoard")
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+            stockBoard.nextRound(player);
+            stockBoardRepository.save(stockBoard);
+        }
+
         // 주식 가격 변동
         List<GameStock> gameStocks = setNextRoundStockPrice(game);
         gameRepository.save(game);
 
-        // 감옥에서 빠져나옴
+        // 플레이어 다음 라운드 세팅
         for (Player player : players) {
-            if (player.getIsPrisoned()) {
-                player.setIsPrisoned(false);
-            }
+            Long stockMoney = getNextRoundPlayerStockMoney(player);
+            player.setNextRound(stockMoney);
+            playerRepository.save(player);
         }
 
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
+    }
+
+    public Long getNextRoundPlayerStockMoney(Player player) {
+        Long stockMoney = 0L;
+
+        // 플레이어 소유 주식 보드 가져오기
+        StockBoard stockBoard = stockBoardRepository
+                .findById(player.getId() + "@stockBoard")
+                .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+
+
+        for (int i = 0; i < stockBoard.getGameStockIds().size(); i++) {
+            // 주식보드에 있는 게임 주식 아이디를 이용해서 게임주식 가져오기
+            String gameStockId = stockBoard.getGameStockIds().get(i);
+
+            GameStock gameStock = gameStockRepository
+                    .findById(gameStockId)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_NOT_FOUND));
+
+            // 게임주식에 있는 가격과 주식보드에 있는 보유량을 곱해서 더해주기
+            stockMoney += gameStock.getStockPrice() * stockBoard.getStockAmounts().get(i);
+        }
+
+        return stockMoney;
     }
 
     public List<GameStock> setNextRoundStockPrice(Game game) {
@@ -305,6 +349,32 @@ public class GameService {
                     return Long.compare(totalMoney2, totalMoney1);
                 })
                 .collect(Collectors.toList());
+    }
+
+
+    public void playersActionFinish(Game game) {
+        // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+        List<Player> playerList = playerRepository.findAllByGameId(game.getId());
+
+        for (Player player : playerList ){
+            player.finishInit();
+            playerRepository.save(player);
+        }
+
+        expiredTimer(game);
+        passTurn(game);
+    }
+
+    // 플레이에 참여하고 있는 플레이어의 수 -> 파산하지 않은 플레이어의 수
+    public Long getPlayingPlayerCnt(Game game) {
+        List<Player> players= playerRepository.findAllByGameId(game.getId());
+        Long cnt = 0L;
+        for (Player player:players ){
+            if(!player.getIsBankrupt()){
+                cnt ++;
+            }
+        }
+        return cnt;
     }
 
 }
