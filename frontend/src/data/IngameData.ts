@@ -124,12 +124,6 @@ export const isStartActiveState = atom<boolean>({
   default: false,
 });
 
-/** 초기자금 */
-export const first_money = atom<number>({
-  key: "first_money",
-  default: 10000000,
-});
-
 /** 주사위 1 */
 export const dice1State = atom<number>({
   key: "dice1State",
@@ -163,7 +157,14 @@ export const playerInfoState = atom<PlayerInfo>({
 /** 플레이어 인게임 정보 기록 */
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
-  default: [],
+  default: [
+    {
+      0: { name: "Player 1", money: 0, color: "dd9090" },
+      1: { name: "Player 2", money: 0, color: "909add" },
+      2: { name: "Player 3", money: 0, color: "90dd9a" },
+      3: { name: "Player 4", money: 0, color: "dddc90" },
+    },
+  ],
 });
 
 /** 플레이어 위치 기록 */
@@ -259,7 +260,21 @@ export const modalMsgState = atom<string>({
   default: "",
 });
 
-//// 플레이어 개인
+///////////////////////// 플레이어 개인
+
+/** 초기자금 */
+export const first_money = atom<number>({
+  key: "first_money",
+  default: 10000000,
+});
+
+/** 탈세금 */
+export const dirtyMoneyState = atom<number>({
+  key: "dirtyMoneyState",
+  default: 50000,
+});
+
+/** 뉴스 보관 */
 export const selectedNewsState = atom<string>({
   key: "selectedNewsState",
   default: "뉴스",

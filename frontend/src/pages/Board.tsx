@@ -28,7 +28,7 @@ import StartSelectBtn from "../components/Turn/StartSelectBtn";
 // css 로드
 import "./Board.css";
 // 데이터로드
-import { PlayerPosition, PlayerData } from "../interface/ingame";
+import { PlayerPosition } from "../interface/ingame";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
@@ -73,7 +73,7 @@ export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
   // 글로벌 변수들
-  const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
+  // const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
   const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
   colorPaletteTint;
   const offset = 10; // 플레이어 위치 조정
@@ -101,20 +101,11 @@ export default function Board() {
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
   const subwayChange = useRecoilValue(isSubwayState); // 지하철 변동
-  const playerDeafaults: PlayerData[] = [];
   const [playerInfo, setPlayerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
-  playerData;
-  for (let i = 1; i <= pNum; i++) {
-    playerDeafaults.push({
-      name: `Player ${i}`,
-      money: firstMoneyValue,
-      color: colorPalette[i - 1],
-    });
-  }
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
 
   const setRound = useSetRecoilState(roundState); // 현재 라운드
-  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setIsPlayerMove = useSetRecoilState(isPlayerMoveState);
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
@@ -575,6 +566,7 @@ export default function Board() {
     history.pushState(null, "", location.href);
   };
 
+  ///////////// 인게임 useEffect ///////////////
   /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
@@ -584,10 +576,20 @@ export default function Board() {
         playerId: weblocation.state.playerId,
       });
     }
-    setPlayerData(playerDeafaults);
+    // 자본금 지금
+    const tmpData = playerData[0];
+    const newPlayerData = { ...tmpData };
+    for (let i = 0; i < pNum; i++) {
+      newPlayerData[i] = {
+        ...newPlayerData[i],
+        money: firstMoneyValue,
+      };
+    }
+    setPlayerData([newPlayerData]);
+    // 라운드 세팅
     setRound((prev) => prev + 1);
     console.log("플레이어 고유 정보입니다", playerInfo);
-    console.log("플레이어 시작 정보입니다", playerDeafaults);
+    console.log("플레이어 시작 정보입니다", playerData);
 
     // 보드 세팅
     if (game.current) {
