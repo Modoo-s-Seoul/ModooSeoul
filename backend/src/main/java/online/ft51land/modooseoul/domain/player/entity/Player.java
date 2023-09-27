@@ -221,4 +221,9 @@ public class Player extends BaseEntity {
     public void setTax(Long tax) {
         this.tax = tax;
     }
+
+    public void taxPayment() {
+        this.cash -= this.tax; // 보유한 현금에서 세금만큼 지불
+        setTax(0L); // 남은 세금 0으로
+    }
 }

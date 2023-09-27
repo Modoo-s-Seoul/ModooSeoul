@@ -161,5 +161,24 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerFinishMessage.of(resultGame));
 	}
 
+	@MessageMapping("/tax/payment/{playerId}")
+	public void playerPayTax(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		PlayerTaxMessage message = playerService.taxPayment(player);
+
+		webSocketSendHandler.sendToPlayer("tax", playerId, game.getId(), message);
+	}
+
+	@MessageMapping("/tax/evasion/{playerId}")
+	public void playerEvadeTax(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		PlayerTaxMessage message = PlayerTaxMessage.of(player);
+
+		webSocketSendHandler.sendToPlayer("tax", playerId, game.getId(), message);
+	}
 
 }
