@@ -9,12 +9,10 @@ import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepo
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -159,6 +157,17 @@ public class PlayerService {
 
         // 메세지 가공 후 리턴
         return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
+    }
+
+
+
+    // 지하철로 이동
+    public PlayerSubwayMessage takeSubway(Player player, PlayerSubwayRequestDto playerTakeSubwayRequestDto) {
+        if(player.getCurrentBoardIdx() ! = ){ // 플레이어의 현재 위치가 지하철이 아닌 경우
+
+        }
+
+        return  null;
     }
 
     // 플레이어 뉴스 선택
