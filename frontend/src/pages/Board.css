@@ -70,3 +70,13 @@
     --dice--bar2: rgb(221, 69, 69);
   }
 }
+
+/* 개발자용 */
+.devContainer {
+  position: fixed;
+  left: 1%;
+  top: 30%;
+}
+.devContainer input {
+  width: 50px;
+}

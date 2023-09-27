@@ -1,9 +1,14 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   buildingChangeState,
   builingInfoState,
+  doubleCntState,
   groundChangeState,
+  isModalMsgActiveState,
   isUserTurnVisibleState,
+  matchPosition,
+  modalMsgState,
+  oilLandState,
   playerDataState,
   tcolState,
   trowState,
@@ -15,22 +20,33 @@ import { useEffect, useState } from "react";
 import "./Ground.css";
 import CloseBtn from "./CloseBtn";
 import TimeBar from "../Base/TimeBar";
+import MessageModal from "../Base/MessageModal";
 
 export default function Ground() {
+  // 자체 인자
   const [, setIsUserTurnVisible] = useRecoilState(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
   const [selectIndustry, setSelectIndustry] = useState(false); // 산업군 선택 토글
-  const [buildWhere, setBuildWhere] = useState(0); // 산업군 선택 토글
+  const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
+  const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
+
+  // 기본 인자
+  const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
+  const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  const matchPos = useRecoilValue(matchPosition);
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
+
+  // 데이터
   const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
-  const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
-  const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
+  const oilLand = useRecoilValue(oilLandState); // 오일랜드 위치
 
   /** 건물 갯수 세기 */
   useEffect(() => {
@@ -56,12 +72,13 @@ export default function Ground() {
     // 땅 변동사항 업데이트
     setGroundChange([{ player: turn, index: turnData.index }]);
     // 땅 구매비용 발생
-    const newPlayerData = [...playerData];
+    const tmpData = playerData[0];
+    const newPlayerData = { ...tmpData };
     newPlayerData[turn] = {
       ...newPlayerData[turn],
-      money: newPlayerData[turn].money - turnData.cost,
+      money: newPlayerData[turn].money - turnData.price,
     };
-    setPlayerData(newPlayerData);
+    setPlayerData([newPlayerData]);
 
     // 턴 종료
     // setIsUserTurnVisible(false);
@@ -95,15 +112,17 @@ export default function Ground() {
       { player: 6, index: turnData.index * 3, point: 2, industry: -1 },
     ]);
     // // 땅 매각비용 발생
-    const newPlayerData = [...playerData];
+    const tmpData = playerData[0];
+    const newPlayerData = { ...tmpData };
     newPlayerData[turn] = {
       ...newPlayerData[turn],
-      money: newPlayerData[turn].money + turnData.cost,
+      money: newPlayerData[turn].money + turnData.price,
     };
-    setPlayerData(newPlayerData);
+    setPlayerData([newPlayerData]);
     // // 건물 매각비용 발생
-    setSelectIndustry(false);
+
     // 턴 종료
+    setSelectIndustry(false);
     // setIsUserTurnVisible(false);
   };
 
@@ -115,7 +134,6 @@ export default function Ground() {
     }
     setSelectedNodes(index);
   };
-  handleNodeClick;
 
   /** 건물 구매 */
   const buyBuilding = (num: number) => {
@@ -169,22 +187,41 @@ export default function Ground() {
       const takePlayer = turnData.player;
       if (turnData.sell && turnData.player !== turn) {
         // 통행료 지불
-        const cost = turnData.cost;
-        console.log(givePlayer, "가", takePlayer, "에게", cost);
-        const newPlayerData = playerData.map((playerInfo, index) => {
-          if (index === givePlayer) {
-            // 통행료를 받는 플레이어
-            return { ...playerInfo, money: playerInfo.money - cost };
-          } else if (index === takePlayer) {
-            // 통행료를 지불하는 플레이어
-            return { ...playerInfo, money: playerInfo.money + cost };
-          } else {
-            return playerInfo;
+        let cost = turnData.cost;
+        if (oilLand !== -1) {
+          const row = matchPos[oilLand].row;
+          const col = matchPos[oilLand].col;
+          if (tRow == row && tCol == col) {
+            // 오일랜드 반영
+            const newCost = cost * 2;
+            cost = newCost;
           }
-        });
-        setPlayerData(newPlayerData);
+        }
+
+        console.log(givePlayer, "가", takePlayer, "에게", cost);
+
+        const tmpData = playerData[0];
+        const newPlayerData = { ...tmpData };
+        if (givePlayer in newPlayerData) {
+          // 통행료를 받는 플레이어
+          newPlayerData[givePlayer] = {
+            ...newPlayerData[givePlayer],
+            money: newPlayerData[givePlayer].money - cost,
+          };
+        }
+        if (takePlayer && takePlayer in newPlayerData) {
+          // 통행료를 지불하는 플레이어
+          newPlayerData[takePlayer] = {
+            ...newPlayerData[takePlayer],
+            money: newPlayerData[takePlayer].money + cost,
+          };
+        }
+
+        setPlayerData([newPlayerData]);
         setIsUserTurnVisible(!isUserTurnVisibleState);
-        setTurn(turn + 1);
+        if (doubleCnt == 0) {
+          setTurn(turn + 1);
+        }
       }
     }
   }, [isUserTurnVisibleState]);
@@ -380,22 +417,26 @@ export default function Ground() {
                 />
               </div>
               {selectIndustry && (
-                <div
-                  onClick={() => {
-                    if (selectedNodes == -1) {
-                      alert("산업군을 지정해주세요");
-                      return;
-                    }
-                    buyBuilding(buildWhere);
-                  }}
-                >
-                  <ClickBtn
-                    height={50}
-                    width={120}
-                    fontsize={25}
-                    text={"건물 구매"}
-                  />
-                </div>
+                <>
+                  <MessageModal />
+                  <div
+                    onClick={() => {
+                      if (selectedNodes == -1) {
+                        setModalMsg("산업군을 지정해주세요");
+                        setIsModalMsgActive(true);
+                        return;
+                      }
+                      buyBuilding(buildWhere);
+                    }}
+                  >
+                    <ClickBtn
+                      height={50}
+                      width={120}
+                      fontsize={25}
+                      text={"건물 구매"}
+                    />
+                  </div>
+                </>
               )}
             </div>
           </>

@@ -7,7 +7,7 @@ import {
   isNewsVisibleState,
   playerInfoState,
 } from "../../../data/IngameData";
-import { sendPlayerMessage } from "../../IngameWs/IngameSendFunction";
+// import { sendPlayerMessage } from "../../IngameWs/IngameSendFunction";
 import { selectedNewsState } from "../../../data/IngameData";
 import TimeBar from "../../Base/TimeBar";
 import "./News.css";
@@ -27,6 +27,11 @@ export default function News() {
   const setNewsVisible = useSetRecoilState(isNewsVisibleState);
   const selectedNews = useRecoilValue(selectedNewsState);
 
+  // 추후삭제 *******************
+  socketClient;
+  playerInfo;
+  round;
+
   const getNews = (idx: number) => {
     // sendPlayerMessage(
     //   socketClient,
@@ -34,6 +39,7 @@ export default function News() {
     //   `send/news`,
     //   `{"currentRound":${round},"cardIdx":${idx}}`
     // );
+    console.log(idx);
     setSelected(true);
   };
 

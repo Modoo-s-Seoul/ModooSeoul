@@ -27,7 +27,6 @@ export default function RoomCreate() {
     if (nickname === "") {
       setAlertMsg("닉네임을 입력하세요.");
       setAlertVisible(true);
-      // window.alert("닉네임을 입력하세요.");
       return;
     }
 
@@ -48,7 +47,6 @@ export default function RoomCreate() {
       } else {
         setAlertMsg(joinResponse.phrase); // 경고창 표시
         setAlertVisible(true);
-        // window.alert(joinResponse.phrase); // 경고창 표시
         return;
       }
     } catch (error) {

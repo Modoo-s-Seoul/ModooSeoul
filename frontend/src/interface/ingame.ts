@@ -7,6 +7,9 @@ export interface PlayerPosition {
   /**스프라이트가 위치할 실제 좌표값 */
   mx: number;
   my: number;
+
+  /** 지하철 여부 */
+  subway: boolean;
 }
 
 /**(타입) 플레이어 고유 정보 */
@@ -18,9 +21,11 @@ export interface PlayerInfo {
 
 /**(타입) 플레이어의 게임 내 정보 */
 export interface PlayerData {
-  name: string;
-  money: number;
-  color: string;
+  [key: string]: {
+    name: string;
+    money: number;
+    color: string;
+  };
 }
 
 /**(타입) 보드의 칸 정보 */
@@ -31,7 +36,9 @@ export interface SpaceInfo {
   kind: string;
   sell: boolean;
   index: number;
+  order: number;
   player: null | number;
+  oil: boolean;
 }
 
 /**(타입) 칸의 좌표와 칸 정보가 매칭된 보드 정보 */
@@ -79,4 +86,12 @@ export interface buildingChangeType {
 export interface stockChangeType {
   stockName: string;
   stockPrice: number[];
+}
+
+/** (타입) 지하철 변동 기록 */
+export interface subwayChangeType {
+  player: number | null;
+  row: number | null;
+  col: number | null;
+  move: boolean;
 }
