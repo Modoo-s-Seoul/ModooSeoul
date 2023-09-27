@@ -460,6 +460,7 @@ export default function Board() {
     // 유저정보 기본 세팅
     if (weblocation.state) {
       setPlayerInfo({
+        nickname: weblocation.state.nickname,
         gameId: weblocation.state.gameId,
         playerId: weblocation.state.playerId,
       });

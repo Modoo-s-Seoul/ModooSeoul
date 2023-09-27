@@ -121,13 +121,19 @@ export const isRollingState = atom<boolean>({
 /** 플레이어 고유 정보 기록 */
 export const playerInfoState = atom<PlayerInfo>({
   key: "playerInfoState",
-  default: { gameId: "", playerId: "" },
+  default: { nickname: "", gameId: "", playerId: "" },
 });
 
 /** 플레이어 인게임 정보 기록 */
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
-  default: [],
+  default: [
+    { name: "1", money: 100, color: "pink" },
+    { name: "2", money: 100, color: "blue" },
+    { name: "3", money: 100, color: "green" },
+    { name: "4", money: 100, color: "yellow" },
+  ],
+  // default: [],
 });
 
 /** 플레이어 위치 기록 */

@@ -11,6 +11,7 @@ export interface PlayerPosition {
 
 /**(타입) 플레이어 고유 정보 */
 export interface PlayerInfo {
+  nickname: string;
   gameId: string;
   playerId: string;
 }
