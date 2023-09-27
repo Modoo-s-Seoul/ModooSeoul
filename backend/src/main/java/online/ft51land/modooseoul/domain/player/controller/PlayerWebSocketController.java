@@ -8,8 +8,6 @@ import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
-import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
