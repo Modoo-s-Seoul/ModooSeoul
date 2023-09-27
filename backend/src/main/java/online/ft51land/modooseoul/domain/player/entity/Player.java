@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class Player extends BaseEntity {
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
     is_prisoned :  감금여부
+    is_finish : 공통 턴 완료 여부
      */
     @Id
     private String id;
@@ -46,6 +48,7 @@ public class Player extends BaseEntity {
     @Column(nullable = false)
     private String nickname;
 
+    @Indexed
     @Column(name = "gamd_id",nullable = false )
     private String gameId;
 
@@ -90,6 +93,8 @@ public class Player extends BaseEntity {
     @Column(name = "is_prisoned")
     private Boolean isPrisoned;
 
+    private Boolean  isFinish;
+
     @Builder
     public Player(String nickname, String gameId){
         this.nickname = nickname;
@@ -128,6 +133,7 @@ public class Player extends BaseEntity {
         this.isPrisoned = false;
 
         this.turnNum = turnNum;
+        this.isFinish = false;
     }
 
     public void playerMove(Long currentBoardId) {
@@ -176,5 +182,13 @@ public class Player extends BaseEntity {
         this.cash = 0L;
         this.stockMoney = 0L;
         this.estateMoney = 0L;
+    }
+
+    public void finish(){
+        this.isFinish = true;
+    }
+
+    public void finishInit(){
+        this.isFinish = false;
     }
 }
