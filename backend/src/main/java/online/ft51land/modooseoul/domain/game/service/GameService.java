@@ -222,7 +222,9 @@ public class GameService {
             player.setNextRound(stockMoney);
             // 배당금 수령
             player.setDevidend();
-
+            // 세금 미납액 증가
+            player.setTax(player.getTax() + (player.getTax() / 1000) * 100);
+            // 저장
             playerRepository.save(player);
         }
 
