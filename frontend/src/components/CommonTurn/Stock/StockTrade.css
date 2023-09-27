@@ -5,12 +5,6 @@
   position: relative;
 }
 
-/*첫번째 페이지 타이틀*/
-.stockContainerTitle {
-  font-size: 40px;
-  margin-top: 10px;
-}
-
 /*stockInnerContainer의 일부를 보여줄 창*/
 .stockWindow {
   width: 100%;
@@ -29,31 +23,13 @@
 /*주식 종목 선택 창, 주식 거래 창*/
 .selectStock,
 .stockTrade {
-  width: 50%;
-  height: 100%;
-}
-
-/*종목 버튼 담을 컨테이너*/
-.stockSelectContainer {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  flex-direction: column;
-
-  width: 100%;
-  height: 80%;
-}
-
-/*종목 버튼*/
-.stockButton {
   width: 50%;
-  height: 20%;
-  border: 3px solid rgb(117, 117, 117);
-  background-color: rgb(236, 226, 215);
-  border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 100%;
+  position: relative;
 }
 
 /*뒤로 가기 버튼*/
@@ -68,8 +44,8 @@
   min-height: 20px;
 
   position: fixed;
-  right: 40%;
-  top: 1%;
+  right: 42%;
+  top: 5%;
 
   object-fit: cover;
 }
@@ -93,8 +69,10 @@
   align-items: center;
   flex-direction: column;
 
+  padding-top: 10%;
+
   width: 100%;
-  height: 50%;
+  height: 100%;
 }
 
 .tradeButtonContainer {
@@ -113,17 +91,27 @@
 
   width: 50%;
   height: 100%;
-  background-color: #848484;
+  background-color: #c3c3c3;
+}
+
+.sellButton {
+  color: #1d33ff;
+}
+
+.buyButton {
+  color: #ff0e0e;
 }
 
 .buyButtonActive,
 .buyButton:hover {
   background-color: #ff0e0e;
+  color: white;
 }
 
 .sellButtonActive,
 .sellButton:hover {
   background-color: #1d33ff;
+  color: white;
 }
 
 /*매도 창 매수 창 따로 보여줄 창*/
