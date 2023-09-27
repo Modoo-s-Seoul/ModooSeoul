@@ -31,7 +31,6 @@ export default function Invite() {
     if (nickname === "") {
       setAlertMsg("닉네임을 입력하세요.");
       setAlertVisible(true);
-      // window.alert("닉네임을 입력하세요."); // 경고창 표시
       return;
     }
 
@@ -51,7 +50,6 @@ export default function Invite() {
       } else {
         setAlertMsg(joinResponse.phrase);
         setAlertVisible(true);
-        // window.alert(joinResponse.phrase); // 경고창 표시
         return;
       }
     } catch (error) {
@@ -59,7 +57,6 @@ export default function Invite() {
       if (axios.isAxiosError(error)) {
         setAlertMsg(error.response?.data.phrase);
         setAlertVisible(true);
-        // alert(error.response?.data.phrase);
         throw error;
       }
     }

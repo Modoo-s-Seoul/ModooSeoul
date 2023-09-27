@@ -61,9 +61,12 @@ import {
   srowState,
   scolState,
   isPlayerMoveState,
+  modalMsgState,
+  isModalMsgActiveState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
+import MessageModal from "../components/Base/MessageModal";
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -137,6 +140,8 @@ export default function Board() {
   const setIsSubway = useSetRecoilState(isSubwayState); // 지하철 변동
   const isStartActive = useRecoilValue(isStartActiveState); // 시작점 토글
   const [, setStartNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
   // 데이터 보관
   const [boardData] = useRecoilState(boardDataState); // 보드데이터
@@ -423,7 +428,8 @@ export default function Board() {
     // 더블 맥스 처리
     if (doubleCnt > 1) {
       if (Dice1 == Dice2) {
-        alert("너무많은 더블... 감옥가자");
+        setModalMsg("더블 3회! 감옥이동");
+        setIsModalMsgActive(true);
         // 캐릭터 감옥이동
         const tileSize = globalTileSize;
         const x = 8 * (tileSize / 2) + config.scale.width / 2;
@@ -900,6 +906,7 @@ export default function Board() {
 
       {/* 주사위 */}
       <DiceRoll rollDiceInBoard={rollDice} />
+      {!isUserTurnVisible && <MessageModal />}
 
       {/* 유저턴 */}
       <IngameModal visible={isUserTurnVisible}>

@@ -1,11 +1,13 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   buildingChangeState,
   builingInfoState,
   doubleCntState,
   groundChangeState,
+  isModalMsgActiveState,
   isUserTurnVisibleState,
   matchPosition,
+  modalMsgState,
   oilLandState,
   playerDataState,
   tcolState,
@@ -18,6 +20,7 @@ import { useEffect, useState } from "react";
 import "./Ground.css";
 import CloseBtn from "./CloseBtn";
 import TimeBar from "../Base/TimeBar";
+import MessageModal from "../Base/MessageModal";
 
 export default function Ground() {
   // 자체 인자
@@ -34,6 +37,8 @@ export default function Ground() {
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   const matchPos = useRecoilValue(matchPosition);
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
   // 데이터
   const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
@@ -402,22 +407,26 @@ export default function Ground() {
                 />
               </div>
               {selectIndustry && (
-                <div
-                  onClick={() => {
-                    if (selectedNodes == -1) {
-                      alert("산업군을 지정해주세요");
-                      return;
-                    }
-                    buyBuilding(buildWhere);
-                  }}
-                >
-                  <ClickBtn
-                    height={50}
-                    width={120}
-                    fontsize={25}
-                    text={"건물 구매"}
-                  />
-                </div>
+                <>
+                  <MessageModal />
+                  <div
+                    onClick={() => {
+                      if (selectedNodes == -1) {
+                        setModalMsg("산업군을 지정해주세요");
+                        setIsModalMsgActive(true);
+                        return;
+                      }
+                      buyBuilding(buildWhere);
+                    }}
+                  >
+                    <ClickBtn
+                      height={50}
+                      width={120}
+                      fontsize={25}
+                      text={"건물 구매"}
+                    />
+                  </div>
+                </>
               )}
             </div>
           </>
