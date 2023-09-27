@@ -19,7 +19,6 @@ import DiceRoll from "./DiceRoll";
 import IngameModal from "../components/Base/IngameModal";
 import News from "../components/CommonTurn/News/News";
 import NewsCheck from "../components/CommonTurn/News/NewsCheckBtn";
-import StockTrade from "../components/CommonTurn/Stock/StockTrade";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -657,11 +656,8 @@ export default function Board() {
       <IngameModal visible={isUserTurnVisible}>
         {isUserTurnVisible && <UserTurn />}
       </IngameModal>
-      {/* <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
-        {isCommonTurnVisible && <CommonTurn />}
-      </IngameModal> */}
       <IngameModal visible={isCommonTurnVisible}>
-        <StockTrade></StockTrade>
+        {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
       <IngameModal
         width="60vw"

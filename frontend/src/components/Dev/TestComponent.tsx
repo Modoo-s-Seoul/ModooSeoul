@@ -1,25 +1,25 @@
 import IngameModal from "../Base/IngameModal";
-import StockTrade from "../CommonTurn/Stock/StockTrade";
+import CommonTurn from "../CommonTurn/CommonTurn";
 
 import { isCommonTurnVisibleState } from "../../data/IngameData";
 import { useRecoilState } from "recoil";
 
 /**컴포넌트 테스트용 컴포넌트 */
 export default function TestComponent() {
-  const [isCommonTurn, setIsCommonTurn] = useRecoilState(
+  const [isCommonTurnVisible, setIsCommonTurnVisible] = useRecoilState(
     isCommonTurnVisibleState
   );
 
   const openModal = () => {
-    setIsCommonTurn((prev) => !prev);
+    setIsCommonTurnVisible((prev) => !prev);
   };
 
   return (
     <>
       <h1>Test Your Components</h1>
       <button onClick={openModal}>모달 열기</button>
-      <IngameModal visible={isCommonTurn}>
-        <StockTrade></StockTrade>
+      <IngameModal visible={isCommonTurnVisible}>
+        {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
     </>
   );

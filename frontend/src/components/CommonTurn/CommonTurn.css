@@ -1,100 +1,39 @@
-.commonEventContainer {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /* align-items: center; */
-
-  padding: 2vw;
-  width: 85vw;
-  height: 70vh;
-  left: 50%;
-  top: 50%;
-  max-width: 1200px;
-  max-height: 600px;
-  transform: translate(-50%, -45%) scale(1); /* 가운데 정렬 */
-
-  background-color: rgb(227, 217, 194);
-  border-radius: 20px;
-  box-shadow: 1px 1px 500px rgb(0, 0, 0), -1px -1px 500px rgb(0, 0, 0);
-  opacity: 1;
-  transition: opacity 4s ease, transform 4s ease;
-}
 .commonTurnContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 80%;
-  margin: auto;
+  width: 100%;
+  height: 100%;
 }
+
 .commonBody {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-.taxCatchBtn {
-  position: fixed;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-
-  left: 50%;
-  top: 10%;
-  transform: translate(-50%, -50%) scale(1); /* 가운데 정렬 */
-  width: 150px;
-  height: 50px;
-
-  background-color: #e03922;
-  border-radius: 200px;
-  color: white;
-  box-shadow: 2px 2px 1px black;
-  z-index: 8;
-
-  font-weight: 500;
-  text-shadow: 1px 1px 1px black;
-  font-size: 24px;
-}
-.commonStockGraph {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  background-color: rgb(251, 250, 249);
-  margin: auto;
-}
-.commonTradingContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-.commonTadingBox {
-  display: flex;
   flex-direction: column;
+
+  width: 100%;
+  height: 80%;
+}
+
+.commonTitle {
+  font-size: 40px;
+  margin-top: 10px;
+}
+
+.commonTurnButton {
+  width: 50%;
+  height: 20%;
+  border: 3px solid rgb(117, 117, 117);
+  background-color: rgb(236, 226, 215);
+  border-radius: 5px;
+  display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(237, 227, 214);
-  width: 30%;
-  height: 100px;
 }
 
-.commonTimer {
-  font-size: 40px;
-}
-
-.twoBtnBox {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 30px;
-}
-.stockValueBtn {
-  background-color: unset;
-  border: unset;
-  margin-left: 10px;
-  margin-right: 10px;
-  font-size: 50px;
+.timeBarContainer {
+  position: fixed;
+  top: 1%;
+  width: 80%;
 }

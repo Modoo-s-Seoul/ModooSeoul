@@ -4,7 +4,8 @@
   justify-content: center;
 
   position: fixed;
-  right: 50%;
+  right: 5%;
+  top: 10px;
 
   width: 3vh;
   height: 3vh;

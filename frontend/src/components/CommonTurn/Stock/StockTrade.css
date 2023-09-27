@@ -58,24 +58,18 @@
 
 /*뒤로 가기 버튼*/
 .backButton {
-  width: 3vh;
-  height: 3vh;
-  min-width: 20px;
-  min-height: 20px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  position: fixed;
-  right: 45%;
 
   width: 5vh;
   height: 5vh;
   min-width: 20px;
   min-height: 20px;
 
-  margin-top: 1%;
+  position: fixed;
+  right: 40%;
+  top: 1%;
 
   object-fit: cover;
 }

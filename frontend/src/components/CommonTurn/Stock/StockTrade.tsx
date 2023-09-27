@@ -1,12 +1,10 @@
 import "./StockTrade.css";
 import { useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
-import { isCommonTurnVisibleState } from "../../../data/IngameData";
 import { stockChangeType } from "../../../interface/ingame";
 import { stockState } from "../../../data/IngameData";
 
-import CloseButton from "../../Base/CloseButton";
 import Chart from "./Chart";
 import Back from "/assets/Back.svg";
 import CustomButton from "../../Base/CustomButton";
@@ -14,7 +12,6 @@ import CustomButton from "../../Base/CustomButton";
 export default function StockTrade() {
   const [toggleContainer, setToggleContainer] = useState(true); // 모달창 페이지 컨트롤
   const [toggleTrade, setToggleTrade] = useState(true); // 매수/매도창 컨트롤
-  const setIsCommonTurnVisible = useSetRecoilState(isCommonTurnVisibleState);
   const stocks = useRecoilValue(stockState);
   const [currentStock, setCurrentStock] = useState<stockChangeType>();
 
@@ -31,11 +28,6 @@ export default function StockTrade() {
     setToggleTrade((prev) => !prev);
   };
 
-  /**모달창 닫기 */
-  const closeModal = () => {
-    setIsCommonTurnVisible((prev) => !prev);
-  };
-
   return (
     <>
       <div className="stockContainer">
@@ -50,7 +42,6 @@ export default function StockTrade() {
           >
             {/*종목 선택 칸 */}
             <div className="selectStock">
-              <CloseButton onClick={closeModal}></CloseButton>
               <div className="stockContainerTitle">종목 선택</div>
               <div className="stockSelectContainer">
                 {stocks.map((ele, index) => {
@@ -73,6 +64,7 @@ export default function StockTrade() {
                 className="backButton"
                 src={Back}
                 alt="뒤로가기"
+                style={{ cursor: "pointer" }}
                 onClick={() => handleContainer()}
               ></img>
               <div className="stockContainerTitle">
