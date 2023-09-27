@@ -57,23 +57,26 @@ function TaxCatchRoom({ onClose }: TaxCatchLoadProps) {
         <div className="thiefCatchContainer">
           <h1>탈 세 신 고</h1>
           <div className="playerButtons">
-            {playerData.map((player, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (selectedPlayer == index) {
-                    setSelectedPlayer(6);
-                  } else {
-                    setSelectedPlayer(index);
-                  }
-                }}
-                className={`playerSelectBtn ${
-                  selectedPlayer === index ? "selected" : ""
-                }`}
-              >
-                {player.name}
-              </button>
-            ))}
+            {Object.keys(playerData[0]).map((playerIndex: string) => {
+              const player = playerData[0][playerIndex];
+              return (
+                <button
+                  key={playerIndex}
+                  onClick={() => {
+                    if (selectedPlayer == Number(playerIndex)) {
+                      setSelectedPlayer(6);
+                    } else {
+                      setSelectedPlayer(Number(playerIndex));
+                    }
+                  }}
+                  className={`playerSelectBtn ${
+                    selectedPlayer === Number(playerIndex) ? "selected" : ""
+                  }`}
+                >
+                  {player.name}
+                </button>
+              );
+            })}
           </div>
           <MessageModal />
           <button className="reportBtn" onClick={handleReport}>

@@ -20,9 +20,11 @@ export interface PlayerInfo {
 
 /**(타입) 플레이어의 게임 내 정보 */
 export interface PlayerData {
-  name: string;
-  money: number;
-  color: string;
+  [key: string]: {
+    name: string;
+    money: number;
+    color: string;
+  };
 }
 
 /**(타입) 보드의 칸 정보 */
