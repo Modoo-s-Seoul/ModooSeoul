@@ -123,4 +123,13 @@ public class StockBoardService {
 		// 메시지 가공 후 반환
 		return StockBoardMessage.of(player, stockBoard, gameStocks);
 	}
+
+	public StockBoardMessage getStockInfo(Player player, List<GameStock> gameStocks) {
+		// 보드 불러오기
+		StockBoard stockBoard = stockBoardRepository
+				.findById(player.getId() + "@stockBoard")
+				.orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+
+		return StockBoardMessage.of(player, stockBoard, gameStocks);
+	}
 }
