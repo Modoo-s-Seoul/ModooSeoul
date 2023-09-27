@@ -53,4 +53,16 @@ public class StockBoardWebSocketController {
 		webSocketSendHandler.sendToPlayer("stock/sell", playerId, game.getId(), message);
 	}
 
+	@MessageMapping("/stock/info/{playerId}")
+	public void getStockInfo(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		List<GameStock> gameStocks = gameStockService.getGameStockById(game);
+
+		StockBoardMessage message = stockBoardService.getStockInfo(player, gameStocks);
+
+		webSocketSendHandler.sendToPlayer("stock/info", playerId, game.getId(), message);
+	}
+
 }
