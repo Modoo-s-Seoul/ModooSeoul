@@ -301,7 +301,7 @@ public class PlayerService {
         if(toll <= payPlayer.getCash()+payPlayer.getStockMoney() && payPlayer.getCash() < toll) {
             //현금 + 주식몰수한 돈으로 해결 가능한 경우
             //나중에 플레이어 주식 redis 삭제
-            payPlayer.sellStock();
+            payPlayer.sellAllStock();
         }
 
         //통행료 지불
