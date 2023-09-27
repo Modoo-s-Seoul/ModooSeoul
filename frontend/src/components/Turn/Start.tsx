@@ -1,15 +1,18 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  builingInfoState,
   isModalMsgActiveState,
   isStartActiveState,
   isUserTurnVisibleState,
   matchPosition,
   modalMsgState,
+  scolState,
+  srowState,
   tcolState,
   trowState,
   turnState,
 } from "../../data/IngameData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { boardDataState } from "../../data/BoardData";
 import CloseBtn from "./CloseBtn";
 import CustomButton from "../Base/CustomButton";
@@ -20,7 +23,9 @@ export default function Start() {
   // 기본 인자
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
-  const turn = useRecoilValue(turnState); // 현재 턴 col
+  const sRow = useRecoilValue(srowState); // 선택 장소 row
+  const sCol = useRecoilValue(scolState); // 선택 장소 col
+  const turn = useRecoilValue(turnState); // 현재 턴
   const boardData = useRecoilValue(boardDataState); // 보드 데이터
   const SetIsUserTurnVisible = useSetRecoilState(isUserTurnVisibleState);
   const SetIsStartActive = useSetRecoilState(isStartActiveState); // 시작점 토글(board에서 감지)
@@ -29,6 +34,8 @@ export default function Start() {
 
   // 데이터 보관
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
+  const [selectData, setSelectData] = useState(boardData[`${sRow}-${sCol}`]); // 선택 장소 데이터
+  const [builingData] = useRecoilState(builingInfoState); // 건물 데이터
   const matchPos = useRecoilValue(matchPosition); // 매칭데이터
 
   /** 클릭시 */
@@ -39,8 +46,16 @@ export default function Start() {
       const row = matchPos[i].row;
       const col = matchPos[i].col;
       if (boardData[`${row}-${col}`].player == turn) {
-        canAct = true;
-        break;
+        // 지을수 있는 건물이 있으면
+        for (let j = 0; j < 3; j++) {
+          if (!builingData[selectData.index * 3 + j].sell) {
+            canAct = true;
+            break;
+          }
+        }
+        if (canAct) {
+          break;
+        }
       }
     }
 
@@ -50,11 +65,15 @@ export default function Start() {
       SetIsUserTurnVisible(false);
     } else {
       // 선택가능한 땅이 없을때 - 메세지 표기 , 턴넘기기
-      console.log("보여");
       setModalMsg("선택가능한 땅이 없습니다.");
       setIsModalMsgActive(true);
     }
   };
+
+  /** 클릭데이터 반영 */
+  useEffect(() => {
+    setSelectData(boardData[`${sRow}-${sCol}`]);
+  }, [sCol, sRow]);
 
   return (
     <>

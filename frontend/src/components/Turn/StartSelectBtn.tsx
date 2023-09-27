@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ClickBtn from "../Base/CustomButton";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  buildingChangeState,
   builingInfoState,
   isStartActiveState,
   scolState,
@@ -16,19 +17,43 @@ import { alertModalState } from "../../data/CommonData";
 
 export default function StartSelectBtn() {
   // 기본인자
-  const sRow = useRecoilValue(srowState); // 현재 턴 row
-  const sCol = useRecoilValue(scolState); // 현재 턴 col
+  const sRow = useRecoilValue(srowState); // 선택 장소 row
+  const sCol = useRecoilValue(scolState); // 선택 장소 col
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [isStartActive, setIsStartActive] = useRecoilState(isStartActiveState); // 오일 토글(board에서 감지)
   const [msgNum, setMsgNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
   const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
-  const [, setBuildWhere] = useState(0); // 부지 위치
+  const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const [alertVisible, setAlertVisible] = useRecoilState(alertModalState);
 
   // 데이터
   const [boardData] = useRecoilState(boardDataState); // 보드 데이터
-  const [turnData, setTurnData] = useState(boardData[`${sRow}-${sCol}`]); // 턴 데이터
-  const [builingData] = useRecoilState(builingInfoState); // 건물 데이터
+  const [turnData, setTurnData] = useState(boardData[`${sRow}-${sCol}`]); // 선택 장소 데이터
+  const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
+  const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
+
+  /** 건물 구매 */
+  const buyBuilding = (num: number) => {
+    // 건물 데이터 갱신
+    const newData = { ...builingData };
+    newData[turnData.index * 3 + num] = {
+      ...newData[turnData.index * 3 + num],
+      sell: true,
+      player: turn,
+      industry: selectedNodes,
+    };
+    setBuildingInfo(newData);
+    // 건물 변동 사항 업데이트
+    setBuildingChange([
+      {
+        player: turn,
+        index: turnData.index * 3,
+        point: num,
+        industry: selectedNodes,
+      },
+    ]);
+    // 건물 건설 비용 발생
+  };
 
   /** 선택완료시 */
   const toggleSelectStart = () => {
@@ -36,6 +61,7 @@ export default function StartSelectBtn() {
     if (msgNum < 2) {
       setAlertVisible(true);
     } else if (msgNum == 2) {
+      buyBuilding(buildWhere);
       setIsStartActive(false);
       setTurn(turn + 1);
       setMsgNum(0);
