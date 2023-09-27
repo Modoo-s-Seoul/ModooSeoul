@@ -6,6 +6,7 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
@@ -162,21 +163,30 @@ public class PlayerWebSocketController {
 	@MessageMapping("/tax/payment/{playerId}")
 	public void playerPayTax(@DestinationVariable String playerId) {
 		Player player = playerService.getPlayerById(playerId);
-		Game game = gameService.getGameById(player.getGameId());
 
 		PlayerTaxMessage message = playerService.taxPayment(player);
 
-		webSocketSendHandler.sendToPlayer("tax", playerId, game.getId(), message);
+		webSocketSendHandler.sendToPlayer("tax", playerId, player.getGameId(), message);
 	}
 
 	@MessageMapping("/tax/evasion/{playerId}")
 	public void playerEvadeTax(@DestinationVariable String playerId) {
 		Player player = playerService.getPlayerById(playerId);
-		Game game = gameService.getGameById(player.getGameId());
 
 		PlayerTaxMessage message = PlayerTaxMessage.of(player);
 
-		webSocketSendHandler.sendToPlayer("tax", playerId, game.getId(), message);
+		webSocketSendHandler.sendToPlayer("tax", playerId, player.getGameId(), message);
 	}
+
+	// 플레이어 신고하기
+	@MessageMapping("/report/{playerId}")
+	public void playerReport(@DestinationVariable String playerId, @Payload PlayerReportRequestDto dto) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerReportMessage message = playerService.reportPlayer(player, dto.nickname());
+
+		webSocketSendHandler.sendToPlayer("report", playerId, player.getGameId(), message);
+	}
+
 
 }
