@@ -9,10 +9,7 @@ import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepo
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
@@ -339,6 +336,15 @@ public class PlayerService {
 
 
         return game.getFinishedPlayerCnt();
+    }
+
+    public PlayerTaxMessage taxPayment(Player player) {
+        if (player.getCash() < player.getTax()) {
+            return PlayerTaxMessage.error(ErrorMessage.CANNOT_PAY_TAX.getPhrase());
+        }
+        player.taxPayment();
+        playerRepository.save(player);
+        return PlayerTaxMessage.of(player);
     }
 
 }

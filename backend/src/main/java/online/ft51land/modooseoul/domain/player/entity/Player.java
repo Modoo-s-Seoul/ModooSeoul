@@ -217,4 +217,13 @@ public class Player extends BaseEntity {
         this.dividend = Math.round(tmp) * 100; // 10% 적용, 20% 적용은 200, 12%는 120
         this.cash += dividend;
     }
+
+    public void setTax(Long tax) {
+        this.tax = tax;
+    }
+
+    public void taxPayment() {
+        this.cash -= this.tax; // 보유한 현금에서 세금만큼 지불
+        setTax(0L); // 남은 세금 0으로
+    }
 }
