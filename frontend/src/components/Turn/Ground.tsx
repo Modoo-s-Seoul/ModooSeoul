@@ -1,10 +1,13 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   buildingChangeState,
   builingInfoState,
+  doubleCntState,
   groundChangeState,
+  isModalMsgActiveState,
   isUserTurnVisibleState,
   matchPosition,
+  modalMsgState,
   oilLandState,
   playerDataState,
   tcolState,
@@ -17,6 +20,7 @@ import { useEffect, useState } from "react";
 import "./Ground.css";
 import CloseBtn from "./CloseBtn";
 import TimeBar from "../Base/TimeBar";
+import MessageModal from "../Base/MessageModal";
 
 export default function Ground() {
   // 자체 인자
@@ -26,12 +30,15 @@ export default function Ground() {
   const [, setCntBuilding] = useState(0); // 선택된 건물의 인덱스를 저장하는 배열
 
   // 기본 인자
-  const [buildWhere, setBuildWhere] = useState(0); // 산업군 선택 토글
+  const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
+  const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   const matchPos = useRecoilValue(matchPosition);
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
   // 데이터
   const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
@@ -124,7 +131,6 @@ export default function Ground() {
     }
     setSelectedNodes(index);
   };
-  handleNodeClick;
 
   /** 건물 구매 */
   const buyBuilding = (num: number) => {
@@ -203,7 +209,9 @@ export default function Ground() {
         });
         setPlayerData(newPlayerData);
         setIsUserTurnVisible(!isUserTurnVisibleState);
-        setTurn(turn + 1);
+        if (doubleCnt == 0) {
+          setTurn(turn + 1);
+        }
       }
     }
   }, [isUserTurnVisibleState]);
@@ -399,22 +407,26 @@ export default function Ground() {
                 />
               </div>
               {selectIndustry && (
-                <div
-                  onClick={() => {
-                    if (selectedNodes == -1) {
-                      alert("산업군을 지정해주세요");
-                      return;
-                    }
-                    buyBuilding(buildWhere);
-                  }}
-                >
-                  <ClickBtn
-                    height={50}
-                    width={120}
-                    fontsize={25}
-                    text={"건물 구매"}
-                  />
-                </div>
+                <>
+                  <MessageModal />
+                  <div
+                    onClick={() => {
+                      if (selectedNodes == -1) {
+                        setModalMsg("산업군을 지정해주세요");
+                        setIsModalMsgActive(true);
+                        return;
+                      }
+                      buyBuilding(buildWhere);
+                    }}
+                  >
+                    <ClickBtn
+                      height={50}
+                      width={120}
+                      fontsize={25}
+                      text={"건물 구매"}
+                    />
+                  </div>
+                </>
               )}
             </div>
           </>

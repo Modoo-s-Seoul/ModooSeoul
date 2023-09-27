@@ -1,0 +1,123 @@
+.startBody {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* startSelectBtn.tsx */
+.groundSelectContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.startShowContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 2vw;
+  width: 30vw;
+  height: 20vh;
+  left: 50%;
+  top: 45%;
+  max-width: 300px;
+  max-height: 300px;
+  transform: translate(-50%, -50%) scale(1); /* 가운데 정렬 */
+
+  background-color: rgb(227, 217, 194);
+  border-radius: 20px;
+  box-shadow: 5px 5px 50px rgb(0, 0, 0), -5px -5px 50px rgb(0, 0, 0);
+}
+
+.startIndustryContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+}
+
+.startSelectBtn {
+  display: flex;
+  margin: auto;
+}
+
+.startSelectDoneContainer {
+  position: fixed;
+  width: auto;
+  width: 100%;
+  top: 50vh;
+}
+
+.startSelectDoneBtn {
+  position: relative;
+  padding: 5px 15px;
+  color: #fff;
+  background-color: #2e2608;
+  border: none;
+  font-size: 20px;
+  border-radius: 20px;
+  /* box-shadow: 1px 3px #50514f; */
+  outline: none;
+  transition: 0.3s;
+  /* top: 100px; */
+  width: 90px;
+}
+
+.startSelectDoneBtn:hover,
+.startSelectDoneBtn:active {
+  outline: none;
+  background: #50514f;
+  cursor: pointer;
+  /* transform: translateY(5px); */
+}
+.startSelectText {
+  color: white;
+  position: relative;
+  top: 80px;
+}
+
+@property --percentage {
+  initial-value: 0%;
+  inherits: false;
+  syntax: "<percentage>";
+}
+
+.startTimeBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: conic-gradient(white var(--percentage), var(--dice--bar2) 0);
+  border-radius: 25px;
+  animation: timer 10s infinite linear;
+  transition: 0.3s ease;
+  opacity: 50;
+  width: 100px;
+  height: 48px;
+  margin: auto;
+  top: 100px;
+}
+.startTimeBar:hover,
+.startTimeBar:active {
+  outline: none;
+  /* background: #50514f; */
+  cursor: pointer;
+  transform: translateY(5px);
+}
+
+@keyframes timer {
+  to {
+    --percentage: 100%;
+  }
+  0% {
+    --dice--bar2: rgb(86, 188, 100);
+  }
+  100% {
+    --dice--bar2: rgb(221, 69, 69);
+  }
+}
