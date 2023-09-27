@@ -809,7 +809,9 @@ export default function Board() {
           groundSprite[i].setAlpha(1);
         } else {
           // 클릭이벤트 원복
-          groundSprite[i].removeInteractive();
+          for (let i = 0; i < groundSprite.length; i++) {
+            groundSprite[i].removeInteractive();
+          }
         }
       }
     }
@@ -850,7 +852,9 @@ export default function Board() {
           groundSprite[i].setAlpha(1);
         } else {
           // 클릭이벤트 원복
-          groundSprite[i].removeInteractive();
+          for (let i = 0; i < groundSprite.length; i++) {
+            groundSprite[i].removeInteractive();
+          }
         }
       }
     }
