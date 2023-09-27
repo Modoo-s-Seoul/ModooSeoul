@@ -484,11 +484,13 @@ export default function Board() {
   };
   /** 지하철용 이동 함수 */
   const movePlayerSubway = (totalDice: number) => {
+    // 주사위 굴리고 싶을시
     if (totalDice === 0) {
       etcSprite[1].setAlpha(0);
       playerPositions[turn].subway = false;
       setTurn(turn + 1);
     }
+    // 클릭 이동시
     for (let i = 0; i < totalDice; i++) {
       setTimeout(() => {
         if (playerPositions[turn].row === 0 && playerPositions[turn].col < 8) {
@@ -512,7 +514,13 @@ export default function Board() {
         if (i === totalDice - 1) {
           etcSprite[1].setAlpha(0);
           playerPositions[turn].subway = false;
-          setTurn(turn + 1);
+          // 이벤트가 끝날 때
+          setTimeout(() => {
+            setTRow(playerPositions[turn].row);
+            setTCol(playerPositions[turn].col);
+            setIsUserTurnVisible(true);
+            setIsRolling(false);
+          }, 500);
         }
       }, i * 200);
     }
@@ -768,8 +776,6 @@ export default function Board() {
           setIsSubway([{ player: turn, row: row, col: col, move: false }]);
         });
       }
-    } else if (backgroundSprite[0]) {
-      console.log("지하철 이벤트 원복");
     }
   }, [isSubwayActive]);
 
