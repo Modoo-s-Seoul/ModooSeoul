@@ -6,13 +6,14 @@ import online.ft51land.modooseoul.domain.game.dto.message.*;
 import online.ft51land.modooseoul.domain.game.dto.request.GameStartTimerRequestDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.game.entity.enums.TimerType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
-import org.springframework.cglib.core.Local;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -119,6 +120,24 @@ public class GameWebSocketController {
 				Game timerGame = gameService.getGameById(gameId);
 
 				if(timerGame.getIsTimerActivated()){  //타이머가 활성화 되어 있으면
+					/** TODO : 시간이 다 됐는데 타이머가 활성화 -> 시간내 액션을 수행을 못한경우
+					 *  처리 필요
+					 */
+					
+					// 선뽑기를 시간내 못 뽑은 경우 -> 그냥 타이머 만료
+					// 뉴스를 시간내 못 뽑은 경우 -> 못뽑은 사람들 자동으로 뽑아서 보내주고 타이머 만료
+					if(gameStartTimerRequestDto.timerType() == TimerType.SELECT_NEWS){
+						List<String> playerIdList = timerGame.getPlayers();
+						for(String playerId : playerIdList){
+							PlayerNewsMessage message = playerService.autoPlayerChooseNews(timerGame, playerId);
+							if(message != null){
+								// 데이터 전달
+								webSocketSendHandler.sendToPlayer("news", playerId, timerGame.getId(), message);
+							}
+						}
+					}
+
+					// 주사위를 새간내 못 돌린 경우 -> 그냥 타이머 만료
 
 					gameService.playersActionFinish(timerGame); // game 에 해당하는 모든 player actionfinish init  , 타이머 종료 , 턴 넘기기
 
@@ -126,11 +145,7 @@ public class GameWebSocketController {
 					webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(timerGame.getIsTimerActivated(), timerGame.getTurnInfo()));
 					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}", timerGame.getId(), LocalDateTime.now() );
 				}else{
-					/**  TODO : action을 완료하지 못한 플레이어 찾아서 완료 시켜주기
-					 *  뉴스 같은 경우는 서버에서 임시로 정해주는 게 아니라서 타이머가 만료가 되어버리면 게임이 진행이 안된다.
-					 *  단 주사위 타이머도 같이 사용하므로 주사위를 던지는 턴일때는 확인하지 않고 넘기기
-					 */
-
+					// TODO : 나중 else 문 지우기
 					System.out.println(" 타이머 비활성후 타이머 만료 " + LocalDateTime.now() +" 현재 턴 : "+ game.getTurnInfo());
 				}
 				

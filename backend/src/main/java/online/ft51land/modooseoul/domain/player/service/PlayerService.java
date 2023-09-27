@@ -6,19 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
+import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.game.entity.Game;
-import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -174,6 +174,23 @@ public class PlayerService {
         return PlayerNewsMessage.of(news);
     }
 
+
+    public PlayerNewsMessage autoPlayerChooseNews(Game game, String playerId) {
+        Player player = getPlayerById(playerId);
+
+        if(!player.getIsFinish()) { // 뉴스를 뽑지 않았다면
+            Random random = new Random();
+            random.setSeed(System.currentTimeMillis());
+            Long cardIdx = random.nextLong(4)+1;
+            PlayerNewsMessage message  = chooseNews(game, PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
+            return  message;
+        }
+
+        return  null;
+    }
+
+
+
     // 플레이어 방 나가기
     public void leaveGame(Game game, Player player) {
         // 게임에서 플레이어 제외
@@ -322,4 +339,5 @@ public class PlayerService {
 
         return game.getFinishedPlayerCnt();
     }
+
 }
