@@ -24,6 +24,7 @@ import NotMyTurn from "../components/Base/NotMyTurn";
 import RoundInfo from "../components/Base/RoundInfo";
 import OilSelectBtn from "../components/Turn/OilSelectBtn";
 import SubwaySelectBtn from "../components/Turn/SubwaySelectBtn";
+import StartSelectBtn from "../components/Turn/StartSelectBtn";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -55,9 +56,17 @@ import {
   oilLandState,
   isSubwayState,
   isSubwayActiveState,
+  isStartActiveState,
+  startMsgNumState,
+  srowState,
+  scolState,
+  isPlayerMoveState,
+  modalMsgState,
+  isModalMsgActiveState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
+import MessageModal from "../components/Base/MessageModal";
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -106,8 +115,11 @@ export default function Board() {
 
   const setRound = useSetRecoilState(roundState); // 현재 라운드
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const setIsPlayerMove = useSetRecoilState(isPlayerMoveState);
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
+  const setSRow = useSetRecoilState(srowState); // 시작점 선택 row
+  const setSCol = useSetRecoilState(scolState); // 시작점 선택 col
   const [dice1, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
   const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
@@ -126,6 +138,10 @@ export default function Board() {
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글
   const setIsSubway = useSetRecoilState(isSubwayState); // 지하철 변동
+  const isStartActive = useRecoilValue(isStartActiveState); // 시작점 토글
+  const [, setStartNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
   // 데이터 보관
   const [boardData] = useRecoilState(boardDataState); // 보드데이터
@@ -140,7 +156,6 @@ export default function Board() {
   const [groundSprite, setGroundSprite] = useState<Phaser.GameObjects.Image[]>(
     []
   ); //땅 스프라이트
-  groundSprite;
   const [buildingSprite, setBuildingSprite] = useState<
     Phaser.GameObjects.Image[]
   >([]); //건물 스프라이트
@@ -413,7 +428,8 @@ export default function Board() {
     // 더블 맥스 처리
     if (doubleCnt > 1) {
       if (Dice1 == Dice2) {
-        alert("너무많은 더블... 감옥가자");
+        setModalMsg("더블 3회! 감옥이동");
+        setIsModalMsgActive(true);
         // 캐릭터 감옥이동
         const tileSize = globalTileSize;
         const x = 8 * (tileSize / 2) + config.scale.width / 2;
@@ -476,12 +492,15 @@ export default function Board() {
   };
   /** 지하철용 이동 함수 */
   const movePlayerSubway = (totalDice: number) => {
+    // 주사위 굴리고 싶을시
     if (totalDice === 0) {
       etcSprite[1].setAlpha(0);
       playerPositions[turn].subway = false;
       setTurn(turn + 1);
     }
+    // 클릭 이동시
     for (let i = 0; i < totalDice; i++) {
+      setIsPlayerMove(true);
       setTimeout(() => {
         if (playerPositions[turn].row === 0 && playerPositions[turn].col < 8) {
           movePlayer(0, 1);
@@ -504,7 +523,13 @@ export default function Board() {
         if (i === totalDice - 1) {
           etcSprite[1].setAlpha(0);
           playerPositions[turn].subway = false;
-          setTurn(turn + 1);
+          // 이벤트가 끝날 때
+          setTimeout(() => {
+            setTRow(playerPositions[turn].row);
+            setTCol(playerPositions[turn].col);
+            setIsUserTurnVisible(true);
+            setIsPlayerMove(false);
+          }, 500);
         }
       }, i * 200);
     }
@@ -512,6 +537,7 @@ export default function Board() {
 
   /** 주사위 굴리기 함수 */
   const rollDice = (): void => {
+    if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
@@ -529,6 +555,7 @@ export default function Board() {
 
   /** 주사위 굴리기 함수(개발자용) */
   const rollDiceDev = () => {
+    if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
 
@@ -760,12 +787,6 @@ export default function Board() {
           setIsSubway([{ player: turn, row: row, col: col, move: false }]);
         });
       }
-    } else if (backgroundSprite[0]) {
-      console.log("지하철 이벤트 원복");
-      // 클릭이벤트 원복
-      for (let i = 0; i < groundSprite.length; i++) {
-        groundSprite[i].removeInteractive();
-      }
     }
   }, [isSubwayActive]);
 
@@ -799,17 +820,52 @@ export default function Board() {
         const col = matchPos[i].col;
         if (boardData[`${row}-${col}`].player !== turn) {
           groundSprite[i].setAlpha(1);
-        } else {
-          // 클릭이벤트 원복
-          groundSprite[i].removeInteractive();
         }
       }
     }
   }, [isOilActive]);
 
-  /** 배경 변경 이벤트 (오일랜드, 지하철) */
+  /** 시작점 선택시 */
   useEffect(() => {
-    if (isOilActive || isSubwayActive) {
+    if (isStartActive) {
+      // 투명화
+      for (let i = 0; i < matchPos.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(0.1);
+        } else {
+          // 클릭이벤트 넣기
+          groundSprite[i].setInteractive();
+          groundSprite[i].on("pointerdown", () => {
+            const x =
+              (col - row) * (globalTileSize / 2) + config.scale.width / 2;
+            const y =
+              (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+            etcSprite[1].setPosition(x + 10, y - 220);
+            etcSprite[1].setAlpha(1);
+            console.log("선택은", row, col);
+            setSRow(row);
+            setSCol(col);
+            setStartNum(1);
+          });
+        }
+      }
+    } else if (backgroundSprite[0]) {
+      // 투명 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(1);
+        }
+      }
+    }
+  }, [isStartActive]);
+
+  /** 변경 이벤트 (오일랜드, 지하철, 시작점) */
+  useEffect(() => {
+    if (isOilActive || isSubwayActive || isStartActive) {
       backgroundSprite[0].clear();
     } else if (backgroundSprite[0]) {
       backgroundSprite[0].fillGradientStyle(
@@ -825,8 +881,12 @@ export default function Board() {
         config.scale.width,
         config.scale.height
       );
+      // 클릭이벤트 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        groundSprite[i].removeAllListeners("pointerdown");
+      }
     }
-  }, [isOilActive, isSubwayActive]);
+  }, [isOilActive, isSubwayActive, isStartActive]);
 
   /** 렌더링 부분 */
   return (
@@ -842,9 +902,11 @@ export default function Board() {
       <UserInfo />
       <OilSelectBtn />
       <SubwaySelectBtn />
+      <StartSelectBtn />
 
       {/* 주사위 */}
       <DiceRoll rollDiceInBoard={rollDice} />
+      {!isUserTurnVisible && <MessageModal />}
 
       {/* 유저턴 */}
       <IngameModal visible={isUserTurnVisible}>

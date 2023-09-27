@@ -49,13 +49,11 @@ export default function Room() {
       .then(() => {
         setAlertMsg("링크가 클립보드에 복사되었습니다.");
         setAlertVisible(true);
-        // alert("링크가 클립보드에 복사되었습니다.");
       })
       .catch((error) => {
         console.error("링크 복사 실패:", error);
         setAlertMsg("링크 복사에 실패했습니다.");
         setAlertVisible(true);
-        // alert("링크 복사에 실패했습니다.");
       });
   };
 
@@ -104,7 +102,6 @@ export default function Room() {
         } else {
           setAlertMsg(receivedData.data);
           setAlertVisible(true);
-          // alert(receivedData.data);
         }
       });
     }
