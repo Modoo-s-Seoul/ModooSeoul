@@ -118,13 +118,13 @@ export const isRollingState = atom<boolean>({
   default: false,
 });
 
-/** 플레이어 고유 정보 기록 */
+/** 현재 플레이어의 고유 정보 기록 */
 export const playerInfoState = atom<PlayerInfo>({
   key: "playerInfoState",
   default: { nickname: "", gameId: "", playerId: "" },
 });
 
-/** 플레이어 인게임 정보 기록 */
+/** 현재 게임에 참가한 모든 플레이어들의 인게임 정보 기록 */
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
   default: [
