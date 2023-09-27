@@ -128,6 +128,7 @@ public class PlayerService {
 
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
+        diceRoller.setSeed(System.currentTimeMillis());
         Long one = diceRoller.nextLong(6) + 1;
         Long two = diceRoller.nextLong(6) + 1;
 
