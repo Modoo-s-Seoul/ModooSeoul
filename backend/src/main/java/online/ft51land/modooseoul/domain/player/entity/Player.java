@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Getter
 @RedisHash(value = "player")
 @NoArgsConstructor //기본 생성자 생성
@@ -41,6 +43,7 @@ public class Player extends BaseEntity {
     is_bankrupt :  파산여부
     is_prisoned :  감금여부
     is_finish : 공통 턴 완료 여부
+    dividend : 해당 라운드 수령 배당금
      */
     @Id
     private String id;
@@ -95,6 +98,8 @@ public class Player extends BaseEntity {
 
     private Boolean  isFinish;
 
+    private Long dividend;
+
     @Builder
     public Player(String nickname, String gameId){
         this.nickname = nickname;
@@ -133,6 +138,8 @@ public class Player extends BaseEntity {
 
         this.turnNum = turnNum;
         this.isFinish = false;
+
+        this.dividend = 0L;
     }
 
     public void playerMove(Long currentBoardId) {
@@ -202,5 +209,12 @@ public class Player extends BaseEntity {
 
     public void finishInit(){
         this.isFinish = false;
+    }
+
+    public void setDevidend() {
+        // 10% 적용하고 반올림하기 ex. 1940 -> 190, 19800 -> 19.8 -> 20 -> 2000
+        Double tmp = (double)this.stockMoney / 1000;
+        this.dividend = Math.round(tmp) * 100; // 10% 적용, 20% 적용은 200, 12%는 120
+        this.cash += dividend;
     }
 }
