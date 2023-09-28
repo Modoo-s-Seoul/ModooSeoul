@@ -142,7 +142,7 @@ public class PlayerService {
 
         // 어디로 이동했는지 저장
         Long bef = rolledPlayer.getCurrentBoardIdx();
-        Long aft = (bef + (one + two)) % 32 + 1; // 1 ~ 32
+        Long aft = (bef + (one + two)) % 32; // 1 ~ 32
         rolledPlayer.playerMove(aft);
 
         // 월급 받았는지 안 받았는지 여부 저장
