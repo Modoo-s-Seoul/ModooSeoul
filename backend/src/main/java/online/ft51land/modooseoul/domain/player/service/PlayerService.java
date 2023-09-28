@@ -159,6 +159,33 @@ public class PlayerService {
         return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
     }
 
+    // 지하철 이용 가능 한지 확인
+    public PlayerCheckSubwayMessage playerCheckSubway(Player player) {
+
+        Game game = gameRepository.findById(player.getGameId())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+        BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+
+        if(!(boardStatus.getBoardType() == BoardType.SPECIAL && boardStatus.getSpecialName().equals("지하철"))){
+            // 플레이어의 현재 위치가 지하철이 아닌 경우
+            throw new BusinessException(ErrorMessage.BAD_REQUEST);
+        }
+
+
+        if(player.getCash() < 100000) {
+            return PlayerCheckSubwayMessage.of(true, false);
+        }
+
+        return PlayerCheckSubwayMessage.of(true, true);
+    }
 
 
     // 지하철로 이동
@@ -402,4 +429,5 @@ public class PlayerService {
         return PlayerReportMessage.of(player);
 
     }
+
 }
