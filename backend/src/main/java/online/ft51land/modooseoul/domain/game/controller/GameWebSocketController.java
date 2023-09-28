@@ -139,6 +139,10 @@ public class GameWebSocketController {
 
 					// 주사위를 새간내 못 돌린 경우 -> 그냥 타이머 만료
 
+					// Todo : 시간내 지하철 이동을 못한 경우 -> 자동으로 주사위 굴리기
+
+
+
 					gameService.playersActionFinish(timerGame); // game 에 해당하는 모든 player actionfinish init  , 타이머 종료 , 턴 넘기기
 
 					// 메시지 보냄

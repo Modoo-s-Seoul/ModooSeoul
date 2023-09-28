@@ -2,6 +2,7 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
@@ -10,6 +11,8 @@ import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestD
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
+import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
+import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -143,9 +146,16 @@ public class PlayerWebSocketController {
 
 		Player player = playerService.getPlayerById(playerId);
 
+
+		Game game = gameService.getGameById(player.getGameId());
+		
+		if(!game.getIsTimerActivated()){
+			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+		}
+		
+		
 		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto.boardId());
-
-
+		
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("subway", player.getGameId(), message);
 
@@ -153,6 +163,11 @@ public class PlayerWebSocketController {
 		//땅 도착 데이터 전달
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
+		// 타이머 비활성 & 턴 정보
+		gameService.playersActionFinish(game);
+		webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+		
 
 	}
 
