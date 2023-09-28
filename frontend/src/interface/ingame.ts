@@ -14,6 +14,7 @@ export interface PlayerPosition {
 
 /**(타입) 플레이어 고유 정보 */
 export interface PlayerInfo {
+  nickname: string;
   gameId: string;
   playerId: string;
 }
@@ -79,6 +80,12 @@ export interface buildingChangeType {
   point: number;
   industry: number;
   // sell: boolean;
+}
+
+/** (타입) 주식 변동 기록 */
+export interface stockChangeType {
+  stockName: string;
+  stockPrice: number[];
 }
 
 /** (타입) 지하철 변동 기록 */

@@ -8,6 +8,7 @@ import {
   builingInfoType,
   groundInfoType,
   buildingChangeType,
+  stockChangeType,
   subwayChangeType,
 } from "../interface/ingame";
 
@@ -148,13 +149,13 @@ export const isRollingState = atom<boolean>({
   default: false,
 });
 
-/** 플레이어 고유 정보 기록 */
+/** 현재 플레이어의 고유 정보 기록 */
 export const playerInfoState = atom<PlayerInfo>({
   key: "playerInfoState",
-  default: { gameId: "", playerId: "" },
+  default: { nickname: "", gameId: "", playerId: "" },
 });
 
-/** 플레이어 인게임 정보 기록 */
+/** 현재 게임에 참가한 모든 플레이어들의 인게임 정보 기록 */
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
   default: [
@@ -245,6 +246,19 @@ export const matchPosition = atom<defaultMatch[]>({
     { row: 8, col: 6 },
     { row: 8, col: 7 },
     { row: 8, col: 8 },
+  ],
+});
+
+/**게임 내의 모든 주식 종목들의 가격 기록 */
+export const stockState = atom<stockChangeType[]>({
+  key: "stockState",
+  default: [
+    { stockName: "OO전자", stockPrice: [] },
+    { stockName: "ㅁㅁ건설", stockPrice: [] },
+    { stockName: "XX바이오", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
   ],
 });
 

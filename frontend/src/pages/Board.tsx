@@ -572,6 +572,7 @@ export default function Board() {
     // 유저정보 기본 세팅
     if (weblocation.state) {
       setPlayerInfo({
+        nickname: weblocation.state.nickname,
         gameId: weblocation.state.gameId,
         playerId: weblocation.state.playerId,
       });
@@ -916,7 +917,7 @@ export default function Board() {
       </IngameModal>
 
       {/* 공통턴 */}
-      <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+      <IngameModal visible={isCommonTurnVisible}>
         {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
 
