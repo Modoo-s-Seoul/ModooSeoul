@@ -114,7 +114,6 @@ public class GameService {
             stockBoard.stockBoardinit(game);
             stockBoardRepository.save(stockBoard);
         }
-        log.info("주식보드 세팅 완료");
 
         return GameStartMessage.of(true, "게임 시작!");
     }
@@ -221,6 +220,11 @@ public class GameService {
         for (Player player : players) {
             Long stockMoney = getNextRoundPlayerStockMoney(player);
             player.setNextRound(stockMoney);
+            // 배당금 수령
+            player.setDevidend();
+            // 세금 미납액 증가
+            player.setTax(player.getTax() + (player.getTax() / 1000) * 100);
+            // 저장
             playerRepository.save(player);
         }
 

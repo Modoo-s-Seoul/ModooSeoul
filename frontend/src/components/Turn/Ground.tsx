@@ -72,12 +72,13 @@ export default function Ground() {
     // 땅 변동사항 업데이트
     setGroundChange([{ player: turn, index: turnData.index }]);
     // 땅 구매비용 발생
-    const newPlayerData = [...playerData];
+    const tmpData = playerData[0];
+    const newPlayerData = { ...tmpData };
     newPlayerData[turn] = {
       ...newPlayerData[turn],
-      money: newPlayerData[turn].money - turnData.cost,
+      money: newPlayerData[turn].money - turnData.price,
     };
-    setPlayerData(newPlayerData);
+    setPlayerData([newPlayerData]);
 
     // 턴 종료
     // setIsUserTurnVisible(false);
@@ -111,15 +112,17 @@ export default function Ground() {
       { player: 6, index: turnData.index * 3, point: 2, industry: -1 },
     ]);
     // // 땅 매각비용 발생
-    const newPlayerData = [...playerData];
+    const tmpData = playerData[0];
+    const newPlayerData = { ...tmpData };
     newPlayerData[turn] = {
       ...newPlayerData[turn],
-      money: newPlayerData[turn].money + turnData.cost,
+      money: newPlayerData[turn].money + turnData.price,
     };
-    setPlayerData(newPlayerData);
+    setPlayerData([newPlayerData]);
     // // 건물 매각비용 발생
-    setSelectIndustry(false);
+
     // 턴 종료
+    setSelectIndustry(false);
     // setIsUserTurnVisible(false);
   };
 
@@ -196,18 +199,25 @@ export default function Ground() {
         }
 
         console.log(givePlayer, "가", takePlayer, "에게", cost);
-        const newPlayerData = playerData.map((playerInfo, index) => {
-          if (index === givePlayer) {
-            // 통행료를 받는 플레이어
-            return { ...playerInfo, money: playerInfo.money - cost };
-          } else if (index === takePlayer) {
-            // 통행료를 지불하는 플레이어
-            return { ...playerInfo, money: playerInfo.money + cost };
-          } else {
-            return playerInfo;
-          }
-        });
-        setPlayerData(newPlayerData);
+
+        const tmpData = playerData[0];
+        const newPlayerData = { ...tmpData };
+        if (givePlayer in newPlayerData) {
+          // 통행료를 받는 플레이어
+          newPlayerData[givePlayer] = {
+            ...newPlayerData[givePlayer],
+            money: newPlayerData[givePlayer].money - cost,
+          };
+        }
+        if (takePlayer && takePlayer in newPlayerData) {
+          // 통행료를 지불하는 플레이어
+          newPlayerData[takePlayer] = {
+            ...newPlayerData[takePlayer],
+            money: newPlayerData[takePlayer].money + cost,
+          };
+        }
+
+        setPlayerData([newPlayerData]);
         setIsUserTurnVisible(!isUserTurnVisibleState);
         if (doubleCnt == 0) {
           setTurn(turn + 1);

@@ -8,6 +8,7 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.entity.enums.TimerType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
+import online.ft51land.modooseoul.domain.player.dto.message.PlayerDividendMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
@@ -84,7 +85,6 @@ public class GameWebSocketController {
 	@MessageMapping("/round-start/{gameId}")
 	public void startRound(@DestinationVariable String gameId) {
 		// game, players 객체 생성
-		log.info("gameId -> {}",gameId);
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
 
@@ -186,6 +186,18 @@ public class GameWebSocketController {
 		for (String playerId : game.getPlayers()) {
 			Player player = playerService.getPlayerById(playerId);
 			webSocketSendHandler.sendToPlayer("free-action", playerId, gameId, PlayerPrisonMessage.of(player));
+		}
+	}
+
+	// 배당금 확인
+	@MessageMapping("/dividends/{gameId}")
+	public void getDevidends(@DestinationVariable String gameId) {
+		// 객체 만들기
+		Game game = gameService.getGameById(gameId);
+		for (String playerId : game.getPlayers()) {
+			Player player = playerService.getPlayerById(playerId);
+			PlayerDividendMessage message = PlayerDividendMessage.of(player);
+			webSocketSendHandler.sendToPlayer("dividends", playerId, gameId, message);
 		}
 	}
 }

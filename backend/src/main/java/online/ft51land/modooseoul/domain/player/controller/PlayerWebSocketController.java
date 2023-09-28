@@ -6,10 +6,10 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
-import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -137,6 +137,24 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("prison", player.getGameId(), message);
 	}
 
+	// 지하철에서 이동할 칸을 선택해서 이동할때
+	@MessageMapping("/subway/{playerId}")
+	public void playerTakeSubway(@DestinationVariable String playerId, @Payload PlayerSubwayRequestDto playerTakeSubwayRequestDto){
+
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto.boardId());
+
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("subway", player.getGameId(), message);
+
+
+		//땅 도착 데이터 전달
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
+		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
+	}
 
 
 	// 공통 턴에서 자기 행동 완료
@@ -159,6 +177,34 @@ public class PlayerWebSocketController {
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerFinishMessage.of(resultGame));
+	}
+
+	@MessageMapping("/tax/payment/{playerId}")
+	public void playerPayTax(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerTaxMessage message = playerService.taxPayment(player);
+
+		webSocketSendHandler.sendToPlayer("tax", playerId, player.getGameId(), message);
+	}
+
+	@MessageMapping("/tax/evasion/{playerId}")
+	public void playerEvadeTax(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerTaxMessage message = PlayerTaxMessage.of(player);
+
+		webSocketSendHandler.sendToPlayer("tax", playerId, player.getGameId(), message);
+	}
+
+	// 플레이어 신고하기
+	@MessageMapping("/report/{playerId}")
+	public void playerReport(@DestinationVariable String playerId, @Payload PlayerReportRequestDto dto) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerReportMessage message = playerService.reportPlayer(player, dto.nickname());
+
+		webSocketSendHandler.sendToPlayer("report", playerId, player.getGameId(), message);
 	}
 
 

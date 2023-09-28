@@ -9,12 +9,10 @@ import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepo
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerArrivalBoardMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerDiceMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerReadyInfoMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -128,6 +126,7 @@ public class PlayerService {
 
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
+        diceRoller.setSeed(System.currentTimeMillis());
         Long one = diceRoller.nextLong(6) + 1;
         Long two = diceRoller.nextLong(6) + 1;
 
@@ -144,7 +143,7 @@ public class PlayerService {
 
         // 어디로 이동했는지 저장
         Long bef = rolledPlayer.getCurrentBoardIdx();
-        Long aft = (bef + (one + two)) % 32 + 1; // 1 ~ 32
+        Long aft = (bef + (one + two)) % 32; // 1 ~ 32
         rolledPlayer.playerMove(aft);
 
         // 월급 받았는지 안 받았는지 여부 저장
@@ -158,6 +157,51 @@ public class PlayerService {
 
         // 메세지 가공 후 리턴
         return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
+    }
+
+
+
+    // 지하철로 이동
+    public PlayerSubwayMessage takeSubway(Player player, Long destination) {
+
+        Game game = gameRepository.findById(player.getGameId())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+        BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+
+        if(!(boardStatus.getBoardType() == BoardType.SPECIAL && boardStatus.getSpecialName().equals("지하철"))){
+            // 플레이어의 현재 위치가 지하철이 아닌 경우
+            throw new BusinessException(ErrorMessage.BAD_REQUEST);
+        }
+
+        // 이동한 보드 아이디가 다시 지하철인경우 예외처리
+        BoardStatus destinationBoardStatus = boardStatusRepository.findById(player.getGameId() + "@"+destination)
+                .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        if(destinationBoardStatus.getBoardType() == BoardType.SPECIAL && destinationBoardStatus.getSpecialName().equals("지하철")){
+            throw new BusinessException(ErrorMessage.BAD_REQUEST);
+        }
+
+        Boolean isSalary = false;
+        // 월급 받는 경우
+        if(player.getCurrentBoardIdx() > destination){
+            player.getSalary();
+            isSalary  = true;
+        }
+
+        // 이동
+        player.playerMove(destination);
+
+        playerRepository.save(player);
+
+        return PlayerSubwayMessage.of(player.getCurrentBoardIdx(), isSalary);
     }
 
     // 플레이어 뉴스 선택
@@ -340,4 +384,22 @@ public class PlayerService {
         return game.getFinishedPlayerCnt();
     }
 
+    public PlayerTaxMessage taxPayment(Player player) {
+        if (player.getCash() < player.getTax()) {
+            return PlayerTaxMessage.error(ErrorMessage.CANNOT_PAY_TAX.getPhrase());
+        }
+        player.taxPayment();
+        playerRepository.save(player);
+        return PlayerTaxMessage.of(player);
+    }
+
+    public PlayerReportMessage reportPlayer(Player player, String nickname) {
+
+        player.setReporteePlayerName(nickname);
+
+        playerRepository.save(player);
+
+        return PlayerReportMessage.of(player);
+
+    }
 }

@@ -77,7 +77,6 @@ public class StockBoard {
 			this.stockAmounts.add(0L);
 			this.stockMoneys.add(0L);
 			this.stockPurchaseAmounts.add(0L);
-			log.info("name = {}", gameStockId);
 		}
 	}
 
