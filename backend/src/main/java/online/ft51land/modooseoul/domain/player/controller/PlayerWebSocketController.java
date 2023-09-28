@@ -6,6 +6,7 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
@@ -176,6 +177,34 @@ public class PlayerWebSocketController {
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("action-finish", player.getGameId(), PlayerFinishMessage.of(resultGame));
+	}
+
+	@MessageMapping("/tax/payment/{playerId}")
+	public void playerPayTax(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerTaxMessage message = playerService.taxPayment(player);
+
+		webSocketSendHandler.sendToPlayer("tax", playerId, player.getGameId(), message);
+	}
+
+	@MessageMapping("/tax/evasion/{playerId}")
+	public void playerEvadeTax(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerTaxMessage message = PlayerTaxMessage.of(player);
+
+		webSocketSendHandler.sendToPlayer("tax", playerId, player.getGameId(), message);
+	}
+
+	// 플레이어 신고하기
+	@MessageMapping("/report/{playerId}")
+	public void playerReport(@DestinationVariable String playerId, @Payload PlayerReportRequestDto dto) {
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerReportMessage message = playerService.reportPlayer(player, dto.nickname());
+
+		webSocketSendHandler.sendToPlayer("report", playerId, player.getGameId(), message);
 	}
 
 

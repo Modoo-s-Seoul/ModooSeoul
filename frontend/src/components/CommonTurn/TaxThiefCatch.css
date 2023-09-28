@@ -17,13 +17,14 @@
   color: black !important;
   font-size: 20px;
 }
-.reportBtn {
+
+.reportButton {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 150px;
   height: 60px;
-  background-color: #756b19 !important;
+  background-color: #ff0606 !important;
   color: #fff;
   border: none;
   border-radius: 200px !important;
@@ -33,9 +34,10 @@
   transition: background-color 0.3s ease;
   margin-top: 40px !important;
 }
-.reportBtn:hover {
-  background-color: #443e10 !important;
+.reportButton:hover {
+  background-color: #ff6060 !important;
 }
+
 .selected {
   background-color: rgb(187, 152, 108) !important;
   font-weight: 600;
