@@ -147,7 +147,7 @@ public class PlayerWebSocketController {
 
 
 		// 메시지 전송
-		webSocketSendHandler.sendToGame("subway", player.getGameId(), message);
+		webSocketSendHandler.sendToGame("check-subway", player.getGameId(), message);
 	}
 
 	// 지하철에서 이동할 칸을 선택해서 이동할때
