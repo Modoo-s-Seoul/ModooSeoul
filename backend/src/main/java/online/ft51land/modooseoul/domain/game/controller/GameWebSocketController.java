@@ -169,7 +169,7 @@ public class GameWebSocketController {
 
 		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
 		if(game.getIsTimerActivated()){
-			gameService.expiredTimer(game);
+			gameService.playersActionFinish(game);
 			// TODO : 다음 턴으로 넘어가는지 생각해보고 넘어가면 passTurn 해야함 / 지금은 타이머 만료까지만 되어 있음
 			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
 		}
