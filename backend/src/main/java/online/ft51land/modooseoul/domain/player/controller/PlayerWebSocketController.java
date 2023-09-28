@@ -137,6 +137,19 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("prison", player.getGameId(), message);
 	}
 
+	// 지하철 이용 가능 한지 확인
+	@MessageMapping("/check-subway/{playerId}")
+	public void playerCheckSubway(@DestinationVariable String playerId){
+
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerCheckSubwayMessage message = playerService.playerCheckSubway(player);
+
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("check-subway", player.getGameId(), message);
+	}
+
 	// 지하철에서 이동할 칸을 선택해서 이동할때
 	@MessageMapping("/subway/{playerId}")
 	public void playerTakeSubway(@DestinationVariable String playerId, @Payload PlayerSubwayRequestDto playerTakeSubwayRequestDto){
@@ -153,7 +166,6 @@ public class PlayerWebSocketController {
 		//땅 도착 데이터 전달
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
-
 	}
 
 
