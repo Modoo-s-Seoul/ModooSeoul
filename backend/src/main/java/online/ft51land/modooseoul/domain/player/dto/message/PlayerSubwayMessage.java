@@ -4,11 +4,13 @@ import lombok.Builder;
 
 @Builder
 public record PlayerSubwayMessage(
-        Long currentBoardIdx
+        Long currentBoardId,
+        Boolean isSalary
 ) {
-    public static PlayerDiceMessage from(Long currentBoardIdx){
-        return PlayerDiceMessage.builder()
-                .currentBoardIdx(currentBoardIdx)
+    public static PlayerSubwayMessage of(Long currentBoardId, Boolean isSalary){
+        return PlayerSubwayMessage.builder()
+                .currentBoardId(currentBoardId)
+                .isSalary(isSalary)
                 .build();
     }
 }

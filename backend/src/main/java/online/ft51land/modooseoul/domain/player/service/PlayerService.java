@@ -162,12 +162,34 @@ public class PlayerService {
 
 
     // 지하철로 이동
-    public PlayerSubwayMessage takeSubway(Player player, PlayerSubwayRequestDto playerTakeSubwayRequestDto) {
-        if(player.getCurrentBoardIdx() ! = ){ // 플레이어의 현재 위치가 지하철이 아닌 경우
-
+    public PlayerSubwayMessage takeSubway(Player player, Long destination) {
+        BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        if(!(boardStatus.getBoardType() == BoardType.SPECIAL && boardStatus.getSpecialName().equals("지하철"))){
+            // 플레이어의 현재 위치가 지하철이 아닌 경우
+            throw new BusinessException(ErrorMessage.BAD_REQUEST);
         }
 
-        return  null;
+        // 이동한 보드 아이디가 다시 지하철인경우 예외처리
+        BoardStatus destinationBoardStatus = boardStatusRepository.findById(player.getGameId() + "@"+destination)
+                .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        if(destinationBoardStatus.getBoardType() == BoardType.SPECIAL && destinationBoardStatus.getSpecialName().equals("지하철")){
+            throw new BusinessException(ErrorMessage.BAD_REQUEST);
+        }
+
+        Boolean isSalary = false;
+        // 월급 받는 경우
+        if(player.getCurrentBoardIdx() > destination){
+            player.getSalary();
+            isSalary  = true;
+        }
+
+        // 이동
+        player.playerMove(destination);
+
+        playerRepository.save(player);
+
+        return PlayerSubwayMessage.of(player.getCurrentBoardIdx(), isSalary);
     }
 
     // 플레이어 뉴스 선택

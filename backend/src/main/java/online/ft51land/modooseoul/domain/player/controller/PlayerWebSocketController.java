@@ -142,7 +142,7 @@ public class PlayerWebSocketController {
 
 		Player player = playerService.getPlayerById(playerId);
 
-		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto);
+		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto.boardId());
 
 
 		// 메시지 전송
