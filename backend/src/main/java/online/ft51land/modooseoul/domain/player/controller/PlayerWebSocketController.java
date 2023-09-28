@@ -7,6 +7,7 @@ import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
@@ -136,6 +137,24 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("prison", player.getGameId(), message);
 	}
 
+	// 지하철에서 이동할 칸을 선택해서 이동할때
+	@MessageMapping("/subway/{playerId}")
+	public void playerTakeSubway(@DestinationVariable String playerId, @Payload PlayerSubwayRequestDto playerTakeSubwayRequestDto){
+
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto.boardId());
+
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("subway", player.getGameId(), message);
+
+
+		//땅 도착 데이터 전달
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
+		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
+	}
 
 
 	// 공통 턴에서 자기 행동 완료
