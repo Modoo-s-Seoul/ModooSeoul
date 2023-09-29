@@ -578,15 +578,14 @@ export default function Board() {
       });
     }
     // 자본금 지금
-    const tmpData = playerData[0];
-    const newPlayerData = { ...tmpData };
+    const newPlayerData = [...playerData];
     for (let i = 0; i < pNum; i++) {
       newPlayerData[i] = {
         ...newPlayerData[i],
         money: firstMoneyValue,
       };
     }
-    setPlayerData([newPlayerData]);
+    setPlayerData(newPlayerData);
     // 라운드 세팅
     setRound((prev) => prev + 1);
     console.log("플레이어 고유 정보입니다", playerInfo);

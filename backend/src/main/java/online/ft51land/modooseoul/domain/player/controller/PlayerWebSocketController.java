@@ -140,6 +140,19 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("prison", player.getGameId(), message);
 	}
 
+	// 지하철 이용 가능 한지 확인
+	@MessageMapping("/check-subway/{playerId}")
+	public void playerCheckSubway(@DestinationVariable String playerId){
+
+		Player player = playerService.getPlayerById(playerId);
+
+		PlayerCheckSubwayMessage message = playerService.playerCheckSubway(player);
+
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("check-subway", player.getGameId(), message);
+	}
+
 	// 지하철에서 이동할 칸을 선택해서 이동할때
 	@MessageMapping("/subway/{playerId}")
 	public void playerTakeSubway(@DestinationVariable String playerId, @Payload PlayerSubwayRequestDto playerTakeSubwayRequestDto){
@@ -148,14 +161,15 @@ public class PlayerWebSocketController {
 
 
 		Game game = gameService.getGameById(player.getGameId());
-		
+
 		if(!game.getIsTimerActivated()){
 			throw new BusinessException(ErrorMessage.BAD_REQUEST);
 		}
-		
-		
+
+
 		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto.boardId());
-		
+
+
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("subway", player.getGameId(), message);
 
@@ -167,7 +181,7 @@ public class PlayerWebSocketController {
 		// 타이머 비활성 & 턴 정보
 		gameService.playersActionFinish(game);
 		webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
-		
+
 
 	}
 
