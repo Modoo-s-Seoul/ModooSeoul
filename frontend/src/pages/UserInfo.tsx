@@ -11,19 +11,18 @@ export default function UserInfo() {
   /** 돈에 변화 감지시 애니메이션 부여 */
   useEffect(() => {
     console.log("0의 돈 바뀜");
-  }, [playerData[0][0].money]);
+  }, [playerData[0].money]);
 
   return (
     <>
       {/* Player Board */}
       <div className="playerContainer">
-        {Object.keys(playerData[0]).map((playerIndex: string) => {
-          const player = playerData[0][playerIndex];
+        {playerData.map((player, index) => {
           return (
             <div
-              key={playerIndex}
+              key={index}
               className={`playerBox ${
-                Number(playerIndex) === turn ? "activePlayer" : ""
+                Number(index) === turn ? "activePlayer" : ""
               }`}
             >
               <p style={{ color: `#${player.color}`, fontSize: "24px" }}>
