@@ -230,4 +230,9 @@ public class Player extends BaseEntity {
     public void setReporteePlayerName(String name) {
         this.reporteePlayerName = name;
     }
+
+    public Long paySubwayFee(){
+        this.cash -= 100000;
+        return this.cash;
+    }
 }

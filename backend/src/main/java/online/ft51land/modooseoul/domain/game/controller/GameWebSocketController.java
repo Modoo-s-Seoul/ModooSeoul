@@ -8,10 +8,7 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.entity.enums.TimerType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerDividendMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerNewsMessage;
-import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
+import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
@@ -120,11 +117,11 @@ public class GameWebSocketController {
 				Game timerGame = gameService.getGameById(gameId);
 
 				if(timerGame.getIsTimerActivated()){  //타이머가 활성화 되어 있으면
-					/** TODO : 시간이 다 됐는데 타이머가 활성화 -> 시간내 액션을 수행을 못한경우
-					 *  처리 필요
-					 */
-					
+					// 시간이 다 됐는데 타이머가 활성화 -> 시간내 액션을 수행을 못한경우
+
+
 					// 선뽑기를 시간내 못 뽑은 경우 -> 그냥 타이머 만료
+					// 주사위를 새간내 못 돌린 경우 -> 그냥 타이머 만료
 					// 뉴스를 시간내 못 뽑은 경우 -> 못뽑은 사람들 자동으로 뽑아서 보내주고 타이머 만료
 					if(gameStartTimerRequestDto.timerType() == TimerType.SELECT_NEWS){
 						List<String> playerIdList = timerGame.getPlayers();
@@ -137,9 +134,22 @@ public class GameWebSocketController {
 						}
 					}
 
-					// 주사위를 새간내 못 돌린 경우 -> 그냥 타이머 만료
-
 					// Todo : 시간내 지하철 이동을 못한 경우 -> 자동으로 주사위 굴리기
+					if(gameStartTimerRequestDto.timerType() == TimerType.SUBWAY){
+						// 게임 턴 정보를 확인해서 어떤 플레어 차례인지 알아내기
+						Player player = playerService.getPlayerByTurnInfo(timerGame);
+
+						// 주사위 굴리고 데이터 가공
+						PlayerDiceMessage playerDiceMessage = playerService.rollDice(player.getId());
+
+						// 데이터 전달
+						webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
+
+						//땅 도착 데이터 전달
+						PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(player.getId());
+						webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
+					}
 
 
 
