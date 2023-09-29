@@ -72,13 +72,12 @@ export default function Ground() {
     // 땅 변동사항 업데이트
     setGroundChange([{ player: turn, index: turnData.index }]);
     // 땅 구매비용 발생
-    const tmpData = playerData[0];
-    const newPlayerData = { ...tmpData };
+    const newPlayerData = [...playerData];
     newPlayerData[turn] = {
       ...newPlayerData[turn],
       money: newPlayerData[turn].money - turnData.price,
     };
-    setPlayerData([newPlayerData]);
+    setPlayerData(newPlayerData);
 
     // 턴 종료
     // setIsUserTurnVisible(false);
@@ -112,13 +111,12 @@ export default function Ground() {
       { player: 6, index: turnData.index * 3, point: 2, industry: -1 },
     ]);
     // // 땅 매각비용 발생
-    const tmpData = playerData[0];
-    const newPlayerData = { ...tmpData };
+    const newPlayerData = [...playerData];
     newPlayerData[turn] = {
       ...newPlayerData[turn],
       money: newPlayerData[turn].money + turnData.price,
     };
-    setPlayerData([newPlayerData]);
+    setPlayerData(newPlayerData);
     // // 건물 매각비용 발생
 
     // 턴 종료
@@ -200,8 +198,7 @@ export default function Ground() {
 
         console.log(givePlayer, "가", takePlayer, "에게", cost);
 
-        const tmpData = playerData[0];
-        const newPlayerData = { ...tmpData };
+        const newPlayerData = { ...playerData };
         if (givePlayer in newPlayerData) {
           // 통행료를 받는 플레이어
           newPlayerData[givePlayer] = {
@@ -217,7 +214,7 @@ export default function Ground() {
           };
         }
 
-        setPlayerData([newPlayerData]);
+        setPlayerData(newPlayerData);
         setIsUserTurnVisible(!isUserTurnVisibleState);
         if (doubleCnt == 0) {
           setTurn(turn + 1);

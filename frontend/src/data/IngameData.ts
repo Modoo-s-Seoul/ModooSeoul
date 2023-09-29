@@ -159,12 +159,10 @@ export const playerInfoState = atom<PlayerInfo>({
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
   default: [
-    {
-      0: { name: "Player 1", money: 0, color: "dd9090" },
-      1: { name: "Player 2", money: 0, color: "909add" },
-      2: { name: "Player 3", money: 0, color: "90dd9a" },
-      3: { name: "Player 4", money: 0, color: "dddc90" },
-    },
+    { name: "Player 1", money: 0, color: "dd9090" },
+    { name: "Player 2", money: 0, color: "909add" },
+    { name: "Player 3", money: 0, color: "90dd9a" },
+    { name: "Player 4", money: 0, color: "dddc90" },
   ],
 });
 
