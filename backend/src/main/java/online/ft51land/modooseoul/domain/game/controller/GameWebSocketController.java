@@ -122,6 +122,8 @@ public class GameWebSocketController {
 
 					// 선뽑기를 시간내 못 뽑은 경우 -> 그냥 타이머 만료
 					// 주사위를 새간내 못 돌린 경우 -> 그냥 타이머 만료
+					// 시간내 부동산 구매를 못한 경우 -> 그냥 타이머 만료
+
 					// 뉴스를 시간내 못 뽑은 경우 -> 못뽑은 사람들 자동으로 뽑아서 보내주고 타이머 만료
 					if(gameStartTimerRequestDto.timerType() == TimerType.SELECT_NEWS){
 						List<String> playerIdList = timerGame.getPlayers();
@@ -134,7 +136,7 @@ public class GameWebSocketController {
 						}
 					}
 
-					// Todo : 시간내 지하철 이동을 못한 경우 -> 자동으로 주사위 굴리기
+					// 시간내 지하철 이동을 못한 경우 -> 자동으로 주사위 굴리기
 					if(gameStartTimerRequestDto.timerType() == TimerType.SUBWAY){
 						// 게임 턴 정보를 확인해서 어떤 플레어 차례인지 알아내기
 						Player player = playerService.getPlayerByTurnInfo(timerGame);
@@ -151,8 +153,13 @@ public class GameWebSocketController {
 
 					}
 
-
-
+					/** TODO : playersActionFinish 이거랑 별도로 타이머 종료, 턴넘기기 별도로 처리해아함
+					 * 주사위 던졌을때는 그냥 타이머만 종료 시키고
+					 * 이후 도착한 땅에 대해서 액션을 다 처리 했을때 턴넘기기를 해야함
+					 * 근데 주사위 안던져서 타이머가 만료가 안된 상태에서
+					 * playersActionFinish
+					 *  이걸 처리해버리면 턴이 넘어가 버리니까 이건 IF문 걸어서 공통일때만 처리하도록 해야함
+					 */
 					gameService.playersActionFinish(timerGame); // game 에 해당하는 모든 player actionfinish init  , 타이머 종료 , 턴 넘기기
 
 					// 메시지 보냄
@@ -184,7 +191,15 @@ public class GameWebSocketController {
 		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
 		if(game.getIsTimerActivated()){
 			gameService.playersActionFinish(game);
-			// TODO : 다음 턴으로 넘어가는지 생각해보고 넘어가면 passTurn 해야함 / 지금은 타이머 만료까지만 되어 있음
+			/**TODO : 다음 턴으로 넘어가는지 생각해보고 넘어가면 passTurn 해야함 / 지금은 타이머 만료까지만 되어 있음
+			 *  주사위는 다음턴으로 넘어가면안됨..
+			 *  지하철도 다음턴으로 넘어가면안됨..
+			 *
+			 *  부동산 구매하다가 구매를 멈추는 경우 호출 될텐데
+			 *  이때 턴넘기는거 처리
+			 *
+ 			 */
+
 			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
 		}
 

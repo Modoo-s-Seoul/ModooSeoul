@@ -10,6 +10,8 @@ import online.ft51land.modooseoul.domain.board_status.entity.enums.PurchaseMessa
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.building.entity.Building;
 import online.ft51land.modooseoul.domain.building.repository.BuildingRepository;
+import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
@@ -26,8 +28,21 @@ public class BoardStatusService {
     private final BoardStatusRepository boardStatusRepository;
     private final PlayerRepository playerRepository;
     private final BuildingRepository buildingRepository;
+    private final GameRepository gameRepository;
 
     public GroundPurchaseMessage purchaseGround(Player player) {
+        Game game = gameRepository.findById(player.getGameId())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+        // 타이머가 활성화 되어 있는지 확인
+        if(!game.getIsTimerActivated()){
+            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+        }
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
 
         //현재 플레이어가 위치한 땅이 소유자가 없는지 한번 더 체크
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
@@ -78,6 +93,19 @@ public class BoardStatusService {
 
 
     public BuildingPurchaseMessage purchaseBuilding(Player player, BuildingPurchaseRequestDto buildingPurchaseRequestDto) {
+
+        Game game = gameRepository.findById(player.getGameId())
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+        // 타이머가 활성화 되어 있는지 확인
+        if(!game.getIsTimerActivated()){
+            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+        }
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
 
         Long boardIdxForBuilding = player.getCurrentBoardIdx(); //건물 지을 땅 인덱스
 

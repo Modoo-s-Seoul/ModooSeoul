@@ -95,7 +95,7 @@ public class Game extends BaseEntity {
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
 		this.finishedPlayerCnt = 0L;
-		this.isTimerActivated = true;
+		this.isTimerActivated = false;
 	}
 
 	public void addPlayer(Player player) {
