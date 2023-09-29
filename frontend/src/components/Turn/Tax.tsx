@@ -41,8 +41,7 @@ export default function Tax() {
   /** 탈세 검증 */
   useEffect(() => {
     // 기본 세팅
-    const tmpData = playerData[0];
-    const newPlayerData = { ...tmpData };
+    const newPlayerData = [...playerData];
     // 세금 징수 or 위로금 지급
     if (turn in newPlayerData) {
       if (dirtyMoney) {
@@ -57,7 +56,7 @@ export default function Tax() {
         };
       }
     }
-    setPlayerData([newPlayerData]);
+    setPlayerData(newPlayerData);
     setDirtyMoney(0);
 
     // 실제구현 - send 요청
