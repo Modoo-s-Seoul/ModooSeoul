@@ -216,6 +216,10 @@ public class PlayerService {
             throw new BusinessException(ErrorMessage.BAD_REQUEST);
         }
 
+
+        // 지하철 이용료비 지불
+        player.paySubwayFee();
+
         Boolean isSalary = false;
         // 월급 받는 경우
         if(player.getCurrentBoardIdx() > destination){
@@ -228,7 +232,7 @@ public class PlayerService {
 
         playerRepository.save(player);
 
-        return PlayerSubwayMessage.of(player.getCurrentBoardIdx(), isSalary);
+        return PlayerSubwayMessage.of(player,isSalary);
     }
 
     // 플레이어 뉴스 선택
@@ -430,4 +434,9 @@ public class PlayerService {
 
     }
 
+    //턴정보로 플레이어 찾기
+    public Player getPlayerByTurnInfo(Game game) {
+        Long turnInfo = game.getTurnInfo();
+        return getPlayerById(game.getPlayers().get(turnInfo.intValue()));
+    }
 }
