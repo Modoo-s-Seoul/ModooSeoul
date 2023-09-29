@@ -198,7 +198,7 @@ export default function Ground() {
 
         console.log(givePlayer, "가", takePlayer, "에게", cost);
 
-        const newPlayerData = { ...playerData };
+        const newPlayerData = [...playerData];
         if (givePlayer in newPlayerData) {
           // 통행료를 받는 플레이어
           newPlayerData[givePlayer] = {
