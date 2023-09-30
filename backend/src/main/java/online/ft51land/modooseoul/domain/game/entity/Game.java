@@ -9,12 +9,14 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.game.entity.enums.TimerType;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +90,8 @@ public class Game extends BaseEntity {
 
 	private Boolean isTimerActivated;
 
+	private TimerType timerType;
+
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
@@ -96,6 +100,7 @@ public class Game extends BaseEntity {
 		this.createdDate = LocalDateTime.now();
 		this.finishedPlayerCnt = 0L;
 		this.isTimerActivated = false;
+		this.timerType = null;
 	}
 
 	public void addPlayer(Player player) {
@@ -159,10 +164,12 @@ public class Game extends BaseEntity {
 		return ++this.turnInfo;
 	}
 
-	public void startTimer(){
+	public void startTimer(TimerType timerType){
+		this.timerType = timerType;
 		this.isTimerActivated = true;
 	}
 	public void expiredTimer(){
+		this.timerType = null;
 		this.isTimerActivated = false;
 	}
 

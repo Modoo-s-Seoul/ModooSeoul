@@ -101,7 +101,8 @@ public class PlayerWebSocketController {
 
 		//----------------------플레이어가 뉴스를 모두 뽑았는지 확인
 		if(finishPlayerCnt == gameService.getPlayingPlayerCnt(game)){
-			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료
+			gameService.passTurn(game); // 턴 넘기기
 		}
 
 		Game resultGame = gameService.getGameById(player.getGameId());
@@ -178,7 +179,7 @@ public class PlayerWebSocketController {
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
-		// 타이머 비활성 & 턴 정보
+		// 타이머 만료, 턴은 안넘어감
 		gameService.playersActionFinish(game);
 		webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
 
@@ -186,7 +187,7 @@ public class PlayerWebSocketController {
 	}
 
 
-	// 공통 턴에서 자기 행동 완료
+	// 공통 턴(1분, 선뽑기, 뉴스뽑기)에서 자기 행동 완료
 	@MessageMapping("/action-finish/{playerId}")
 	public void playerActionFinish(@DestinationVariable String playerId){
 
@@ -199,7 +200,8 @@ public class PlayerWebSocketController {
 
 		// 모두가 턴 넘길 준비가 되어 있다면
 		if(finishPlayerCnt == gameService.getPlayingPlayerCnt(game)){
-			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료
+			gameService.passTurn(game); //턴 넘기기
 		}
 
 		Game resultGame = gameService.getGameById(player.getGameId());
