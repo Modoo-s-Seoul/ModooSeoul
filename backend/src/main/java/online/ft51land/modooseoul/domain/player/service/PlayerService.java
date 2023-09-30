@@ -335,6 +335,12 @@ public class PlayerService {
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
+            // 감옥 칸 도착시 턴 넘기기
+            Game game = gameRepository.findById(player.getGameId())
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+            game.passTurn();
+            gameRepository.save(game);
             return PlayerArrivalBoardMessage.of("감옥 도착",boardStatus);
         }
         //특수칸 - 오일랜드
