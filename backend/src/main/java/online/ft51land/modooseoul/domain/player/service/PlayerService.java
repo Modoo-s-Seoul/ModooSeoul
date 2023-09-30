@@ -321,14 +321,14 @@ public class PlayerService {
         }
 
         if(boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return specialBoard(boardStatus);
+            return specialBoard(boardStatus, player);
         }
 
         return null;
     }
 
     @Transactional
-    public PlayerArrivalBoardMessage<BoardStatus> specialBoard(BoardStatus boardStatus) {
+    public PlayerArrivalBoardMessage<BoardStatus> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("출발지 도착",boardStatus);
@@ -343,6 +343,13 @@ public class PlayerService {
         }
         //특수칸 - 지하철
         if(boardStatus.getSpecialName().equals("지하철") && boardStatus.getBoardType() == BoardType.SPECIAL) {
+            // 지하철 칸 도착시 턴 넘기기
+            Game game = gameRepository.findById(player.getGameId())
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+            game.passTurn();
+            gameRepository.save(game);
+
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
