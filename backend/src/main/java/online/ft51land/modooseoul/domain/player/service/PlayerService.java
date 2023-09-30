@@ -316,6 +316,7 @@ public class PlayerService {
         }
         //찬스카드
         if(boardStatus.getBoardType() == BoardType.CHANCE) {
+            // TODO : 찬스카드 랜덤으로 뽑아 알려주기
             return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
         }
 
@@ -350,7 +351,7 @@ public class PlayerService {
 
     @Transactional
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
-        //통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
+        //TODO : 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
         Player payPlayer = getPlayerById(playerId);
         Player ownerPlayer = getPlayerById(ownerId);
@@ -382,6 +383,7 @@ public class PlayerService {
         //통행료 지불
         payPlayer.payToll(toll);
         ownerPlayer.receiveToll(toll);
+        passTurn(payPlayer);
         playerRepository.save(payPlayer);
         playerRepository.save(ownerPlayer);
     }
