@@ -21,7 +21,27 @@
 .activePlayer {
   border: 10px solid rgb(128, 23, 0); /* 턴에 해당하는 플레이어에게 굵은 보더 스타일 */
 }
+.playerMoneyAnimation {
+  animation: moneyChange 1s ease-in-out;
+}
 
+@keyframes moneyChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.playerMoneyIncrease{
+  color : green
+}
+.playerMoneyDecrease{
+  color : red
+}
 .sample {
   color: #dddc90;
   color: #90dd9a;
