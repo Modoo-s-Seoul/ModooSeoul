@@ -1,7 +1,8 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   buildingChangeState,
   builingInfoState,
+  displayPlayerDataState,
   doubleCntState,
   groundChangeState,
   isModalMsgActiveState,
@@ -13,14 +14,14 @@ import {
   tcolState,
   trowState,
   turnState,
-} from '../../data/IngameData';
-import ClickBtn from '../Base/CustomButton';
-import { boardDataState } from '../../data/BoardData';
-import { useEffect, useState } from 'react';
-import './Ground.css';
-import CloseBtn from './CloseBtn';
-import TimeBar from '../Base/TimeBar';
-import MessageModal from '../Base/MessageModal';
+} from "../../data/IngameData";
+import ClickBtn from "../Base/CustomButton";
+import { boardDataState } from "../../data/BoardData";
+import { useEffect, useState } from "react";
+import "./Ground.css";
+import CloseBtn from "./CloseBtn";
+import TimeBar from "../Base/TimeBar";
+import MessageModal from "../Base/MessageModal";
 
 export default function Ground() {
   // 자체 인자
@@ -36,6 +37,7 @@ export default function Ground() {
   const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); //
   const matchPos = useRecoilValue(matchPosition);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
@@ -78,6 +80,7 @@ export default function Ground() {
       money: newPlayerData[turn].money - turnData.price,
     };
     setPlayerData(newPlayerData);
+    setDisplayPlayerData(newPlayerData);
 
     // 턴 종료
     // setIsUserTurnVisible(false);
@@ -117,6 +120,7 @@ export default function Ground() {
       money: newPlayerData[turn].money + turnData.price,
     };
     setPlayerData(newPlayerData);
+    setDisplayPlayerData(newPlayerData);
     // // 건물 매각비용 발생
 
     // 턴 종료
@@ -196,12 +200,12 @@ export default function Ground() {
           }
         }
 
-        console.log(givePlayer, '가', takePlayer, '에게', cost);
+        console.log(givePlayer, "가", takePlayer, "에게", cost);
 
         const newPlayerData = [...playerData];
         if (givePlayer in newPlayerData) {
           // 통행료를 지불하는 플레이어
-          console.log('지불', newPlayerData, givePlayer, takePlayer);
+          console.log("지불", newPlayerData, givePlayer, takePlayer);
           newPlayerData[givePlayer] = {
             ...newPlayerData[givePlayer],
             money: newPlayerData[givePlayer].money - cost,
@@ -209,7 +213,7 @@ export default function Ground() {
         }
         if (takePlayer != null && takePlayer in newPlayerData) {
           // 통행료를 지급받는 플레이어
-          console.log('지급받');
+          console.log("지급받");
           newPlayerData[takePlayer] = {
             ...newPlayerData[takePlayer],
             money: newPlayerData[takePlayer].money + cost,
@@ -217,6 +221,7 @@ export default function Ground() {
         }
 
         setPlayerData(newPlayerData);
+        setDisplayPlayerData(newPlayerData);
         setIsUserTurnVisible(!isUserTurnVisibleState);
         if (doubleCnt == 0) {
           setTurn(turn + 1);
@@ -227,7 +232,7 @@ export default function Ground() {
 
   return (
     <>
-      <div className={'userTurnContainer'}>
+      <div className={"userTurnContainer"}>
         {/* 상단 - 닫기 버튼 */}
         <div>
           <CloseBtn />
@@ -270,7 +275,7 @@ export default function Ground() {
                             height={30}
                             width={60}
                             fontsize={18}
-                            text={'건물 짓기'}
+                            text={"건물 짓기"}
                           />
                         </div>
                       )}
@@ -280,7 +285,7 @@ export default function Ground() {
                             height={30}
                             width={50}
                             fontsize={18}
-                            text={'판매'}
+                            text={"판매"}
                           />
                         </div>
                       )}
@@ -304,7 +309,7 @@ export default function Ground() {
                             height={30}
                             width={60}
                             fontsize={18}
-                            text={'건물 짓기'}
+                            text={"건물 짓기"}
                           />
                         </div>
                       )}
@@ -314,7 +319,7 @@ export default function Ground() {
                             height={30}
                             width={50}
                             fontsize={18}
-                            text={'판매'}
+                            text={"판매"}
                           />
                         </div>
                       )}
@@ -338,7 +343,7 @@ export default function Ground() {
                             height={30}
                             width={60}
                             fontsize={18}
-                            text={'건물 짓기'}
+                            text={"건물 짓기"}
                           />
                         </div>
                       )}
@@ -348,7 +353,7 @@ export default function Ground() {
                             height={30}
                             width={50}
                             fontsize={18}
-                            text={'판매'}
+                            text={"판매"}
                           />
                         </div>
                       )}
@@ -371,12 +376,12 @@ export default function Ground() {
                 </div>
               </div>
               <div className="buildingBuyContainer">
-                {['교육', '교통', '유통', '주거', '문화'].map(
+                {["교육", "교통", "유통", "주거", "문화"].map(
                   (label, index) => (
                     <div
                       key={index}
                       className={`buildingBuyBox ${
-                        selectedNodes == index ? 'buyActive' : ''
+                        selectedNodes == index ? "buyActive" : ""
                       }`}
                       onClick={() => handleNodeClick(index)}
                     >
@@ -398,7 +403,7 @@ export default function Ground() {
                   height={50}
                   width={150}
                   fontsize={30}
-                  text={'땅 구매'}
+                  text={"땅 구매"}
                 />
               </div>
             </div>
@@ -412,7 +417,7 @@ export default function Ground() {
                   height={50}
                   width={120}
                   fontsize={25}
-                  text={'땅 판매'}
+                  text={"땅 판매"}
                 />
               </div>
               {selectIndustry && (
@@ -421,7 +426,7 @@ export default function Ground() {
                   <div
                     onClick={() => {
                       if (selectedNodes == -1) {
-                        setModalMsg('산업군을 지정해주세요');
+                        setModalMsg("산업군을 지정해주세요");
                         setIsModalMsgActive(true);
                         return;
                       }
@@ -432,7 +437,7 @@ export default function Ground() {
                       height={50}
                       width={120}
                       fontsize={25}
-                      text={'건물 구매'}
+                      text={"건물 구매"}
                     />
                   </div>
                 </>
