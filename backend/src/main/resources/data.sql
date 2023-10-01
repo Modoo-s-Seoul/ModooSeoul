@@ -132,8 +132,8 @@ INSERT INTO building (id, price, name) VALUES (5, '700000', '문화');
 
 
 -- SYNERGY insert query start
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('1', '1', '3');
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('2', '1', '4');
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('3', '2', '4');
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('4', '3', '4');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('1', '1', '3','도매, 소매의 밀집지');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('2', '1', '4','서울 교통의 요충지');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('3', '2', '4','제 2의 대치동');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('4', '3', '4','서울 쇼핑의 중심');
 -- SYNERGY insert query end
