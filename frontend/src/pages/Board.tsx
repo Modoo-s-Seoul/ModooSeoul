@@ -193,8 +193,18 @@ export default function Board() {
 
   /** phaser 에셋 불러오기 */
   function preload(this: Phaser.Scene) {
-    // 보드관련 에셋
-    this.load.image("sampleTile", "assets/Polygon3.png");
+    // 보드 에셋
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (row === 0 || col === 0 || row === 8 || col === 8) {
+          this.load.image(
+            `boardframe_${row}-${col}`,
+            `assets/board/${row}-${col}.png`
+          );
+        }
+      }
+    }
+    // 건물 에셋
     this.load.image("sampleBuilding", "assets/building.png");
     this.load.image("sampleShop", "assets/shop.png");
     // 캐릭터 에셋
@@ -239,14 +249,13 @@ export default function Board() {
 
           // 폴리곤
           const sampleTile = this.add
-            .image(x, y, "sampleTile")
+            .image(x, y, `boardframe_${row}-${col}`)
             .setOrigin(0.5, 3.35);
           sampleTile.setScale(1, 1);
           setGroundSprite((prevGroundSprite) => [
             ...prevGroundSprite,
             sampleTile,
           ]);
-          // sampleTile.setTint(0xff0000);
 
           // 디폴트 건물 1
           const sampleBuilding = this.add
