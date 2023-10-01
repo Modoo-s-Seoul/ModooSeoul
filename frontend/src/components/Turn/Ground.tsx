@@ -2,6 +2,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   buildingChangeState,
   builingInfoState,
+  displayPlayerDataState,
   doubleCntState,
   groundChangeState,
   isModalMsgActiveState,
@@ -36,6 +37,7 @@ export default function Ground() {
   const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); //
   const matchPos = useRecoilValue(matchPosition);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
@@ -78,6 +80,7 @@ export default function Ground() {
       money: newPlayerData[turn].money - turnData.price,
     };
     setPlayerData(newPlayerData);
+    setDisplayPlayerData(newPlayerData);
 
     // 턴 종료
     // setIsUserTurnVisible(false);
@@ -117,6 +120,7 @@ export default function Ground() {
       money: newPlayerData[turn].money + turnData.price,
     };
     setPlayerData(newPlayerData);
+    setDisplayPlayerData(newPlayerData);
     // // 건물 매각비용 발생
 
     // 턴 종료
@@ -200,14 +204,16 @@ export default function Ground() {
 
         const newPlayerData = [...playerData];
         if (givePlayer in newPlayerData) {
-          // 통행료를 받는 플레이어
+          // 통행료를 지불하는 플레이어
+          console.log("지불", newPlayerData, givePlayer, takePlayer);
           newPlayerData[givePlayer] = {
             ...newPlayerData[givePlayer],
             money: newPlayerData[givePlayer].money - cost,
           };
         }
-        if (takePlayer && takePlayer in newPlayerData) {
-          // 통행료를 지불하는 플레이어
+        if (takePlayer != null && takePlayer in newPlayerData) {
+          // 통행료를 지급받는 플레이어
+          console.log("지급받");
           newPlayerData[takePlayer] = {
             ...newPlayerData[takePlayer],
             money: newPlayerData[takePlayer].money + cost,
@@ -215,6 +221,7 @@ export default function Ground() {
         }
 
         setPlayerData(newPlayerData);
+        setDisplayPlayerData(newPlayerData);
         setIsUserTurnVisible(!isUserTurnVisibleState);
         if (doubleCnt == 0) {
           setTurn(turn + 1);
