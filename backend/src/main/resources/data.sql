@@ -113,7 +113,7 @@ INSERT INTO board (id, board_type, `description`, special_name) VALUES ('25', 'S
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('26', '2738000', 'DISTRICT', '강동구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('27', '3839000', 'DISTRICT', '성동구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('28', '3248000', 'DISTRICT', '광진구');
-INSERT INTO board (id, board_type) VALUES ('29', 'CHANCE');
+INSERT INTO board (id, board_type, `description`, special_name) VALUES ('29', 'SPECIAL', '모범 납세자에겐 상을 ! 탈세자에겐 벌을 ! 당신은 ?', '국세청');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('30', '3545000', 'DISTRICT', '송파구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('31', '4687000', 'DISTRICT', '서초구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000', 'DISTRICT', '강남구');
@@ -123,9 +123,9 @@ INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000
 
 
 -- BUILDING insert query start
-INSERT INTO building (id, price, name) VALUES (1, '400', '교통');
-INSERT INTO building (id, price, name) VALUES (2, '200', '교육');
-INSERT INTO building (id, price, name) VALUES (3, '600', '유통');
-INSERT INTO building (id, price, name) VALUES (4, '500', '주거');
-INSERT INTO building (id, price, name) VALUES (5, '700', '문화');
+INSERT INTO building (id, price, name) VALUES (1, '400000', '교통');
+INSERT INTO building (id, price, name) VALUES (2, '200000', '교육');
+INSERT INTO building (id, price, name) VALUES (3, '600000', '유통');
+INSERT INTO building (id, price, name) VALUES (4, '500000', '주거');
+INSERT INTO building (id, price, name) VALUES (5, '700000', '문화');
 -- BUILDING insert query end
