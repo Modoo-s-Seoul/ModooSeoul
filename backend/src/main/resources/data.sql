@@ -132,8 +132,8 @@ INSERT INTO building (id, price, name) VALUES (5, '700', '문화');
 
 
 -- CHANCE insert query start
-INSERT INTO chance (id, name, description) VALUES (1, '탈세여부확인', '상대방의 탈세 여부를 확인하세요!');
-INSERT INTO chance (id, name, description) VALUES (2, '추가뉴스', '선택하지 않은 뉴스 1종을 볼 수 있습니다!');
-INSERT INTO chance (id, name, description) VALUES (3, '로또당첨', '로또에 당첨되셨습니다! 수령금(100만원)을 받으세요!');
-INSERT INTO chance (id, name, description) VALUES (4, '꽝', '아쉽게도 꽝입니다.');
+INSERT INTO chance (id, name, chance_type, description) VALUES (1, '탈세여부확인', 'TAX', '상대방의 탈세 여부를 확인하세요!');
+INSERT INTO chance (id, name, chance_type, description) VALUES (2, '추가뉴스', 'NEWS', '선택하지 않은 뉴스 1종을 볼 수 있습니다!');
+INSERT INTO chance (id, name, chance_type, description) VALUES (3, '로또당첨', 'LOTTO', '로또에 당첨되셨습니다! 수령금(100만원)을 받으세요!');
+INSERT INTO chance (id, name, chance_type, description) VALUES (4, '꽝', 'UNLUCKY', '아쉽게도 꽝입니다.');
 -- CHANCE insert query end
