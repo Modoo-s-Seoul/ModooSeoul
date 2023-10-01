@@ -116,6 +116,9 @@ public class StockBoardService {
 		// 총 주식 보유금 수정
 		player.tradeStock((price * amount) * (-1));
 
+		// 세금 설정
+		player.setTax(player.getTax() + ((price * amount) / 1000) * 100);
+
 		// 저장
 		playerRepository.save(player);
 		stockBoardRepository.save(stockBoard);

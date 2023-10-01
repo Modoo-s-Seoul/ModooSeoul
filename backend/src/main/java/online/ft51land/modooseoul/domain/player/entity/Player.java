@@ -38,7 +38,7 @@ public class Player extends BaseEntity {
     already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
     select_stock_id: 확인한 뉴스의 종목
-    reportee_player_id : 피고자(신고를 당한 사람)
+    reportee_player_name : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
     is_prisoned :  감금여부
@@ -84,8 +84,8 @@ public class Player extends BaseEntity {
     @Column(name = "select_news_id")
     private Long selectNewsId;
 
-    @Column(name = "reportee_player_id")
-    private Long reporteePlayerId;
+    @Column(name = "reportee_player_name")
+    private String reporteePlayerName;
 
     @Column(name ="turn_num")
     private Long turnNum;
@@ -216,5 +216,23 @@ public class Player extends BaseEntity {
         Double tmp = (double)this.stockMoney / 1000;
         this.dividend = Math.round(tmp) * 100; // 10% 적용, 20% 적용은 200, 12%는 120
         this.cash += dividend;
+    }
+
+    public void setTax(Long tax) {
+        this.tax = tax;
+    }
+
+    public void taxPayment() {
+        this.cash -= this.tax; // 보유한 현금에서 세금만큼 지불
+        setTax(0L); // 남은 세금 0으로
+    }
+
+    public void setReporteePlayerName(String name) {
+        this.reporteePlayerName = name;
+    }
+
+    public Long paySubwayFee(){
+        this.cash -= 100000;
+        return this.cash;
     }
 }

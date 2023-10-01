@@ -572,20 +572,20 @@ export default function Board() {
     // 유저정보 기본 세팅
     if (weblocation.state) {
       setPlayerInfo({
+        nickname: weblocation.state.nickname,
         gameId: weblocation.state.gameId,
         playerId: weblocation.state.playerId,
       });
     }
     // 자본금 지금
-    const tmpData = playerData[0];
-    const newPlayerData = { ...tmpData };
+    const newPlayerData = [...playerData];
     for (let i = 0; i < pNum; i++) {
       newPlayerData[i] = {
         ...newPlayerData[i],
         money: firstMoneyValue,
       };
     }
-    setPlayerData([newPlayerData]);
+    setPlayerData(newPlayerData);
     // 라운드 세팅
     setRound((prev) => prev + 1);
     console.log("플레이어 고유 정보입니다", playerInfo);
@@ -916,7 +916,7 @@ export default function Board() {
       </IngameModal>
 
       {/* 공통턴 */}
-      <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+      <IngameModal visible={isCommonTurnVisible}>
         {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
 

@@ -13,6 +13,7 @@ import online.ft51land.modooseoul.domain.game.dto.message.GameStartMessage;
 import online.ft51land.modooseoul.domain.game.dto.response.GameCreateResponseDto;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.game.entity.enums.TimerType;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.game_stock.entity.GameStock;
 import online.ft51land.modooseoul.domain.game_stock.repository.GameStockRepository;
@@ -222,7 +223,9 @@ public class GameService {
             player.setNextRound(stockMoney);
             // 배당금 수령
             player.setDevidend();
-
+            // 세금 미납액 증가
+            player.setTax(player.getTax() + (player.getTax() / 1000) * 100);
+            // 저장
             playerRepository.save(player);
         }
 
@@ -313,8 +316,8 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public void startTimer(Game game) {
-        game.startTimer();
+    public void startTimer(Game game, TimerType timerType) {
+        game.startTimer(timerType);
         gameRepository.save(game);
     }
 
@@ -355,7 +358,7 @@ public class GameService {
 
 
     public void playersActionFinish(Game game) {
-        // game 에 해당하는 모든 player pass init  , 타이머 종료 , 턴 넘기기
+        // game 에 해당하는 모든 player pass init  , 타이머 종료
         List<Player> playerList = playerRepository.findAllByGameId(game.getId());
 
         for (Player player : playerList ){
@@ -363,8 +366,8 @@ public class GameService {
             playerRepository.save(player);
         }
 
-        expiredTimer(game);
-        passTurn(game);
+        expiredTimer(game); // 타이머 만료
+//        passTurn(game);
     }
 
     // 플레이에 참여하고 있는 플레이어의 수 -> 파산하지 않은 플레이어의 수

@@ -64,9 +64,15 @@ export default function Room() {
     }
   };
 
+  const leaveRoom = (socketClient: CompatClient | null, playerId: string) => {
+    if (socketClient !== null) {
+      socketClient.send(`/send/leave/${playerId}`);
+    }
+  };
+
   useEffect(() => {
     if (socketClient !== null) {
-      // 참가한 방의 정보를 알려주는 채널
+      // 방에 참가 시 현재 방의 정보를 알려주는 채널
       socketClient.subscribe(`/receive/game/join/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         console.log("Room Status:", message);
@@ -82,6 +88,17 @@ export default function Room() {
         const message = JSON.parse(msg.body);
         const receivedData = message.data;
         console.log("Ready Status", receivedData);
+        setRoomStatus(receivedData);
+      });
+
+      // 방에서 누군가가 나갈 시 현재 방의 정보를 알려주는 채널
+      socketClient.subscribe(`/receive/game/leave/${gameId}`, (msg) => {
+        const message = JSON.parse(msg.body);
+        const receivedData = message.data;
+        console.log(
+          "Someone leave this Room.\nCurrent Room Status",
+          receivedData
+        );
         setRoomStatus(receivedData);
       });
 
@@ -124,7 +141,9 @@ export default function Room() {
       {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
         <div className="roomHeader">
-          <BackBtn />
+          <div onClick={() => leaveRoom(socketClient, playerId)}>
+            <BackBtn />
+          </div>
           <div className="roomHeaderBtn" onClick={handleCopyLink}>
             링크 복사
           </div>
