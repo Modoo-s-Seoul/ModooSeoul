@@ -40,6 +40,11 @@ public class PlayerService {
                                .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
     }
 
+    public Game getGameById(String gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+    }
+
     // 방 참가 플레이어 정보 보내주기
     public List<PlayerReadyInfoMessage> getPlayersInfoForRoom(Game game) {
         // Message 만들기
@@ -71,8 +76,7 @@ public class PlayerService {
     public PlayerJoinResponseDto joinGame(PlayerJoinRequestDto playerJoinRequestDto) {
 
         // 1. 방이 존재하는지 확인
-        Game game = gameRepository.findById(playerJoinRequestDto.gameId())
-                                  .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(playerJoinRequestDto.gameId());
 
         // 2. 대기 중인 방인지 확인
         if (game.getIsStart()) {
@@ -115,8 +119,7 @@ public class PlayerService {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
 
-        Game game = gameRepository.findById(rolledPlayer.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(rolledPlayer.getGameId());
 
         // 턴 정보 확인
         if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
@@ -162,8 +165,7 @@ public class PlayerService {
     // 지하철 이용 가능 한지 확인
     public PlayerCheckSubwayMessage playerCheckSubway(Player player) {
 
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         // 턴 정보 확인
         if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -191,8 +193,7 @@ public class PlayerService {
     // 지하철로 이동
     public PlayerSubwayMessage takeSubway(Player player, Long destination) {
 
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         // 턴 정보 확인
         if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -284,8 +285,7 @@ public class PlayerService {
     }
 
     public Long passTurn (Player player){
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         Long nextTurn = game.passTurn();
         gameRepository.save(game);
@@ -316,7 +316,7 @@ public class PlayerService {
         }
         //찬스카드
         if(boardStatus.getBoardType() == BoardType.CHANCE) {
-            return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
+            return PlayerArrivalBoardMessage.of("찬스 카드 도착",randomChance(player));
         }
 
         if(boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -324,6 +324,30 @@ public class PlayerService {
         }
 
         return null;
+    }
+
+    private Object randomChance(Player player) {
+        //랜덤 숫자 생성(1~4)
+        Random random = new Random();
+        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
+
+        return chanceBoard(player, chanceNum);
+    }
+
+    private Object chanceBoard(Player player, Long chanceNum) {
+        if(chanceNum == 1L) {
+            //탈세여부 확인
+            Game game = getGameById(player.getGameId());
+            return null;
+
+        }
+        if(chanceNum == 2L) {
+            //추가 뉴스 제공
+        }
+        if(chanceNum == 3L) {
+
+        }
+        return null; //꽝
     }
 
     @Transactional
@@ -350,7 +374,7 @@ public class PlayerService {
 
     @Transactional
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
-        //통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
+        //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
         Player payPlayer = getPlayerById(playerId);
         Player ownerPlayer = getPlayerById(ownerId);
@@ -375,7 +399,7 @@ public class PlayerService {
 
         if(toll <= payPlayer.getCash()+payPlayer.getStockMoney() && payPlayer.getCash() < toll) {
             //현금 + 주식몰수한 돈으로 해결 가능한 경우
-            //나중에 플레이어 주식 redis 삭제
+            //TODO: 나중에 플레이어 주식 redis 삭제
             payPlayer.sellAllStock();
         }
 
