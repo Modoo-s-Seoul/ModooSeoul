@@ -155,9 +155,20 @@ export const playerInfoState = atom<PlayerInfo>({
   default: { nickname: "", gameId: "", playerId: "" },
 });
 
-/** 현재 게임에 참가한 모든 플레이어들의 인게임 정보 기록 */
+/** 인게임 플레이어 정보 (웹소켓 갱신) */
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
+  default: [
+    { name: "Player 1", money: 0, color: "dd9090" },
+    { name: "Player 2", money: 0, color: "909add" },
+    { name: "Player 3", money: 0, color: "90dd9a" },
+    { name: "Player 4", money: 0, color: "dddc90" },
+  ],
+});
+
+/** 인게임 플레이어 정보 (화면 출력용) */
+export const displayPlayerDataState = atom<PlayerData[]>({
+  key: "displayPlayerDataState",
   default: [
     { name: "Player 1", money: 0, color: "dd9090" },
     { name: "Player 2", money: 0, color: "909add" },
