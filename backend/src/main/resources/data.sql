@@ -129,3 +129,11 @@ INSERT INTO building (id, price, name) VALUES (3, '600000', '유통');
 INSERT INTO building (id, price, name) VALUES (4, '500000', '주거');
 INSERT INTO building (id, price, name) VALUES (5, '700000', '문화');
 -- BUILDING insert query end
+
+
+-- SYNERGY insert query start
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('1', '1', '3');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('2', '1', '4');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('3', '2', '4');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('4', '3', '4');
+-- SYNERGY insert query end
