@@ -274,6 +274,12 @@ export const modalMsgState = atom<string>({
 
 ///////////////////////// 플레이어 개인
 
+/** 본인턴 여부 */
+export const yourTurnState = atom<boolean>({
+  key: "yourTurnState",
+  default: false,
+});
+
 /** 초기자금 */
 export const first_money = atom<number>({
   key: "first_money",
@@ -292,6 +298,12 @@ export const selectedNewsState = atom<string>({
   default: "뉴스",
 });
 
+/** 추가 뉴스 보관 */
+export const moreNewsState = atom<string>({
+  key: "moreNewsState",
+  default: "",
+});
+
 /** 감옥 여부 */
 export const isPrisonState = atom<boolean>({
   key: "isPrisonState",
@@ -302,4 +314,10 @@ export const isPrisonState = atom<boolean>({
 export const isSubwayState = atom<subwayChangeType[]>({
   key: "isSubwayState",
   default: [{ player: null, row: 0, col: 0, move: false }],
+});
+
+/** 찬스카드 내용 */
+export const keyRandomState = atom<string>({
+  key: "keyRandomState",
+  default: "news",
 });
