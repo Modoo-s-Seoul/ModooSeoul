@@ -123,11 +123,11 @@ INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000
 
 
 -- BUILDING insert query start
-INSERT INTO building (id, price, name) VALUES (1, '400000', '교통');
-INSERT INTO building (id, price, name) VALUES (2, '200000', '교육');
-INSERT INTO building (id, price, name) VALUES (3, '600000', '유통');
-INSERT INTO building (id, price, name) VALUES (4, '500000', '주거');
-INSERT INTO building (id, price, name) VALUES (5, '700000', '문화');
+INSERT INTO building (id, price, name) VALUES (1, '600000', '교통');
+INSERT INTO building (id, price, name) VALUES (2, '400000', '교육');
+INSERT INTO building (id, price, name) VALUES (3, '800000', '유통');
+INSERT INTO building (id, price, name) VALUES (4, '1000000', '주거');
+INSERT INTO building (id, price, name) VALUES (5, '200000', '문화');
 -- BUILDING insert query end
 
 
