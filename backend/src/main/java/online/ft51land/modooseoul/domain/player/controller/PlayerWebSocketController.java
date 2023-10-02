@@ -19,6 +19,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -238,5 +239,19 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToPlayer("report", playerId, player.getGameId(), message);
 	}
 
+	// 탈세여부 확인하기
+	@MessageMapping("/evasion-check/{playerId}")
+	public void checkEvasion(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+		List<Player> players = new ArrayList<>();
+		for (String playerIds : game.getPlayers()) {
+			players.add(playerService.getPlayerById(playerIds));
+		}
+		PlayerEvasionMessage message = playerService.checkEvasion(player, players);
 
+		webSocketSendHandler.sendToPlayer("evasion-check", playerId, player.getGameId(), message);
+		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+	}
 }
