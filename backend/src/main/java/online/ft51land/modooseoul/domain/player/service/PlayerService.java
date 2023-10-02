@@ -240,10 +240,15 @@ public class PlayerService {
     }
 
     // 플레이어 뉴스 선택
-    public PlayerNewsMessage chooseNews(Game game, PlayerNewsRequestDto playerNewsRequestDto) {
+    public PlayerNewsMessage chooseNews(Game game, String playerId, PlayerNewsRequestDto playerNewsRequestDto) {
         // 해당 뉴스 내용 가져오기
         Long currentRound = playerNewsRequestDto.currentRound();
         Long cardIdx = playerNewsRequestDto.cardIdx();
+
+        Player player = getPlayerById(playerId);
+        player.setSelectNewsId(cardIdx);
+        playerRepository.save(player);
+
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
         gameRepository.save(game);
@@ -261,7 +266,7 @@ public class PlayerService {
             Random random = new Random();
             random.setSeed(System.currentTimeMillis());
             Long cardIdx = random.nextLong(4)+1;
-            PlayerNewsMessage message  = chooseNews(game, PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
+            PlayerNewsMessage message  = chooseNews(game, player.getId(), PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
             return  message;
         }
 
@@ -368,7 +373,16 @@ public class PlayerService {
 
         }
         if(chanceNum == 2L) {
+
             //추가 뉴스 제공
+//            // 해당 뉴스 내용 가져오기
+//            Long currentRound = playerNewsRequestDto.currentRound(); //game에서 받아오고
+//            Long cardIdx = playerNewsRequestDto.cardIdx(); //player selectedNewsId 받아와서
+//
+//            News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1))); //news데이터 가공하고 보내기
+//
+//            // 메시지 가공 후 리턴
+//            return PlayerNewsMessage.of(news);
         }
         if(chanceNum == 3L) {
 

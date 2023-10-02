@@ -95,7 +95,7 @@ public class PlayerWebSocketController {
 		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
 
 		// 뉴스 데이터 가공
-		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequestDto);
+		PlayerNewsMessage message = playerService.chooseNews(game, playerId, playerNewsRequestDto);
 
 		// 데이터 전달
 		webSocketSendHandler.sendToPlayer("news", playerId, game.getId(), message);

@@ -37,7 +37,7 @@ public class Player extends BaseEntity {
     dice : 주사위
     already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
-    select_stock_id: 확인한 뉴스의 종목
+    select_news_id: 확인한 뉴스의 종목
     reportee_player_name : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
@@ -242,5 +242,9 @@ public class Player extends BaseEntity {
 
     public void setChanceNum(Long chanceNum) {
         this.chanceNum = chanceNum;
+    }
+
+    public void setSelectNewsId(Long cardIdx) {
+        this.selectNewsId = cardIdx;
     }
 }
