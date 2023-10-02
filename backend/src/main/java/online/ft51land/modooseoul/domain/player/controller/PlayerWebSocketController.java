@@ -42,7 +42,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		// 메시지 가공 후 전송
-		webSocketSendHandler.sendToGame("join", gameId, playerService.getPlayersInfoForRoom(game));
+		webSocketSendHandler.sendToGame("players-info", gameId, playerService.getPlayersInfoForRoom(game));
 	}
 
 	// 플레이어 레디
@@ -58,7 +58,7 @@ public class PlayerWebSocketController {
 		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(gameService.getGameById(gameId));
 
 		// 보내기
-		webSocketSendHandler.sendToGame("ready", player.getGameId(),message);
+		webSocketSendHandler.sendToGame("players-info", player.getGameId(),message);
 	}
 
 	// 주사위 굴리기
@@ -122,7 +122,7 @@ public class PlayerWebSocketController {
 		playerService.leaveGame(game, player);
 
 		// 메시지 생성
-		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(game);
+		PlayerLeaveMessage message = playerService.getLeavePlayerName(player);
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("leave", game.getId(), message);
