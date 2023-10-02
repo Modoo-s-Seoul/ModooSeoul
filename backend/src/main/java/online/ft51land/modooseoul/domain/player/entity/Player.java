@@ -38,7 +38,7 @@ public class Player extends BaseEntity {
     dice : 주사위
     already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
-    select_stock_id: 확인한 뉴스의 종목
+    select_news_id: 확인한 뉴스의 종목
     reportee_player_name : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
@@ -46,6 +46,7 @@ public class Player extends BaseEntity {
     is_finish : 공통 턴 완료 여부
     dividend : 해당 라운드 수령 배당금
     stockBoardId : 플레이어 주식 보드 아이디
+    chance_num: 찬스카드 번호
      */
     @Id
     private String id;
@@ -104,6 +105,9 @@ public class Player extends BaseEntity {
 
     private String stockBoardId;
 
+
+    @Column(name = "chance_num")
+    private Long chanceNum;
 
     @Builder
     public Player(String nickname, String gameId){
@@ -258,5 +262,17 @@ public class Player extends BaseEntity {
 
     public void receivePenalty(Long penalty) {
         this.cash += penalty;
+    }
+
+    public void setChanceNum(Long chanceNum) {
+        this.chanceNum = chanceNum;
+    }
+
+    public void setSelectNewsId(Long cardIdx) {
+        this.selectNewsId = cardIdx;
+    }
+
+    public void winLotto() {
+        this.cash += 1_000_000L;
     }
 }

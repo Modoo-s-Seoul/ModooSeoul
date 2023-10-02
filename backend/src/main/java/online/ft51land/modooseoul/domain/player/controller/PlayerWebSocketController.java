@@ -79,6 +79,9 @@ public class PlayerWebSocketController {
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
+		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
+			webSocketSendHandler.sendToPlayer("arrive-board-info", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+		}
 	}
 
 	// 뉴스 선택하기
@@ -93,7 +96,7 @@ public class PlayerWebSocketController {
 		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
 
 		// 뉴스 데이터 가공
-		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequestDto);
+		PlayerNewsMessage message = playerService.chooseNews(game, playerId, playerNewsRequestDto);
 
 		// 데이터 전달
 		webSocketSendHandler.sendToPlayer("news", playerId, game.getId(), message);
