@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
+import online.ft51land.modooseoul.domain.chance.entity.Chance;
+import online.ft51land.modooseoul.domain.chance.repository.ChanceRepository;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
@@ -33,6 +35,7 @@ public class PlayerService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
     private final BoardStatusRepository boardStatusRepository;
+    private final ChanceRepository chanceRepository;
 
     // playerId 로 Player 객체 얻어오는 메서드
     public Player getPlayerById(String playerId) {
@@ -326,19 +329,42 @@ public class PlayerService {
         return null;
     }
 
-    private Object randomChance(Player player) {
+    private PlayerChanceMessage randomChance(Player player) {
         //랜덤 숫자 생성(1~4)
         Random random = new Random();
         Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
+        player.setChanceNum(chanceNum);
+        playerRepository.save(player);
 
-        return chanceBoard(player, chanceNum);
+        Chance chance = chanceRepository.findById(chanceNum)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.CHANCE_NOT_FOUND));;
+
+        PlayerChanceMessage playerChanceMessage = PlayerChanceMessage.of(chance.getName(),chance.getDescription());
+        return playerChanceMessage;
     }
 
-    private Object chanceBoard(Player player, Long chanceNum) {
+    public Object chanceBoardInfo(String curPlayerId) {
+        //개인에게 보내줄거
+        Player player = getPlayerById(curPlayerId);
+        Long chanceNum = player.getChanceNum();
+
         if(chanceNum == 1L) {
             //탈세여부 확인
             Game game = getGameById(player.getGameId());
-            return null;
+
+            // Message 만들기
+            List<PlayerChanceTaxMessage> message = new ArrayList<>();
+            List<String> playerIdList = game.getPlayers();
+
+            for (String playerId : playerIdList) {
+                if(!curPlayerId.equals(playerId)) {
+                    //내 정보 아닌 것만 담아서 보내줌
+                    Player diffPlayer = getPlayerById(playerId);
+                    message.add(PlayerChanceTaxMessage.of(diffPlayer.getNickname(), diffPlayer.getTax() != 0L));
+                }
+            }
+
+            return message;
 
         }
         if(chanceNum == 2L) {

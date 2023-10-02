@@ -76,12 +76,11 @@ public class PlayerWebSocketController {
 
 		//땅 도착 데이터 전달
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
-		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
-			webSocketSendHandler.sendToPlayer("arrive-board-info",playerId, player.getGameId(),playerArrivalBoardMessage);
-		}else {
-			webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
-		}
+		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
+		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
+			webSocketSendHandler.sendToPlayer("arrive-board-info", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+		}
 	}
 
 	// 뉴스 선택하기

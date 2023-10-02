@@ -44,6 +44,7 @@ public class Player extends BaseEntity {
     is_prisoned :  감금여부
     is_finish : 공통 턴 완료 여부
     dividend : 해당 라운드 수령 배당금
+    chance_num: 찬스카드 번호
      */
     @Id
     private String id;
@@ -99,6 +100,9 @@ public class Player extends BaseEntity {
     private Boolean  isFinish;
 
     private Long dividend;
+
+    @Column(name = "chance_num")
+    private Long chanceNum;
 
     @Builder
     public Player(String nickname, String gameId){
@@ -234,5 +238,9 @@ public class Player extends BaseEntity {
     public Long paySubwayFee(){
         this.cash -= 100000;
         return this.cash;
+    }
+
+    public void setChanceNum(Long chanceNum) {
+        this.chanceNum = chanceNum;
     }
 }

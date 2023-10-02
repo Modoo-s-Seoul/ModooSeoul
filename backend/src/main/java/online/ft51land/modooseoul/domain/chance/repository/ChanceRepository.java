@@ -1,7 +1,9 @@
 package online.ft51land.modooseoul.domain.chance.repository;
 
 import online.ft51land.modooseoul.domain.chance.entity.Chance;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ChanceRepository extends CrudRepository<Chance, Long> {
+@Repository
+public interface ChanceRepository extends JpaRepository<Chance, Long> {
 }
