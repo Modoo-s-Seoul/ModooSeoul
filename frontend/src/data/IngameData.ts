@@ -354,5 +354,5 @@ export const isSubwayState = atom<subwayChangeType[]>({
 /** 찬스카드 내용 */
 export const keyRandomState = atom<string>({
   key: "keyRandomState",
-  default: "news",
+  default: "tax",
 });
