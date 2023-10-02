@@ -215,6 +215,11 @@ export default function Board() {
     // 건물 에셋
     this.load.image("sampleBuilding", "assets/building.png");
     this.load.image("sampleShop", "assets/shop.png");
+    // 지역구 에셋
+    this.load.image("area0", "assets/area/west.png");
+    this.load.image("area1", "assets/area/north.png");
+    this.load.image("area2", "assets/area/east.png");
+    this.load.image("area3", "assets/area/south.png");
     // 캐릭터 에셋
     for (let i = 0; i < 4; i++) {
       this.load.image(characterAssetNames[i], characterAssetLocation[i]);
@@ -299,6 +304,27 @@ export default function Board() {
           ]);
         }
       }
+    }
+
+    // 지역구 삽입
+    const areaColRow = [
+      [4, 0, -0.5, 0.65],
+      [8, 4, -0.5, -0.65],
+      [4, 8, 0.5, -0.65],
+      [0, 4, 0.5, 0.65],
+    ];
+    for (let i = 0; i < 4; i++) {
+      const x =
+        (areaColRow[i][0] - areaColRow[i][1]) * (tileSize / 2) +
+        config.scale.width / 2;
+      const y =
+        (areaColRow[i][0] + areaColRow[i][1]) * (tileSize / 4) +
+        config.scale.height / 2;
+      const area = this.add
+        .image(x, y, `area${i}`)
+        .setOrigin(0.5 + areaColRow[i][2], 3.35 + areaColRow[i][3]);
+      area.setScale(1, 1);
+      area.setAlpha(0.2);
     }
 
     // 플레이어 위치 초기화

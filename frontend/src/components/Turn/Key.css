@@ -13,18 +13,22 @@
 }
 
 .keyTitle{
-    font-size: 30px;
+    font-size: 40px;
 }
 
 /* 하위 컴포넌트 */
 .innerKeyContainer{
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 100%;
-    height: 80%;
+    margin: auto;
+    padding-top: 20px;
+    border: 10px solid rgb(221, 196, 154);
+    /* border-radius: 500px; */
+    box-shadow: 4px 4px 16px black, -4px -4px 16px black;
+    width: 90%;
+    height: 70%;
     animation: fadeIn 1s ease-in-out;
 }
 @keyframes fadeIn {
@@ -37,14 +41,20 @@
         opacity: 1; /* 최종 투명도: 1 (완전히 나타남) */
     }
 }
+.innerKeyTitle{
+    font-size: 30px;
+}
+.keyNewsResult{
+    font-size: 24px;
+}
 .innerKeyBody{
-    border: 1px solid rgb(185, 49, 49);
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 80%;
-    height: 80%;
+    flex: 1;
+    /* height: 80%; */
 }
 .keyThiefContanier{
     display: flex;
