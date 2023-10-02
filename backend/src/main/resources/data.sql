@@ -113,7 +113,7 @@ INSERT INTO board (id, board_type, `description`, special_name) VALUES ('25', 'S
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('26', '2738000', 'DISTRICT', '강동구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('27', '3839000', 'DISTRICT', '성동구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('28', '3248000', 'DISTRICT', '광진구');
-INSERT INTO board (id, board_type) VALUES ('29', 'CHANCE');
+INSERT INTO board (id, board_type, `description`, special_name) VALUES ('29', 'SPECIAL', '모범 납세자에겐 상을 ! 탈세자에겐 벌을 ! 당신은 ?', '국세청');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('30', '3545000', 'DISTRICT', '송파구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('31', '4687000', 'DISTRICT', '서초구');
 INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000', 'DISTRICT', '강남구');
@@ -123,11 +123,11 @@ INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000
 
 
 -- BUILDING insert query start
-INSERT INTO building (id, price, name) VALUES (1, '400', '교통');
-INSERT INTO building (id, price, name) VALUES (2, '200', '교육');
-INSERT INTO building (id, price, name) VALUES (3, '600', '유통');
-INSERT INTO building (id, price, name) VALUES (4, '500', '주거');
-INSERT INTO building (id, price, name) VALUES (5, '700', '문화');
+INSERT INTO building (id, price, name) VALUES (1, '600000', '교통');
+INSERT INTO building (id, price, name) VALUES (2, '400000', '교육');
+INSERT INTO building (id, price, name) VALUES (3, '800000', '유통');
+INSERT INTO building (id, price, name) VALUES (4, '1000000', '주거');
+INSERT INTO building (id, price, name) VALUES (5, '200000', '문화');
 -- BUILDING insert query end
 
 
@@ -137,3 +137,10 @@ INSERT INTO chance (id, name, chance_type, description) VALUES (2, '추가뉴스
 INSERT INTO chance (id, name, chance_type, description) VALUES (3, '로또당첨', 'LOTTO', '로또에 당첨되셨습니다! 수령금(100만원)을 받으세요!');
 INSERT INTO chance (id, name, chance_type, description) VALUES (4, '꽝', 'UNLUCKY', '아쉽게도 꽝입니다.');
 -- CHANCE insert query end
+
+-- SYNERGY insert query start
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('1', '1', '3','도매, 소매의 밀집지');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('2', '1', '4','서울 교통의 요충지');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('3', '2', '4','제 2의 대치동');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('4', '3', '4','서울 쇼핑의 중심');
+-- SYNERGY insert query end

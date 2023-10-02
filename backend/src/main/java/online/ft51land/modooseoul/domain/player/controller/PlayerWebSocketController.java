@@ -19,6 +19,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -42,7 +43,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		// 메시지 가공 후 전송
-		webSocketSendHandler.sendToGame("join", gameId, playerService.getPlayersInfoForRoom(game));
+		webSocketSendHandler.sendToGame("players-info", gameId, playerService.getPlayersInfoForRoom(game));
 	}
 
 	// 플레이어 레디
@@ -58,7 +59,7 @@ public class PlayerWebSocketController {
 		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(gameService.getGameById(gameId));
 
 		// 보내기
-		webSocketSendHandler.sendToGame("ready", player.getGameId(),message);
+		webSocketSendHandler.sendToGame("players-info", player.getGameId(),message);
 	}
 
 	// 주사위 굴리기
@@ -125,7 +126,7 @@ public class PlayerWebSocketController {
 		playerService.leaveGame(game, player);
 
 		// 메시지 생성
-		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(game);
+		PlayerLeaveMessage message = playerService.getLeavePlayerName(player);
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("leave", game.getId(), message);
@@ -241,5 +242,19 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToPlayer("report", playerId, player.getGameId(), message);
 	}
 
+	// 탈세여부 확인하기
+	@MessageMapping("/evasion-check/{playerId}")
+	public void checkEvasion(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+		List<Player> players = new ArrayList<>();
+		for (String playerIds : game.getPlayers()) {
+			players.add(playerService.getPlayerById(playerIds));
+		}
+		PlayerEvasionMessage message = playerService.checkEvasion(player, players);
 
+		webSocketSendHandler.sendToPlayer("evasion-check", playerId, player.getGameId(), message);
+		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+	}
 }

@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import "./CommonTurn.css";
 import TaxThiefCatch from "./TaxThiefCatch";
 import CloseButton from "../Base/CloseButton";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import {
   roundState,
   isCommonTurnVisibleState,
   turnState,
   isPrisonState,
+  pNumState,
 } from "../../data/IngameData";
 import TimeBar from "../Base/TimeBar";
 import StockTrade from "./Stock/StockTrade";
@@ -19,7 +20,8 @@ export default function CommonTurn() {
   const commonTime = 100000000000;
   const [timeCnt, setTimeCnt] = useState(commonTime);
   const setRound = useSetRecoilState(roundState);
-  const setTurn = useSetRecoilState(turnState);
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 턴 수
+  const pNum = useRecoilValue(pNumState); // 플레이어 수
   const setIsCommonTurnVisible = useSetRecoilState(isCommonTurnVisibleState);
   const [isPrison, setIsPrison] = useRecoilState(isPrisonState); // 감옥 여부
   const [isTradeVisible, setIsTradeVisible] = useState(false); // 주식 거래
@@ -47,6 +49,11 @@ export default function CommonTurn() {
 
   // 초측정
   useEffect(() => {
+    // 턴 수가 공통 턴이 아닐 경우 자동으로 꺼짐(개발용)
+    if (turn != pNum) {
+      setIsCommonTurnVisible(false);
+    }
+
     const timer = setInterval(() => {
       if (timeCnt > 1) {
         setTimeCnt(timeCnt - 1);
@@ -66,7 +73,7 @@ export default function CommonTurn() {
     return () => {
       clearInterval(timer);
     };
-  }, [timeCnt]);
+  }, [turn, timeCnt]);
 
   return (
     <>

@@ -93,7 +93,7 @@ export const boardDataState = atom<BoardData>({
       oil: false,
     },
     "0-8": {
-      name: "감옥",
+      name: "경찰서",
       price: 0,
       cost: 0,
       kind: "prison",
@@ -181,7 +181,7 @@ export const boardDataState = atom<BoardData>({
       oil: false,
     },
     "8-8": {
-      name: "oil",
+      name: "오일랜드",
       price: 0,
       cost: 0,
       kind: "oil",

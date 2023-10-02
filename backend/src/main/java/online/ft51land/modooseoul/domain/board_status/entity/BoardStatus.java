@@ -88,4 +88,8 @@ public class BoardStatus extends BaseEntity {
         this.buildings = new int[4];
         this.ownerId = null;
     }
+
+    public void addSynerge() {
+        this.synergy+=1;
+    }
 }

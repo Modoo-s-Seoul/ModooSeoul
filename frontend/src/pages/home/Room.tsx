@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // import { ipAddress } from "../../api/RoomApi";
 import { useSocket } from "../SocketContext";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { alertModalState, roomStatus } from "../../data/CommonData";
 import { unsubscribeRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
@@ -11,12 +11,14 @@ import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
 import { handleFullScreen } from "../../components/Base/BaseFunc";
 import { AlertModal } from "../../components/Base/AlertModal";
+import { pNumState } from "../../data/IngameData";
 
 /** 게임 대기룸 컴포넌트. 
   초대링크, 방생성을 통해서만 접근 가능*/
 export default function Room() {
   const [alertMsg, setAlertMsg] = useState(""); // alert modal
   const [alertVisible, setAlertVisible] = useRecoilState(alertModalState);
+  const setpNumState = useSetRecoilState(pNumState);
   /**웹소켓 클라이언트 */
   const socketClient = useSocket();
   const navigate = useNavigate();
@@ -134,6 +136,7 @@ export default function Room() {
 
   useEffect(() => {
     console.log("Current Room Status", curRoomStatus);
+    setpNumState(curRoomStatus.length);
   }, [curRoomStatus]);
 
   return (

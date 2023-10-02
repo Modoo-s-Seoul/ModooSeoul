@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -6,6 +5,8 @@ import {
   PointElement,
   LineElement,
   Tooltip,
+  Filler,
+  ScriptableContext,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -25,7 +26,8 @@ export default function Chart() {
     LinearScale,
     PointElement,
     LineElement,
-    Tooltip
+    Tooltip,
+    Filler
   );
 
   const options = {
@@ -41,49 +43,47 @@ export default function Chart() {
         grid: {
           display: false,
         },
-        position: "right" as const,
+        position: "right" as const, // 타입을 명시적으로 지정해 에러를 막아야 한다
       },
     },
     plugins: {},
   };
 
-  const [stockData, setStockData] = useState({
-    labels: [""],
-    datasets: [
-      {
-        label: "",
-        data: [0],
-        borderColor: "",
-        borderWidth: 2,
-        fill: false,
-      },
-    ],
-  });
+  const stockLabels = ["", "", "", "1R", "2R"];
+  const stockPrice = [100, 75, 110, 115, 110];
 
-  useEffect(() => {
-    // 여기에서 주식 데이터를 가져오는 API 호출 등을 수행하고,
-    // 가져온 데이터를 stockData에 설정해야 합니다.
-
-    // 가상의 주식 데이터 예시
-    const sampleData = {
-      labels: ["", "", "", "1R", "2R"],
+  const data = (labels: string[], price: number[]) => {
+    const chartData = {
+      labels: labels,
       datasets: [
         {
-          label: "주식 가격",
-          data: [100, 75, 110, 115, 110],
-          borderColor: "blue",
-          borderWidth: 2,
-          fill: false,
+          data: price,
+          fill: true,
+          backgroundColor: (context: ScriptableContext<"line">) => {
+            const ctx = context.chart.ctx;
+
+            if (ctx) {
+              const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+              gradient.addColorStop(0, "rgba(225,116,116,0.5)");
+              gradient.addColorStop(1, "rgba(225,116,116,0.1)");
+              return gradient;
+            }
+
+            return "transparent";
+          },
+          borderColor: "red",
+          borderWidth: 1,
+          pointBackgroundColor: "red",
         },
       ],
     };
 
-    setStockData(sampleData);
-  }, []);
+    return chartData;
+  };
 
   return (
     <>
-      <Line options={options} data={stockData} />
+      <Line options={options} data={data(stockLabels, stockPrice)} />
     </>
   );
 }
