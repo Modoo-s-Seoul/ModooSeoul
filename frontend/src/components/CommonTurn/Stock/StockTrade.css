@@ -43,8 +43,8 @@
   min-width: 20px;
   min-height: 20px;
 
-  position: fixed;
-  right: 42%;
+  position: absolute;
+  right: 85%;
   top: 5%;
 
   object-fit: cover;
