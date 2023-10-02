@@ -1,5 +1,8 @@
 import { ReactNode } from "react";
 import "./IngameModal.css";
+import "../CommonTurn/CommonTurn.css";
+import { useRecoilValue } from "recoil";
+import { isCommonGroundSellActiveState } from "../../data/IngameData";
 
 interface Props {
   children?: ReactNode;
@@ -23,10 +26,14 @@ export default function IngameModal({
   minWidth,
   minHeight,
 }: Props) {
+  const isGroundSellActive = useRecoilValue(isCommonGroundSellActiveState);
+
   return (
     <>
       <div
-        className={`ingameModal ${visible ? "ingameModalActive" : ""}`}
+        className={`${isGroundSellActive ? "hideModal" : ""} ingameModal ${
+          visible ? "ingameModalActive" : ""
+        } `}
         style={{
           width: `${width}`,
           height: `${height}`,
