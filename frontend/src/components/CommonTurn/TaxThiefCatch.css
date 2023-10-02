@@ -21,27 +21,60 @@
 .taxThiefButton {
   width: 80% !important;
   height: 80% !important;
+  background-color: rgb(80, 80, 80) !important;
   transition: all 0.3s ease-in-out;
 }
 
-.centered {
-  /* transform: translate(-62.5%, -62.5%); */
+.taxThiefButton:hover {
+  border: 3px solid rgb(118, 255, 225) !important;
+  background-color: rgb(134, 134, 134) !important;
+}
+
+.selected {
+  transform: scale(0);
+}
+
+.questionBox {
+  width: 100%;
+
   position: absolute;
-  width: 30% !important;
-  height: 30% !important;
+  top: 25%;
+
+  font-weight: bold;
+  font-size: xx-large;
+
+  transform: scale(0);
+  transition: all 0.3s ease-in-out;
+}
+
+.selectedBox {
+  width: 50%;
+  background-color: rgb(80, 80, 80);
+  border-radius: 20px;
+  border: 5px solid #9b0000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 50%;
+
+  font-weight: bold;
+  font-size: 80px;
+
+  transform: scale(0);
+  transition: all 0.3s ease-in-out;
+}
+
+.selectedBoxVisible {
+  transform: scale(1);
 }
 
 .playerButtonsContainer {
   display: flex;
   justify-content: space-around;
   align-items: center;
-}
-
-.playerSelectBtn {
-  margin: 5px;
-  background-color: bisque !important;
-  color: black !important;
-  font-size: 20px;
 }
 
 .reportButtonContainer {
@@ -92,11 +125,6 @@
 .reportButtonVisible {
   margin-left: 50%;
   transform: scale(1);
-}
-
-.selected {
-  background-color: rgb(187, 152, 108) !important;
-  font-weight: 600;
 }
 
 .cancelButton {
