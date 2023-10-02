@@ -114,6 +114,8 @@ public class GameService {
             StockBoard stockBoard = new StockBoard(player.getId());
             stockBoard.stockBoardinit(game);
             stockBoardRepository.save(stockBoard);
+            player.setStockBoardId(stockBoard.getId());
+            playerRepository.save(player);
         }
 
         return GameStartMessage.of(true, "게임 시작!");
