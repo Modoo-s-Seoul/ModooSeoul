@@ -373,16 +373,16 @@ public class PlayerService {
 
         }
         if(chanceNum == 2L) {
-
             //추가 뉴스 제공
-//            // 해당 뉴스 내용 가져오기
-//            Long currentRound = playerNewsRequestDto.currentRound(); //game에서 받아오고
-//            Long cardIdx = playerNewsRequestDto.cardIdx(); //player selectedNewsId 받아와서
-//
-//            News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1))); //news데이터 가공하고 보내기
-//
-//            // 메시지 가공 후 리턴
-//            return PlayerNewsMessage.of(news);
+            Game game = getGameById(player.getGameId());
+
+            Long currentRound = game.getCurrentRound();
+            Long cardIdx = player.getSelectNewsId()==1L ? 2L : 1L; //player selectedNewsId가 1이면 2번 뉴스 보여주고 아니면 1번뉴스 보여줌
+
+            News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1))); //news데이터 가공하고 보내기
+
+            // 메시지 가공 후 리턴
+            return PlayerNewsMessage.of(news);
         }
         if(chanceNum == 3L) {
 
