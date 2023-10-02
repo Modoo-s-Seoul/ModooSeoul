@@ -80,7 +80,7 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
 		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
-			webSocketSendHandler.sendToPlayer("arrive-board-info", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
 		}
 	}
 
