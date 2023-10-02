@@ -35,6 +35,12 @@ export const doubleCntState = atom<number>({
   default: 0,
 });
 
+/** 더블 감옥 여부 */
+export const doublePrisonState = atom<boolean>({
+  key: "doublePrisonState",
+  default: false,
+});
+
 /** 플레이어 이동 토글 */
 export const isPlayerMoveState = atom<boolean>({
   key: "isPlayerMoveState",
@@ -122,6 +128,12 @@ export const isSubwayActiveState = atom<boolean>({
 /** 시작점선택 활성화 */
 export const isStartActiveState = atom<boolean>({
   key: "isStartActiveState",
+  default: false,
+});
+
+/** 시작점선택 활성화 */
+export const isCommonGroundSellActiveState = atom<boolean>({
+  key: "isCommonGroundSellActiveState",
   default: false,
 });
 
@@ -219,6 +231,12 @@ export const startMsgNumState = atom<number>({
   default: 0,
 });
 
+/** 공통턴 땅판매 선택순서 */
+export const groundMsgNumState = atom<number>({
+  key: "groundMsgNumState",
+  default: 0,
+});
+
 /** 보드판 위치 정보 */
 export const matchPosition = atom<defaultMatch[]>({
   key: "matchPosition",
@@ -284,6 +302,12 @@ export const modalMsgState = atom<string>({
 });
 
 ///////////////////////// 플레이어 개인
+
+/** 본인의 턴 */
+export const whoAreYouState = atom<number>({
+  key: "whoAreYouState",
+  default: 0,
+});
 
 /** 본인턴 여부 */
 export const yourTurnState = atom<boolean>({
