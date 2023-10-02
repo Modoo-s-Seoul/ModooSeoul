@@ -45,7 +45,6 @@ export default function UserInfo() {
 
   /** 돈에 변화 감지시 애니메이션 부여 */
   useEffect(() => {
-    console.log("Player 1의 돈 바뀜", prevMoneyStates[0], playerData[0].money);
     // 상승 하락 기록
     if (prevMoneyStates[0] < playerData[0].money) {
       setIsMoneyIncrease((prevState) => ({
@@ -76,7 +75,6 @@ export default function UserInfo() {
   }, [playerData[0].money]);
 
   useEffect(() => {
-    console.log("Player 2의 돈 바뀜");
     // 상승 하락 기록
     if (prevMoneyStates[1] < playerData[1].money) {
       setIsMoneyIncrease((prevState) => ({
@@ -106,7 +104,6 @@ export default function UserInfo() {
   }, [playerData[1].money]);
 
   useEffect(() => {
-    console.log("Player 3의 돈 바뀜");
     // 상승 하락 기록
     if (prevMoneyStates[2] < playerData[2].money) {
       setIsMoneyIncrease((prevState) => ({
@@ -136,7 +133,6 @@ export default function UserInfo() {
   }, [playerData[2].money]);
 
   useEffect(() => {
-    console.log("Player 4의 돈 바뀜");
     // 상승 하락 기록
     if (prevMoneyStates[3] < playerData[3].money) {
       setIsMoneyIncrease((prevState) => ({

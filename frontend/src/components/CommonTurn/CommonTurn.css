@@ -8,3 +8,8 @@
   top: 5%;
   width: 80%;
 }
+
+.hideModal{
+  opacity: 0 !important;
+  z-index: -1;
+}

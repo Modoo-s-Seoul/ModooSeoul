@@ -37,7 +37,7 @@ export default function Ground() {
   const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
-  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); //
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 플레이어 전광판 정보
   const matchPos = useRecoilValue(matchPosition);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
