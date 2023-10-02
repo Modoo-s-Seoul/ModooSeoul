@@ -14,6 +14,8 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+import online.ft51land.modooseoul.domain.synergy.entity.Synergy;
+import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class BoardStatusService {
     private final PlayerRepository playerRepository;
     private final BuildingRepository buildingRepository;
     private final GameRepository gameRepository;
+    private final SynergyReository synergyReository;
 
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
@@ -196,8 +199,28 @@ public class BoardStatusService {
         player.purchaseBuilding(building.getPrice());
         playerRepository.save(player);
 
-        //board status 업데이트
         boardStatus.purchaseBuilding(buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId(),building.getPrice());
+
+        // 시너지 확인
+        for (int buildingId : boardStatus.getBuildings()) {
+            Long minBuildingId = 0L;
+            Long maxBuildingId = 0L;
+            if(buildingId < buildingPurchaseRequestDto.buildingId()){
+                minBuildingId = (long) buildingId;
+                maxBuildingId = buildingPurchaseRequestDto.buildingId();
+            }else{
+                minBuildingId = buildingPurchaseRequestDto.buildingId();
+                maxBuildingId = (long) buildingId;
+            }
+
+            if(synergyReository.existsByFirstBuildingAndSecondBuilding(minBuildingId, maxBuildingId)){
+                boardStatus.addSynerge();
+            }
+        }
+
+
+
+        //board status 업데이트
         boardStatusRepository.save(boardStatus);
 
         return(BuildingPurchaseMessage
@@ -208,4 +231,5 @@ public class BoardStatusService {
                         ,buildingPurchaseRequestDto.buildingId()
                         ,player.getId()));
     }
+
 }
