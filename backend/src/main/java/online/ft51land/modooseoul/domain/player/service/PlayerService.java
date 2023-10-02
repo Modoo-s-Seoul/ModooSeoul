@@ -12,7 +12,6 @@ import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -51,6 +50,10 @@ public class PlayerService {
             message.add(PlayerReadyInfoMessage.of(player));
         }
         return message;
+    }
+
+    public PlayerLeaveMessage getLeavePlayerName(Player player) {
+        return PlayerLeaveMessage.of(player);
     }
 
     // 플레이어 레디 / 취소 할 시 레포지토리 상태 변경해주기
