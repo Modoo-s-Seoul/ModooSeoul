@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
@@ -44,6 +45,7 @@ public class Player extends BaseEntity {
     is_prisoned :  감금여부
     is_finish : 공통 턴 완료 여부
     dividend : 해당 라운드 수령 배당금
+    stockBoardId : 플레이어 주식 보드 아이디
      */
     @Id
     private String id;
@@ -100,6 +102,9 @@ public class Player extends BaseEntity {
 
     private Long dividend;
 
+    private String stockBoardId;
+
+
     @Builder
     public Player(String nickname, String gameId){
         this.nickname = nickname;
@@ -142,6 +147,10 @@ public class Player extends BaseEntity {
         this.dividend = 0L;
     }
 
+    public void setStockBoardId(String stockBoardId) {
+        this.stockBoardId = stockBoardId;
+    }
+
     public void playerMove(Long currentBoardId) {
         this.currentBoardIdx = currentBoardId;
     }
@@ -171,6 +180,8 @@ public class Player extends BaseEntity {
     }
 
     public void setNextRound(Long stockMoney) {
+        if (this.tax == 1L) // 신고당한 애들
+            this.tax = 0L;
         this.setIsPrisoned(false);
         this.stockMoney = stockMoney;
     }
@@ -183,9 +194,14 @@ public class Player extends BaseEntity {
         this.cash += toll;
     }
 
-    public void sellAllStock() {
+    public void sellAllStock(StockBoard stockBoard) {
         this.cash += this.stockMoney;
         this.stockMoney = 0L;
+
+        for (int i = 0; i < stockBoard.getGameStockIds().size(); i++) {
+            stockBoard.setStockMoneys(i, 0L);
+            stockBoard.setStockAmounts(i, 0L);
+        }
     }
 
     public void tradeStock(Long totalPrice) {
@@ -234,5 +250,13 @@ public class Player extends BaseEntity {
     public Long paySubwayFee(){
         this.cash -= 100000;
         return this.cash;
+    }
+
+    public void payPenalty(Long penalty) {
+        this.cash -= penalty;
+    }
+
+    public void receivePenalty(Long penalty) {
+        this.cash += penalty;
     }
 }
