@@ -247,4 +247,8 @@ public class Player extends BaseEntity {
     public void setSelectNewsId(Long cardIdx) {
         this.selectNewsId = cardIdx;
     }
+
+    public void winLotto() {
+        this.cash += 1_000_000L;
+    }
 }

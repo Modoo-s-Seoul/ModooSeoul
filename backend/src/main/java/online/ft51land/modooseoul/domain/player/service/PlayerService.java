@@ -385,7 +385,8 @@ public class PlayerService {
             return PlayerNewsMessage.of(news);
         }
         if(chanceNum == 3L) {
-
+            player.winLotto();
+            playerRepository.save(player);
         }
         return null; //꽝
     }
