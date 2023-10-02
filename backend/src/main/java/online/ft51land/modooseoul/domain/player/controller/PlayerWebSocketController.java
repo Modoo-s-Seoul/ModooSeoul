@@ -2,8 +2,10 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
@@ -81,6 +83,13 @@ public class PlayerWebSocketController {
 
 		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
 			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+		}
+
+		if(gameService.checkGameEnd(player.getGameId())) { //파산하지 않은 수가 1명이면
+			//게임 종료
+			Game game = gameService.getGameById(player.getGameId());
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
+			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
 		}
 	}
 

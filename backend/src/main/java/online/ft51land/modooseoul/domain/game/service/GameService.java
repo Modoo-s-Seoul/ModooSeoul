@@ -43,8 +43,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GameService {
 
-    private final PlayerService playerService;
-
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
     private final PlayerRepository playerRepository;
@@ -341,7 +339,8 @@ public class GameService {
         List<Player> sortedPlayers = new ArrayList<>();
 
         for (String playerId : players) {
-            Player player = playerService.getPlayerById(playerId);
+            Player player = playerRepository.findById(playerId)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));;
             sortedPlayers.add(player);
         }
         return  sortToMoney(sortedPlayers);
@@ -384,4 +383,8 @@ public class GameService {
         return cnt;
     }
 
+    public boolean checkGameEnd(String gameId) {
+        Game game = getGameById(gameId);
+        return getPlayingPlayerCnt(game) == 1;
+    }
 }
