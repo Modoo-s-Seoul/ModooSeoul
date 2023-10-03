@@ -454,7 +454,7 @@ public class PlayerService {
 
     private PlayerArrivalBoardMessage<?> checkAddBuilding(BoardStatus boardStatus, Player player) {
 
-        if(player.getEstates() == null) { // 건물을 더 지을 땅이 없다면
+        if(player.getEstates() == null || player.getEstates().size() == 0) { // 건물을 더 지을 땅이 없다면
             return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
         }
         for (Long estate : player.getEstates()) {
@@ -469,6 +469,7 @@ public class PlayerService {
         }
         return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
     }
+
 
     @Transactional
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
