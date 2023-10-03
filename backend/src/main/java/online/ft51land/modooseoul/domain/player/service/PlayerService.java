@@ -387,6 +387,10 @@ public class PlayerService {
             Long currentRound = game.getCurrentRound();
             Long cardIdx = player.getSelectNewsId()==1L ? 2L : 1L; //player selectedNewsId가 1이면 2번 뉴스 보여주고 아니면 1번뉴스 보여줌
 
+            //추가 뉴스 정보 저장
+            player.setPlusNewsId(cardIdx);
+            playerRepository.save(player);
+
             News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1))); //news데이터 가공하고 보내기
 
             // 메시지 가공 후 리턴
@@ -613,5 +617,21 @@ public class PlayerService {
         }
         player.bankrupt();
         playerRepository.save(player);
+    }
+
+    public List<PlayerNewsMessage> checkNews(Player player) {
+        Game game = getGameById(player.getGameId());
+
+        News news = game.getNews().get((int)((game.getCurrentRound() - 1) * 4 + (player.getSelectNewsId() - 1))); //news데이터 가공하고 보내기
+
+        List<PlayerNewsMessage> playerNewsMessageList = new ArrayList<>();
+        playerNewsMessageList.add(PlayerNewsMessage.of(news));
+
+        if(player.getPlusNewsId()!=0L) {
+            News plusNews = game.getNews().get((int)((game.getCurrentRound() - 1) * 4 + (player.getPlusNewsId() - 1))); //news데이터 가공하고 보내기
+            playerNewsMessageList.add(PlayerNewsMessage.of(plusNews));
+        }
+
+        return playerNewsMessageList;
     }
 }
