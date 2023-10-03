@@ -421,7 +421,7 @@ public class PlayerService {
     public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return checkAddBuilding(boardStatus, player);
+            return checkAddBuilding(player);
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -452,7 +452,7 @@ public class PlayerService {
         return null;
     }
 
-    private PlayerArrivalBoardMessage<?> checkAddBuilding(BoardStatus boardStatus, Player player) {
+    private PlayerArrivalBoardMessage<?> checkAddBuilding( Player player) {
 
         if(player.getEstates() == null || player.getEstates().size() == 0) { // 건물을 더 지을 땅이 없다면
             return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
