@@ -82,11 +82,12 @@ public class BoardStatus extends BaseEntity {
         this.buildings = buildings;
     }
 
-    public void resetBoard() {
+    public void resetBoard(Long price) {
         this.synergy = 1L;
         this.oil = 1L;
         this.buildings = new int[4];
         this.ownerId = null;
+        this.price = price;
     }
 
     public void addSynerge() {
