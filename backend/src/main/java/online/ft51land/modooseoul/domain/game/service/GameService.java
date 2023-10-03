@@ -225,6 +225,10 @@ public class GameService {
             player.setDevidend();
             // 세금 미납액 증가
             player.setTax(player.getTax() + (player.getTax() / 1000) * 100);
+
+            //플레이어 선택 뉴스 + 추가뉴스 값 초기화
+            player.setNews();
+
             // 저장
             playerRepository.save(player);
         }
