@@ -337,10 +337,7 @@ public class PlayerService {
     public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            if(player.getEstates() == null) { // 건물을 더 지을 땅이 없다면
-                return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
-            }
-            return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, true));
+            return checkAddBuilding(boardStatus, player);
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -369,6 +366,24 @@ public class PlayerService {
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
         return null;
+    }
+
+    private PlayerArrivalBoardMessage<?> checkAddBuilding(BoardStatus boardStatus, Player player) {
+
+        if(player.getEstates() == null) { // 건물을 더 지을 땅이 없다면
+            return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
+        }
+        for (Long estate : player.getEstates()) {
+            BoardStatus playerBoardStatus = boardStatusRepository.findById(player.getGameId() + "@" + estate)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+            int[] buildings = playerBoardStatus.getBuildings();
+            for (int i = 1; i < 4; i++) {
+                if (buildings[i] == 0) {
+                    return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, true));
+                }
+            }
+        }
+        return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
     }
 
     @Transactional
