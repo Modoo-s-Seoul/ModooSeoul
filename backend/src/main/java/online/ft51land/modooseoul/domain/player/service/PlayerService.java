@@ -435,7 +435,7 @@ public class PlayerService {
         }
         //특수칸 - 오일랜드
         if(boardStatus.getSpecialName().equals("FT OilLand") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return PlayerArrivalBoardMessage.of("오일랜드 도착",boardStatus);
+            return checkFTOilLand(player);
         }
         //특수칸 - 지하철
         if(boardStatus.getSpecialName().equals("지하철") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -450,6 +450,18 @@ public class PlayerService {
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
         return null;
+    }
+
+    private PlayerArrivalBoardMessage<?> checkFTOilLand(Player player) {
+        if(player.getCash() < 100000){
+            return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true, false,false,  player.getEstates()) );
+        }
+
+        if(player.getEstates() == null || player.getEstates().size() == 0) { //  땅이 있는지 확인
+            return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true,true, false, player.getEstates()) );
+        }
+
+        return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true, true, true,  player.getEstates()));
     }
 
     private PlayerArrivalBoardMessage<?> checkAddBuilding( Player player) {
