@@ -74,8 +74,8 @@ export default function Room() {
 
   useEffect(() => {
     if (socketClient !== null) {
-      // 방에 참가 시 현재 방의 정보를 알려주는 채널
-      socketClient.subscribe(`/receive/game/join/${gameId}`, (msg) => {
+      //  현재 방의 정보를 알려주는 채널
+      socketClient.subscribe(`/receive/game/players-info/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         console.log("Room Status:", message);
         const receivedData = message.data;
@@ -85,23 +85,12 @@ export default function Room() {
       // 플레이어 참가. 참가한 방의 정보 업데이트
       socketClient.send(`/send/join/${gameId}`);
 
-      // 준비 완료 시 갱신된 참가한 방의 정보를 알려주는 채널
-      socketClient.subscribe(`/receive/game/ready/${gameId}`, (msg) => {
-        const message = JSON.parse(msg.body);
-        const receivedData = message.data;
-        console.log("Ready Status", receivedData);
-        setRoomStatus(receivedData);
-      });
-
-      // 방에서 누군가가 나갈 시 현재 방의 정보를 알려주는 채널
+      // 방에서 누군가가 나갈 시 나간 사람의 정보를 알려주는 채널
       socketClient.subscribe(`/receive/game/leave/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         const receivedData = message.data;
-        console.log(
-          "Someone leave this Room.\nCurrent Room Status",
-          receivedData
-        );
-        setRoomStatus(receivedData);
+        setAlertMsg(`${receivedData.nickname} 님이 이 방에서 나갔습니다.`);
+        setAlertVisible(true);
       });
 
       // 참가한 방의 게임 시작 가능 여부를 알려주는 채널
