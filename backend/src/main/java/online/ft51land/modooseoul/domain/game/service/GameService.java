@@ -68,7 +68,7 @@ public class GameService {
 
     public GameStartMessage gameStart(Game game, List<Player> players) {
 
-        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
+//        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
         // 게임 시작 가능 여부 확인
         int readyCnt = 0;
 
