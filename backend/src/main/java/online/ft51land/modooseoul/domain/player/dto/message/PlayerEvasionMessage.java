@@ -25,18 +25,19 @@ public record PlayerEvasionMessage(
 				.build();
 	}
 
-	static public PlayerEvasionMessage ofReportee(Boolean isEvade) {
+	static public PlayerEvasionMessage ofGame(Boolean isEvade, Player reportee) {
 		String message;
 		if (isEvade) {
-			message = "당신의 탈세가 검거되었습니다. 탈세금의 3배를 징수합니다.";
+			message = reportee.getNickname() + "의 탈세가 검거되었습니다. 탈세금의 3배를 징수합니다.";
 		}
 		else {
-			message = "누군가 선량한 당신을 탈세범으로 신고하였습니다. 위로금을 수령합니다.";
+			message = reportee.getNickname() + "(이)가 신고당했지만, 그는 탈세를 하지 않았습니다.";
 		}
 		return PlayerEvasionMessage
 				.builder()
 				.isEvade(isEvade)
 				.message(message)
+				.reporteeName(reportee.getNickname())
 				.build();
 	}
 }
