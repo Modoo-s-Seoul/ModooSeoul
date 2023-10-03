@@ -3,7 +3,9 @@ package online.ft51land.modooseoul.domain.player.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.board.entity.Board;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
+import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
 import online.ft51land.modooseoul.domain.chance.entity.Chance;
@@ -14,6 +16,7 @@ import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
@@ -38,6 +41,7 @@ public class PlayerService {
     private final BoardStatusRepository boardStatusRepository;
     private final StockBoardRepository stockBoardRepository;
     private final ChanceRepository chanceRepository;
+    private final BoardRepository boardRepository;
 
     // playerId 로 Player 객체 얻어오는 메서드
     public Player getPlayerById(String playerId) {
@@ -48,6 +52,16 @@ public class PlayerService {
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+    }
+
+    public BoardStatus getBoardStatusById(String boardStatusId) {
+        return boardStatusRepository.findById(boardStatusId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+    }
+
+    public Board getBoardById(String boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
 
     // 방 참가 플레이어 정보 보내주기
@@ -469,7 +483,9 @@ public class PlayerService {
                 for (Long estate : payPlayer.getEstates()) {
                     BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
                             .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
-                    sellBoard.resetBoard();
+
+                    Board board = getBoardById(String.valueOf(estate));
+                    sellBoard.resetBoard(board.getPrice());
                     boardStatusRepository.save(sellBoard);
                 }
             }
@@ -643,7 +659,8 @@ public class PlayerService {
             for (Long estate : player.getEstates()) {
                 BoardStatus sellBoard = boardStatusRepository.findById(player.getGameId()+"@"+estate)
                                                              .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
-                sellBoard.resetBoard();
+                Board board = getBoardById(String.valueOf(estate));
+                sellBoard.resetBoard(board.getPrice());
                 boardStatusRepository.save(sellBoard);
             }
         }
@@ -665,5 +682,31 @@ public class PlayerService {
         }
 
         return playerNewsMessageList;
+    }
+
+    @Transactional
+    public PlayerGroundSellMessage sellGround(Player player, PlayerSellGroundRequestDto playerSellGroundRequestDto) {
+        //플레이어 소유의 땅인지 먼저 확인
+        String boardStatusId = player.getGameId()+'@'+playerSellGroundRequestDto.boardIdx();
+
+        BoardStatus boardStatus = getBoardStatusById(boardStatusId);
+
+        if(boardStatus.getOwnerId().equals(player.getId())) {
+            Long boardPrice = boardStatus.getPrice();
+
+            Board board = getBoardById(String.valueOf(playerSellGroundRequestDto.boardIdx()));
+
+            //땅&건물 판매 보드 반영
+            boardStatus.resetBoard(board.getPrice());
+            boardStatusRepository.save(boardStatus);
+
+            //플레이어 자산, 가지고있는 땅 정보 반영
+            player.sellBuildingAndGround(playerSellGroundRequestDto.boardIdx(), boardPrice);
+            playerRepository.save(player);
+
+            return PlayerGroundSellMessage.of(true, "판매 성공", playerSellGroundRequestDto.boardIdx(), player);
+        }
+
+        return PlayerGroundSellMessage.of(false, "판매 실패", playerSellGroundRequestDto.boardIdx(), player);
     }
 }

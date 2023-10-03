@@ -289,4 +289,10 @@ public class Player extends BaseEntity {
     public void setPlusNewsId(Long cardIdx) {
         this.plusNewsId = cardIdx;
     }
+
+    public void sellBuildingAndGround(Long boardIdx, Long boardPrice) {
+        this.estates.remove(boardIdx);
+        this.cash += boardPrice;
+        this.estateMoney -= boardPrice;
+    }
 }
