@@ -178,7 +178,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(player.getGameId());
 
 		if(!game.getIsTimerActivated()){
-			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+			throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
 		}
 
 
