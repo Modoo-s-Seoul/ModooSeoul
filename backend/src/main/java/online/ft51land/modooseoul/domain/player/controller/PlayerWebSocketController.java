@@ -260,14 +260,19 @@ public class PlayerWebSocketController {
 		// 객체 생성
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
+		if (player.getReporteePlayerName() == null) {
+			throw new BusinessException(ErrorMessage.PLAYER_NOT_FOUND);
+		}
+
 		PlayerEvasionMessage message = null;
 		Player reportee = null;
+		System.out.println("player.getNickname() = " + player.getNickname());
+		System.out.println("player.getReporteePlayerName() = " + player.getReporteePlayerName());
 		for (String playerIds : game.getPlayers()) {
 			reportee = playerService.getPlayerById(playerIds);
+			System.out.println("reportee.getId() = " + reportee.getId());
+			System.out.println("reportee.getNickname() = " + reportee.getNickname());
 			if (reportee.getNickname().equals(player.getReporteePlayerName())) {
-				System.out.println("reportee.getNickname() = " + reportee.getNickname());
-				System.out.println("reportee.getTax() = " + reportee.getTax());
-				System.out.println("reportee.getId() = " + reportee.getId());
 				message = playerService.checkEvasion(player, reportee);
 				break;
 			}
@@ -283,9 +288,9 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToPlayer("evasion-reporter", playerId, player.getGameId(), message);
 
 		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
-		message = PlayerEvasionMessage.ofReportee(message.isEvade());
+		message = PlayerEvasionMessage.ofGame(message.isEvade(), reportee);
 
-		webSocketSendHandler.sendToPlayer("evasion-reportee", reportee.getId(), player.getGameId(),message);
+		webSocketSendHandler.sendToGame("evasion-notice", player.getGameId(),message);
 	}
 
 	@MessageMapping("/news-check/{playerId}")
