@@ -11,7 +11,12 @@ import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
 import { handleFullScreen } from "../../components/Base/BaseFunc";
 import { AlertModal } from "../../components/Base/AlertModal";
-import { pNumState } from "../../data/IngameData";
+import {
+  pNumState,
+  modalMsgState,
+  isModalMsgActiveState,
+} from "../../data/IngameData";
+import NoLandMessage from "../../components/Base/MessageModal";
 
 /** 게임 대기룸 컴포넌트. 
   초대링크, 방생성을 통해서만 접근 가능*/
@@ -30,8 +35,8 @@ export default function Room() {
   const playerId = location.state.playerId;
 
   const [curRoomStatus, setRoomStatus] = useRecoilState(roomStatus);
-
-  console.log(location.state);
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 모달 메세지 토글
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
 
   /**게임시작 */
   const handleStartGame = () => {
@@ -49,13 +54,13 @@ export default function Room() {
     navigator.clipboard
       .writeText(gameUrl)
       .then(() => {
-        setAlertMsg("링크가 클립보드에 복사되었습니다.");
-        setAlertVisible(true);
+        setModalMsg("링크가 클립보드에 복사되었습니다.");
+        setIsModalMsgActive(true);
       })
       .catch((error) => {
         console.error("링크 복사 실패:", error);
-        setAlertMsg("링크 복사에 실패했습니다.");
-        setAlertVisible(true);
+        setModalMsg("링크 복사에 실패했습니다.");
+        setIsModalMsgActive(true);
       });
   };
 
@@ -108,7 +113,7 @@ export default function Room() {
             },
           });
         } else {
-          setAlertMsg(receivedData.data);
+          setAlertMsg(receivedData.message);
           setAlertVisible(true);
         }
       });
@@ -130,13 +135,18 @@ export default function Room() {
 
   return (
     <>
+      <NoLandMessage />
       {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
         <div className="roomHeader">
           <div onClick={() => leaveRoom(socketClient, playerId)}>
             <BackBtn />
           </div>
-          <div className="roomHeaderBtn" onClick={handleCopyLink}>
+          <div
+            className="roomHeaderBtn"
+            style={{ cursor: "pointer" }}
+            onClick={handleCopyLink}
+          >
             링크 복사
           </div>
         </div>
@@ -155,9 +165,7 @@ export default function Room() {
                     key={ele.nickname}
                   >
                     {ele.nickname === nickname ? (
-                      <div style={{ backgroundColor: "red" }}>
-                        {`${index === 0 ? "👑" : ""} ${ele.nickname}`}
-                      </div>
+                      <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     ) : (
                       <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     )}

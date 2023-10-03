@@ -131,14 +131,8 @@ export default function IngameWebSocket() {
         const receivedData = res.data;
       });
 
-      //타이머 시작,완료 알림
+      //타이머 시작,완료,취소 알림
       socketClient.subscribe(`/receive/game/timer/${gameId}`, (msg) => {
-        const res = JSON.parse(msg.body);
-        const receivedData = res.data;
-      });
-
-      //타이머 취소
-      socketClient.subscribe(`/receive/game/timer-cancel/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
       });
@@ -169,7 +163,7 @@ export default function IngameWebSocket() {
         const receivedData = res.data;
       });
 
-      // 뉴스 선택
+      // 뉴스 선택, 확인
       socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
@@ -220,12 +214,6 @@ export default function IngameWebSocket() {
 
       //세금 납,탈세 상태 확인
       socketClient.subscribe(`/receive/tax/${playerId}`, (msg) => {
-        const res = JSON.parse(msg.body);
-        const receivedData = res.data;
-      });
-
-      // 뉴스 확인
-      socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
       });
