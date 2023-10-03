@@ -156,7 +156,7 @@ public class GameWebSocketController {
 						webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
 
 						//땅 도착 데이터 전달
-						PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(player.getId());
+						PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(player.getId(), timerGame);
 						webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
 					}

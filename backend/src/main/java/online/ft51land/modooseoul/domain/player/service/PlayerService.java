@@ -321,7 +321,7 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerArrivalBoardMessage<?> arrivalBoardInfo(String playerId) {
+    public PlayerArrivalBoardMessage<?> arrivalBoardInfo(String playerId, Game game) {
 
         Player player = getPlayerById(playerId);
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
@@ -338,7 +338,7 @@ public class PlayerService {
         }
         //지역구 - 남땅
         if(!player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
-            tollPayment(boardStatus, playerId, boardStatus.getOwnerId());
+            tollPayment(boardStatus, playerId, boardStatus.getOwnerId(), game);
             PlayerPayResponseDto playerPayResponseDto = PlayerPayResponseDto.of(boardStatus,getPlayerById(playerId),getPlayerById(boardStatus.getOwnerId()));
             return PlayerArrivalBoardMessage.of("다른 플레이어 소유 땅",playerPayResponseDto);
         }
@@ -454,14 +454,17 @@ public class PlayerService {
 
     private PlayerArrivalBoardMessage<?> checkFTOilLand(Player player) {
         if(player.getCash() < 100000){
-            return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true, false,false,  player.getEstates()) );
+            return PlayerArrivalBoardMessage.of("오일랜드 도착"
+                    ,PlayerFTOilLandArriveMessage.of(true, false,false,  player.getEstates()) );
         }
 
         if(player.getEstates() == null || player.getEstates().size() == 0) { //  땅이 있는지 확인
-            return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true,true, false, player.getEstates()) );
+            return PlayerArrivalBoardMessage.of("오일랜드 도착"
+                    ,PlayerFTOilLandArriveMessage.of(true,true, false, player.getEstates()) );
         }
 
-        return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true, true, true,  player.getEstates()));
+        return PlayerArrivalBoardMessage.of("오일랜드 도착"
+                ,PlayerFTOilLandArriveMessage.of(true, true, true,  player.getEstates()));
     }
 
     private PlayerArrivalBoardMessage<?> checkAddBuilding( Player player) {
@@ -484,7 +487,7 @@ public class PlayerService {
 
 
     @Transactional
-    public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
+    public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId, Game game) {
         //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
         Player payPlayer = getPlayerById(playerId);
@@ -525,6 +528,17 @@ public class PlayerService {
         passTurn(payPlayer);
         playerRepository.save(payPlayer);
         playerRepository.save(ownerPlayer);
+
+        // 도착한 땅이 ftOilland 였다면
+        if(payPlayer.getCurrentBoardIdx() == game.getFtOilLandBoardId()){
+            // game 내 FTOilland 초기화
+            game.ftOilLandInit();
+            // 땅 Oil 초기화
+            boardStatus.oilInit();
+
+            gameRepository.save(game);
+            boardStatusRepository.save(boardStatus);
+        }
     }
 
     public Long playerActionFinish(Player player, Game game){

@@ -78,7 +78,8 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessage);
 
 		//땅 도착 데이터 전달
-		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage =
+				playerService.arrivalBoardInfo(playerId, gameService.getGameById(player.getGameId()));
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
 		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
@@ -192,7 +193,7 @@ public class PlayerWebSocketController {
 
 
 		//땅 도착 데이터 전달
-		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId, game);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
 		// 타이머 만료, 턴은 안넘어감
