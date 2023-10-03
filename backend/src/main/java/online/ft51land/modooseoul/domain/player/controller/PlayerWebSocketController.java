@@ -266,4 +266,12 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToPlayer("evasion-check", playerId, player.getGameId(), message);
 		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
 	}
+
+	@MessageMapping("/news-check/{playerId}")
+	public void checkNews(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+		List<PlayerNewsMessage> playerNewsMessageList = playerService.checkNews(player);
+		webSocketSendHandler.sendToPlayer("news", playerId, player.getGameId(), playerNewsMessageList);
+
+	}
 }

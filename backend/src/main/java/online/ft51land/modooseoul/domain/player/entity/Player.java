@@ -38,7 +38,8 @@ public class Player extends BaseEntity {
     dice : 주사위
     already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
-    select_news_id: 확인한 뉴스의 종목
+    select_news_id: 확인한 뉴스의 id
+    plus_news_id: 찬스카드에서 추가로 확인한 뉴스의 id
     reportee_player_name : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
@@ -86,6 +87,9 @@ public class Player extends BaseEntity {
 
     @Column(name = "select_news_id")
     private Long selectNewsId;
+
+    @Column(name = "plus_news_id")
+    private Long plusNewsId;
 
     @Column(name = "reportee_player_name")
     private String reporteePlayerName;
@@ -138,6 +142,7 @@ public class Player extends BaseEntity {
         this.dice = 0L;
         this.isDouble = false;
         this.selectNewsId = 0L;
+        this.plusNewsId = 0L;
 
         this.tax = 0L;
         this.isArrested = false;
@@ -274,5 +279,14 @@ public class Player extends BaseEntity {
 
     public void winLotto() {
         this.cash += 1_000_000L;
+    }
+
+    public void setNews() {
+        this.selectNewsId = 0L;
+        this.plusNewsId = 0L;
+    }
+
+    public void setPlusNewsId(Long cardIdx) {
+        this.plusNewsId = cardIdx;
     }
 }
