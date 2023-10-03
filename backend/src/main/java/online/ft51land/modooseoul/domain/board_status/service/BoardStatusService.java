@@ -236,6 +236,15 @@ public class BoardStatusService {
 
     public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
 
+        // 타이머가 활성화 되어 있는지 확인
+        if(!game.getIsTimerActivated()){
+            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+        }
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId()+"@"+boardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
