@@ -334,10 +334,13 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerArrivalBoardMessage<BoardStatus> specialBoard(BoardStatus boardStatus, Player player) {
+    public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return PlayerArrivalBoardMessage.of("출발지 도착",boardStatus);
+            if(player.getEstates() == null) { // 건물을 더 지을 땅이 없다면
+                return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
+            }
+            return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, true));
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
