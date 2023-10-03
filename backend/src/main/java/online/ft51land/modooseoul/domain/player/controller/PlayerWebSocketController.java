@@ -46,7 +46,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		// 메시지 가공 후 전송
-		webSocketSendHandler.sendToGame("players-info", gameId, playerService.getPlayersInfoForRoom(game));
+		webSocketSendHandler.sendToGame("init", gameId, playerService.getPlayersInfoForRoom(game));
 	}
 
 	// 플레이어 레디
@@ -62,7 +62,7 @@ public class PlayerWebSocketController {
 		List<PlayerReadyInfoMessage> message = playerService.getPlayersInfoForRoom(gameService.getGameById(gameId));
 
 		// 보내기
-		webSocketSendHandler.sendToGame("players-info", player.getGameId(),message);
+		webSocketSendHandler.sendToGame("init", player.getGameId(),message);
 	}
 
 	// 주사위 굴리기
@@ -140,6 +140,9 @@ public class PlayerWebSocketController {
 
 		// 메시지 전송
 		webSocketSendHandler.sendToGame("leave", game.getId(), message);
+
+		// 게임 나간 후에 방 정보 다시 전송
+		webSocketSendHandler.sendToGame("init", game.getId(), playerService.getPlayersInfoForRoom(game));
 	}
 
 	// 감옥에 들어갔을 경우
