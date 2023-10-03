@@ -304,7 +304,8 @@ public class PlayerWebSocketController {
 	@MessageMapping("/ground-sell/{playerId}")
 	public void sellGround(@DestinationVariable String playerId, @Payload PlayerSellGroundRequestDto playerSellGroundRequestDto){
 		Player player = playerService.getPlayerById(playerId);
-		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(player, playerSellGroundRequestDto);
+		Game game = gameService.getGameById(player.getGameId());
+		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(game, player, playerSellGroundRequestDto);
 		webSocketSendHandler.sendToPlayer("ground-sell", playerId, player.getGameId(), playerGroundSellMessage);
 	}
 }

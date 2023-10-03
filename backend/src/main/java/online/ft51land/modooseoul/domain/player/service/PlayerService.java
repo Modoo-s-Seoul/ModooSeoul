@@ -693,7 +693,7 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerGroundSellMessage sellGround(Player player, PlayerSellGroundRequestDto playerSellGroundRequestDto) {
+    public PlayerGroundSellMessage sellGround(Game game, Player player, PlayerSellGroundRequestDto playerSellGroundRequestDto) {
         //플레이어 소유의 땅인지 먼저 확인
         String boardStatusId = player.getGameId()+'@'+playerSellGroundRequestDto.boardIdx();
 
@@ -703,6 +703,12 @@ public class PlayerService {
             Long boardPrice = boardStatus.getPrice();
 
             Board board = getBoardById(String.valueOf(playerSellGroundRequestDto.boardIdx()));
+
+            // 파는 땅이 ftoilland 였다면
+            if(game.getFtOilLandBoardId() !=null && game.getFtOilLandBoardId() == playerSellGroundRequestDto.boardIdx()){
+                game.ftOilLandInit();
+                gameRepository.save(game);
+            }
 
             //땅&건물 판매 보드 반영
             boardStatus.resetBoard(board.getPrice());
