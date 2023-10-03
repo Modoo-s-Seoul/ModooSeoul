@@ -186,4 +186,7 @@ public class Game extends BaseEntity {
     public void setFTOilLand(Long boardId) {
 		this.ftOilLandBoardId = boardId;
     }
+	public void ftOilLandInit() {
+		this.ftOilLandBoardId = null;
+	}
 }
