@@ -452,7 +452,7 @@ public class PlayerService {
 
     // 탈세했는지 확인하기
     @Transactional
-    public PlayerEvasionMessage checkEvasion(Player reporter, List<Player> players) {
+    public PlayerEvasionMessage checkEvasion(Player reporter, Player reportee) {
         // 신고한 사람이 없는 경우
         if (reporter.getReporteePlayerName() == null) {
             return null;
@@ -460,17 +460,12 @@ public class PlayerService {
 
         // 신고 성공 여부
         Boolean flag;
-        PlayerEvasionMessage message = null;
-        for (Player reportee : players) {
-            if (reportee.getNickname().equals(reporter.getReporteePlayerName())) {
-                System.out.println("reportee = " + reportee.getNickname());
-                flag = evasionAction(reportee, reporter);
-                message = PlayerEvasionMessage.of(reporter, flag);
-                reportee.setReporteePlayerName("");
-                playerRepository.save(reportee);
-                break;
-            }
-        }
+        PlayerEvasionMessage message;
+        flag = evasionAction(reportee, reporter);
+        message = PlayerEvasionMessage.ofReporter(reporter, flag);
+
+        reportee.setReporteePlayerName("");
+        playerRepository.save(reportee);
 
         return message;
     }
