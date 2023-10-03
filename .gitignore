@@ -6,3 +6,4 @@ backend/src/main/generated/online/ft51land/modooseoul/domain/board/entity/QBoard
 backend/src/main/generated/online/ft51land/modooseoul/domain/building/entity/QBuilding.java
 backend/src/main/generated/online/ft51land/modooseoul/domain/synergy/entity/QSynergy.java
 backend/src/main/generated/online/ft51land/modooseoul/domain/chance/entity/QChance.java
+backend/src/main/generated/online/ft51land/modooseoul/utils/entity/QBaseEntity.java

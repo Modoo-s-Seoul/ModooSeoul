@@ -162,7 +162,9 @@ public class GameWebSocketController {
 					}
 
 					// 시간내 부동산 구매 완료를 못한 경우 -> 그냥 타이머 만료, 턴 패스
-					if(gameStartTimerRequestDto.timerType() == TimerType.ESTATE_PURCHASE){
+					// 출발점 도착시 시간내에 건물을 짓지 못한 경우 -> 타이머 만료, 턴 패스
+					if(gameStartTimerRequestDto.timerType() == TimerType.ESTATE_PURCHASE
+							|| gameStartTimerRequestDto.timerType() == TimerType.STARTING_POINT_ARRIVAL){
 						gameService.passTurn(timerGame);
 					}
 
@@ -199,7 +201,9 @@ public class GameWebSocketController {
 			// 주사위를 시간 내 돌려서 타이머가 중지되어야 하는 경우  -> 그냥 타이머 만료
 
 			// 시간내 부동산 구매 완료하여 턴 종료를 요청한  경우 -> 그냥 타이머 만료, 턴 패스
-			if(game.getTimerType() == TimerType.ESTATE_PURCHASE){
+			// 출발점에 도착시 건물을 짓지 않고 넘어가는 경우 -> 그냥 타이머 만료, 턴 패스
+			if(game.getTimerType() == TimerType.ESTATE_PURCHASE
+					|| game.getTimerType()  == TimerType.STARTING_POINT_ARRIVAL ){
 				game.passTurn();
 			}
 
