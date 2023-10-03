@@ -18,7 +18,7 @@ export default function NoLandMessage() {
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [isModalMsgActive]);
 
   return isModalMsgActive ? (
     <div className="noLandMessage">{modalMsg}</div>
