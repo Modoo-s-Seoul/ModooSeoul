@@ -30,7 +30,7 @@ public class BoardStatusWebSocketController {
         Player player = playerService.getPlayerById(playerId);
 
         //땅 구매 로직 start
-        GroundPurchaseMessage groundPurchaseMessage = boardStatusService .purchaseGround(player);
+        GroundPurchaseMessage groundPurchaseMessage = boardStatusService.purchaseGround(player);
 
         //데이터 전달
         webSocketSendHandler.sendToGame("purchase/ground", player.getGameId(),groundPurchaseMessage);
