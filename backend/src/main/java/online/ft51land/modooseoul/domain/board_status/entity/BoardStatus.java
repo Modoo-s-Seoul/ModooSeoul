@@ -93,4 +93,12 @@ public class BoardStatus extends BaseEntity {
     public void addSynerge() {
         this.synergy+=1;
     }
+
+    public void updateOil(){
+        this.oil +=1L;
+    }
+
+    public void oilInit() {
+        this.oil = 1L;
+    }
 }

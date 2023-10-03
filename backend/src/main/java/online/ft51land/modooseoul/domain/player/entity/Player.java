@@ -261,6 +261,11 @@ public class Player extends BaseEntity {
         return this.cash;
     }
 
+    public Long payFTOilLandEffect(){
+        this.cash -= 100000;
+        return this.cash;
+    }
+
     public void payPenalty(Long penalty) {
         this.cash -= penalty;
     }
