@@ -2,12 +2,15 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
@@ -19,6 +22,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -78,6 +82,16 @@ public class PlayerWebSocketController {
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
+		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
+			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+		}
+
+		if(gameService.checkGameEnd(player.getGameId())) { //파산하지 않은 수가 1명이면
+			//게임 종료
+			Game game = gameService.getGameById(player.getGameId());
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
+			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
+		}
 	}
 
 	// 뉴스 선택하기
@@ -92,7 +106,7 @@ public class PlayerWebSocketController {
 		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
 
 		// 뉴스 데이터 가공
-		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequestDto);
+		PlayerNewsMessage message = playerService.chooseNews(game, playerId, playerNewsRequestDto);
 
 		// 데이터 전달
 		webSocketSendHandler.sendToPlayer("news", playerId, game.getId(), message);
@@ -164,7 +178,7 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(player.getGameId());
 
 		if(!game.getIsTimerActivated()){
-			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+			throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
 		}
 
 
@@ -238,5 +252,34 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToPlayer("report", playerId, player.getGameId(), message);
 	}
 
+	// 탈세여부 확인하기
+	@MessageMapping("/evasion-check/{playerId}")
+	public void checkEvasion(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+		List<Player> players = new ArrayList<>();
+		for (String playerIds : game.getPlayers()) {
+			players.add(playerService.getPlayerById(playerIds));
+		}
+		PlayerEvasionMessage message = playerService.checkEvasion(player, players);
 
+		webSocketSendHandler.sendToPlayer("evasion-check", playerId, player.getGameId(), message);
+		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+	}
+
+	@MessageMapping("/news-check/{playerId}")
+	public void checkNews(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+		List<PlayerNewsMessage> playerNewsMessageList = playerService.checkNews(player);
+		webSocketSendHandler.sendToPlayer("news", playerId, player.getGameId(), playerNewsMessageList);
+
+	}
+
+	@MessageMapping("/ground-sell/{playerId}")
+	public void sellGround(@DestinationVariable String playerId, @Payload PlayerSellGroundRequestDto playerSellGroundRequestDto){
+		Player player = playerService.getPlayerById(playerId);
+		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(player, playerSellGroundRequestDto);
+		webSocketSendHandler.sendToPlayer("ground-sell", playerId, player.getGameId(), playerGroundSellMessage);
+	}
 }

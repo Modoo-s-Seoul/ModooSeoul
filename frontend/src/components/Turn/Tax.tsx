@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   dirtyMoneyState,
+  displayPlayerDataState,
   isUserTurnVisibleState,
   playerDataState,
   turnState,
@@ -12,6 +13,7 @@ export default function Tax() {
   // 기본인자
   const turn = useRecoilValue(turnState);
   const [dirtyMoney, setDirtyMoney] = useRecoilState(dirtyMoneyState);
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 플레이어 전광판 정보
   // 데이터 보관
   const [playerData, setPlayerData] = useRecoilState(playerDataState);
   // 시간 제한 인자
@@ -31,10 +33,11 @@ export default function Tax() {
         setTurn((prev) => prev + 1);
         /** 감옥 여부 초기화  */
       }
-    }, 1000);
+    }, 3000);
     // 컴포넌트가 언마운트될 때 타이머 정리
     return () => {
       clearInterval(timer);
+      setDisplayPlayerData(playerData);
     };
   }, [timeCnt]);
 
@@ -57,6 +60,7 @@ export default function Tax() {
       }
     }
     setPlayerData(newPlayerData);
+
     setDirtyMoney(0);
 
     // 실제구현 - send 요청

@@ -126,7 +126,7 @@ export default function IngameWebSocket() {
       });
 
       //공통 턴 준비
-      socketClient.subscribe(`/receive/game/action-ready/${gameId}`, (msg) => {
+      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
       });
@@ -163,7 +163,7 @@ export default function IngameWebSocket() {
         const receivedData = res.data;
       });
 
-      // 뉴스 선택
+      // 뉴스 선택, 확인
       socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
@@ -214,12 +214,6 @@ export default function IngameWebSocket() {
 
       //세금 납,탈세 상태 확인
       socketClient.subscribe(`/receive/tax/${playerId}`, (msg) => {
-        const res = JSON.parse(msg.body);
-        const receivedData = res.data;
-      });
-
-      // 뉴스 확인
-      socketClient.subscribe(`/receive/news-check/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
       });

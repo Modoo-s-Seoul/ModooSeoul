@@ -14,6 +14,8 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+import online.ft51land.modooseoul.domain.synergy.entity.Synergy;
+import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,12 @@ public class BoardStatusService {
     private final PlayerRepository playerRepository;
     private final BuildingRepository buildingRepository;
     private final GameRepository gameRepository;
+    private final SynergyReository synergyReository;
+
+    public BoardStatus getBoardStatusById(String boardStatusId) {
+        return boardStatusRepository.findById(boardStatusId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+    }
 
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
@@ -47,8 +55,7 @@ public class BoardStatusService {
         //현재 플레이어가 위치한 땅이 소유자가 없는지 한번 더 체크
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
 
-        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        BoardStatus boardStatus = getBoardStatusById(curBoardId);
 
         //플레이어 자산으로 땅을 살 수 있는지 체크
         if(player.getCash() < boardStatus.getPrice()) {
@@ -117,8 +124,7 @@ public class BoardStatusService {
         //플레이어 땅인지 체크
         String curBoardId = player.getGameId()+"@"+boardIdxForBuilding;
 
-        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        BoardStatus boardStatus = getBoardStatusById(curBoardId);
 
         //땅의 주인이 플레이어인지확인
         if(!boardStatus.getOwnerId().equals(player.getId())) {
@@ -196,8 +202,28 @@ public class BoardStatusService {
         player.purchaseBuilding(building.getPrice());
         playerRepository.save(player);
 
-        //board status 업데이트
         boardStatus.purchaseBuilding(buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId(),building.getPrice());
+
+        // 시너지 확인
+        for (int buildingId : boardStatus.getBuildings()) {
+            Long minBuildingId = 0L;
+            Long maxBuildingId = 0L;
+            if(buildingId < buildingPurchaseRequestDto.buildingId()){
+                minBuildingId = (long) buildingId;
+                maxBuildingId = buildingPurchaseRequestDto.buildingId();
+            }else{
+                minBuildingId = buildingPurchaseRequestDto.buildingId();
+                maxBuildingId = (long) buildingId;
+            }
+
+            if(synergyReository.existsByFirstBuildingAndSecondBuilding(minBuildingId, maxBuildingId)){
+                boardStatus.addSynerge();
+            }
+        }
+
+
+
+        //board status 업데이트
         boardStatusRepository.save(boardStatus);
 
         return(BuildingPurchaseMessage
@@ -208,4 +234,5 @@ public class BoardStatusService {
                         ,buildingPurchaseRequestDto.buildingId()
                         ,player.getId()));
     }
+
 }

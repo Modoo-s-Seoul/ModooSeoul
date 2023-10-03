@@ -43,8 +43,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GameService {
 
-    private final PlayerService playerService;
-
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
     private final PlayerRepository playerRepository;
@@ -70,7 +68,7 @@ public class GameService {
 
     public GameStartMessage gameStart(Game game, List<Player> players) {
 
-        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
+//        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
         // 게임 시작 가능 여부 확인
         int readyCnt = 0;
 
@@ -114,6 +112,8 @@ public class GameService {
             StockBoard stockBoard = new StockBoard(player.getId());
             stockBoard.stockBoardinit(game);
             stockBoardRepository.save(stockBoard);
+            player.setStockBoardId(stockBoard.getId());
+            playerRepository.save(player);
         }
 
         return GameStartMessage.of(true, "게임 시작!");
@@ -225,6 +225,10 @@ public class GameService {
             player.setDevidend();
             // 세금 미납액 증가
             player.setTax(player.getTax() + (player.getTax() / 1000) * 100);
+
+            //플레이어 선택 뉴스 + 추가뉴스 값 초기화
+            player.setNews();
+
             // 저장
             playerRepository.save(player);
         }
@@ -339,7 +343,8 @@ public class GameService {
         List<Player> sortedPlayers = new ArrayList<>();
 
         for (String playerId : players) {
-            Player player = playerService.getPlayerById(playerId);
+            Player player = playerRepository.findById(playerId)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));;
             sortedPlayers.add(player);
         }
         return  sortToMoney(sortedPlayers);
@@ -382,4 +387,8 @@ public class GameService {
         return cnt;
     }
 
+    public boolean checkGameEnd(String gameId) {
+        Game game = getGameById(gameId);
+        return getPlayingPlayerCnt(game) == 1;
+    }
 }

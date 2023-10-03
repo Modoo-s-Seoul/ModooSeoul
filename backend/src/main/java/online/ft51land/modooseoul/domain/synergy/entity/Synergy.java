@@ -6,20 +6,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import online.ft51land.modooseoul.domain.building.entity.Building;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@ToString
 public class Synergy {
 
     @Id
     private Long id;
 
-    @ManyToOne
-    private Building firstBuilding;
+    @Column(name = "first_building_id")
+    private Long firstBuilding;
 
-    @ManyToOne
-    private Building secondBuilding;
+    @Column(name = "second_building_id")
+    private Long secondBuilding;
 
+    private String description;
 }

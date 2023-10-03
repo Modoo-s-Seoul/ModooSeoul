@@ -3,19 +3,26 @@ package online.ft51land.modooseoul.domain.player.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.board.entity.Board;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
+import online.ft51land.modooseoul.domain.board.repository.BoardRepository;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
+import online.ft51land.modooseoul.domain.chance.entity.Chance;
+import online.ft51land.modooseoul.domain.chance.repository.ChanceRepository;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerJoinResponseDto;
 import online.ft51land.modooseoul.domain.player.dto.response.PlayerPayResponseDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
+import online.ft51land.modooseoul.domain.stock_board.repository.StockBoardRepository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
@@ -32,11 +39,29 @@ public class PlayerService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
     private final BoardStatusRepository boardStatusRepository;
+    private final StockBoardRepository stockBoardRepository;
+    private final ChanceRepository chanceRepository;
+    private final BoardRepository boardRepository;
 
     // playerId 로 Player 객체 얻어오는 메서드
     public Player getPlayerById(String playerId) {
         return playerRepository.findById(playerId)
                                .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+    }
+
+    public Game getGameById(String gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+    }
+
+    public BoardStatus getBoardStatusById(String boardStatusId) {
+        return boardStatusRepository.findById(boardStatusId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+    }
+
+    public Board getBoardById(String boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
 
     // 방 참가 플레이어 정보 보내주기
@@ -74,8 +99,7 @@ public class PlayerService {
     public PlayerJoinResponseDto joinGame(PlayerJoinRequestDto playerJoinRequestDto) {
 
         // 1. 방이 존재하는지 확인
-        Game game = gameRepository.findById(playerJoinRequestDto.gameId())
-                                  .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(playerJoinRequestDto.gameId());
 
         // 2. 대기 중인 방인지 확인
         if (game.getIsStart()) {
@@ -118,8 +142,7 @@ public class PlayerService {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
 
-        Game game = gameRepository.findById(rolledPlayer.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(rolledPlayer.getGameId());
 
         // 턴 정보 확인
         if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
@@ -165,8 +188,7 @@ public class PlayerService {
     // 지하철 이용 가능 한지 확인
     public PlayerCheckSubwayMessage playerCheckSubway(Player player) {
 
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         // 턴 정보 확인
         if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -194,8 +216,7 @@ public class PlayerService {
     // 지하철로 이동
     public PlayerSubwayMessage takeSubway(Player player, Long destination) {
 
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         // 턴 정보 확인
         if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -239,10 +260,15 @@ public class PlayerService {
     }
 
     // 플레이어 뉴스 선택
-    public PlayerNewsMessage chooseNews(Game game, PlayerNewsRequestDto playerNewsRequestDto) {
+    public PlayerNewsMessage chooseNews(Game game, String playerId, PlayerNewsRequestDto playerNewsRequestDto) {
         // 해당 뉴스 내용 가져오기
         Long currentRound = playerNewsRequestDto.currentRound();
         Long cardIdx = playerNewsRequestDto.cardIdx();
+
+        Player player = getPlayerById(playerId);
+        player.setSelectNewsId(cardIdx);
+        playerRepository.save(player);
+
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
         gameRepository.save(game);
@@ -260,7 +286,7 @@ public class PlayerService {
             Random random = new Random();
             random.setSeed(System.currentTimeMillis());
             Long cardIdx = random.nextLong(4)+1;
-            PlayerNewsMessage message  = chooseNews(game, PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
+            PlayerNewsMessage message  = chooseNews(game, player.getId(), PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
             return  message;
         }
 
@@ -287,8 +313,7 @@ public class PlayerService {
     }
 
     public Long passTurn (Player player){
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         Long nextTurn = game.passTurn();
         gameRepository.save(game);
@@ -319,24 +344,93 @@ public class PlayerService {
         }
         //찬스카드
         if(boardStatus.getBoardType() == BoardType.CHANCE) {
-            return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
+            return PlayerArrivalBoardMessage.of("찬스 카드 도착",randomChance(player));
         }
 
         if(boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return specialBoard(boardStatus);
+            return specialBoard(boardStatus, player);
         }
 
         return null;
     }
 
     @Transactional
-    public PlayerArrivalBoardMessage<BoardStatus> specialBoard(BoardStatus boardStatus) {
+    public PlayerChanceMessage randomChance(Player player) {
+        //랜덤 숫자 생성(1~4)
+        Random random = new Random();
+        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
+        player.setChanceNum(chanceNum);
+        playerRepository.save(player);
+
+        Chance chance = chanceRepository.findById(chanceNum)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.CHANCE_NOT_FOUND));;
+
+        PlayerChanceMessage playerChanceMessage = PlayerChanceMessage.of(chance.getName(),chance.getDescription());
+        return playerChanceMessage;
+    }
+
+    @Transactional
+    public Object chanceBoardInfo(String curPlayerId) {
+        //개인에게 보내줄거
+        Player player = getPlayerById(curPlayerId);
+        Long chanceNum = player.getChanceNum();
+
+        if(chanceNum == 1L) {
+            //탈세여부 확인
+            Game game = getGameById(player.getGameId());
+
+            // Message 만들기
+            List<PlayerChanceTaxMessage> message = new ArrayList<>();
+            List<String> playerIdList = game.getPlayers();
+
+            for (String playerId : playerIdList) {
+                if(!curPlayerId.equals(playerId)) {
+                    //내 정보 아닌 것만 담아서 보내줌
+                    Player diffPlayer = getPlayerById(playerId);
+                    message.add(PlayerChanceTaxMessage.of(diffPlayer.getNickname(), diffPlayer.getTax() != 0L));
+                }
+            }
+
+            return message;
+
+        }
+        if(chanceNum == 2L) {
+            //추가 뉴스 제공
+            Game game = getGameById(player.getGameId());
+
+            Long currentRound = game.getCurrentRound();
+            Long cardIdx = player.getSelectNewsId()==1L ? 2L : 1L; //player selectedNewsId가 1이면 2번 뉴스 보여주고 아니면 1번뉴스 보여줌
+
+            //추가 뉴스 정보 저장
+            player.setPlusNewsId(cardIdx);
+            playerRepository.save(player);
+
+            News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1))); //news데이터 가공하고 보내기
+
+            // 메시지 가공 후 리턴
+            return PlayerNewsMessage.of(news);
+        }
+        if(chanceNum == 3L) {
+            player.winLotto();
+            playerRepository.save(player);
+        }
+        return null; //꽝
+    }
+
+    @Transactional
+    public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return PlayerArrivalBoardMessage.of("출발지 도착",boardStatus);
+            return checkAddBuilding(boardStatus, player);
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
+            // 감옥 칸 도착시 턴 넘기기
+            Game game = gameRepository.findById(player.getGameId())
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+            game.passTurn();
+            gameRepository.save(game);
             return PlayerArrivalBoardMessage.of("감옥 도착",boardStatus);
         }
         //특수칸 - 오일랜드
@@ -345,15 +439,40 @@ public class PlayerService {
         }
         //특수칸 - 지하철
         if(boardStatus.getSpecialName().equals("지하철") && boardStatus.getBoardType() == BoardType.SPECIAL) {
+            // 지하철 칸 도착시 턴 넘기기
+            Game game = gameRepository.findById(player.getGameId())
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+
+            game.passTurn();
+            gameRepository.save(game);
+
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
         return null;
     }
 
+    private PlayerArrivalBoardMessage<?> checkAddBuilding(BoardStatus boardStatus, Player player) {
+
+        if(player.getEstates() == null) { // 건물을 더 지을 땅이 없다면
+            return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
+        }
+        for (Long estate : player.getEstates()) {
+            BoardStatus playerBoardStatus = boardStatusRepository.findById(player.getGameId() + "@" + estate)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+            int[] buildings = playerBoardStatus.getBuildings();
+            for (int i = 1; i < 4; i++) {
+                if (buildings[i] == 0) {
+                    return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, true));
+                }
+            }
+        }
+        return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
+    }
+
     @Transactional
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
-        //통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
+        //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
         Player payPlayer = getPlayerById(playerId);
         Player ownerPlayer = getPlayerById(ownerId);
@@ -364,7 +483,9 @@ public class PlayerService {
                 for (Long estate : payPlayer.getEstates()) {
                     BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
                             .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
-                    sellBoard.resetBoard();
+
+                    Board board = getBoardById(String.valueOf(estate));
+                    sellBoard.resetBoard(board.getPrice());
                     boardStatusRepository.save(sellBoard);
                 }
             }
@@ -378,13 +499,17 @@ public class PlayerService {
 
         if(toll <= payPlayer.getCash()+payPlayer.getStockMoney() && payPlayer.getCash() < toll) {
             //현금 + 주식몰수한 돈으로 해결 가능한 경우
-            //나중에 플레이어 주식 redis 삭제
-            payPlayer.sellAllStock();
+            StockBoard stockBoard = stockBoardRepository
+                    .findById(payPlayer.getId() + "@stockBoard")
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+            payPlayer.sellAllStock(stockBoard);
+
         }
 
         //통행료 지불
         payPlayer.payToll(toll);
         ownerPlayer.receiveToll(toll);
+        passTurn(payPlayer);
         playerRepository.save(payPlayer);
         playerRepository.save(ownerPlayer);
     }
@@ -441,5 +566,147 @@ public class PlayerService {
     public Player getPlayerByTurnInfo(Game game) {
         Long turnInfo = game.getTurnInfo();
         return getPlayerById(game.getPlayers().get(turnInfo.intValue()));
+    }
+
+    // 탈세했는지 확인하기
+    @Transactional
+    public PlayerEvasionMessage checkEvasion(Player reporter, List<Player> players) {
+        // 신고한 사람이 없는 경우
+        if (reporter.getReporteePlayerName() == null) {
+            return null;
+        }
+
+        // 신고 성공 여부
+        Boolean flag;
+        PlayerEvasionMessage message = null;
+        for (Player reportee : players) {
+            if (reportee.getNickname().equals(reporter.getReporteePlayerName())) {
+                System.out.println("reportee = " + reportee.getNickname());
+                flag = evasionAction(reportee, reporter);
+                message = PlayerEvasionMessage.of(reporter, flag);
+                reportee.setReporteePlayerName("");
+                playerRepository.save(reportee);
+                break;
+            }
+        }
+
+        return message;
+    }
+
+    public Boolean evasionAction(Player reportee, Player player) {
+        // 탈세 확인 액션
+        if (reportee.getTax() == 0) {
+            // 탈세 안 했다면
+            // 신고자 벌금 지불
+            if (player.getCash() + player.getStockMoney() < 1000000L) {
+                // 파산
+                setBankruptedPlayerEstateNull(player);
+            }
+            else if (player.getCash() < 1000000L) {
+                StockBoard stockBoard = stockBoardRepository.findById(player.getId() + "@stockBoard")
+                        .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+                player.sellAllStock(stockBoard);
+                stockBoardRepository.save(stockBoard);
+            }
+            // 벌금 지불
+            player.payPenalty(1000000L);
+
+            // 신고당한 사람에게 10% 줌
+            reportee.receivePenalty(100000L);
+
+            playerRepository.save(player);
+            playerRepository.save(reportee);
+
+            return false; // 탈세 안함
+        }
+        else {
+            // 탈세 했다면
+            // 신고한 사람 포상금 받기
+            player.receivePenalty(5000000L); // 일단 500만원
+
+            playerRepository.save(player);
+            // 이미 지불한 경우
+            if (reportee.getTax() == 1L) {
+                return true;
+            }
+            // 탈세자는 체납금의 3배 지불
+            Long arrears = reportee.getTax() * 3;
+
+            if (reportee.getCash() + reportee.getStockMoney() < arrears) {
+                // 파산
+                setBankruptedPlayerEstateNull(reportee);
+                return true;
+            }
+            if (reportee.getCash() < arrears) {
+                // 주식 다 팔기
+                StockBoard stockBoard = stockBoardRepository.findById(reportee.getId() + "@stockBoard")
+                        .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+                reportee.sellAllStock(stockBoard);
+                stockBoardRepository.save(stockBoard);
+            }
+            // 미납금 지불
+            reportee.payPenalty(arrears);
+            reportee.setTax(1L);
+
+            playerRepository.save(reportee);
+
+            return true;
+        }
+    }
+
+    private void setBankruptedPlayerEstateNull(Player player) {
+        if(player.getEstates() != null) {
+            for (Long estate : player.getEstates()) {
+                BoardStatus sellBoard = boardStatusRepository.findById(player.getGameId()+"@"+estate)
+                                                             .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+                Board board = getBoardById(String.valueOf(estate));
+                sellBoard.resetBoard(board.getPrice());
+                boardStatusRepository.save(sellBoard);
+            }
+        }
+        player.bankrupt();
+        playerRepository.save(player);
+    }
+
+    public List<PlayerNewsMessage> checkNews(Player player) {
+        Game game = getGameById(player.getGameId());
+
+        News news = game.getNews().get((int)((game.getCurrentRound() - 1) * 4 + (player.getSelectNewsId() - 1))); //news데이터 가공하고 보내기
+
+        List<PlayerNewsMessage> playerNewsMessageList = new ArrayList<>();
+        playerNewsMessageList.add(PlayerNewsMessage.of(news));
+
+        if(player.getPlusNewsId()!=0L) {
+            News plusNews = game.getNews().get((int)((game.getCurrentRound() - 1) * 4 + (player.getPlusNewsId() - 1))); //news데이터 가공하고 보내기
+            playerNewsMessageList.add(PlayerNewsMessage.of(plusNews));
+        }
+
+        return playerNewsMessageList;
+    }
+
+    @Transactional
+    public PlayerGroundSellMessage sellGround(Player player, PlayerSellGroundRequestDto playerSellGroundRequestDto) {
+        //플레이어 소유의 땅인지 먼저 확인
+        String boardStatusId = player.getGameId()+'@'+playerSellGroundRequestDto.boardIdx();
+
+        BoardStatus boardStatus = getBoardStatusById(boardStatusId);
+
+        if(boardStatus.getOwnerId().equals(player.getId())) {
+            Long boardPrice = boardStatus.getPrice();
+
+            Board board = getBoardById(String.valueOf(playerSellGroundRequestDto.boardIdx()));
+
+            //땅&건물 판매 보드 반영
+            boardStatus.resetBoard(board.getPrice());
+            boardStatusRepository.save(boardStatus);
+
+            //플레이어 자산, 가지고있는 땅 정보 반영
+            player.sellBuildingAndGround(playerSellGroundRequestDto.boardIdx(), boardPrice);
+            playerRepository.save(player);
+
+            return PlayerGroundSellMessage.of(true, "판매 성공", playerSellGroundRequestDto.boardIdx(), player);
+        }
+
+        return PlayerGroundSellMessage.of(false, "판매 실패", playerSellGroundRequestDto.boardIdx(), player);
     }
 }
