@@ -421,7 +421,7 @@ public class PlayerService {
     public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return checkAddBuilding(boardStatus, player);
+            return checkAddBuilding(player);
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -435,7 +435,7 @@ public class PlayerService {
         }
         //특수칸 - 오일랜드
         if(boardStatus.getSpecialName().equals("FT OilLand") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return PlayerArrivalBoardMessage.of("오일랜드 도착",boardStatus);
+            return checkFTOilLand(player);
         }
         //특수칸 - 지하철
         if(boardStatus.getSpecialName().equals("지하철") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -452,9 +452,21 @@ public class PlayerService {
         return null;
     }
 
-    private PlayerArrivalBoardMessage<?> checkAddBuilding(BoardStatus boardStatus, Player player) {
+    private PlayerArrivalBoardMessage<?> checkFTOilLand(Player player) {
+        if(player.getCash() < 100000){
+            return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true, false,false,  player.getEstates()) );
+        }
 
-        if(player.getEstates() == null) { // 건물을 더 지을 땅이 없다면
+        if(player.getEstates() == null || player.getEstates().size() == 0) { //  땅이 있는지 확인
+            return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true,true, false, player.getEstates()) );
+        }
+
+        return PlayerArrivalBoardMessage.of("오일랜드 도착",PlayerFTOilLandArriveMessage.of(true, true, true,  player.getEstates()));
+    }
+
+    private PlayerArrivalBoardMessage<?> checkAddBuilding( Player player) {
+
+        if(player.getEstates() == null || player.getEstates().size() == 0) { // 건물을 더 지을 땅이 없다면
             return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
         }
         for (Long estate : player.getEstates()) {
@@ -469,6 +481,7 @@ public class PlayerService {
         }
         return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
     }
+
 
     @Transactional
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {

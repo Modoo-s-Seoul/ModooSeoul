@@ -3,12 +3,14 @@ package online.ft51land.modooseoul.domain.board_status.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board_status.dto.message.BuildingPurchaseMessage;
+import online.ft51land.modooseoul.domain.board_status.dto.message.FTOilLandMessage;
 import online.ft51land.modooseoul.domain.board_status.dto.message.GroundPurchaseMessage;
 import online.ft51land.modooseoul.domain.board_status.dto.request.BuildingPurchaseRequestDto;
 import online.ft51land.modooseoul.domain.board_status.service.BoardStatusService;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.service.GameService;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerFTOilLandRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
@@ -66,6 +68,24 @@ public class BoardStatusWebSocketController {
             webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
         }
 
+    }
+
+
+    @MessageMapping("/select-FTOilLand/{playerId}")
+    public void selectFTOilLand(@DestinationVariable String playerId, @Payload PlayerFTOilLandRequestDto playerFTOilLandRequestDto){
+        Player player = playerService.getPlayerById(playerId);
+
+        Game game = gameService.getGameById(player.getGameId());
+
+        FTOilLandMessage ftOilLandMessage = boardStatusService.ftOilLandEffect(game, player, playerFTOilLandRequestDto.boardId());
+
+        webSocketSendHandler.sendToGame("FTOilLand", player.getGameId(), ftOilLandMessage);
+
+
+        // 타이머 만료, 턴 넘기기
+        gameService.playersActionFinish(game);
+        gameService.passTurn(game);
+        webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
     }
 
 }
