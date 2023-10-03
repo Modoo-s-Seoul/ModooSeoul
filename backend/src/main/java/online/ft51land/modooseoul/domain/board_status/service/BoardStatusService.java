@@ -33,6 +33,11 @@ public class BoardStatusService {
     private final GameRepository gameRepository;
     private final SynergyReository synergyReository;
 
+    public BoardStatus getBoardStatusById(String boardStatusId) {
+        return boardStatusRepository.findById(boardStatusId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+    }
+
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
                 .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
@@ -50,8 +55,7 @@ public class BoardStatusService {
         //현재 플레이어가 위치한 땅이 소유자가 없는지 한번 더 체크
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
 
-        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        BoardStatus boardStatus = getBoardStatusById(curBoardId);
 
         //플레이어 자산으로 땅을 살 수 있는지 체크
         if(player.getCash() < boardStatus.getPrice()) {
@@ -120,8 +124,7 @@ public class BoardStatusService {
         //플레이어 땅인지 체크
         String curBoardId = player.getGameId()+"@"+boardIdxForBuilding;
 
-        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        BoardStatus boardStatus = getBoardStatusById(curBoardId);
 
         //땅의 주인이 플레이어인지확인
         if(!boardStatus.getOwnerId().equals(player.getId())) {
