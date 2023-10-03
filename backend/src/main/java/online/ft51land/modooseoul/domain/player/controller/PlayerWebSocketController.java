@@ -22,7 +22,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -261,14 +260,32 @@ public class PlayerWebSocketController {
 		// 객체 생성
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
-		List<Player> players = new ArrayList<>();
+		PlayerEvasionMessage message = null;
+		Player reportee = null;
 		for (String playerIds : game.getPlayers()) {
-			players.add(playerService.getPlayerById(playerIds));
+			reportee = playerService.getPlayerById(playerIds);
+			if (reportee.getNickname().equals(player.getReporteePlayerName())) {
+				System.out.println("reportee.getNickname() = " + reportee.getNickname());
+				System.out.println("reportee.getTax() = " + reportee.getTax());
+				System.out.println("reportee.getId() = " + reportee.getId());
+				message = playerService.checkEvasion(player, reportee);
+				break;
+			}
 		}
-		PlayerEvasionMessage message = playerService.checkEvasion(player, players);
+		if (reportee == null) {
+			throw new BusinessException(ErrorMessage.PLAYER_NOT_FOUND);
+		}
 
-		webSocketSendHandler.sendToPlayer("evasion-check", playerId, player.getGameId(), message);
+		if (message == null) {
+			throw new BusinessException(ErrorMessage.INTERVAL_SERVER_ERROR);
+		}
+
+		webSocketSendHandler.sendToPlayer("evasion-reporter", playerId, player.getGameId(), message);
+
 		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+		message = PlayerEvasionMessage.ofReportee(message.isEvade());
+
+		webSocketSendHandler.sendToPlayer("evasion-reportee", reportee.getId(), player.getGameId(),message);
 	}
 
 	@MessageMapping("/news-check/{playerId}")
