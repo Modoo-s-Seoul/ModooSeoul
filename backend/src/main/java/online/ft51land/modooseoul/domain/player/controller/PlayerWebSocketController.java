@@ -10,6 +10,7 @@ import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
@@ -273,5 +274,12 @@ public class PlayerWebSocketController {
 		List<PlayerNewsMessage> playerNewsMessageList = playerService.checkNews(player);
 		webSocketSendHandler.sendToPlayer("news", playerId, player.getGameId(), playerNewsMessageList);
 
+	}
+
+	@MessageMapping("/ground-sell/{playerId}")
+	public void sellGround(@DestinationVariable String playerId, @Payload PlayerSellGroundRequestDto playerSellGroundRequestDto){
+		Player player = playerService.getPlayerById(playerId);
+		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(player, playerSellGroundRequestDto);
+		webSocketSendHandler.sendToPlayer("ground-sell", playerId, player.getGameId(), playerGroundSellMessage);
 	}
 }
