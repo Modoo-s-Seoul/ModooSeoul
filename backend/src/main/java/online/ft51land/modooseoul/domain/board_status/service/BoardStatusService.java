@@ -3,6 +3,7 @@ package online.ft51land.modooseoul.domain.board_status.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board_status.dto.message.BuildingPurchaseMessage;
+import online.ft51land.modooseoul.domain.board_status.dto.message.FTOilLandMessage;
 import online.ft51land.modooseoul.domain.board_status.dto.message.GroundPurchaseMessage;
 import online.ft51land.modooseoul.domain.board_status.dto.request.BuildingPurchaseRequestDto;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
@@ -221,8 +222,6 @@ public class BoardStatusService {
             }
         }
 
-
-
         //board status 업데이트
         boardStatusRepository.save(boardStatus);
 
@@ -235,4 +234,52 @@ public class BoardStatusService {
                         ,player.getId()));
     }
 
+    public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
+
+        // 타이머가 활성화 되어 있는지 확인
+        if(!game.getIsTimerActivated()){
+            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+        }
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+        BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId()+"@"+boardId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+        // ftoilland 가 이미 존재 했을 경우
+        if(game.getFtOilLandBoardId() != null){
+
+            // 이미 있는데 그 땅이 선택한 땅이 다를 경우
+            if(boardId != game.getFtOilLandBoardId()){
+                // 이미 있는데 다른 땅을 선택했다면
+                BoardStatus originFTOilLand = boardStatusRepository.findById(player.getGameId()+"@"+game.getFtOilLandBoardId())
+                        .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+                // 기존 ftoilland 일반땅으로 변경
+                originFTOilLand.oilInit();
+                boardStatusRepository.save(originFTOilLand);
+
+            }
+        }
+
+
+        // 게임에 ftoilland 설정
+        game.setFTOilLand(boardId);
+        gameRepository.save(game);
+
+        // 몇배인지 설정
+        boardStatus.updateOil();
+        boardStatusRepository.save(boardStatus);
+
+        // 비용지불
+        player.payFTOilLandEffect();
+        playerRepository.save(player);
+
+
+        return FTOilLandMessage.of(player.getCash(), boardStatus);
+
+    }
 }
