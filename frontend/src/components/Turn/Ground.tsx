@@ -37,7 +37,7 @@ export default function Ground() {
   const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
-  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); //
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 플레이어 전광판 정보
   const matchPos = useRecoilValue(matchPosition);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
@@ -160,7 +160,8 @@ export default function Ground() {
     // 건물 건설 비용 발생
 
     // 턴 종료
-    // setIsUserTurnVisible(false);
+    setIsUserTurnVisible(false);
+    setTurn(turn + 1);
   };
 
   /** 건물 판매 */
@@ -240,123 +241,127 @@ export default function Ground() {
         </div>
         {/* 중단 - 본 내용 */}
         <div className="groundBody">
-          <div className="groundTitle">{turnData.name}</div>
           {/* <div>구매 : 턴 종료 / 판매 : 자유롭게 </div> */}
-          {boardData[`${tRow}-${tCol}`].sell && <div>시너지 효과 : 없음</div>}
+          {boardData[`${tRow}-${tCol}`].sell && (
+            <div className="effectTitle">시너지 효과 : 없음</div>
+          )}
           {!selectIndustry && (
             <>
               <div className="groundSelectContainer">
                 {boardData[`${tRow}-${tCol}`].sell == false && (
                   <>
                     <div className="groundSelectBox">
-                      <div>땅</div>
+                      <div className="groundTitle">{turnData.name}</div>
+                      <div>땅값</div>
                       <div> {turnData.price}원</div>
                     </div>
                   </>
                 )}
                 {boardData[`${tRow}-${tCol}`].sell == true && (
                   <>
-                    <div className="groundSelectBox">
-                      <div>부지 1</div>
-                      {builingData[turnData.index * 3 + 0].sell && (
-                        <div>
-                          산업 : {builingData[turnData.index * 3 + 0].industry}
-                        </div>
-                      )}
-                      {!builingData[turnData.index * 3 + 0].sell && (
-                        <div
-                          onClick={() => {
-                            setSelectIndustry(true);
-                            setBuildWhere(0);
-                            // buyBuilding(0);
-                          }}
-                        >
-                          <ClickBtn
-                            height={30}
-                            width={60}
-                            fontsize={18}
-                            text={"건물 짓기"}
-                          />
-                        </div>
-                      )}
-                      {builingData[turnData.index * 3 + 0].sell && (
-                        <div onClick={() => sellBuilding(0)}>
-                          <ClickBtn
-                            height={30}
-                            width={50}
-                            fontsize={18}
-                            text={"판매"}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="groundSelectBox">
-                      <div>부지 2</div>
-                      {builingData[turnData.index * 3 + 1].sell && (
-                        <div>
-                          산업 : {builingData[turnData.index * 3 + 1].industry}
-                        </div>
-                      )}
-                      {!builingData[turnData.index * 3 + 1].sell && (
-                        <div
-                          onClick={() => {
-                            setSelectIndustry(true);
-                            setBuildWhere(1);
-                            // buyBuilding(1);
-                          }}
-                        >
-                          <ClickBtn
-                            height={30}
-                            width={60}
-                            fontsize={18}
-                            text={"건물 짓기"}
-                          />
-                        </div>
-                      )}
-                      {builingData[turnData.index * 3 + 1].sell && (
-                        <div onClick={() => sellBuilding(1)}>
-                          <ClickBtn
-                            height={30}
-                            width={50}
-                            fontsize={18}
-                            text={"판매"}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="groundSelectBox">
-                      <div>부지 3</div>
-                      {builingData[turnData.index * 3 + 2].sell && (
-                        <div>
-                          산업 : {builingData[turnData.index * 3 + 2].industry}
-                        </div>
-                      )}
-                      {!builingData[turnData.index * 3 + 2].sell && (
-                        <div
-                          onClick={() => {
-                            setSelectIndustry(true);
-                            setBuildWhere(2);
-                            // buyBuilding(2);
-                          }}
-                        >
-                          <ClickBtn
-                            height={30}
-                            width={60}
-                            fontsize={18}
-                            text={"건물 짓기"}
-                          />
-                        </div>
-                      )}
-                      {builingData[turnData.index * 3 + 2].sell && (
-                        <div onClick={() => sellBuilding(2)}>
-                          <ClickBtn
-                            height={30}
-                            width={50}
-                            fontsize={18}
-                            text={"판매"}
-                          />
-                        </div>
-                      )}
+                    <div className="groundThreeContainer">
+                      <div className="groundThreeBox">
+                        {builingData[turnData.index * 3 + 0].sell && (
+                          <div>
+                            산업 :{" "}
+                            {builingData[turnData.index * 3 + 0].industry}
+                          </div>
+                        )}
+                        {!builingData[turnData.index * 3 + 0].sell && (
+                          <div
+                            onClick={() => {
+                              setSelectIndustry(true);
+                              setBuildWhere(0);
+                            }}
+                          >
+                            <ClickBtn
+                              height={30}
+                              width={60}
+                              fontsize={18}
+                              text={"건물 짓기"}
+                            />
+                          </div>
+                        )}
+                        {!isUserTurnVisibleState &&
+                          builingData[turnData.index * 3 + 0].sell && (
+                            <div onClick={() => sellBuilding(0)}>
+                              <ClickBtn
+                                height={30}
+                                width={50}
+                                fontsize={18}
+                                text={"판매"}
+                              />
+                            </div>
+                          )}
+                      </div>
+                      <div className="groundThreeBox">
+                        {builingData[turnData.index * 3 + 1].sell && (
+                          <div>
+                            산업 :{" "}
+                            {builingData[turnData.index * 3 + 1].industry}
+                          </div>
+                        )}
+                        {!builingData[turnData.index * 3 + 1].sell && (
+                          <div
+                            onClick={() => {
+                              setSelectIndustry(true);
+                              setBuildWhere(1);
+                            }}
+                          >
+                            <ClickBtn
+                              height={30}
+                              width={60}
+                              fontsize={18}
+                              text={"건물 짓기"}
+                            />
+                          </div>
+                        )}
+                        {!isUserTurnVisibleState &&
+                          builingData[turnData.index * 3 + 1].sell && (
+                            <div onClick={() => sellBuilding(1)}>
+                              <ClickBtn
+                                height={30}
+                                width={50}
+                                fontsize={18}
+                                text={"판매"}
+                              />
+                            </div>
+                          )}
+                      </div>
+                      <div className="groundThreeBox">
+                        {builingData[turnData.index * 3 + 2].sell && (
+                          <div>
+                            산업 :{" "}
+                            {builingData[turnData.index * 3 + 2].industry}
+                          </div>
+                        )}
+                        {!builingData[turnData.index * 3 + 2].sell && (
+                          <div
+                            onClick={() => {
+                              setSelectIndustry(true);
+                              setBuildWhere(2);
+                            }}
+                          >
+                            <ClickBtn
+                              height={30}
+                              width={60}
+                              fontsize={18}
+                              text={"건물 짓기"}
+                            />
+                          </div>
+                        )}
+                        {!isUserTurnVisibleState &&
+                          builingData[turnData.index * 3 + 2].sell && (
+                            <div onClick={() => sellBuilding(2)}>
+                              <ClickBtn
+                                height={30}
+                                width={50}
+                                fontsize={18}
+                                text={"판매"}
+                              />
+                            </div>
+                          )}
+                      </div>
                     </div>
                   </>
                 )}
@@ -371,8 +376,10 @@ export default function Ground() {
                     setSelectedNodes(-1);
                     setSelectIndustry(false);
                   }}
+                  style={{ cursor: "pointer" }}
+                  className="backBtnBuildingBuy"
                 >
-                  ↜뒤로가기
+                  ↩
                 </div>
               </div>
               <div className="buildingBuyContainer">
@@ -412,14 +419,17 @@ export default function Ground() {
         {boardData[`${tRow}-${tCol}`].sell == true && (
           <>
             <div className="groundBtnContainer">
-              <div onClick={sellGround}>
-                <ClickBtn
-                  height={50}
-                  width={120}
-                  fontsize={25}
-                  text={"땅 판매"}
-                />
-              </div>
+              {!isUserTurnVisibleState && (
+                <div onClick={sellGround}>
+                  <ClickBtn
+                    height={50}
+                    width={120}
+                    fontsize={25}
+                    text={"땅 판매"}
+                  />
+                </div>
+              )}
+
               {selectIndustry && (
                 <>
                   <MessageModal />

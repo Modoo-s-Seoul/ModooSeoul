@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.board_status.repository.BoardStatusRepository;
+import online.ft51land.modooseoul.domain.chance.entity.Chance;
+import online.ft51land.modooseoul.domain.chance.repository.ChanceRepository;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
@@ -35,11 +37,17 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
     private final BoardStatusRepository boardStatusRepository;
     private final StockBoardRepository stockBoardRepository;
+    private final ChanceRepository chanceRepository;
 
     // playerId 로 Player 객체 얻어오는 메서드
     public Player getPlayerById(String playerId) {
         return playerRepository.findById(playerId)
                                .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+    }
+
+    public Game getGameById(String gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
     }
 
     // 방 참가 플레이어 정보 보내주기
@@ -77,8 +85,7 @@ public class PlayerService {
     public PlayerJoinResponseDto joinGame(PlayerJoinRequestDto playerJoinRequestDto) {
 
         // 1. 방이 존재하는지 확인
-        Game game = gameRepository.findById(playerJoinRequestDto.gameId())
-                                  .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(playerJoinRequestDto.gameId());
 
         // 2. 대기 중인 방인지 확인
         if (game.getIsStart()) {
@@ -121,8 +128,7 @@ public class PlayerService {
         // 주사위 굴린 플레이어
         Player rolledPlayer = getPlayerById(playerId);
 
-        Game game = gameRepository.findById(rolledPlayer.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(rolledPlayer.getGameId());
 
         // 턴 정보 확인
         if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
@@ -168,8 +174,7 @@ public class PlayerService {
     // 지하철 이용 가능 한지 확인
     public PlayerCheckSubwayMessage playerCheckSubway(Player player) {
 
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         // 턴 정보 확인
         if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -197,8 +202,7 @@ public class PlayerService {
     // 지하철로 이동
     public PlayerSubwayMessage takeSubway(Player player, Long destination) {
 
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         // 턴 정보 확인
         if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -242,10 +246,15 @@ public class PlayerService {
     }
 
     // 플레이어 뉴스 선택
-    public PlayerNewsMessage chooseNews(Game game, PlayerNewsRequestDto playerNewsRequestDto) {
+    public PlayerNewsMessage chooseNews(Game game, String playerId, PlayerNewsRequestDto playerNewsRequestDto) {
         // 해당 뉴스 내용 가져오기
         Long currentRound = playerNewsRequestDto.currentRound();
         Long cardIdx = playerNewsRequestDto.cardIdx();
+
+        Player player = getPlayerById(playerId);
+        player.setSelectNewsId(cardIdx);
+        playerRepository.save(player);
+
         News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1)));
 
         gameRepository.save(game);
@@ -263,7 +272,7 @@ public class PlayerService {
             Random random = new Random();
             random.setSeed(System.currentTimeMillis());
             Long cardIdx = random.nextLong(4)+1;
-            PlayerNewsMessage message  = chooseNews(game, PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
+            PlayerNewsMessage message  = chooseNews(game, player.getId(), PlayerNewsRequestDto.of(game.getCurrentRound(), cardIdx));
             return  message;
         }
 
@@ -290,8 +299,7 @@ public class PlayerService {
     }
 
     public Long passTurn (Player player){
-        Game game = gameRepository.findById(player.getGameId())
-                .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
+        Game game = getGameById(player.getGameId());
 
         Long nextTurn = game.passTurn();
         gameRepository.save(game);
@@ -322,8 +330,7 @@ public class PlayerService {
         }
         //찬스카드
         if(boardStatus.getBoardType() == BoardType.CHANCE) {
-            // TODO : 찬스카드 랜덤으로 뽑아 알려주기
-            return PlayerArrivalBoardMessage.of("찬스 카드 도착",boardStatus);
+            return PlayerArrivalBoardMessage.of("찬스 카드 도착",randomChance(player));
         }
 
         if(boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -331,6 +338,69 @@ public class PlayerService {
         }
 
         return null;
+    }
+
+    @Transactional
+    public PlayerChanceMessage randomChance(Player player) {
+        //랜덤 숫자 생성(1~4)
+        Random random = new Random();
+        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
+        player.setChanceNum(chanceNum);
+        playerRepository.save(player);
+
+        Chance chance = chanceRepository.findById(chanceNum)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.CHANCE_NOT_FOUND));;
+
+        PlayerChanceMessage playerChanceMessage = PlayerChanceMessage.of(chance.getName(),chance.getDescription());
+        return playerChanceMessage;
+    }
+
+    @Transactional
+    public Object chanceBoardInfo(String curPlayerId) {
+        //개인에게 보내줄거
+        Player player = getPlayerById(curPlayerId);
+        Long chanceNum = player.getChanceNum();
+
+        if(chanceNum == 1L) {
+            //탈세여부 확인
+            Game game = getGameById(player.getGameId());
+
+            // Message 만들기
+            List<PlayerChanceTaxMessage> message = new ArrayList<>();
+            List<String> playerIdList = game.getPlayers();
+
+            for (String playerId : playerIdList) {
+                if(!curPlayerId.equals(playerId)) {
+                    //내 정보 아닌 것만 담아서 보내줌
+                    Player diffPlayer = getPlayerById(playerId);
+                    message.add(PlayerChanceTaxMessage.of(diffPlayer.getNickname(), diffPlayer.getTax() != 0L));
+                }
+            }
+
+            return message;
+
+        }
+        if(chanceNum == 2L) {
+            //추가 뉴스 제공
+            Game game = getGameById(player.getGameId());
+
+            Long currentRound = game.getCurrentRound();
+            Long cardIdx = player.getSelectNewsId()==1L ? 2L : 1L; //player selectedNewsId가 1이면 2번 뉴스 보여주고 아니면 1번뉴스 보여줌
+
+            //추가 뉴스 정보 저장
+            player.setPlusNewsId(cardIdx);
+            playerRepository.save(player);
+
+            News news = game.getNews().get((int)((currentRound - 1) * 4 + (cardIdx - 1))); //news데이터 가공하고 보내기
+
+            // 메시지 가공 후 리턴
+            return PlayerNewsMessage.of(news);
+        }
+        if(chanceNum == 3L) {
+            player.winLotto();
+            playerRepository.save(player);
+        }
+        return null; //꽝
     }
 
     @Transactional
@@ -388,7 +458,7 @@ public class PlayerService {
 
     @Transactional
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId) {
-        //TODO : 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
+        //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
         Player payPlayer = getPlayerById(playerId);
         Player ownerPlayer = getPlayerById(ownerId);
@@ -413,7 +483,6 @@ public class PlayerService {
 
         if(toll <= payPlayer.getCash()+payPlayer.getStockMoney() && payPlayer.getCash() < toll) {
             //현금 + 주식몰수한 돈으로 해결 가능한 경우
-            //나중에 플레이어 주식 redis 삭제
             StockBoard stockBoard = stockBoardRepository
                     .findById(payPlayer.getId() + "@stockBoard")
                     .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
@@ -580,5 +649,21 @@ public class PlayerService {
         }
         player.bankrupt();
         playerRepository.save(player);
+    }
+
+    public List<PlayerNewsMessage> checkNews(Player player) {
+        Game game = getGameById(player.getGameId());
+
+        News news = game.getNews().get((int)((game.getCurrentRound() - 1) * 4 + (player.getSelectNewsId() - 1))); //news데이터 가공하고 보내기
+
+        List<PlayerNewsMessage> playerNewsMessageList = new ArrayList<>();
+        playerNewsMessageList.add(PlayerNewsMessage.of(news));
+
+        if(player.getPlusNewsId()!=0L) {
+            News plusNews = game.getNews().get((int)((game.getCurrentRound() - 1) * 4 + (player.getPlusNewsId() - 1))); //news데이터 가공하고 보내기
+            playerNewsMessageList.add(PlayerNewsMessage.of(plusNews));
+        }
+
+        return playerNewsMessageList;
     }
 }

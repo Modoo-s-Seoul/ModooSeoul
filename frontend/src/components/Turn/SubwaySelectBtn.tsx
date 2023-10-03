@@ -1,7 +1,7 @@
 // import React from 'react';
 import "./Subway.css";
 
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   isSubwayActiveState,
   isSubwayState,
@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 export default function SubwaySelectBtn() {
   // 기본인자
-  const turn = useRecoilValue(turnState);
+  const [turn, setTurn] = useRecoilState(turnState);
   const [isSubway, setIsSubway] = useRecoilState(isSubwayState); // 지하철 변동
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글(board에서 감지)
@@ -19,7 +19,11 @@ export default function SubwaySelectBtn() {
   /** 선택완료시 */
   const toggleSelectSubway = () => {
     // 이동안할시
-
+    if (isSubway[0].player == null) {
+      setIsSubwayActive(false);
+      setTurn(turn + 1);
+      return;
+    }
     // 이동할시
     const newSubwayChange = [...isSubway];
     newSubwayChange[0] = { ...newSubwayChange[0], move: true };

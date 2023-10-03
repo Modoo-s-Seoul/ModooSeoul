@@ -24,162 +24,216 @@ export default function IngameWebSocket() {
   useEffect(() => {
     // WebSocket 연결 설정 및 관리 코드를 이곳에 추가하세요.
     if (socketClient !== null) {
-      console.log("초기 방 구독을 시작합니다");
-
       //// 공통 구독 ////
-      // 구독 0. 턴정보
-      socketClient.subscribe(`/receive/game/${gameId}`, (msg) => {
+
+      // 플레이어 기본 정보/순서 확인
+      socketClient.subscribe(`/receive/game/init/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub0 Turn:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독1. 주사위 정보
+
+      //라운드 시작
+      socketClient.subscribe(`/receive/game/round-start/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+      });
+
+      // 턴정보 확인
+      socketClient.subscribe(`/receive/game/turn/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+      });
+
+      // 턴 종료
+      socketClient.subscribe(`/receive/game/pass-turn/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+      });
+
+      // 주사위 굴리기
       socketClient.subscribe(`/receive/game/roll/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub1 Roll dice:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독2. 땅 구매
+
+      // 땅 구매
       socketClient.subscribe(
-        `/receive/game/purchase/ground/${playerId}`,
+        `/receive/game/purchase/ground/${gameId}`,
         (msg) => {
           const res = JSON.parse(msg.body);
-          console.log("Ingame Sub2 Buy ground:", res);
-          // const receivedData = res.data;
+          const receivedData = res.data;
         }
       );
-      // 구독 3. 건물 구매
+
+      // 건물 구매
       socketClient.subscribe(
-        `/receive/game/purchase/building/${playerId}`,
+        `/receive/game/purchase/building/${gameId}`,
         (msg) => {
           const res = JSON.parse(msg.body);
-          console.log("Ingame Sub 3 Buy building:", res);
-          // const receivedData = res.data;
+          const receivedData = res.data;
         }
       );
-      // 구독 4. 통행료 지불
-      socketClient.subscribe(``, (msg) => {
+
+      //도착한 땅에 대한 행동 요청
+      socketClient.subscribe(
+        `/receive/game/arrive-board-info/${gameId}`,
+        (msg) => {
+          const res = JSON.parse(msg.body);
+          const receivedData = res.data;
+        }
+      );
+
+      //투옥
+      socketClient.subscribe(`/receive/game/prison/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 4 Toll fee:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 5. 세금 납세 / 탈세
-      socketClient.subscribe(``, (msg) => {
+
+      //공통 턴 시작
+      socketClient.subscribe(`/receive/game/free-action/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 5 tax :", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 6. 출발지 도착
-      socketClient.subscribe(``, (msg) => {
+
+      //출발지 도착
+      socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 6 arrive start:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 7. 오일랜드 도착
-      socketClient.subscribe(``, (msg) => {
+
+      //오일랜드 도착
+      socketClient.subscribe(`/receive/game/oil-land/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 7 arrive oil:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 8. 지하철 도착
-      socketClient.subscribe(``, (msg) => {
+
+      //지하철 이용 여부 확인
+      socketClient.subscribe(`/receive/game/check-subway/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 8 arrive subway:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 9. 찬스카드 도착
-      socketClient.subscribe(``, (msg) => {
+
+      //지하철 이동
+      socketClient.subscribe(`/receive/game/subway/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 9 arrive chance:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 10. 감옥 도착
-      socketClient.subscribe(``, (msg) => {
+
+      //찬스 카드 도착
+      socketClient.subscribe(`/receive/game/chance/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 10 arrive prison:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 11. 탈세 신고 결과
-      socketClient.subscribe(``, (msg) => {
+
+      //공통 턴 준비
+      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 11 tax-thief-catch result:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 12. 1분 액션 준비완료
-      socketClient.subscribe(``, (msg) => {
+
+      //타이머 시작,완료 알림
+      socketClient.subscribe(`/receive/game/timer/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 12 common turn ready:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 13. 1분 액션 만료
-      socketClient.subscribe(``, (msg) => {
+
+      //타이머 취소
+      socketClient.subscribe(`/receive/game/timer-cancel/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 13 common done:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 14. 플레이어 퇴장
-      socketClient.subscribe(``, (msg) => {
+
+      //공통 턴 행동 완료
+      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 14 player exit:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 15. 게임 종료
-      socketClient.subscribe(``, (msg) => {
+
+      //플레이어 퇴장
+      socketClient.subscribe(`/receive/game/player-leave/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 15 Game done:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
+      });
+
+      //게임 종료
+      socketClient.subscribe(`/receive/game/end/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
       });
 
       //// 개별 구독 ////
-      // 구독 1. 뉴스 선택
+
+      //배당금 확인
+      socketClient.subscribe(`/receive/dividend/${playerId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+      });
+
+      // 뉴스 선택
       socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 1 select news:", res);
         const receivedData = res.data;
         setSelectedNews(receivedData.description);
       });
 
-      // 구독 2. 땅 판매
-      socketClient.subscribe(``, (msg) => {
+      // 땅 판매
+      socketClient.subscribe(`/receive/ground/sell/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 2 sell ground:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 3. 건물 판매
-      socketClient.subscribe(``, (msg) => {
+
+      // 건물 판매
+      socketClient.subscribe(`/receive/building/sell/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 2 sell building:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 4. 주식 구매
-      socketClient.subscribe(``, (msg) => {
+
+      // 주식 구매
+      socketClient.subscribe(`/receive/stock/purchase/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 4 buy stock:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 5. 주식 판매
-      socketClient.subscribe(``, (msg) => {
+
+      // 주식 판매
+      socketClient.subscribe(`/receive/stock/sell/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 4 sell stock:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 6. 탈세자 신고
-      socketClient.subscribe(``, (msg) => {
+
+      // 개인 주식정보 확인
+      socketClient.subscribe(`/receive/stock/info/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 6 report tax-thief:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 7. 개인 주식정보 받기
-      socketClient.subscribe(``, (msg) => {
+
+      // 탈세자 신고
+      socketClient.subscribe(`/receive/report/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 7 my stock info:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
       });
-      // 구독 8. 뉴스 확인하기
-      socketClient.subscribe(``, (msg) => {
+
+      // 탈세자 신고 결과 공지
+      socketClient.subscribe(`/receive/evasion-check/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
-        console.log("Ingame Sub 8 news check:", res);
-        // const receivedData = res.data;
+        const receivedData = res.data;
+      });
+
+      //세금 납,탈세 상태 확인
+      socketClient.subscribe(`/receive/tax/${playerId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+      });
+
+      // 뉴스 확인
+      socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+      });
+
+      // 찬스 카드 확인
+      socketClient.subscribe(`/receive/chance/${playerId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
       });
     }
 

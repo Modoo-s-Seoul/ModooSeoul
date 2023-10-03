@@ -2,8 +2,10 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
+import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
@@ -79,6 +81,16 @@ public class PlayerWebSocketController {
 		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage = playerService.arrivalBoardInfo(playerId);
 		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
 
+		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
+			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+		}
+
+		if(gameService.checkGameEnd(player.getGameId())) { //파산하지 않은 수가 1명이면
+			//게임 종료
+			Game game = gameService.getGameById(player.getGameId());
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
+			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
+		}
 	}
 
 	// 뉴스 선택하기
@@ -93,7 +105,7 @@ public class PlayerWebSocketController {
 		Long finishPlayerCnt = playerService.playerActionFinish(player, game);
 
 		// 뉴스 데이터 가공
-		PlayerNewsMessage message = playerService.chooseNews(game, playerNewsRequestDto);
+		PlayerNewsMessage message = playerService.chooseNews(game, playerId, playerNewsRequestDto);
 
 		// 데이터 전달
 		webSocketSendHandler.sendToPlayer("news", playerId, game.getId(), message);
@@ -253,5 +265,13 @@ public class PlayerWebSocketController {
 
 		webSocketSendHandler.sendToPlayer("evasion-check", playerId, player.getGameId(), message);
 		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+	}
+
+	@MessageMapping("/news-check/{playerId}")
+	public void checkNews(@DestinationVariable String playerId) {
+		Player player = playerService.getPlayerById(playerId);
+		List<PlayerNewsMessage> playerNewsMessageList = playerService.checkNews(player);
+		webSocketSendHandler.sendToPlayer("news", playerId, player.getGameId(), playerNewsMessageList);
+
 	}
 }
