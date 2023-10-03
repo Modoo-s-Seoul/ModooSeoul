@@ -168,7 +168,7 @@ export default function Board() {
   const config = {
     type: Phaser.AUTO,
     parent: "gameScreen",
-    // transparent: true, //배경 투명하게 설정
+    transparent: true, //배경 투명하게 설정
 
     // 캔버스 크기 창 크기에 따라 자동 맞춤되는 옵션
     scale: {
@@ -230,13 +230,13 @@ export default function Board() {
   /** phaser 에셋 생성 */
   function create(this: Phaser.Scene) {
     // 배경 생성
-    const gradient = this.add.graphics();
-    gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
-    gradient.fillRect(0, 0, config.scale.width, config.scale.height);
-    setBackgroundSprite((prevBackgroundSprite) => [
-      ...prevBackgroundSprite,
-      gradient,
-    ]);
+    // const gradient = this.add.graphics();
+    // gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
+    // gradient.fillRect(0, 0, config.scale.width, config.scale.height);
+    // setBackgroundSprite((prevBackgroundSprite) => [
+    //   ...prevBackgroundSprite,
+    //   gradient,
+    // ]);
 
     // 보드 생성
     const tileSize = globalTileSize;

@@ -20,30 +20,6 @@ export default function IngameWebSocket() {
   // 세팅할 데이터들
   const setSelectedNews = useSetRecoilState(selectedNewsState); // 뉴스
 
-  const wsApiAddress = {
-    game: [],
-
-    player: [
-      "building/sell",
-      //건물 판매
-      "stock/purchase",
-      //주식 구매
-      "stock/sell",
-      //주식 판매
-      "report",
-      //탈세자 신고
-      "evasion-check",
-      //탈세자 신고 결과 공지
-      "tax",
-      "stock/info",
-      //주식 정보 확인
-      "news-check",
-      //뉴스 확인
-      "chance",
-      //찬스 카드 확인
-    ],
-  };
-
   /** 초기구독 */
   useEffect(() => {
     // WebSocket 연결 설정 및 관리 코드를 이곳에 추가하세요.
@@ -155,14 +131,8 @@ export default function IngameWebSocket() {
         const receivedData = res.data;
       });
 
-      //타이머 시작,완료 알림
+      //타이머 시작,완료,취소 알림
       socketClient.subscribe(`/receive/game/timer/${gameId}`, (msg) => {
-        const res = JSON.parse(msg.body);
-        const receivedData = res.data;
-      });
-
-      //타이머 취소
-      socketClient.subscribe(`/receive/game/timer-cancel/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
       });

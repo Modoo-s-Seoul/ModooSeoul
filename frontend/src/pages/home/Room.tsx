@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // import { ipAddress } from "../../api/RoomApi";
 import { useSocket } from "../SocketContext";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { alertModalState, roomStatus } from "../../data/CommonData";
 import { unsubscribeRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
@@ -35,15 +35,8 @@ export default function Room() {
   const playerId = location.state.playerId;
 
   const [curRoomStatus, setRoomStatus] = useRecoilState(roomStatus);
-  // const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 모달 메세지 토글
-  const [isModalMsgActive, setIsModalMsgActive] = useRecoilState(
-    isModalMsgActiveState
-  ); // 모달 메세지 토글
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 모달 메세지 토글
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
-
-  useEffect(() => {
-    console.log(isModalMsgActive);
-  }, [isModalMsgActive]);
 
   /**게임시작 */
   const handleStartGame = () => {
@@ -120,7 +113,7 @@ export default function Room() {
             },
           });
         } else {
-          setAlertMsg(receivedData.data);
+          setAlertMsg(receivedData.message);
           setAlertVisible(true);
         }
       });
@@ -172,9 +165,7 @@ export default function Room() {
                     key={ele.nickname}
                   >
                     {ele.nickname === nickname ? (
-                      <div style={{ backgroundColor: "red" }}>
-                        {`${index === 0 ? "👑" : ""} ${ele.nickname}`}
-                      </div>
+                      <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     ) : (
                       <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     )}
