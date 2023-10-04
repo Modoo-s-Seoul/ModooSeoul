@@ -34,6 +34,7 @@ import java.util.Random;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class PlayerService {
 
     private final GameRepository gameRepository;
@@ -295,6 +296,7 @@ public class PlayerService {
 
 
 
+
     // 플레이어 방 나가기
     public void leaveGame(Game game, Player player) {
         // 게임에서 플레이어 제외
@@ -320,7 +322,7 @@ public class PlayerService {
         return nextTurn;
     }
 
-    @Transactional
+
     public PlayerArrivalBoardMessage<?> arrivalBoardInfo(String playerId, Game game) {
 
         Player player = getPlayerById(playerId);
@@ -354,7 +356,7 @@ public class PlayerService {
         return null;
     }
 
-    @Transactional
+
     public PlayerChanceMessage randomChance(Player player) {
         //랜덤 숫자 생성(1~4)
         Random random = new Random();
@@ -369,7 +371,7 @@ public class PlayerService {
         return playerChanceMessage;
     }
 
-    @Transactional
+
     public Object chanceBoardInfo(String curPlayerId) {
         //개인에게 보내줄거
         Player player = getPlayerById(curPlayerId);
@@ -417,7 +419,7 @@ public class PlayerService {
         return null; //꽝
     }
 
-    @Transactional
+
     public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -486,7 +488,7 @@ public class PlayerService {
     }
 
 
-    @Transactional
+
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId, Game game) {
         //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
@@ -596,7 +598,7 @@ public class PlayerService {
     }
 
     // 탈세했는지 확인하기
-    @Transactional
+
     public PlayerEvasionMessage checkEvasion(Player reporter, Player reportee) {
         // 신고한 사람이 없는 경우
         if (reporter.getReporteePlayerName() == null) {
@@ -706,7 +708,7 @@ public class PlayerService {
         return playerNewsMessageList;
     }
 
-    @Transactional
+
     public PlayerGroundSellMessage sellGround(Game game, Player player, PlayerSellGroundRequestDto playerSellGroundRequestDto) {
         //플레이어 소유의 땅인지 먼저 확인
         String boardStatusId = player.getGameId()+'@'+playerSellGroundRequestDto.boardIdx();
