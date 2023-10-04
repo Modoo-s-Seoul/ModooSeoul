@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   tcolState,
   trowState,
-  isPrisonState,
+  // isPrisonState,
   isUserTurnVisibleState,
   playerInfoState,
 } from "../../data/IngameData";
@@ -19,7 +19,7 @@ export default function Prison() {
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const boardData = useRecoilValue(boardDataState); // 보드 데이터
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
-  const setIsPrison = useSetRecoilState(isPrisonState); // 감옥 반영
+  // const setIsPrison = useSetRecoilState(isPrisonState); // 감옥 반영
 
   // 웹소켓 기본인자
   const socketClient = useSocket();
@@ -33,9 +33,8 @@ export default function Prison() {
   /** 감옥 여부 반영 */
   useEffect(() => {
     // 실제구현 (감옥반영 요청)
-
     // 가구현
-    setIsPrison(true);
+    // setIsPrison(true);
   }, []);
 
   // 초측정

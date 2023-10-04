@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSocket } from "../../pages/SocketContext";
 import { useLocation } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   selectedNewsState,
   playerDataState,
@@ -13,9 +13,16 @@ import {
   isPrisonState,
   diceActiveState,
   whoAreYouState,
+  groundChangeState,
 } from "../../data/IngameData";
+import { matchIndex } from "./../../data/IngameData";
 
 export default function IngameWebSocket() {
+  // 기본 인자
+
+  // 데이터
+  const matchIndexList = useRecoilValue(matchIndex);
+
   // 세팅할 데이터들
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
   const setRound = useSetRecoilState(roundState); // 현재 라운드
@@ -27,6 +34,7 @@ export default function IngameWebSocket() {
   const setPrison = useSetRecoilState(isPrisonState);
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const setWhoAreYou = useSetRecoilState(whoAreYouState); // 본인의 턴 기록
+  const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
 
   // 게임 정보
   const weblocation = useLocation();
@@ -129,6 +137,16 @@ export default function IngameWebSocket() {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
           console.log(receivedData);
+          // 구매 가능할시
+          if (receivedData.isPurchase) {
+            // 땅 변동사항 업데이트
+            setGroundChange([
+              {
+                player: receivedData.playerIdx,
+                index: matchIndexList[receivedData.groundIdx - 1],
+              },
+            ]);
+          }
         }
       );
 
@@ -245,6 +263,10 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        // 땅 판매 가능할시
+        setGroundChange([
+          { player: 6, index: matchIndexList[receivedData.groundIdx - 1] },
+        ]);
       });
 
       // 건물 판매
