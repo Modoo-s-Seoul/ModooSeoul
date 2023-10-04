@@ -64,6 +64,14 @@ public class PlayerService {
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
 
+    public List<Player> getPlayersByGame(Game game) {
+        List<Player> players = new ArrayList<>();
+        for (String playerId : game.getPlayers()) {
+            players.add(getPlayerById(playerId));
+        }
+        return players;
+    }
+
     // 방 참가 플레이어 정보 보내주기
     public List<PlayerReadyInfoMessage> getPlayersInfoForRoom(Game game) {
         // Message 만들기
@@ -315,8 +323,11 @@ public class PlayerService {
 
     public Long passTurn (Player player){
         Game game = getGameById(player.getGameId());
-
-        Long nextTurn = game.passTurn();
+        List<Player> players = new ArrayList<>();
+        for (String playerId : game.getPlayers()) {
+            players.add(getPlayerById(playerId));
+        }
+        Long nextTurn = game.passTurn(players);
         gameRepository.save(game);
         return nextTurn;
     }
@@ -430,7 +441,7 @@ public class PlayerService {
             Game game = gameRepository.findById(player.getGameId())
                     .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
 
-            game.passTurn();
+            game.passTurn(getPlayersByGame(game));
             gameRepository.save(game);
             return PlayerArrivalBoardMessage.of("감옥 도착",boardStatus);
         }
@@ -444,7 +455,7 @@ public class PlayerService {
             Game game = gameRepository.findById(player.getGameId())
                     .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
 
-            game.passTurn();
+            game.passTurn(getPlayersByGame(game));
             gameRepository.save(game);
 
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
@@ -489,8 +500,6 @@ public class PlayerService {
         return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
     }
 
-
-
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId, Game game) {
         //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
@@ -499,18 +508,7 @@ public class PlayerService {
 
         if(toll > payPlayer.getCash()+payPlayer.getStockMoney()) {
             //파산 경우
-            if(payPlayer.getEstates() != null) {
-                for (Long estate : payPlayer.getEstates()) {
-                    BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
-                            .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
-
-                    Board board = getBoardById(String.valueOf(estate));
-                    sellBoard.resetBoard(board.getPrice());
-                    boardStatusRepository.save(sellBoard);
-                }
-            }
-            payPlayer.bankrupt();
-            playerRepository.save(payPlayer);
+            setBankruptedPlayerEstateNull(payPlayer);
             ownerPlayer.receiveToll(toll);
             playerRepository.save(ownerPlayer);
 
@@ -600,7 +598,6 @@ public class PlayerService {
     }
 
     // 탈세했는지 확인하기
-
     public PlayerEvasionMessage checkEvasion(Player reporter, Player reportee) {
         // 신고한 사람이 없는 경우
         if (reporter.getReporteePlayerName() == null) {
