@@ -10,6 +10,7 @@ import {
   modalMsgState,
   pNumState,
   turnState,
+  whoAreYouState,
 } from "../../data/IngameData";
 import { useEffect } from "react";
 import MessageModal from "./MessageModal";
@@ -19,6 +20,7 @@ export default function NotMyTurn() {
   // 기본인자
   const turn = useRecoilValue(turnState); // 현재 플레이 순서
   const pNum = useRecoilValue(pNumState); // 현재 플레이 순서
+  const whoAreYou = useRecoilValue(whoAreYouState);
   const [doublePrison, setDoublePrison] = useRecoilState(doublePrisonState);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
@@ -47,7 +49,18 @@ export default function NotMyTurn() {
   return (
     <>
       <div className="notMyTurnContainer">
-        <div className="notMyTurnText">{turnMatch[turn]}</div>
+        <div className="notMyTurnText">
+          {whoAreYou == turn && (
+            <>
+              <div>당신의 차례입니다.</div>
+            </>
+          )}
+          {whoAreYou !== turn && (
+            <>
+              <div>{turnMatch[turn]}</div>
+            </>
+          )}
+        </div>
         {!isUserTurnVisible && !isCommonTurnVisible && <MessageModal />}
       </div>
     </>

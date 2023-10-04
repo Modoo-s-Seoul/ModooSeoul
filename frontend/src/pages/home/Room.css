@@ -67,6 +67,17 @@
 .ready {
   border: 10px solid rgb(118, 255, 225);
 }
+.readyBtn{
+  border: none;
+  background-color: rgb(164, 213, 213);
+  font-family: Dongle-Regular !important;
+  border-radius: 10px;
+  font-size: 20px;
+  transition: background-color 0.3s ease-in-out;
+}
+.readyBtn:hover{
+  background-color: rgb(98, 190, 190);
+}
 
 .crown {
 }

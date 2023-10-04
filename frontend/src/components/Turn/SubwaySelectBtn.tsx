@@ -5,23 +5,30 @@ import { useRecoilState } from "recoil";
 import {
   isSubwayActiveState,
   isSubwayState,
+  playerInfoState,
   turnState,
 } from "../../data/IngameData";
 import { useEffect } from "react";
+import { useSocket } from "../../pages/SocketContext";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 
 export default function SubwaySelectBtn() {
   // 기본인자
-  const [turn, setTurn] = useRecoilState(turnState);
+  const [turn] = useRecoilState(turnState);
   const [isSubway, setIsSubway] = useRecoilState(isSubwayState); // 지하철 변동
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글(board에서 감지)
+
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
   /** 선택완료시 */
   const toggleSelectSubway = () => {
     // 이동안할시
     if (isSubway[0].player == null) {
       setIsSubwayActive(false);
-      setTurn(turn + 1);
+      sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
       return;
     }
     // 이동할시
@@ -38,9 +45,7 @@ export default function SubwaySelectBtn() {
     // 플레이어 턴일시
     if (isSubwayActive) {
       const rollTimeout = setTimeout(() => {
-        // 가구현
-        // setTurn(turn + 1);
-        // 실제 구현 - 턴 변경 요청
+        setIsSubwayActive(false);
       }, 10000);
       if (!isSubwayActive) {
         clearTimeout(rollTimeout);
