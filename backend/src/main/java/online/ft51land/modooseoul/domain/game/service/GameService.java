@@ -316,8 +316,8 @@ public class GameService {
     public void passTurn(Game game) {
         List<Player> players = new ArrayList<>();
         for (String playerId : game.getPlayers()) {
-            playerRepository.findById(playerId)
-                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+            players.add(playerRepository.findById(playerId)
+                                        .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND)));
         }
         game.passTurn(players);
         gameRepository.save(game);

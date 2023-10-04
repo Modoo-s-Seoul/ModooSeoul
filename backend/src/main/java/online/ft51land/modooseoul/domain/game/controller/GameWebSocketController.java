@@ -197,6 +197,7 @@ public class GameWebSocketController {
 
 		Game game = gameService.getGameById(gameId);
 
+
 		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
 		if(game.getIsTimerActivated()){
 
@@ -208,7 +209,7 @@ public class GameWebSocketController {
 			if(game.getTimerType() == TimerType.ESTATE_PURCHASE
 					|| game.getTimerType()  == TimerType.STARTING_POINT_ARRIVAL
 					|| game.getTimerType()  == TimerType.FTOILLAND_ARRIVAL){
-				game.passTurn();
+				game.passTurn(playerService.getPlayersByGame(game));
 			}
 
 
