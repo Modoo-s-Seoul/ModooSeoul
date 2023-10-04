@@ -286,9 +286,9 @@ public class PlayerWebSocketController {
 		Game game = gameService.getGameById(player.getGameId());
 
 		// 턴 정보 확인
-//		if(!player.getTurnNum().equals(game.getTurnInfo())){
-//			throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-//		}
+		if(!player.getTurnNum().equals(game.getTurnInfo())){
+			throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+		}
 
 		// 로직 실행
 		PlayerEvasionMessage message = playerService.playerArrivedtaxService(player);
@@ -297,13 +297,4 @@ public class PlayerWebSocketController {
 		webSocketSendHandler.sendToGame("tax-service", game.getId(), message);
 	}
 
-	@MessageMapping("/test/{playerId}")
-	public void test(@DestinationVariable String playerId) {
-		Player player = playerService.getPlayerById(playerId);
-
-		player.playerMove(29L);
-		playerRepository.save(player);
-
-		System.out.println("player.Curr = " + player.getCurrentBoardIdx());
-	}
 }

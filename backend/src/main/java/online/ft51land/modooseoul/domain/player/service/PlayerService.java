@@ -560,9 +560,9 @@ public class PlayerService {
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
                                                        .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
 
-//        if(!(boardStatus.getBoardType() == BoardType.SPECIAL && boardStatus.getSpecialName().equals("국세청"))){
-//            throw new BusinessException(ErrorMessage.BAD_REQUEST);
-//        }
+        if(!(boardStatus.getBoardType() == BoardType.SPECIAL && boardStatus.getSpecialName().equals("국세청"))){
+            throw new BusinessException(ErrorMessage.BAD_REQUEST);
+        }
 
         // 국세청 도착 시 작업
         Boolean isEvade = evasionAction(player, null);
