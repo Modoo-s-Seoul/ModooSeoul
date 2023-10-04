@@ -313,10 +313,10 @@ public class PlayerWebSocketController {
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
 
-		// 턴 정보 확인
-		if(!player.getTurnNum().equals(game.getTurnInfo())){
-			throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-		}
+		// 턴 정보 확인 TODO : 주석해제하기
+//		if(!player.getTurnNum().equals(game.getTurnInfo())){
+//			throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//		}
 
 		// 로직 실행
 		PlayerEvasionMessage message = playerService.playerArrivedtaxService(player);

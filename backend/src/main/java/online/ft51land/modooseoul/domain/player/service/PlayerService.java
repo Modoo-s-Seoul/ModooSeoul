@@ -152,11 +152,11 @@ public class PlayerService {
 
         Game game = getGameById(rolledPlayer.getGameId());
 
-        // 턴 정보 확인
-        if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
-            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
+//            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
@@ -198,10 +198,10 @@ public class PlayerService {
 
         Game game = getGameById(player.getGameId());
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
                 .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
@@ -226,11 +226,11 @@ public class PlayerService {
 
         Game game = getGameById(player.getGameId());
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
                 .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
@@ -300,9 +300,6 @@ public class PlayerService {
 
         return  null;
     }
-
-
-
 
     // 플레이어 방 나가기
     public void leaveGame(Game game, Player player) {
@@ -551,15 +548,15 @@ public class PlayerService {
          *
          */
 
-        // 공통턴이 아닐때 pass 요청을 하면 에러
-        if(game.getTurnInfo() < game.getPlayers().size()){
-          throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 공통턴이 아닐때 pass 요청을 하면 에러 TODO : 주석해제하기
+//        if(game.getTurnInfo() < game.getPlayers().size()){
+//          throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
-        // 이미 행동을 완료한 플레이어가 다시 완료 했을 경우 예외 처리
-        if(player.getIsFinish()){
-            throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 이미 행동을 완료한 플레이어가 다시 완료 했을 경우 예외 처리 TODO : 주석해제하기
+//        if(player.getIsFinish()){
+//            throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
 
         player.finish();

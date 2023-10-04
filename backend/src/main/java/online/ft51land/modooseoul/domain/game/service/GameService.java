@@ -91,7 +91,7 @@ public class GameService {
 
         // 방 초기 세팅
         game.setBasicInfo(); // 방 기본 정보
-        sequencePlayer(game); // 선 정하기
+//        sequencePlayer(game); // 선 정하기 // TODO : 테스트용. 배포시에 주석 풀기
         setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
         setGameStocks(game); // 주식 초기값 저장
@@ -231,6 +231,8 @@ public class GameService {
             playerRepository.save(player);
         }
 
+        System.out.println("turn : " + game.getTurnInfo());
+
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
     }
@@ -345,7 +347,7 @@ public class GameService {
 
         for (String playerId : players) {
             Player player = playerRepository.findById(playerId)
-                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));;
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
             sortedPlayers.add(player);
         }
         return  sortToMoney(sortedPlayers);
