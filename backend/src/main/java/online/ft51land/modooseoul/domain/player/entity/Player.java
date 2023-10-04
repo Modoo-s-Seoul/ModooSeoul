@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Getter
 @RedisHash(value = "player")
 @NoArgsConstructor //기본 생성자 생성
@@ -35,12 +38,16 @@ public class Player extends BaseEntity {
     dice : 주사위
     already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
-    select_stock_id: 확인한 뉴스의 종목
-    reportee_player_id : 피고자(신고를 당한 사람)
+    select_news_id: 확인한 뉴스의 id
+    plus_news_id: 찬스카드에서 추가로 확인한 뉴스의 id
+    reportee_player_name : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
     is_prisoned :  감금여부
     is_finish : 공통 턴 완료 여부
+    dividend : 해당 라운드 수령 배당금
+    stockBoardId : 플레이어 주식 보드 아이디
+    chance_num: 찬스카드 번호
      */
     @Id
     private String id;
@@ -81,8 +88,11 @@ public class Player extends BaseEntity {
     @Column(name = "select_news_id")
     private Long selectNewsId;
 
-    @Column(name = "reportee_player_id")
-    private Long reporteePlayerId;
+    @Column(name = "plus_news_id")
+    private Long plusNewsId;
+
+    @Column(name = "reportee_player_name")
+    private String reporteePlayerName;
 
     @Column(name ="turn_num")
     private Long turnNum;
@@ -94,6 +104,14 @@ public class Player extends BaseEntity {
     private Boolean isPrisoned;
 
     private Boolean  isFinish;
+
+    private Long dividend;
+
+    private String stockBoardId;
+
+
+    @Column(name = "chance_num")
+    private Long chanceNum;
 
     @Builder
     public Player(String nickname, String gameId){
@@ -124,6 +142,7 @@ public class Player extends BaseEntity {
         this.dice = 0L;
         this.isDouble = false;
         this.selectNewsId = 0L;
+        this.plusNewsId = 0L;
 
         this.tax = 0L;
         this.isArrested = false;
@@ -133,6 +152,12 @@ public class Player extends BaseEntity {
 
         this.turnNum = turnNum;
         this.isFinish = false;
+
+        this.dividend = 0L;
+    }
+
+    public void setStockBoardId(String stockBoardId) {
+        this.stockBoardId = stockBoardId;
     }
 
     public void playerMove(Long currentBoardId) {
@@ -164,6 +189,8 @@ public class Player extends BaseEntity {
     }
 
     public void setNextRound(Long stockMoney) {
+        if (this.tax == 1L) // 신고당한 애들 미납금 정산시켜주기
+            this.tax = 0L;
         this.setIsPrisoned(false);
         this.stockMoney = stockMoney;
     }
@@ -176,9 +203,14 @@ public class Player extends BaseEntity {
         this.cash += toll;
     }
 
-    public void sellAllStock() {
+    public void sellAllStock(StockBoard stockBoard) {
         this.cash += this.stockMoney;
         this.stockMoney = 0L;
+
+        for (int i = 0; i < stockBoard.getGameStockIds().size(); i++) {
+            stockBoard.setStockMoneys(i, 0L);
+            stockBoard.setStockAmounts(i, 0L);
+        }
     }
 
     public void tradeStock(Long totalPrice) {
@@ -203,4 +235,70 @@ public class Player extends BaseEntity {
     public void finishInit(){
         this.isFinish = false;
     }
+
+    public void setDevidend() {
+        // 10% 적용하고 반올림하기 ex. 1940 -> 190, 19800 -> 19.8 -> 20 -> 2000
+        Double tmp = (double)this.stockMoney / 1000;
+        this.dividend = Math.round(tmp) * 100; // 10% 적용, 20% 적용은 200, 12%는 120
+        this.cash += dividend;
+    }
+
+    public void setTax(Long tax) {
+        this.tax = tax;
+    }
+
+    public void taxPayment() {
+        this.cash -= this.tax; // 보유한 현금에서 세금만큼 지불
+        setTax(0L); // 남은 세금 0으로
+    }
+
+    public void setReporteePlayerName(String name) {
+        this.reporteePlayerName = name;
+    }
+
+    public Long paySubwayFee(){
+        this.cash -= 100000;
+        return this.cash;
+    }
+
+    public Long payFTOilLandEffect(){
+        this.cash -= 100000;
+        return this.cash;
+    }
+
+    public void payPenalty(Long penalty) {
+        this.cash -= penalty;
+    }
+
+    public void receivePenalty(Long penalty) {
+        this.cash += penalty;
+    }
+
+    public void setChanceNum(Long chanceNum) {
+        this.chanceNum = chanceNum;
+    }
+
+    public void setSelectNewsId(Long cardIdx) {
+        this.selectNewsId = cardIdx;
+    }
+
+    public void winLotto() {
+        this.cash += 1_000_000L;
+    }
+
+    public void setNews() {
+        this.selectNewsId = 0L;
+        this.plusNewsId = 0L;
+    }
+
+    public void setPlusNewsId(Long cardIdx) {
+        this.plusNewsId = cardIdx;
+    }
+
+    public void sellBuildingAndGround(Long boardIdx, Long boardPrice) {
+        this.estates.remove(boardIdx);
+        this.cash += boardPrice;
+        this.estateMoney -= boardPrice;
+    }
+
 }

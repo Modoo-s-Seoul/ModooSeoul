@@ -1,26 +1,31 @@
 import { useEffect, useState } from "react";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { useSocket } from "../../../pages/SocketContext";
 import {
   roundState,
   turnState,
   isNewsVisibleState,
   playerInfoState,
+  selectedNewsState,
+  pNumState,
 } from "../../../data/IngameData";
 // import { sendPlayerMessage } from "../../IngameWs/IngameSendFunction";
-import { selectedNewsState } from "../../../data/IngameData";
 import TimeBar from "../../Base/TimeBar";
 import "./News.css";
 
 export default function News() {
   // 기본 인자
+
+  /** 이 값을 조정해 뉴스 떠있는 시간 조정 */
+  const newsTime = 10;
   const socketClient = useSocket();
-  const [timeCnt, setTimeCnt] = useState(5); // 시간 제한 5초
+  const [timeCnt, setTimeCnt] = useState(newsTime); // 시간 제한 5초
   const cards = [1, 2, 3, 4];
   const [selected, setSelected] = useState(false);
   const playerInfo = useRecoilValue(playerInfoState); // 플레이어 고유 정보
   const round = useRecoilValue(roundState); // 현재 라운드 수
-  const setTurn = useSetRecoilState(turnState);
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 턴 수
+  const pNum = useRecoilValue(pNumState); // 플레이어 수
   const setNewsVisible = useSetRecoilState(isNewsVisibleState);
   const selectedNews = useRecoilValue(selectedNewsState);
 
@@ -42,6 +47,11 @@ export default function News() {
 
   // 초측정
   useEffect(() => {
+    // 턴 수가 뉴스 턴이 아닐 경우 자동으로 꺼짐(개발용)
+    if (turn != pNum + 1) {
+      setNewsVisible(false);
+    }
+
     const timer = setInterval(() => {
       if (timeCnt > 1) {
         setTimeCnt(timeCnt - 1);
@@ -56,7 +66,7 @@ export default function News() {
     return () => {
       clearInterval(timer);
     };
-  }, [timeCnt]);
+  }, [turn, timeCnt]);
 
   useEffect(() => {
     console.log("선택된 뉴스:", selectedNews);
@@ -66,13 +76,14 @@ export default function News() {
     <>
       <div className="newsPageContainer">
         <div className="newsPageTitle">뉴스를 선택하세요!</div>
-        <TimeBar duration={10} />
+        <TimeBar duration={newsTime} />
         <div className="newsCardContainer">
           {cards.map((ele, index) => {
             return (
               <div
                 className={`newsCard ${selected ? "newsCardFade" : ""}`}
                 key={index}
+                style={{ cursor: "pointer" }}
                 onClick={() => getNews(ele)}
               >
                 {ele}

@@ -6,37 +6,200 @@
   align-items: center;
 }
 
+.taxThiefGrid {
+  width: 100%;
+  height: 80%;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  place-items: center;
+  gap: 10px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.taxThiefButton {
+  width: 80% !important;
+  height: 80% !important;
+  background-color: rgb(80, 80, 80) !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.taxThiefButton:hover {
+  border: 3px solid rgb(118, 255, 225) !important;
+  background-color: rgb(134, 134, 134) !important;
+}
+
+.selected {
+  transform: scale(0);
+}
+
+.questionBox {
+  width: 100%;
+
+  position: absolute;
+  top: 25%;
+
+  font-weight: bold;
+  font-size: xx-large;
+
+  transform: scale(0);
+  transition: all 0.3s ease-in-out;
+}
+
+.selectedBox {
+  width: 50%;
+  background-color: rgb(80, 80, 80);
+  border-radius: 20px;
+  border: 5px solid #9b0000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 50%;
+
+  font-weight: bold;
+  font-size: 80px;
+
+  transform: scale(0);
+  transition: all 0.3s ease-in-out;
+}
+
+.selectedBoxVisible {
+  transform: scale(1);
+}
+
 .playerButtonsContainer {
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
-.playerSelectBtn {
-  margin: 5px;
-  background-color: bisque !important;
-  color: black !important;
-  font-size: 20px;
+
+.reportButtonContainer {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  position: relative;
 }
-.reportBtn {
+
+.noticeBox {
+  width: 100%;
+  height: 100%;
+  font-size: xx-large;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  position: absolute;
+  transition: all 0.3s ease-in-out;
+}
+
+.reportButton {
   width: 150px;
   height: 60px;
-  background-color: #756b19 !important;
-  color: #fff;
+  background-color: red;
   border: none;
-  border-radius: 200px !important;
-  font-weight: bold !important;
-  font-weight: 400 !important;
+  border-radius: 200px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+
+  color: #fff;
+  font-weight: bold;
+  font-weight: 400;
   font-size: 30px;
-  transition: background-color 0.3s ease;
-  margin-top: 40px !important;
+
+  transform: scale(0);
+  transition: all 0.3s ease;
+  margin-top: 40px;
 }
-.reportBtn:hover {
-  background-color: #443e10 !important;
+
+.reportButtonVisible {
+  margin-left: 50%;
+  transform: scale(1);
 }
-.selected {
-  background-color: rgb(187, 152, 108) !important;
-  font-weight: 600;
+
+.cancelButton {
+  background-color: green;
+}
+
+.cancelButton:hover {
+  background-color: rgb(0, 175, 0) !important;
+}
+
+.cancelButtonVisible {
+  margin-right: 50%;
+  transform: scale(1);
+}
+
+.glowingButton {
+  position: relative;
+}
+
+.glowingButton:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 3s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 200px;
+}
+
+.glowingButton:active:after {
+  background: transparent;
+}
+
+.glowingButton:hover:before {
+  opacity: 1;
+}
+
+.glowingButton:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ff0000;
+  left: 0;
+  top: 0;
+  border-radius: 200px;
+}
+
+@keyframes glowing {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }

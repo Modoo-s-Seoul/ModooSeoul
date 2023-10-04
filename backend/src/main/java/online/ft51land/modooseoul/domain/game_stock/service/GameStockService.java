@@ -15,9 +15,11 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+//@Transactional
 public class GameStockService {
 
 	private final GameStockRepository gameStockRepository;
+
 
 	public List<GameStock> getGameStockById(Game game){
 		List<GameStock> gameStocks = new ArrayList<>();

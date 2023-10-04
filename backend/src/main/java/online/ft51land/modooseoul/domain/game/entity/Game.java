@@ -9,12 +9,14 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
+import online.ft51land.modooseoul.domain.game.entity.enums.TimerType;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.utils.entity.BaseEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,8 @@ public class Game extends BaseEntity {
     turn_info : 턴정보
     finishedPlayerCnt : 공통 턴에서 본인의 행동을 완료한 플레이어의 수
     isTimerActivated : 타이머 활성화 여부
+    timerType: 돌아가는 타이머의 타입
+    ftOilLandBoardId : FT OilLand인 땅 번호
      */
 
 	@Id
@@ -88,6 +92,10 @@ public class Game extends BaseEntity {
 
 	private Boolean isTimerActivated;
 
+	private TimerType timerType;
+
+	private Long ftOilLandBoardId;
+
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
@@ -95,7 +103,8 @@ public class Game extends BaseEntity {
 		this.players = new ArrayList<>();
 		this.createdDate = LocalDateTime.now();
 		this.finishedPlayerCnt = 0L;
-		this.isTimerActivated = true;
+		this.isTimerActivated = false;
+		this.timerType = null;
 	}
 
 	public void addPlayer(Player player) {
@@ -159,10 +168,12 @@ public class Game extends BaseEntity {
 		return ++this.turnInfo;
 	}
 
-	public void startTimer(){
+	public void startTimer(TimerType timerType){
+		this.timerType = timerType;
 		this.isTimerActivated = true;
 	}
 	public void expiredTimer(){
+		this.timerType = null;
 		this.isTimerActivated = false;
 	}
 
@@ -170,5 +181,12 @@ public class Game extends BaseEntity {
 		this.endType = endType;
 		this.winPlayerId = winPlayerId;
 		this.endTime = LocalDateTime.now();
+	}
+
+    public void setFTOilLand(Long boardId) {
+		this.ftOilLandBoardId = boardId;
+    }
+	public void ftOilLandInit() {
+		this.ftOilLandBoardId = null;
 	}
 }

@@ -1,0 +1,84 @@
+.keyHeader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.keyBody{
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.keyTitle{
+    font-size: 40px;
+}
+
+/* 하위 컴포넌트 */
+.innerKeyContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: auto;
+    padding-top: 20px;
+    border: 10px solid rgb(221, 196, 154);
+    /* border-radius: 500px; */
+    box-shadow: 4px 4px 16px black, -4px -4px 16px black;
+    width: 90%;
+    height: 70%;
+    animation: fadeIn 1s ease-in-out;
+}
+@keyframes fadeIn {
+    from {
+        transform: scale(0); /* 초기 크기: 0으로 시작 */
+        opacity: 0; /* 초기 투명도: 0으로 시작 */
+    }
+    to {
+        transform: scale(1); /* 최종 크기: 1 (원래 크기) */
+        opacity: 1; /* 최종 투명도: 1 (완전히 나타남) */
+    }
+}
+.innerKeyTitle{
+    font-size: 30px;
+}
+.keyNewsResult{
+    font-size: 24px;
+}
+.innerKeyBody{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
+    flex: 1;
+    /* height: 80%; */
+}
+.keyThiefContanier{
+    display: flex;
+    width: 80%;
+    height: 50%;
+    flex-direction: row;
+    /* flex: 1; */
+    justify-content: space-between;
+    align-items: center;
+
+}
+.keyThief{
+    border: 2px solid rgb(117, 117, 117);
+    padding: 5px;
+    margin: 5px;
+}
+.keySelectedThief{
+    border: 2px solid rgb(148, 4, 4);
+}
+.keyThiefResult,
+.keyLottoResult{
+    font-size: 30px;
+}
+
+.innerKeyNothing{
+    font-size: 90px;
+}
