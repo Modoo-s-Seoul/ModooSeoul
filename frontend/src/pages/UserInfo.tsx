@@ -1,10 +1,11 @@
 // 보드판에 있는 칸에 대한 정보입니다.
 import "./UserInfo.css";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   displayPlayerDataState,
   first_money,
   pNumState,
+  playerDataState,
   // playerDataState,
   turnState,
 } from "../data/IngameData";
@@ -19,6 +20,8 @@ export default function UserInfo() {
   const turn = useRecoilValue(turnState); // 현재 플레이 순서
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const firstmoney = useRecoilValue(first_money); // 초기 자금 기록
+  const [playerRealData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
 
   // 상승 하락 여부
   const [isMoneyIncrease, setIsMoneyIncrease] = useState<AnimationStates>({
@@ -42,6 +45,11 @@ export default function UserInfo() {
     "2": false,
     "3": false,
   });
+
+  /** 최초 돈 로드 */
+  useEffect(() => {
+    setDisplayPlayerData(playerRealData);
+  }, []);
 
   /** 돈에 변화 감지시 애니메이션 부여 */
   useEffect(() => {

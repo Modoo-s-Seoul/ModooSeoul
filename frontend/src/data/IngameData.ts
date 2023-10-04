@@ -89,6 +89,18 @@ export const scolState = atom<number>({
   default: 0,
 });
 
+/** 시작 문구 컴포넌트 활성화 */
+export const isGameStartVisibleState = atom<boolean>({
+  key: "isGameStartVisibleState",
+  default: false,
+});
+
+/** 순서 뽑기 컴포넌트 활성화 */
+export const isYourTurnVisibleState = atom<boolean>({
+  key: "isYourTurnVisibleState",
+  default: false,
+});
+
 /** 로딩 컴포넌트 활성화 */
 export const isLoadingVisibleState = atom<boolean>({
   key: "isLoadingVisibleState",
