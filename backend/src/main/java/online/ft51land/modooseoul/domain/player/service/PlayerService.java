@@ -350,8 +350,10 @@ public class PlayerService {
         if(boardStatus.getSpecialName().equals("지하철") && boardStatus.getBoardType() == BoardType.SPECIAL) {
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
         }
-        //특수칸 - 국세청 board 업데이트 되면 만들기
-        // TODO : 국세청 도착 메시지 만들어야함.
+        //특수칸 - 국세청
+        if (boardStatus.getSpecialName().equals("국세청") && boardStatus.getBoardType() == BoardType.SPECIAL) {
+            return PlayerArrivalBoardMessage.of("국세청 도착", boardStatus);
+        }
         return null;
     }
 
