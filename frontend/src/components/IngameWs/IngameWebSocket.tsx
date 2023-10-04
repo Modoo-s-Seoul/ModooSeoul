@@ -89,6 +89,22 @@ export default function IngameWebSocket() {
         setTurn(receivedData.turnInfo);
       });
 
+      // 턴 정보 확인
+      socketClient.subscribe(`/receive/game/turn/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+        setTurn(receivedData.turnInfo);
+      });
+
+      // 턴 종료
+      socketClient.subscribe(`/receive/game/pass-turn/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+        setTurn(receivedData.turnInfo);
+      });
+
       //공통 턴 행동 완료
       socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
