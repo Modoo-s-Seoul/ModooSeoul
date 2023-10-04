@@ -4,7 +4,6 @@ import {
   builingInfoState,
   displayPlayerDataState,
   doubleCntState,
-  groundChangeState,
   isModalMsgActiveState,
   isUserTurnVisibleState,
   matchPosition,
@@ -46,10 +45,9 @@ export default function Ground() {
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
   // 데이터
-  const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
-  const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
+  const [boardData] = useRecoilState(boardDataState); // 보드 데이터
+  const [turnData, setTurnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
-  const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
   const oilLand = useRecoilValue(oilLandState); // 오일랜드 위치
 
@@ -70,16 +68,9 @@ export default function Ground() {
 
   /** 땅 구매 */
   const buyGround = () => {
-    // 보드 데이터 갱신
-    const newData = { ...boardData };
-    newData[`${tRow}-${tCol}`] = {
-      ...newData[`${tRow}-${tCol}`],
-      sell: true,
-      player: turn,
-    };
-    setBoardData(newData);
-    // 땅 변동사항 업데이트
-    setGroundChange([{ player: turn, index: turnData.index }]);
+    // 실제구현
+    sendWsMessage(socketClient, playerInfo.playerId, "send/purchase/ground");
+
     // 땅 구매비용 발생
     const newPlayerData = [...playerData];
     newPlayerData[turn] = {
@@ -95,16 +86,14 @@ export default function Ground() {
 
   /** 땅판매 */
   const sellGround = () => {
-    // 보드 데이터 갱신
-    const newGroundData = { ...boardData };
-    newGroundData[`${tRow}-${tCol}`] = {
-      ...newGroundData[`${tRow}-${tCol}`],
-      sell: false,
-      player: null,
-    };
-    setBoardData(newGroundData);
-    // 땅 변동사항 업데이트
-    setGroundChange([{ player: 6, index: turnData.index }]);
+    // 실제 구현
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      "send/ground-sell",
+      `{"boardIdx":${1}}`
+    );
+
     // 땅 팔시 건물도 모두 매각
     const newBuildingData = { ...builingData };
     for (let i = 0; i < 3; i++) {
@@ -237,6 +226,30 @@ export default function Ground() {
       }
     }
   }, [isUserTurnVisibleState]);
+
+  // 타이머 관련
+  useEffect(() => {
+    // 타이머 요청
+    sendWsMessage(
+      socketClient,
+      playerInfo.gameId,
+      `send/timer`,
+      `{"timerType":"ESTATE_PURCHASE"}`
+    );
+    // // 언마운트시 타이머 해제
+    // return () => {
+    //   sendWsMessage(
+    //     socketClient,
+    //     playerInfo.playerId,
+    //     "/send/timer-cancel"
+    //   );
+    // };
+  }, []);
+
+  // 턴데이터 갱신
+  useEffect(() => {
+    setTurnData(boardData[`${tRow}-${tCol}`]);
+  }, [tCol, tRow]);
 
   return (
     <>
