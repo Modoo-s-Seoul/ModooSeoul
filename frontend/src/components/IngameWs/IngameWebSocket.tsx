@@ -27,7 +27,7 @@ export default function IngameWebSocket() {
       //// 공통 구독 ////
 
       // 플레이어 기본 정보/순서 확인
-      socketClient.subscribe(`/receive/game/init/${gameId}`, (msg) => {
+      socketClient.subscribe(`/receive/game/player-info/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
       });
