@@ -5,19 +5,19 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   selectedNewsState,
   playerDataState,
-  displayPlayerDataState,
   roundState,
   turnState,
   timerState,
   dice1State,
   dice2State,
   isPrisonState,
+  diceActiveState,
+  whoAreYouState,
 } from "../../data/IngameData";
 
 export default function IngameWebSocket() {
   // 세팅할 데이터들
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
-  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const setRound = useSetRecoilState(roundState); // 현재 라운드
   const setTurn = useSetRecoilState(turnState); // 현재 플레이 순서
   const setTimer = useSetRecoilState(timerState); // 현재 플레이 순서
@@ -25,15 +25,19 @@ export default function IngameWebSocket() {
   const setDice1Value = useSetRecoilState(dice1State);
   const setDice2Value = useSetRecoilState(dice2State);
   const setPrison = useSetRecoilState(isPrisonState);
+  const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
+  const setWhoAreYou = useSetRecoilState(whoAreYouState); // 본인의 턴 기록
 
   // 게임 정보
   const weblocation = useLocation();
   let gameId = "test";
   let playerId = "test";
+  let nickname = "test";
   gameId;
   if (weblocation.state) {
     gameId = weblocation.state.gameId;
     playerId = weblocation.state.playerId;
+    nickname = weblocation.state.nickname;
   }
   /**웹소켓 클라이언트 */
   const socketClient = useSocket();
@@ -58,9 +62,13 @@ export default function IngameWebSocket() {
             cash: receivedData[i].cash,
             totalAsset: receivedData[i].totalAsset,
           };
+          // 본인의 턴 기록
+          if (nickname == receivedData[i].nickname) {
+            setWhoAreYou(i);
+            console.log("본인의 턴은", i, "입니다.");
+          }
         }
         setPlayerData(newPlayerData);
-        setDisplayPlayerData(newPlayerData);
       });
 
       //라운드 시작
@@ -95,6 +103,7 @@ export default function IngameWebSocket() {
         console.log(receivedData);
         setDice1Value(receivedData.first);
         setDice2Value(receivedData.second);
+        setDiceActive(true);
       });
 
       // 땅 구매

@@ -113,7 +113,7 @@ export default function Board() {
   const [sCol, setSCol] = useRecoilState(scolState); // 시작점 선택 col
   const [dice1, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
   const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
-  const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
+  const [diceActive, setDiceActive] = useRecoilState(diceActiveState); // 주사위 상태
   const [isRolling, setIsRolling] = useRecoilState(isRollingState); // 주사위 굴리기 버튼 활성화 상태
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
     isUserTurnVisibleState
@@ -157,7 +157,7 @@ export default function Board() {
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
 
   // 플레이어 개인정보
-  const whoAreYou = useRecoilValue(whoAreYouState);
+  const whoAreYou = useRecoilValue(whoAreYouState); // 본인의 턴
 
   // 음악
   const audio = useRecoilValue(musicState);
@@ -238,13 +238,14 @@ export default function Board() {
   /** phaser 에셋 생성 */
   function create(this: Phaser.Scene) {
     // 배경 생성
-    // const gradient = this.add.graphics();
-    // gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
-    // gradient.fillRect(0, 0, config.scale.width, config.scale.height);
-    // setBackgroundSprite((prevBackgroundSprite) => [
-    //   ...prevBackgroundSprite,
-    //   gradient,
-    // ]);
+    const gradient = this.add.graphics();
+    gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
+    gradient.fillRect(0, 0, config.scale.width, config.scale.height);
+    setBackgroundSprite((prevBackgroundSprite) => [
+      ...prevBackgroundSprite,
+      gradient,
+    ]);
+    gradient.setAlpha(0.5);
 
     // 보드 생성
     const tileSize = globalTileSize;
@@ -576,11 +577,11 @@ export default function Board() {
     }
 
     // 주사위 값 결정
-    const Dice1 = Math.floor(Math.random() * 6) + 1;
-    const Dice2 = Math.floor(Math.random() * 6) + 1;
-    setDiceActive(true);
-    setDice1Value(Dice1);
-    setDice2Value(Dice2);
+    // const Dice1 = Math.floor(Math.random() * 6) + 1;
+    // const Dice2 = Math.floor(Math.random() * 6) + 1;
+    // setDiceActive(true);
+    // setDice1Value(Dice1);
+    // setDice2Value(Dice2);
   };
 
   /** 주사위 굴리기 함수(개발자용) */
@@ -611,24 +612,42 @@ export default function Board() {
     // 유저정보 기본 세팅
     let gameId = "test";
     let playerId = "test";
+    let nickname = "test";
     if (weblocation.state) {
       console.log("전달받은 아이디 있음");
       gameId = weblocation.state.gameId;
       playerId = weblocation.state.playerId;
+      nickname = weblocation.state.nickname;
       window.localStorage.setItem("gameId", gameId);
       window.localStorage.setItem("playerId", playerId);
+      window.localStorage.setItem("nickname", nickname);
+      const newPlayerInfo = { ...playerInfo };
+      newPlayerInfo.gameId = gameId;
+      newPlayerInfo.playerId = playerId;
+      newPlayerInfo.nickname = nickname;
+      setPlayerInfo(newPlayerInfo);
     } else {
       console.log("전달받은 아이디 없음");
       const getGameid = window.localStorage.getItem("gameId");
       const getPlayerid = window.localStorage.getItem("playerId");
+      const getNickname = window.localStorage.getItem("nickname");
       if (getGameid != null) {
         gameId = getGameid;
       }
       if (getPlayerid) {
         playerId = getPlayerid;
       }
+      if (getNickname) {
+        nickname = getNickname;
+      }
+      const newPlayerInfo = { ...playerInfo };
+      newPlayerInfo.gameId = gameId;
+      newPlayerInfo.playerId = playerId;
+      newPlayerInfo.nickname = nickname;
+      setPlayerInfo(newPlayerInfo);
     }
     console.log("---------------", gameId, playerId);
+    setDisplayPlayerData(playerData);
 
     sendWsMessage(socketClient, gameId, "send/players-info");
 
@@ -748,7 +767,7 @@ export default function Board() {
   /** 유저 턴 구현 */
   useEffect(() => {
     // 주사위가 던져지고 나면
-    if (isRolling) {
+    if (diceActive) {
       // 1. 도착지 깃발 위치 이동
       let goRow = playerPositions[turn].row;
       let goCol = playerPositions[turn].col;
@@ -781,7 +800,7 @@ export default function Board() {
         setDiceActive(false);
       }, 2000);
     }
-  }, [isRolling, dice1, dice2]);
+  }, [isRolling, dice1, dice2, diceActive]);
 
   /** 공통 턴 구현 */
   useEffect(() => {
@@ -1013,6 +1032,7 @@ export default function Board() {
         config.scale.width,
         config.scale.height
       );
+      backgroundSprite[0].setAlpha(0.5);
       // 클릭이벤트 원복
       for (let i = 0; i < groundSprite.length; i++) {
         groundSprite[i].removeAllListeners("pointerdown");
@@ -1038,10 +1058,10 @@ export default function Board() {
       <GroundSelectBtn />
 
       {/* 주사위 */}
-      <DiceRoll rollDiceInBoard={rollDice} />
+      {whoAreYou == turn && <DiceRoll rollDiceInBoard={rollDice} />}
 
       {/* 유저턴 */}
-      <IngameModal visible={isUserTurnVisible}>
+      <IngameModal visible={isUserTurnVisible && whoAreYou == turn}>
         {isUserTurnVisible && <UserTurn />}
       </IngameModal>
 
