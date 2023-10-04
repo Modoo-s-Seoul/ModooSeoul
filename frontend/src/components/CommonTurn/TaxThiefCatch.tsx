@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 
 import "./TaxThiefCatch.css";
 import { playerDataState, playerInfoState } from "../../data/IngameData";
-import { sendPlayerMessage } from "../IngameWs/IngameSendFunction";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 import { useSocket } from "../../pages/SocketContext";
 
 export default function TaxThiefCatch() {
@@ -32,7 +32,7 @@ export default function TaxThiefCatch() {
   /** 플레이어 신고 */
   const handleReport = () => {
     if (selected) {
-      sendPlayerMessage(
+      sendWsMessage(
         socketClient,
         playerInfo.playerId,
         "sent/report",

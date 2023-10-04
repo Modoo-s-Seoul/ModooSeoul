@@ -5,10 +5,7 @@ import GameOption from "../components/Base/GameOption";
 
 // 웹소켓
 import IngameWebSocket from "../components/IngameWs/IngameWebSocket";
-import {
-  sendPlayerMessage,
-  // sendGameMessage,
-} from "../components/IngameWs/IngameSendFunction";
+import { sendWsMessage } from "../components/IngameWs/IngameSendFunction";
 import { useSocket } from "./SocketContext";
 import { useLocation } from "react-router-dom";
 // 컴포넌트 로드
@@ -101,7 +98,6 @@ export default function Board() {
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
   const setDoublePrison = useSetRecoilState(doublePrisonState);
   const pNum = useRecoilValue(pNumState); // 플레이어 수
-  const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
   const subwayChange = useRecoilValue(isSubwayState); // 지하철 변동
@@ -110,7 +106,6 @@ export default function Board() {
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
 
-  const setRound = useSetRecoilState(roundState); // 현재 라운드
   const setIsPlayerMove = useSetRecoilState(isPlayerMoveState);
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
@@ -577,7 +572,7 @@ export default function Board() {
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
     if (socketClient) {
-      sendPlayerMessage(socketClient, playerInfo.playerId, "send/roll");
+      sendWsMessage(socketClient, playerInfo.playerId, "send/roll");
     }
 
     // 주사위 값 결정
@@ -614,25 +609,14 @@ export default function Board() {
   /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
-    if (weblocation.state) {
-      setPlayerInfo({
-        nickname: weblocation.state.nickname,
-        gameId: weblocation.state.gameId,
-        playerId: weblocation.state.playerId,
-      });
-    }
-    // 자본금 지금
-    const newPlayerData = [...playerData];
-    for (let i = 0; i < pNum; i++) {
-      newPlayerData[i] = {
-        ...newPlayerData[i],
-        money: firstMoneyValue,
-      };
-    }
-    setPlayerData(newPlayerData);
-    setDisplayPlayerData(newPlayerData);
+    const gameId = weblocation.state.gameId;
+    const playerId = weblocation.state.playerId;
+
+    sendWsMessage(socketClient, gameId, "send/players-info");
+
     // 라운드 세팅
-    setRound((prev) => prev + 1);
+    sendWsMessage(socketClient, gameId, "send/round-start");
+
     console.log("플레이어 고유 정보입니다", playerInfo);
     console.log("플레이어 시작 정보입니다", playerData);
 
