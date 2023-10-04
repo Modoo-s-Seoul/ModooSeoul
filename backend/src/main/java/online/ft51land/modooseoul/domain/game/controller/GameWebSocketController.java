@@ -173,7 +173,8 @@ public class GameWebSocketController {
 					// ftoilland 도착시 시간내에 땅을 선택하지 못한 경우 -> 타이머 만료, 턴 패스
 					if(gameStartTimerRequestDto.timerType() == TimerType.ESTATE_PURCHASE
 							|| gameStartTimerRequestDto.timerType() == TimerType.STARTING_POINT_ARRIVAL
-							|| gameStartTimerRequestDto.timerType() == TimerType.FTOILLAND_ARRIVAL){
+							|| gameStartTimerRequestDto.timerType() == TimerType.FTOILLAND_ARRIVAL
+							|| gameStartTimerRequestDto.timerType() == TimerType.FREE_ACTION){
 						gameService.passTurn(timerGame);
 					}
 
