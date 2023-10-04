@@ -66,7 +66,7 @@ public class BoardStatusService {
                     .of(false
                             , PurchaseMessage.CASH_INSUFFICIENT //구매할 현금이 부족합니다.
                             , player.getCurrentBoardIdx()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
         if(boardStatus.getOwnerId() != null) {
@@ -74,7 +74,7 @@ public class BoardStatusService {
                     .of(false
                             , PurchaseMessage.GROUND_OWNER_EXISTS //땅의 소유자가 있습니다.
                             , player.getCurrentBoardIdx()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
         //초기화
@@ -97,7 +97,7 @@ public class BoardStatusService {
                 .of(true
                         , PurchaseMessage.GROUND_PURCHASE_SUCCESS //땅구매에 성공하였습니다.
                         , player.getCurrentBoardIdx()
-                        , player.getId()));
+                        , player.getTurnNum()));
     }
 
 
@@ -138,7 +138,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
         if(boardStatus.getBuildings() == null) {
@@ -155,7 +155,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
 
         }
 
@@ -168,7 +168,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
 
@@ -180,7 +180,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
 
@@ -197,7 +197,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
 
         }
 
@@ -234,7 +234,7 @@ public class BoardStatusService {
                         ,boardIdxForBuilding
                         ,buildingPurchaseRequestDto.buildingIdx()
                         ,buildingPurchaseRequestDto.buildingId()
-                        ,player.getId()));
+                        ,player.getTurnNum()));
     }
 
 
