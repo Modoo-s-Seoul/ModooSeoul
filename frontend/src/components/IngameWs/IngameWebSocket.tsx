@@ -58,7 +58,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/roll/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("주사위 정보", receivedData);
       });
 
       // 땅 구매

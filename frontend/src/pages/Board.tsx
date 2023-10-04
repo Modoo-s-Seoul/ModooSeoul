@@ -5,10 +5,7 @@ import GameOption from "../components/Base/GameOption";
 
 // 웹소켓
 import IngameWebSocket from "../components/IngameWs/IngameWebSocket";
-import {
-  sendPlayerMessage,
-  // sendGameMessage,
-} from "../components/IngameWs/IngameSendFunction";
+import { sendWsMessage } from "../components/IngameWs/IngameSendFunction";
 import { useSocket } from "./SocketContext";
 import { useLocation } from "react-router-dom";
 // 컴포넌트 로드
@@ -578,7 +575,7 @@ export default function Board() {
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
     if (socketClient) {
-      sendPlayerMessage(socketClient, playerInfo.playerId, "send/roll");
+      sendWsMessage(socketClient, playerInfo.playerId, `send/roll`);
     }
 
     // 주사위 값 결정
