@@ -620,7 +620,7 @@ export default function Board() {
     sendWsMessage(socketClient, gameId, "send/players-info");
 
     // 라운드 세팅
-    sendWsMessage(socketClient, gameId, "send/round-start");
+    // sendWsMessage(socketClient, gameId, "send/round-start");
 
     console.log("플레이어 고유 정보입니다", playerInfo);
     console.log("플레이어 시작 정보입니다", playerData);
