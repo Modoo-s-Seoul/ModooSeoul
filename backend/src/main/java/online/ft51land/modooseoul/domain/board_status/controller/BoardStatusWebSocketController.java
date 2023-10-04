@@ -13,8 +13,6 @@ import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerFTOilLandRequestDto;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
-import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -61,12 +59,10 @@ public class BoardStatusWebSocketController {
         webSocketSendHandler.sendToGame("purchase/building", player.getGameId(), buildingPurchaseMessage);
 
 
-        if(player.getCurrentBoardIdx() == 1) { // 시적점에 도착해서 건물을 구매하는 경우
-            // 타이머 만료, 턴 넘기기
-            gameService.playersActionFinish(game);
-            gameService.passTurn(game);
-            webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
-        }
+        // 타이머 만료, 턴 넘기기
+        gameService.playersActionFinish(game);
+        gameService.passTurn(game);
+        webSocketSendHandler.sendToGame("timer", game.getId(), GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
 
     }
 
