@@ -29,8 +29,6 @@ import { PlayerPosition } from "../interface/ingame";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
-  first_money,
-  roundState,
   turnState,
   dice1State,
   dice2State,
@@ -63,10 +61,14 @@ import {
   whoAreYouState,
   groundMsgNumState,
   doublePrisonState,
+  isGameStartVisibleState,
+  isYourTurnVisibleState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
 import GroundSelectBtn from "../components/CommonTurn/GroundSelectBtn";
+import GameStart from "../components/Base/intro/GameStart";
+import YourTurn from "../components/Base/intro/YourTurn";
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -102,7 +104,7 @@ export default function Board() {
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
   const subwayChange = useRecoilValue(isSubwayState); // 지하철 변동
   const [playerInfo, setPlayerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
-  const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
+  const [playerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
 
@@ -124,6 +126,11 @@ export default function Board() {
   const [loadingVisible, setLoadingVisible] = useRecoilState(
     isLoadingVisibleState
   ); // 로딩 페이지 토글
+  // 기본 인자
+  const [isGameStartVisible, setIsGameStartVisible] = useRecoilState(
+    isGameStartVisibleState
+  ); // 1. 게임스타트 인자
+  const isYourTurnVisible = useRecoilValue(isYourTurnVisibleState); // 2. 순서정하기
   const [isOilActive, setIsOilActive] = useRecoilState(isOilActiveState); // 오일 토글
   const [oilLand, setOilLand] = useRecoilState(oilLandState); // 오일 위치
   const [isSubwayActive, setIsSubwayActive] =
@@ -210,11 +217,7 @@ export default function Board() {
     // 건물 에셋
     this.load.image("sampleBuilding", "assets/building.png");
     this.load.image("sampleShop", "assets/shop.png");
-    // 지역구 에셋
-    this.load.image("area0", "assets/area/west.png");
-    this.load.image("area1", "assets/area/north.png");
-    this.load.image("area2", "assets/area/east.png");
-    this.load.image("area3", "assets/area/south.png");
+
     // 캐릭터 에셋
     for (let i = 0; i < 4; i++) {
       this.load.image(characterAssetNames[i], characterAssetLocation[i]);
@@ -300,27 +303,6 @@ export default function Board() {
           ]);
         }
       }
-    }
-
-    // 지역구 삽입
-    const areaColRow = [
-      [4, 0, -0.5, 0.65],
-      [8, 4, -0.5, -0.65],
-      [4, 8, 0.5, -0.65],
-      [0, 4, 0.5, 0.65],
-    ];
-    for (let i = 0; i < 4; i++) {
-      const x =
-        (areaColRow[i][0] - areaColRow[i][1]) * (tileSize / 2) +
-        config.scale.width / 2;
-      const y =
-        (areaColRow[i][0] + areaColRow[i][1]) * (tileSize / 4) +
-        config.scale.height / 2;
-      const area = this.add
-        .image(x, y, `area${i}`)
-        .setOrigin(0.5 + areaColRow[i][2], 3.35 + areaColRow[i][3]);
-      area.setScale(1, 1);
-      area.setAlpha(0.2);
     }
 
     // 플레이어 위치 초기화
@@ -415,8 +397,9 @@ export default function Board() {
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, flag]);
     setEtcSprite((prevEtcSprite) => [...prevEtcSprite, oileffect]);
 
-    // 생성 완료후 - 로딩
+    // 생성 완료후 - 로딩, 게임스타트
     setLoadingVisible(false);
+    setIsGameStartVisible(true);
   }
 
   /** 플레이어 이동 함수 */
@@ -474,7 +457,8 @@ export default function Board() {
         // 기본 정보 재세팅
         setDoubleCnt(0);
         setIsRolling(false);
-        setTurn(turn + 1);
+        // 턴넘기기
+        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
         return;
       }
     }
@@ -527,7 +511,7 @@ export default function Board() {
     if (totalDice === 0) {
       etcSprite[1].setAlpha(0);
       playerPositions[turn].subway = false;
-      setTurn(turn + 1);
+      sendWsMessage(socketClient, playerInfo.playerId, "send/roll");
     }
     // 클릭 이동시
     for (let i = 0; i < totalDice; i++) {
@@ -1045,13 +1029,21 @@ export default function Board() {
     <div>
       {/* 로딩 */}
       {loadingVisible && <Loading />}
-      {!loadingVisible && <NotMyTurn />}
-      {!loadingVisible && <RoundInfo />}
+      {!loadingVisible && <GameStart />}
+      {!isGameStartVisible && <YourTurn />}
+      {!loadingVisible && !isGameStartVisible && !isYourTurnVisible && (
+        <NotMyTurn />
+      )}
+      {!loadingVisible && !isGameStartVisible && !isYourTurnVisible && (
+        <RoundInfo />
+      )}
+      {!loadingVisible && !isGameStartVisible && !isYourTurnVisible && (
+        <UserInfo />
+      )}
 
       {/* 기본 세팅 */}
       <IngameWebSocket />
       <GameOption />
-      <UserInfo />
       <OilSelectBtn />
       <SubwaySelectBtn />
       <StartSelectBtn />
@@ -1102,14 +1094,16 @@ export default function Board() {
         <button onClick={rollDiceDev}>굴리기</button>
         <button
           onClick={() => {
-            setTurn((turn + pNum + 1) % (pNum + 2));
+            sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
+            // setTurn((turn + pNum + 1) % (pNum + 2));
           }}
         >
           턴 하나 뒤로
         </button>
         <button
           onClick={() => {
-            setTurn((turn + 1) % (pNum + 2));
+            sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
+            // setTurn((turn + 1) % (pNum + 2));
           }}
         >
           턴 하나 앞으로
