@@ -36,7 +36,6 @@ public class PlayerWebSocketController {
 
 	private final WebSocketSendHandler webSocketSendHandler;
 
-
 	// 플레이어 참가
 	@MessageMapping("/join/{gameId}")
 	public void playerJoin(@DestinationVariable String gameId) {
@@ -87,12 +86,7 @@ public class PlayerWebSocketController {
 			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
 		}
 
-		if(gameService.checkGameEnd(player.getGameId())) { //파산하지 않은 수가 1명이면
-			//게임 종료
-			Game game = gameService.getGameById(player.getGameId());
-			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
-			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
-		}
+
 	}
 
 	// 뉴스 선택하기
