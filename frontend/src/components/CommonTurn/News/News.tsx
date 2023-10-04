@@ -9,7 +9,7 @@ import {
   selectedNewsState,
   pNumState,
 } from "../../../data/IngameData";
-// import { sendPlayerMessage } from "../../IngameWs/IngameSendFunction";
+import { sendWsMessage } from "../../IngameWs/IngameSendFunction";
 import TimeBar from "../../Base/TimeBar";
 import "./News.css";
 
@@ -35,12 +35,12 @@ export default function News() {
   round;
 
   const getNews = (idx: number) => {
-    // sendPlayerMessage(
-    //   socketClient,
-    //   playerInfo.playerId,
-    //   `send/news`,
-    //   `{"currentRound":${round},"cardIdx":${idx}}`
-    // );
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      `send/news`,
+      `{"currentRound":${round},"cardIdx":${idx}}`
+    );
     console.log(idx);
     setSelected(true);
   };

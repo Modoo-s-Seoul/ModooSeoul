@@ -609,8 +609,13 @@ export default function Board() {
   /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
-    const gameId = weblocation.state.gameId;
-    const playerId = weblocation.state.playerId;
+    let gameId = "test";
+    let playerId = "test";
+
+    if (weblocation.state) {
+      gameId = weblocation.state.gameId;
+      playerId = weblocation.state.playerId;
+    }
 
     sendWsMessage(socketClient, gameId, "send/players-info");
 

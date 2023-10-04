@@ -5,6 +5,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   selectedNewsState,
   playerDataState,
+  playerInfoState,
   displayPlayerDataState,
   roundState,
   turnState,
@@ -12,19 +13,24 @@ import {
   dice1State,
   dice2State,
   isPrisonState,
+  stockState,
+  stockLabelState,
 } from "../../data/IngameData";
 
 export default function IngameWebSocket() {
   // 세팅할 데이터들
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
+  const setPlayerInfo = useSetRecoilState(playerInfoState); // 플레이어 인게임 정보
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const setRound = useSetRecoilState(roundState); // 현재 라운드
-  const setTurn = useSetRecoilState(turnState); // 현재 플레이 순서
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setTimer = useSetRecoilState(timerState); // 현재 플레이 순서
   const setSelectedNews = useSetRecoilState(selectedNewsState); // 뉴스
   const setDice1Value = useSetRecoilState(dice1State);
   const setDice2Value = useSetRecoilState(dice2State);
   const setPrison = useSetRecoilState(isPrisonState);
+  const [stock, setStock] = useRecoilState(stockState);
+  const [stockLabel, setStockLabel] = useRecoilState(stockLabelState);
 
   // 게임 정보
   const weblocation = useLocation();
@@ -40,6 +46,13 @@ export default function IngameWebSocket() {
 
   /** 초기구독 */
   useEffect(() => {
+    if (weblocation.state) {
+      setPlayerInfo({
+        nickname: weblocation.state.nickname,
+        gameId: gameId,
+        playerId: playerId,
+      });
+    }
     // WebSocket 연결 설정 및 관리 코드를 이곳에 추가하세요.
     if (socketClient !== null) {
       //// 공통 구독 ////
@@ -70,6 +83,26 @@ export default function IngameWebSocket() {
         console.log(receivedData);
         setRound(receivedData.currentRound);
         /* 주식 정보 업데이트 */
+        const newStock = [...stock];
+        for (let i = 0; i < 3; ++i) {
+          if (newStock[i].stockName.length === 0) {
+            newStock[i] = {
+              ...newStock[i],
+              stockName: receivedData.stockName[i],
+            };
+          }
+          newStock[i] = {
+            ...newStock[i],
+            stockPrice: [
+              ...newStock[i].stockPrice,
+              receivedData.stockPrices[i],
+            ],
+          };
+        }
+
+        const newLabel = [...stockLabel, `${turn}R`];
+        setStock(newStock);
+        setStockLabel(newLabel);
       });
 
       //타이머 시작,완료,취소 알림
