@@ -199,7 +199,7 @@ export default function Room() {
                           className="readyBtn"
                           onClick={() => readyPlayer(socketClient, playerId)}
                         >
-                          레디
+                          Ready
                         </button>
                       ) : (
                         <div>준비 중...</div>
