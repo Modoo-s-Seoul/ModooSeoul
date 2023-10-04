@@ -364,7 +364,7 @@ public class PlayerService {
         playerRepository.save(player);
 
         Chance chance = chanceRepository.findById(chanceNum)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.CHANCE_NOT_FOUND));;
+                .orElseThrow(()-> new BusinessException(ErrorMessage.CHANCE_NOT_FOUND));
 
         PlayerChanceMessage playerChanceMessage = PlayerChanceMessage.of(chance.getName(),chance.getDescription());
         return playerChanceMessage;
@@ -761,6 +761,9 @@ public class PlayerService {
 
         // 국세청 도착 시 작업
         Boolean isEvade = evasionAction(player, null);
+
+        // 턴 넘기기
+        passTurn(player);
 
         // 메시지 가공
         return PlayerEvasionMessage.ofGame(isEvade, player);
