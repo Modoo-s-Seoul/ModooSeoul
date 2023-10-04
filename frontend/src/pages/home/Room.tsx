@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // import { ipAddress } from "../../api/RoomApi";
 import { useSocket } from "../SocketContext";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { alertModalState, roomStatus } from "../../data/CommonData";
 import { unsubscribeRoom } from "../../api/RoomApi";
 import BackBtn from "../../components/Base/BackBtn";
@@ -11,12 +11,19 @@ import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
 import { handleFullScreen } from "../../components/Base/BaseFunc";
 import { AlertModal } from "../../components/Base/AlertModal";
+import {
+  pNumState,
+  modalMsgState,
+  isModalMsgActiveState,
+} from "../../data/IngameData";
+import NoLandMessage from "../../components/Base/MessageModal";
 
 /** 게임 대기룸 컴포넌트. 
   초대링크, 방생성을 통해서만 접근 가능*/
 export default function Room() {
   const [alertMsg, setAlertMsg] = useState(""); // alert modal
   const [alertVisible, setAlertVisible] = useRecoilState(alertModalState);
+  const setpNumState = useSetRecoilState(pNumState);
   /**웹소켓 클라이언트 */
   const socketClient = useSocket();
   const navigate = useNavigate();
@@ -28,8 +35,8 @@ export default function Room() {
   const playerId = location.state.playerId;
 
   const [curRoomStatus, setRoomStatus] = useRecoilState(roomStatus);
-
-  console.log(location.state);
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 모달 메세지 토글
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
 
   /**게임시작 */
   const handleStartGame = () => {
@@ -47,13 +54,13 @@ export default function Room() {
     navigator.clipboard
       .writeText(gameUrl)
       .then(() => {
-        setAlertMsg("링크가 클립보드에 복사되었습니다.");
-        setAlertVisible(true);
+        setModalMsg("링크가 클립보드에 복사되었습니다.");
+        setIsModalMsgActive(true);
       })
       .catch((error) => {
         console.error("링크 복사 실패:", error);
-        setAlertMsg("링크 복사에 실패했습니다.");
-        setAlertVisible(true);
+        setModalMsg("링크 복사에 실패했습니다.");
+        setIsModalMsgActive(true);
       });
   };
 
@@ -64,10 +71,16 @@ export default function Room() {
     }
   };
 
+  const leaveRoom = (socketClient: CompatClient | null, playerId: string) => {
+    if (socketClient !== null) {
+      socketClient.send(`/send/leave/${playerId}`);
+    }
+  };
+
   useEffect(() => {
     if (socketClient !== null) {
-      // 참가한 방의 정보를 알려주는 채널
-      socketClient.subscribe(`/receive/game/join/${gameId}`, (msg) => {
+      //  현재 방의 정보를 알려주는 채널
+      socketClient.subscribe(`/receive/game/init/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         console.log("Room Status:", message);
         const receivedData = message.data;
@@ -77,12 +90,12 @@ export default function Room() {
       // 플레이어 참가. 참가한 방의 정보 업데이트
       socketClient.send(`/send/join/${gameId}`);
 
-      // 준비 완료 시 갱신된 참가한 방의 정보를 알려주는 채널
-      socketClient.subscribe(`/receive/game/ready/${gameId}`, (msg) => {
+      // 방에서 누군가가 나갈 시 나간 사람의 정보를 알려주는 채널
+      socketClient.subscribe(`/receive/game/leave/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         const receivedData = message.data;
-        console.log("Ready Status", receivedData);
-        setRoomStatus(receivedData);
+        setAlertMsg(`${receivedData.nickname} 님이 이 방에서 나갔습니다.`);
+        setAlertVisible(true);
       });
 
       // 참가한 방의 게임 시작 가능 여부를 알려주는 채널
@@ -100,7 +113,7 @@ export default function Room() {
             },
           });
         } else {
-          setAlertMsg(receivedData.data);
+          setAlertMsg(receivedData.message);
           setAlertVisible(true);
         }
       });
@@ -117,15 +130,23 @@ export default function Room() {
 
   useEffect(() => {
     console.log("Current Room Status", curRoomStatus);
+    setpNumState(curRoomStatus.length);
   }, [curRoomStatus]);
 
   return (
     <>
+      <NoLandMessage />
       {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
         <div className="roomHeader">
-          <BackBtn />
-          <div className="roomHeaderBtn" onClick={handleCopyLink}>
+          <div onClick={() => leaveRoom(socketClient, playerId)}>
+            <BackBtn />
+          </div>
+          <div
+            className="roomHeaderBtn"
+            style={{ cursor: "pointer" }}
+            onClick={handleCopyLink}
+          >
             링크 복사
           </div>
         </div>
@@ -144,9 +165,7 @@ export default function Room() {
                     key={ele.nickname}
                   >
                     {ele.nickname === nickname ? (
-                      <div style={{ backgroundColor: "red" }}>
-                        {`${index === 0 ? "👑" : ""} ${ele.nickname}`}
-                      </div>
+                      <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     ) : (
                       <div>{`${index === 0 ? "👑" : ""} ${ele.nickname}`}</div>
                     )}

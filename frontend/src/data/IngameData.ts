@@ -8,6 +8,7 @@ import {
   builingInfoType,
   groundInfoType,
   buildingChangeType,
+  stockChangeType,
   subwayChangeType,
 } from "../interface/ingame";
 
@@ -32,6 +33,12 @@ export const sample2 = selector({
 export const doubleCntState = atom<number>({
   key: "doubleCntState",
   default: 0,
+});
+
+/** 더블 감옥 여부 */
+export const doublePrisonState = atom<boolean>({
+  key: "doublePrisonState",
+  default: false,
 });
 
 /** 플레이어 이동 토글 */
@@ -124,10 +131,10 @@ export const isStartActiveState = atom<boolean>({
   default: false,
 });
 
-/** 초기자금 */
-export const first_money = atom<number>({
-  key: "first_money",
-  default: 10000000,
+/** 시작점선택 활성화 */
+export const isCommonGroundSellActiveState = atom<boolean>({
+  key: "isCommonGroundSellActiveState",
+  default: false,
 });
 
 /** 주사위 1 */
@@ -154,16 +161,32 @@ export const isRollingState = atom<boolean>({
   default: false,
 });
 
-/** 플레이어 고유 정보 기록 */
+/** 현재 플레이어의 고유 정보 기록 */
 export const playerInfoState = atom<PlayerInfo>({
   key: "playerInfoState",
-  default: { gameId: "", playerId: "" },
+  default: { nickname: "", gameId: "", playerId: "" },
 });
 
-/** 플레이어 인게임 정보 기록 */
+/** 인게임 플레이어 정보 (웹소켓 갱신) */
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
-  default: [],
+  default: [
+    { name: "Player 1", money: 0, color: "dd9090" },
+    { name: "Player 2", money: 0, color: "909add" },
+    { name: "Player 3", money: 0, color: "90dd9a" },
+    { name: "Player 4", money: 0, color: "dddc90" },
+  ],
+});
+
+/** 인게임 플레이어 정보 (화면 출력용) */
+export const displayPlayerDataState = atom<PlayerData[]>({
+  key: "displayPlayerDataState",
+  default: [
+    { name: "Player 1", money: 0, color: "dd9090" },
+    { name: "Player 2", money: 0, color: "909add" },
+    { name: "Player 3", money: 0, color: "90dd9a" },
+    { name: "Player 4", money: 0, color: "dddc90" },
+  ],
 });
 
 /** 플레이어 위치 기록 */
@@ -208,6 +231,12 @@ export const startMsgNumState = atom<number>({
   default: 0,
 });
 
+/** 공통턴 땅판매 선택순서 */
+export const groundMsgNumState = atom<number>({
+  key: "groundMsgNumState",
+  default: 0,
+});
+
 /** 보드판 위치 정보 */
 export const matchPosition = atom<defaultMatch[]>({
   key: "matchPosition",
@@ -247,6 +276,19 @@ export const matchPosition = atom<defaultMatch[]>({
   ],
 });
 
+/**게임 내의 모든 주식 종목들의 가격 기록 */
+export const stockState = atom<stockChangeType[]>({
+  key: "stockState",
+  default: [
+    { stockName: "OO전자", stockPrice: [] },
+    { stockName: "ㅁㅁ건설", stockPrice: [] },
+    { stockName: "XX바이오", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+    // { stockName: "", stockPrice: [] },
+  ],
+});
+
 /** 모달 메세지 토글 */
 export const isModalMsgActiveState = atom<boolean>({
   key: "isModalMsgActiveState",
@@ -259,10 +301,42 @@ export const modalMsgState = atom<string>({
   default: "",
 });
 
-//// 플레이어 개인
+///////////////////////// 플레이어 개인
+
+/** 본인의 턴 */
+export const whoAreYouState = atom<number>({
+  key: "whoAreYouState",
+  default: 0,
+});
+
+/** 본인턴 여부 */
+export const yourTurnState = atom<boolean>({
+  key: "yourTurnState",
+  default: false,
+});
+
+/** 초기자금 */
+export const first_money = atom<number>({
+  key: "first_money",
+  default: 10000000,
+});
+
+/** 탈세금 */
+export const dirtyMoneyState = atom<number>({
+  key: "dirtyMoneyState",
+  default: 50000,
+});
+
+/** 뉴스 보관 */
 export const selectedNewsState = atom<string>({
   key: "selectedNewsState",
   default: "뉴스",
+});
+
+/** 추가 뉴스 보관 */
+export const moreNewsState = atom<string>({
+  key: "moreNewsState",
+  default: "",
 });
 
 /** 감옥 여부 */
@@ -275,4 +349,10 @@ export const isPrisonState = atom<boolean>({
 export const isSubwayState = atom<subwayChangeType[]>({
   key: "isSubwayState",
   default: [{ player: null, row: 0, col: 0, move: false }],
+});
+
+/** 찬스카드 내용 */
+export const keyRandomState = atom<string>({
+  key: "keyRandomState",
+  default: "tax",
 });

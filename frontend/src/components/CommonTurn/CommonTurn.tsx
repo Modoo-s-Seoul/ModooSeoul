@@ -1,35 +1,105 @@
 // import React from 'react';
-import { useEffect, useState } from 'react';
-import './CommonTurn.css';
-import TaxThiefCatch from './TaxThiefCatch';
-import CloseBtnCommon from './CloseBtnCommon';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useEffect, useState } from "react";
+import "./CommonTurn.css";
+import TaxThiefCatch from "./TaxThiefCatch";
+import CloseButton from "../Base/CloseButton";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import {
   roundState,
   isCommonTurnVisibleState,
   turnState,
   isPrisonState,
-} from '../../data/IngameData';
-import ClickBtn from '../Base/CustomButton';
-import TimeBar from '../Base/TimeBar';
+  pNumState,
+  isCommonGroundSellActiveState,
+  modalMsgState,
+  isModalMsgActiveState,
+  matchPosition,
+  whoAreYouState,
+} from "../../data/IngameData";
+import TimeBar from "../Base/TimeBar";
+import StockTrade from "./Stock/StockTrade";
+import IngameModal from "../Base/IngameModal";
+import MessageModal from "../Base/MessageModal";
+import { boardDataState } from "../../data/BoardData";
 
 export default function CommonTurn() {
   // 기본 인자
-  const [timeCnt, setTimeCnt] = useState(10);
+  const commonTime = 100000000000;
+  const [timeCnt, setTimeCnt] = useState(commonTime);
   const setRound = useSetRecoilState(roundState);
-  const setTurn = useSetRecoilState(turnState);
-  const setCommonTurn = useSetRecoilState(isCommonTurnVisibleState);
-  const [isPrison, setIsPrison] = useRecoilState(isPrisonState); // 감옥
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 턴 수
+  const pNum = useRecoilValue(pNumState); // 플레이어 수
+  const setIsCommonTurnVisible = useSetRecoilState(isCommonTurnVisibleState);
+  const [isPrison, setIsPrison] = useRecoilState(isPrisonState); // 감옥 여부
+  const [isTradeVisible, setIsTradeVisible] = useState(false); // 주식 거래
+  const [isTaxCatchVisible, setIsTaxCatchVisible] = useState(false); // 탈세자 신고
+  const setIsCGSA = useSetRecoilState(isCommonGroundSellActiveState); // 땅 판매 버튼 열기
+  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 모달 메세지 토글
+  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
+  // 플레이어 개인정보
+  const whoAreYou = useRecoilValue(whoAreYouState);
+  // 데이터 보관
+  const matchPos = useRecoilValue(matchPosition); // 매칭데이터
+  const boardData = useRecoilValue(boardDataState); // 보드 데이터
+
+  /**거래창 열기 */
+  const openTrade = () => {
+    setIsTradeVisible(true);
+  };
+
+  /**거래창 닫기 */
+  const closeTrade = () => {
+    setIsTradeVisible(false);
+  };
+
+  /**탈세자 신고창 열기 */
+  const openTaxCatch = () => {
+    setIsTaxCatchVisible(true);
+  };
+
+  /**탈세자 신고창 닫기 */
+  const closeTaxCatch = () => {
+    setIsTaxCatchVisible(false);
+  };
+
+  /**땅판매 열기 */
+  const openGroundSell = () => {
+    // 판매 검증
+    let canAct = false;
+    for (let i = 0; i < matchPos.length; i++) {
+      const row = matchPos[i].row;
+      const col = matchPos[i].col;
+      if (boardData[`${row}-${col}`].player == whoAreYou) {
+        // 지을수 있는 땅이 있으면
+        canAct = true;
+        break;
+      }
+    }
+
+    if (canAct) {
+      // 선택가능한 땅이 있을때
+      setIsCGSA(true);
+    } else {
+      // 선택가능한 땅이 없을때 - 메세지 표기
+      setModalMsg("선택가능한 땅이 없습니다.");
+      setIsModalMsgActive(true);
+    }
+  };
 
   // 초측정
   useEffect(() => {
+    // 턴 수가 공통 턴이 아닐 경우 자동으로 꺼짐(개발용)
+    if (turn != pNum) {
+      setIsCommonTurnVisible(false);
+    }
+
     const timer = setInterval(() => {
-      if (timeCnt > 0) {
+      if (timeCnt > 1) {
         setTimeCnt(timeCnt - 1);
       } else {
         clearInterval(timer); // 타이머 정지
         // 0초일시 턴 넘기기 (비활성화)
-        setCommonTurn(false);
+        setIsCommonTurnVisible(false);
         setTurn((prev) => prev + 1);
         setRound((prev) => prev + 1);
         /** 감옥 여부 초기화  */
@@ -42,7 +112,7 @@ export default function CommonTurn() {
     return () => {
       clearInterval(timer);
     };
-  }, [timeCnt]);
+  }, [turn, timeCnt]);
 
   return (
     <>
@@ -50,12 +120,8 @@ export default function CommonTurn() {
       {isPrison && (
         <>
           <div className="commonTurnContainer">
-            {/* 상단 바 */}
-            <CloseBtnCommon />
-            <div className="commonTimer">{timeCnt}</div>
-            <TimeBar duration={60} />
             {/* 본문 */}
-            <div className={'commonBody'}>
+            <div className={"modalBaseBody"}>
               <div>감옥에서는 아무 행동도 취할 수 없습니다.</div>
             </div>
           </div>
@@ -63,51 +129,58 @@ export default function CommonTurn() {
       )}
       {/* 감옥이 아닐시 */}
       {!isPrison && (
-        <>
-          <TaxThiefCatch />
-          <div className="commonTurnContainer">
-            {/* 상단 바 */}
-            <CloseBtnCommon />
-            <div className="commonTimer">{timeCnt}</div>
-            <TimeBar duration={60} />
-            {/* 본문 */}
-            <div className={'commonBody'}>
-              {/* 주식 */}
-              <div className="commonStockGraph">
-                <div>주식 그래프</div>
-              </div>
-              <div className="commonTradingContainer">
-                <div className="commonTadingBox">
-                  <div>주식 1</div>
-                  <div className="twoBtnBox">
-                    <div className="stockValueBtn">-</div>
-                    <div>{` 갯수 `}</div>
-                    <div className="stockValueBtn">+</div>
-                  </div>
-                </div>
-                <div className="commonTadingBox">
-                  <div>주식 2</div>
-                  <div className="twoBtnBox">
-                    <div className="stockValueBtn">-</div>
-                    <div>{` 갯수 `}</div>
-                    <div className="stockValueBtn">+</div>
-                  </div>
-                </div>
-                <div className="commonTadingBox">
-                  <div>주식 3</div>
-                  <div className="twoBtnBox">
-                    <div className="stockValueBtn">-</div>
-                    <div>{` 갯수 `}</div>
-                    <div className="stockValueBtn">+</div>
-                  </div>
-                </div>
-              </div>
-              <div>예상 보유 자산 : 10억</div>
-              <ClickBtn height={40} width={120} text="거래하기" fontsize={24} />
+        <div className={`modalBaseContainer`}>
+          {/* 상단 바 */}
+          <div className="modalBaseTitle">공통 턴</div>
+          <MessageModal />
+
+          {/* 본문 */}
+          <div className="modalBaseBody">
+            <div
+              className="modalBaseButton"
+              style={{ cursor: "pointer" }}
+              onClick={openGroundSell}
+            >
+              부동산 판매
+            </div>
+            <div
+              className="modalBaseButton"
+              onClick={openTrade}
+              style={{ cursor: "pointer" }}
+            >
+              주식 거래
+            </div>
+            <div
+              className="modalBaseButton taxCatchButton"
+              onClick={openTaxCatch}
+              style={{ cursor: "pointer" }}
+            >
+              탈세 신고
             </div>
           </div>
-        </>
+
+          {/* 주식 */}
+          <IngameModal visible={isTradeVisible}>
+            {isTradeVisible && <StockTrade />}
+            <div style={{ cursor: "pointer" }}>
+              <CloseButton onClick={closeTrade} />
+            </div>
+          </IngameModal>
+
+          {/* 탈세자 신고 */}
+          <IngameModal visible={isTaxCatchVisible}>
+            {isTaxCatchVisible && <TaxThiefCatch />}
+            <div style={{ cursor: "pointer" }}>
+              <CloseButton onClick={closeTaxCatch} />
+            </div>
+          </IngameModal>
+        </div>
       )}
+
+      {/* TimeBar 렌더링 */}
+      <div className="timeBarContainer">
+        <TimeBar duration={commonTime} />
+      </div>
     </>
   );
 }

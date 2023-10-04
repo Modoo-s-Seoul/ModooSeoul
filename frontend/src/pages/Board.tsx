@@ -28,7 +28,7 @@ import StartSelectBtn from "../components/Turn/StartSelectBtn";
 // css 로드
 import "./Board.css";
 // 데이터로드
-import { PlayerPosition, PlayerData } from "../interface/ingame";
+import { PlayerPosition } from "../interface/ingame";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   pNumState,
@@ -61,19 +61,22 @@ import {
   srowState,
   scolState,
   isPlayerMoveState,
-  modalMsgState,
-  isModalMsgActiveState,
+  displayPlayerDataState,
+  isCommonGroundSellActiveState,
+  whoAreYouState,
+  groundMsgNumState,
+  doublePrisonState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
-import MessageModal from "../components/Base/MessageModal";
+import GroundSelectBtn from "../components/CommonTurn/GroundSelectBtn";
 
 ////////  게임 보드 /////////
 export default function Board() {
   const game = useRef<HTMLDivElement | null>(null);
 
   // 글로벌 변수들
-  const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
+  // const colorPalette = ["dd9090", "909add", "90dd9a", "dddc90"];
   const colorPaletteTint = [0xdd9090, 0x909add, 0x90dd9a, 0xdddc90];
   colorPaletteTint;
   const offset = 10; // 플레이어 위치 조정
@@ -96,30 +99,23 @@ export default function Board() {
 
   // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
+  const setDoublePrison = useSetRecoilState(doublePrisonState);
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const firstMoneyValue = useRecoilValue(first_money); // 초기 자본
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
   const subwayChange = useRecoilValue(isSubwayState); // 지하철 변동
-  const playerDeafaults: PlayerData[] = [];
   const [playerInfo, setPlayerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
-  playerData;
-  for (let i = 1; i <= pNum; i++) {
-    playerDeafaults.push({
-      name: `Player ${i}`,
-      money: firstMoneyValue,
-      color: colorPalette[i - 1],
-    });
-  }
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
+  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
 
   const setRound = useSetRecoilState(roundState); // 현재 라운드
-  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
   const setIsPlayerMove = useSetRecoilState(isPlayerMoveState);
   const setTRow = useSetRecoilState(trowState); // 현재 턴 row
   const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
-  const setSRow = useSetRecoilState(srowState); // 시작점 선택 row
-  const setSCol = useSetRecoilState(scolState); // 시작점 선택 col
+  const [sRow, setSRow] = useRecoilState(srowState); // 시작점 선택 row
+  const [sCol, setSCol] = useRecoilState(scolState); // 시작점 선택 col
   const [dice1, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
   const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
@@ -133,15 +129,17 @@ export default function Board() {
   const [loadingVisible, setLoadingVisible] = useRecoilState(
     isLoadingVisibleState
   ); // 로딩 페이지 토글
-  const isOilActive = useRecoilValue(isOilActiveState); // 오일 토글
-  const setOilLand = useSetRecoilState(oilLandState); // 오일 위치
+  const [isOilActive, setIsOilActive] = useRecoilState(isOilActiveState); // 오일 토글
+  const [oilLand, setOilLand] = useRecoilState(oilLandState); // 오일 위치
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글
-  const setIsSubway = useSetRecoilState(isSubwayState); // 지하철 변동
-  const isStartActive = useRecoilValue(isStartActiveState); // 시작점 토글
-  const [, setStartNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
-  const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
-  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
+  const [isSubway, setIsSubway] = useRecoilState(isSubwayState); // 지하철 변동
+  const [isStartActive, setIsStartActive] = useRecoilState(isStartActiveState); // 시작점 토글
+  const [startNum, setStartNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
+  const [groundMsgNum, setGroundMsgNum] = useRecoilState(groundMsgNumState); // 공통턴 선택 순서
+  const [isCommonGroundSellActive, setIsCGSA] = useRecoilState(
+    isCommonGroundSellActiveState
+  ); // 공통턴 땅판매 토글
 
   // 데이터 보관
   const [boardData] = useRecoilState(boardDataState); // 보드데이터
@@ -163,6 +161,9 @@ export default function Board() {
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
 
+  // 플레이어 개인정보
+  const whoAreYou = useRecoilValue(whoAreYouState);
+
   // 음악
   const audio = useRecoilValue(musicState);
   const [isNewsVisible, setIsNewsVisible] = useRecoilState(isNewsVisibleState); // 공통 턴 수행 가능 여부
@@ -175,7 +176,7 @@ export default function Board() {
   const config = {
     type: Phaser.AUTO,
     parent: "gameScreen",
-    // transparent: true, //배경 투명하게 설정
+    transparent: true, //배경 투명하게 설정
 
     // 캔버스 크기 창 크기에 따라 자동 맞춤되는 옵션
     scale: {
@@ -200,10 +201,25 @@ export default function Board() {
 
   /** phaser 에셋 불러오기 */
   function preload(this: Phaser.Scene) {
-    // 보드관련 에셋
-    this.load.image("sampleTile", "assets/Polygon3.png");
+    // 보드 에셋
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (row === 0 || col === 0 || row === 8 || col === 8) {
+          this.load.image(
+            `boardframe_${row}-${col}`,
+            `assets/board/${row}-${col}.png`
+          );
+        }
+      }
+    }
+    // 건물 에셋
     this.load.image("sampleBuilding", "assets/building.png");
     this.load.image("sampleShop", "assets/shop.png");
+    // 지역구 에셋
+    this.load.image("area0", "assets/area/west.png");
+    this.load.image("area1", "assets/area/north.png");
+    this.load.image("area2", "assets/area/east.png");
+    this.load.image("area3", "assets/area/south.png");
     // 캐릭터 에셋
     for (let i = 0; i < 4; i++) {
       this.load.image(characterAssetNames[i], characterAssetLocation[i]);
@@ -227,13 +243,13 @@ export default function Board() {
   /** phaser 에셋 생성 */
   function create(this: Phaser.Scene) {
     // 배경 생성
-    const gradient = this.add.graphics();
-    gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
-    gradient.fillRect(0, 0, config.scale.width, config.scale.height);
-    setBackgroundSprite((prevBackgroundSprite) => [
-      ...prevBackgroundSprite,
-      gradient,
-    ]);
+    // const gradient = this.add.graphics();
+    // gradient.fillGradientStyle(0xadd8e6, 0xadd8e6, 0x87ceeb, 0x87ceeb, 1);
+    // gradient.fillRect(0, 0, config.scale.width, config.scale.height);
+    // setBackgroundSprite((prevBackgroundSprite) => [
+    //   ...prevBackgroundSprite,
+    //   gradient,
+    // ]);
 
     // 보드 생성
     const tileSize = globalTileSize;
@@ -246,14 +262,13 @@ export default function Board() {
 
           // 폴리곤
           const sampleTile = this.add
-            .image(x, y, "sampleTile")
+            .image(x, y, `boardframe_${row}-${col}`)
             .setOrigin(0.5, 3.35);
           sampleTile.setScale(1, 1);
           setGroundSprite((prevGroundSprite) => [
             ...prevGroundSprite,
             sampleTile,
           ]);
-          // sampleTile.setTint(0xff0000);
 
           // 디폴트 건물 1
           const sampleBuilding = this.add
@@ -289,6 +304,27 @@ export default function Board() {
           ]);
         }
       }
+    }
+
+    // 지역구 삽입
+    const areaColRow = [
+      [4, 0, -0.5, 0.65],
+      [8, 4, -0.5, -0.65],
+      [4, 8, 0.5, -0.65],
+      [0, 4, 0.5, 0.65],
+    ];
+    for (let i = 0; i < 4; i++) {
+      const x =
+        (areaColRow[i][0] - areaColRow[i][1]) * (tileSize / 2) +
+        config.scale.width / 2;
+      const y =
+        (areaColRow[i][0] + areaColRow[i][1]) * (tileSize / 4) +
+        config.scale.height / 2;
+      const area = this.add
+        .image(x, y, `area${i}`)
+        .setOrigin(0.5 + areaColRow[i][2], 3.35 + areaColRow[i][3]);
+      area.setScale(1, 1);
+      area.setAlpha(0.2);
     }
 
     // 플레이어 위치 초기화
@@ -428,8 +464,7 @@ export default function Board() {
     // 더블 맥스 처리
     if (doubleCnt > 1) {
       if (Dice1 == Dice2) {
-        setModalMsg("더블 3회! 감옥이동");
-        setIsModalMsgActive(true);
+        setDoublePrison(true);
         // 캐릭터 감옥이동
         const tileSize = globalTileSize;
         const x = 8 * (tileSize / 2) + config.scale.width / 2;
@@ -575,19 +610,31 @@ export default function Board() {
     history.pushState(null, "", location.href);
   };
 
+  ///////////// 인게임 useEffect ///////////////
   /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
     if (weblocation.state) {
       setPlayerInfo({
+        nickname: weblocation.state.nickname,
         gameId: weblocation.state.gameId,
         playerId: weblocation.state.playerId,
       });
     }
-    setPlayerData(playerDeafaults);
+    // 자본금 지금
+    const newPlayerData = [...playerData];
+    for (let i = 0; i < pNum; i++) {
+      newPlayerData[i] = {
+        ...newPlayerData[i],
+        money: firstMoneyValue,
+      };
+    }
+    setPlayerData(newPlayerData);
+    setDisplayPlayerData(newPlayerData);
+    // 라운드 세팅
     setRound((prev) => prev + 1);
     console.log("플레이어 고유 정보입니다", playerInfo);
-    console.log("플레이어 시작 정보입니다", playerDeafaults);
+    console.log("플레이어 시작 정보입니다", playerData);
 
     // 보드 세팅
     if (game.current) {
@@ -649,6 +696,13 @@ export default function Board() {
       etcSprite[0].setAlpha(0);
     }
   }, [turn]);
+
+  /** 깃발 동기화 */
+  useEffect(() => {
+    if (etcSprite[1] && groundMsgNum == 0) {
+      etcSprite[1].setAlpha(0);
+    }
+  }, [groundMsgNum, turn]);
 
   /** 땅 정보 변경시 */
   useEffect(() => {
@@ -729,8 +783,16 @@ export default function Board() {
 
   /** 공통 턴 구현 */
   useEffect(() => {
-    // 유저턴 언로드
+    // 각종턴 언로드
     setIsUserTurnVisible(false);
+    setIsOilActive(false);
+    setIsOilActive(false);
+    setIsStartActive(false);
+    setIsSubwayActive(false);
+    setIsCGSA(false);
+    setDoubleCnt(0);
+    setGroundMsgNum(0);
+    setStartNum(0);
 
     if (turn === pNum) {
       // 공통턴 띄우기
@@ -783,12 +845,18 @@ export default function Board() {
           const y =
             (col + row) * (globalTileSize / 4) + config.scale.height / 2;
           etcSprite[1].setPosition(x + 10, y - 220);
-          etcSprite[1].setAlpha(1);
-          setIsSubway([{ player: turn, row: row, col: col, move: false }]);
+          // 토글
+          if (isSubway[0].player === null) {
+            etcSprite[1].setAlpha(1);
+            setIsSubway([{ player: turn, row: row, col: col, move: false }]);
+          } else {
+            etcSprite[1].setAlpha(0);
+            setIsSubway([{ player: null, row: row, col: col, move: false }]);
+          }
         });
       }
     }
-  }, [isSubwayActive]);
+  }, [isSubwayActive, isSubway]);
 
   /** 오일랜드 선택시 */
   useEffect(() => {
@@ -807,9 +875,15 @@ export default function Board() {
               (col - row) * (globalTileSize / 2) + config.scale.width / 2;
             const y =
               (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+            // 토글
             etcSprite[2].setPosition(x, y - offset2 - 10);
-            etcSprite[2].setAlpha(1);
-            setOilLand(i);
+            if (oilLand === -1) {
+              etcSprite[2].setAlpha(1);
+              setOilLand(i);
+            } else {
+              etcSprite[2].setAlpha(0);
+              setOilLand(-1);
+            }
           });
         }
       }
@@ -823,7 +897,7 @@ export default function Board() {
         }
       }
     }
-  }, [isOilActive]);
+  }, [isOilActive, oilLand]);
 
   /** 시작점 선택시 */
   useEffect(() => {
@@ -843,11 +917,18 @@ export default function Board() {
             const y =
               (col + row) * (globalTileSize / 4) + config.scale.height / 2;
             etcSprite[1].setPosition(x + 10, y - 220);
-            etcSprite[1].setAlpha(1);
-            console.log("선택은", row, col);
             setSRow(row);
             setSCol(col);
-            setStartNum(1);
+            // 토글
+            if (startNum === 0) {
+              etcSprite[1].setAlpha(1);
+              setSRow(row);
+              setSCol(col);
+              setStartNum(1);
+            } else {
+              etcSprite[1].setAlpha(0);
+              setStartNum(0);
+            }
           });
         }
       }
@@ -861,11 +942,60 @@ export default function Board() {
         }
       }
     }
-  }, [isStartActive]);
+  }, [isStartActive, startNum]);
 
-  /** 변경 이벤트 (오일랜드, 지하철, 시작점) */
+  /** 공통턴 - 땅판매 선택시 */
   useEffect(() => {
-    if (isOilActive || isSubwayActive || isStartActive) {
+    // 본인 턴 값에 일치하는 땅에 대해서만 조사
+    if (isCommonGroundSellActive) {
+      // 투명화
+      for (let i = 0; i < matchPos.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== whoAreYou) {
+          groundSprite[i].setAlpha(0.1);
+        } else {
+          // 클릭이벤트 넣기
+          groundSprite[i].setInteractive();
+          groundSprite[i].on("pointerdown", () => {
+            const x =
+              (col - row) * (globalTileSize / 2) + config.scale.width / 2;
+            const y =
+              (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+            etcSprite[1].setPosition(x, y - offset2 - 10);
+            // 토글
+            if (groundMsgNum === 1 && sRow == row && sCol == col) {
+              etcSprite[1].setAlpha(0);
+              setGroundMsgNum(0);
+            } else {
+              etcSprite[1].setAlpha(1);
+              setSRow(row);
+              setSCol(col);
+              setGroundMsgNum(1);
+            }
+          });
+        }
+      }
+    } else if (backgroundSprite[0]) {
+      // 투명 원복
+      for (let i = 0; i < groundSprite.length; i++) {
+        const row = matchPos[i].row;
+        const col = matchPos[i].col;
+        if (boardData[`${row}-${col}`].player !== turn) {
+          groundSprite[i].setAlpha(1);
+        }
+      }
+    }
+  }, [isCommonGroundSellActive, groundMsgNum, sCol, sRow]);
+
+  /** 변경 이벤트 (오일랜드, 지하철, 시작점, 공통턴땅판매) */
+  useEffect(() => {
+    if (
+      isOilActive ||
+      isSubwayActive ||
+      isStartActive ||
+      isCommonGroundSellActive
+    ) {
       backgroundSprite[0].clear();
     } else if (backgroundSprite[0]) {
       backgroundSprite[0].fillGradientStyle(
@@ -886,7 +1016,7 @@ export default function Board() {
         groundSprite[i].removeAllListeners("pointerdown");
       }
     }
-  }, [isOilActive, isSubwayActive, isStartActive]);
+  }, [isOilActive, isSubwayActive, isStartActive, isCommonGroundSellActive]);
 
   /** 렌더링 부분 */
   return (
@@ -903,10 +1033,10 @@ export default function Board() {
       <OilSelectBtn />
       <SubwaySelectBtn />
       <StartSelectBtn />
+      <GroundSelectBtn />
 
       {/* 주사위 */}
       <DiceRoll rollDiceInBoard={rollDice} />
-      {!isUserTurnVisible && <MessageModal />}
 
       {/* 유저턴 */}
       <IngameModal visible={isUserTurnVisible}>
@@ -914,7 +1044,7 @@ export default function Board() {
       </IngameModal>
 
       {/* 공통턴 */}
-      <IngameModal width="85vw" height="70vh" visible={isCommonTurnVisible}>
+      <IngameModal visible={isCommonTurnVisible}>
         {isCommonTurnVisible && <CommonTurn />}
       </IngameModal>
 
