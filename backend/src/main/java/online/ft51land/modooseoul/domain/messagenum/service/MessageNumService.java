@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.messagenum.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class MessageNumService {
 
     private final MessageNumRepository messageNumRepository;
