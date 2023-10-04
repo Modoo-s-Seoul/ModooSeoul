@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
+//@Transactional
 public class WebSocketSendHandler {
 
 	private final MessageNumRepository messageNumRepository;

@@ -3,6 +3,8 @@ package online.ft51land.modooseoul.domain.player.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
+import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
+import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
@@ -33,7 +35,6 @@ public class PlayerWebSocketController {
 	private final GameService gameService;
 
 	private final WebSocketSendHandler webSocketSendHandler;
-
 
 
 	// 플레이어 참가
@@ -267,12 +268,8 @@ public class PlayerWebSocketController {
 
 		PlayerEvasionMessage message = null;
 		Player reportee = null;
-		System.out.println("player.getNickname() = " + player.getNickname());
-		System.out.println("player.getReporteePlayerName() = " + player.getReporteePlayerName());
 		for (String playerIds : game.getPlayers()) {
 			reportee = playerService.getPlayerById(playerIds);
-			System.out.println("reportee.getId() = " + reportee.getId());
-			System.out.println("reportee.getNickname() = " + reportee.getNickname());
 			if (reportee.getNickname().equals(player.getReporteePlayerName())) {
 				message = playerService.checkEvasion(player, reportee);
 				break;
@@ -288,7 +285,7 @@ public class PlayerWebSocketController {
 
 		webSocketSendHandler.sendToPlayer("evasion-reporter", playerId, player.getGameId(), message);
 
-		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+		// 신고 당한 사람에게 보내는 메시지
 		message = PlayerEvasionMessage.ofGame(message.isEvade(), reportee);
 
 		webSocketSendHandler.sendToGame("evasion-notice", player.getGameId(),message);
@@ -309,4 +306,23 @@ public class PlayerWebSocketController {
 		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(game, player, playerSellGroundRequestDto);
 		webSocketSendHandler.sendToPlayer("ground-sell", playerId, player.getGameId(), playerGroundSellMessage);
 	}
+
+	@MessageMapping("/tax-service/{playerId}")
+	public void playerArrivedTaxService(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		// 턴 정보 확인
+		if(!player.getTurnNum().equals(game.getTurnInfo())){
+			throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+		}
+
+		// 로직 실행
+		PlayerEvasionMessage message = playerService.playerArrivedtaxService(player);
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("tax-service", game.getId(), message);
+	}
+
 }

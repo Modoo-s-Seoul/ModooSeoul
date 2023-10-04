@@ -15,7 +15,6 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.synergy.entity.Synergy;
 import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
@@ -27,6 +26,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+//@Transactional
 public class BoardStatusService {
     private final BoardStatusRepository boardStatusRepository;
     private final PlayerRepository playerRepository;
@@ -34,10 +34,12 @@ public class BoardStatusService {
     private final GameRepository gameRepository;
     private final SynergyReository synergyReository;
 
+
     public BoardStatus getBoardStatusById(String boardStatusId) {
         return boardStatusRepository.findById(boardStatusId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
+
 
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
@@ -97,6 +99,7 @@ public class BoardStatusService {
                         , player.getCurrentBoardIdx()
                         , player.getId()));
     }
+
 
 
 
@@ -233,6 +236,8 @@ public class BoardStatusService {
                         ,buildingPurchaseRequestDto.buildingId()
                         ,player.getId()));
     }
+
+
 
     public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
 
