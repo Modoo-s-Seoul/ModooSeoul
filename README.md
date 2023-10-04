@@ -2,8 +2,10 @@
 
 
 
-# 🌎 모두의 서울 🌎
-> 플레이어들이 부동산 투자, 주식투자, 뉴스 예측 및 전략적인 판단력을 활용하는 현실 기반 금융 전략 시뮬레이션 게임
+# 💰 모두의 서울 💰
+> 현실적인 부동산 투자, 주식 거래, 뉴스 예측의 스릴 넘치는 세계로 여러분을 초대합니다.💌 <br> 
+모두의 서울로 여러분의 금융 미래를 만들 수 있어요 🌎<br> 
+지금 참여하고 전략적 사고로 도시 서울을 정복하세요!
 <br>
 
 ## 🔗라이브
@@ -12,16 +14,37 @@
 <br>
 
 ## ✈️ 프로젝트 소개
-부트캠프 정보 제공과 소통을 목적으로 하는 커뮤니티 사이트입니다.
-- 부트캠프 정보 및 후기 열람
-- 주제별 익명 게시판 커뮤니티
-- 알고리즘 문제풀이와 2048 게임으로 가볍게 즐기는 경쟁요소
+플레이어들이 부동산 투자, 주식 투자, 뉴스 예측 및 전략적인 판단력을 활용하는 현실 기반 금융 전략 시뮬레이션 게임입니다.
 
+**보드**
+- 실제 서울의 다양한 지역구로 보드 구성
+<br>
+
+**부동산 투자**
+- 플레이어가 도착한 땅 구매 가능
+- 구매한 땅 위에 다양한 건물 짓기
+- 각 건물의 종류는 가치가 다름
+- 건물들의 조합에 따라 지역구가 활성화되어 통행료 배수 증가
+<br>
+
+**주식 투자**
+- 주식 시장에서 주식을 매수, 매도 가능
+- 뉴스 이벤트에 따라서 주식 변동
+- 플레이어는 세상의 변화를 감지해 투자
+<br>
+
+**뉴스**
+- 플레이어는 뉴스를 랜덤으로 선택 후 주식에 대한 정보를 제공
+- 제공받은 정보를 이용하여 주식변동을 예측하여 투자
+<br>
+
+**세금**
+- 플레이어는 얻은 수익을 토대로 세금을 납부
+- 세금을 납부하지 않은 플레이어는 잡힐 시 3배 납부 후 감옥
 <br>
 
 ## ⏰ 개발 기간
-<br>
-2023년 7월 04일 ~ 2023년 08월 18일
+2023년 8월 21일 ~ 2023년 10월 06일
 
 <br>
 
@@ -32,40 +55,37 @@
             멤버
       </td>
       <td align="center" width="130px">
-        <a href="https://github.com/mycook3"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/45381384?v=4"/></a>
-            <br />
-            <a href="https://github.com/mycook3">박지환(BE)</a>
-      </td>
-       <td align="center" width="130px">
-        <a href="https://github.com/yeonx"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/71878202?v=4"/></a>
-            <br />
-            <a href="https://github.com/yeonx">이연희(BE)</a>
-      </td> <td align="center" width="130px">
         <a href="https://github.com/An0401na"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/99172832?v=4"/></a>
             <br />
             <a href="https://github.com/An0401na">안 나(BE)</a>
       </td>
-      <td align="center" width="130px">
-        <a href="https://github.com/hehezune"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/108918495?v=4"/></a>
+       <td align="center" width="130px">
+        <a href="https://github.com/yeeeooonn"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/73294363?v=4"/></a>
             <br />
-            <a href="https://github.com/hehezune">김봉준(FE)</a>
+            <a href="https://github.com/yeeeooonn">이수연(BE)</a>
+      </td> 
+      <td align="center" width="130px">
+        <a href="https://github.com/changkim1"><img height="100px" width="100px" src="https://file.notion.so/f/s/3b0af5b5-2eb3-4ba3-a570-892596ee9aec/image.png?id=3187fc68-9228-45e6-80ae-dc582624de99&table=block&spaceId=5fa1f5f0-4946-41aa-966b-9a3cd388acd0&expirationTimestamp=1696514400000&signature=UmZv9S31GTye7kRPSRHXWqwMNZKMFxgXfRNmXk7VTOg&downloadName=image.png"/></a>
+            <br />
+            <a href="https://github.com/changkim1">김창희(BE)</a>
+      </td>
+      <td align="center" width="130px">
+        <a href="https://github.com/archedu-JunhaCho"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/122509605?v=4"/></a>
+            <br />
+            <a href="https://github.com/archedu-JunhaCho">조준하(FE)</a>
       </td>
        <td align="center" width="130px">
-        <a href="https://github.com/sulogc"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/28620037?v=4"/></a>
+        <a href="https://github.com/Baejw0111"><img height="100px" width="100px" src="https://file.notion.so/f/s/048ce6da-d4ce-495d-a7d9-9e437a59e152/%EB%B0%B0%EC%A0%95%EC%9B%90_%EC%A6%9D%EB%AA%85%EC%82%AC%EC%A7%84.jpg?id=5b62ec1d-4280-4d06-ad37-c5e41a06e956&table=block&spaceId=5fa1f5f0-4946-41aa-966b-9a3cd388acd0&expirationTimestamp=1696514400000&signature=DSAJa3Pa5wLhoCNE7YarBAJCBqeUa_Sd4A9uESV2OM4&downloadName=%EB%B0%B0%EC%A0%95%EC%9B%90_%EC%A6%9D%EB%AA%85%EC%82%AC%EC%A7%84.jpg"/></a>
             <br />
-            <a href="https://github.com/sulogc">임수형(FE)</a>
-      </td> <td align="center" width="130px">
-        <a href="https://github.com/kcrikana"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/83369769?v=4"/></a>
-            <br />
-            <a href="https://github.com/kcrikana">김민범(FE)</a>
-      </td>
+            <a href="https://github.com/Baejw0111">배정원(FE)</a>
+      </td> 
      <tr/>
     <tr>
         <td align="center" width="130px">
             기여
       </td>
        <td align="center" width="130px">
-           로그인 및 회원가입
+           팀장, 웹소켓, DB 설계
        </td>
        <td align="center" width="130px">
          게시판, CI/CD
@@ -78,9 +98,6 @@
        </td>
        <td align="center" width="130px">
          부트캠프, DBA
-       </td>
-       <td align="center" width="130px">
-         메인, 로그인 및 회원가입
        </td>
     </tr>
 </table>
