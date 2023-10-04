@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.board_status.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board_status.dto.message.BuildingPurchaseMessage;
@@ -15,7 +16,6 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.synergy.entity.Synergy;
 import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
@@ -34,11 +34,13 @@ public class BoardStatusService {
     private final GameRepository gameRepository;
     private final SynergyReository synergyReository;
 
+    @Transactional
     public BoardStatus getBoardStatusById(String boardStatusId) {
         return boardStatusRepository.findById(boardStatusId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
 
+    @Transactional
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
                 .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
@@ -100,6 +102,7 @@ public class BoardStatusService {
 
 
 
+    @Transactional
     public BuildingPurchaseMessage purchaseBuilding(Player player, BuildingPurchaseRequestDto buildingPurchaseRequestDto) {
 
         Game game = gameRepository.findById(player.getGameId())
@@ -234,6 +237,8 @@ public class BoardStatusService {
                         ,player.getId()));
     }
 
+
+    @Transactional
     public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
 
         // 타이머가 활성화 되어 있는지 확인
