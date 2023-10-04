@@ -10,10 +10,7 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.*;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
@@ -86,6 +83,30 @@ public class PlayerWebSocketController {
 			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
 		}
 
+
+	}
+
+	// TODO: 주사위 굴리기 test - 배포시 삭제
+	@MessageMapping("/roll-test/{playerId}")
+	public void playerRollDiceTest(@DestinationVariable String playerId, @Payload PlayerDiceTestRequestDto playerDiceTestRequestDto) {
+		log.info("주사위 굴리기 by {}", playerId);
+
+		Player player = playerService.getPlayerById(playerId);
+
+		// 주사위 굴리고 데이터 가공
+		PlayerDiceMessage playerDiceMessageTest = playerService.rollDiceTest(playerId, playerDiceTestRequestDto);
+
+		// 데이터 전달
+		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessageTest);
+
+		//땅 도착 데이터 전달
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage =
+				playerService.arrivalBoardInfo(playerId, gameService.getGameById(player.getGameId()));
+		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
+		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
+			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
+		}
 
 	}
 
