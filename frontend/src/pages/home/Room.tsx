@@ -80,7 +80,7 @@ export default function Room() {
   useEffect(() => {
     if (socketClient !== null) {
       //  현재 방의 정보를 알려주는 채널
-      socketClient.subscribe(`/receive/game/players-info/${gameId}`, (msg) => {
+      socketClient.subscribe(`/receive/game/init/${gameId}`, (msg) => {
         const message = JSON.parse(msg.body);
         console.log("Room Status:", message);
         const receivedData = message.data;
