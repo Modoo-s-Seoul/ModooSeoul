@@ -160,12 +160,20 @@ public class Game extends BaseEntity {
 	}
 
 
-	public Long passTurn() {
+	public Long passTurn(List<Player> players) {
+		// 뉴스 뽑고나서 다시 0번으로 이동
 		if(this.players.size() + 1 == this.turnInfo){
-			return this.turnInfo = 0L;
+			this.turnInfo = -1L;
 		}
 		this.finishedPlayerCnt = 0L;
-		return ++this.turnInfo;
+		this.turnInfo++;
+		if (this.turnInfo < this.players.size()) {
+			// 해당 turnInfo 플레이어가 파산당했을 경우 다음 턴으로 이동
+			while (players.get(this.turnInfo.intValue()).getIsBankrupt()) {
+				this.turnInfo++;
+			}
+		}
+		return this.turnInfo;
 	}
 
 	public void startTimer(TimerType timerType){
