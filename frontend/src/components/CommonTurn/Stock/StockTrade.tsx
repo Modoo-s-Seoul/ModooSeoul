@@ -70,7 +70,10 @@ export default function StockTrade() {
               ></img>
               <div className="modalBaseTitle">{currentStock?.stockName}</div>
               <div className="modalBaseBody">
-                <Chart stockPrice={stocks} stockLabels={stockLabel} />
+                <Chart
+                  stockPrice={currentStock?.stockHistory}
+                  stockLabels={stockLabel}
+                />
                 <div className="stockTradeBox">
                   <div className="tradeButtonContainer">
                     <div

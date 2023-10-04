@@ -12,7 +12,7 @@ import { Line } from "react-chartjs-2";
 
 interface Props {
   stockLabels: string[];
-  stockPrice: number[];
+  stockPrice: number[] | undefined;
 }
 
 export default function Chart({ stockLabels, stockPrice }: Props) {
@@ -53,7 +53,7 @@ export default function Chart({ stockLabels, stockPrice }: Props) {
   // const stockLabels = ["", "", "", "1R", "2R"];
   // const stockPrice = [100, 75, 110, 115, 110];
 
-  const data = (labels: string[], price: number[]) => {
+  const data = (labels: string[], price: number[] | undefined) => {
     const chartData = {
       labels: labels,
       datasets: [

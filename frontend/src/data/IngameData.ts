@@ -280,12 +280,9 @@ export const matchPosition = atom<defaultMatch[]>({
 export const stockState = atom<stockChangeType[]>({
   key: "stockState",
   default: [
-    // { stockName: "OO전자", stockPrice: [] },
-    // { stockName: "ㅁㅁ건설", stockPrice: [] },
-    // { stockName: "XX바이오", stockPrice: [] },
-    { stockName: "", stockPrice: [] },
-    { stockName: "", stockPrice: [] },
-    { stockName: "", stockPrice: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
   ],
 });
 
