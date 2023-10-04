@@ -79,6 +79,13 @@ public class GameWebSocketController {
 		List<PlayerInGameInfoMessage> message = gameService.getPlayersInfo(players);
 
 		webSocketSendHandler.sendToGame("players-info", gameId, message);
+
+		// 1명 제외하고 모두 파산일 경우
+		if(gameService.checkGameEnd(gameId)) { //파산하지 않은 수가 1명이면
+			//게임 종료
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
+			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
+		}
 	}
 
 	@MessageMapping("/round-start/{gameId}")

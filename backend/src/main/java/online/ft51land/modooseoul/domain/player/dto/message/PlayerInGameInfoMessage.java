@@ -11,7 +11,8 @@ public record PlayerInGameInfoMessage(
 		String nickname,
 		Long currentBoardIdx,
 		Long cash,
-		Long totalAsset
+		Long totalAsset,
+		Boolean isBankrupt
 ) {
 	public static PlayerInGameInfoMessage of(Player player) {
 		Long totalAsset = player.getCash() + player.getStockMoney()
@@ -23,6 +24,7 @@ public record PlayerInGameInfoMessage(
 				.currentBoardIdx(player.getCurrentBoardIdx())
 				.nickname(player.getNickname())
 				.totalAsset(totalAsset)
+				.isBankrupt(player.getIsBankrupt())
 				.build();
 	}
 }
