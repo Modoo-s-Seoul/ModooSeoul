@@ -19,6 +19,7 @@ import java.util.Objects;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+//@Transactional
 public class StockBoardService {
 
 	private final PlayerRepository playerRepository;

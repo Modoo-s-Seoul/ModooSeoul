@@ -20,7 +20,7 @@ export default function BackBtn() {
         >
           <path
             d="M20 12H4M4 12L10 6M4 12L10 18"
-            stroke="#313131"
+            stroke="#d1d1d1"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

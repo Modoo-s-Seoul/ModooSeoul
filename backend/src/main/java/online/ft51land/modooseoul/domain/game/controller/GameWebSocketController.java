@@ -79,6 +79,13 @@ public class GameWebSocketController {
 		List<PlayerInGameInfoMessage> message = gameService.getPlayersInfo(players);
 
 		webSocketSendHandler.sendToGame("players-info", gameId, message);
+
+		// 1명 제외하고 모두 파산일 경우
+		if(gameService.checkGameEnd(gameId)) { //파산하지 않은 수가 1명이면
+			//게임 종료
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
+			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
+		}
 	}
 
 	@MessageMapping("/round-start/{gameId}")
@@ -166,7 +173,8 @@ public class GameWebSocketController {
 					// ftoilland 도착시 시간내에 땅을 선택하지 못한 경우 -> 타이머 만료, 턴 패스
 					if(gameStartTimerRequestDto.timerType() == TimerType.ESTATE_PURCHASE
 							|| gameStartTimerRequestDto.timerType() == TimerType.STARTING_POINT_ARRIVAL
-							|| gameStartTimerRequestDto.timerType() == TimerType.FTOILLAND_ARRIVAL){
+							|| gameStartTimerRequestDto.timerType() == TimerType.FTOILLAND_ARRIVAL
+							|| gameStartTimerRequestDto.timerType() == TimerType.FREE_ACTION){
 						gameService.passTurn(timerGame);
 					}
 
@@ -197,6 +205,7 @@ public class GameWebSocketController {
 
 		Game game = gameService.getGameById(gameId);
 
+
 		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
 		if(game.getIsTimerActivated()){
 
@@ -208,7 +217,7 @@ public class GameWebSocketController {
 			if(game.getTimerType() == TimerType.ESTATE_PURCHASE
 					|| game.getTimerType()  == TimerType.STARTING_POINT_ARRIVAL
 					|| game.getTimerType()  == TimerType.FTOILLAND_ARRIVAL){
-				game.passTurn();
+				game.passTurn(playerService.getPlayersByGame(game));
 			}
 
 

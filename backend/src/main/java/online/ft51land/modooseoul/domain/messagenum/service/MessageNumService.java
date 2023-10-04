@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+//@Transactional
 public class MessageNumService {
 
     private final MessageNumRepository messageNumRepository;

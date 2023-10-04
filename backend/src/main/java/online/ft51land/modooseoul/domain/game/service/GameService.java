@@ -1,6 +1,6 @@
 package online.ft51land.modooseoul.domain.game.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.Board;
@@ -26,7 +26,6 @@ import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMess
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
 import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
@@ -41,6 +40,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+//@Transactional
 public class GameService {
 
     private final GameRepository gameRepository;
@@ -52,8 +52,6 @@ public class GameService {
     private final GameStockRepository gameStockRepository;
     private final StockRepository stockRepository;
     private final StockBoardRepository stockBoardRepository;
-
-
 
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
@@ -93,7 +91,7 @@ public class GameService {
 
         // 방 초기 세팅
         game.setBasicInfo(); // 방 기본 정보
-        sequencePlayer(game); // 선 정하기
+//        sequencePlayer(game); // 선 정하기 // TODO : 테스트용. 배포시에 주석 풀기
         setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
         setGameStocks(game); // 주식 초기값 저장
@@ -233,6 +231,8 @@ public class GameService {
             playerRepository.save(player);
         }
 
+        System.out.println("turn : " + game.getTurnInfo());
+
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
     }
@@ -316,7 +316,12 @@ public class GameService {
     }
 
     public void passTurn(Game game) {
-        game.passTurn();
+        List<Player> players = new ArrayList<>();
+        for (String playerId : game.getPlayers()) {
+            players.add(playerRepository.findById(playerId)
+                                        .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND)));
+        }
+        game.passTurn(players);
         gameRepository.save(game);
     }
 
@@ -325,13 +330,11 @@ public class GameService {
         gameRepository.save(game);
     }
 
-
     public void expiredTimer(Game game) {
         game.expiredTimer();
         gameRepository.save(game);
     }
 
-    @Transactional
     public GameEndMessage endGame(Game game, EndType endType) {
         List<Player> players = convertToPlayerList(game.getPlayers());
         game.setEndGame(endType,players.get(0).getId());
@@ -344,7 +347,7 @@ public class GameService {
 
         for (String playerId : players) {
             Player player = playerRepository.findById(playerId)
-                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));;
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
             sortedPlayers.add(player);
         }
         return  sortToMoney(sortedPlayers);
@@ -361,7 +364,6 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
-
     public void playersActionFinish(Game game) {
         // game 에 해당하는 모든 player pass init  , 타이머 종료
         List<Player> playerList = playerRepository.findAllByGameId(game.getId());
@@ -376,6 +378,8 @@ public class GameService {
     }
 
     // 플레이에 참여하고 있는 플레이어의 수 -> 파산하지 않은 플레이어의 수
+
+
     public Long getPlayingPlayerCnt(Game game) {
         List<Player> players= playerRepository.findAllByGameId(game.getId());
         Long cnt = 0L;
