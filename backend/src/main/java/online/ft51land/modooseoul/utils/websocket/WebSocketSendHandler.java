@@ -9,12 +9,11 @@ import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
 @Slf4j
-@Transactional
+//@Transactional
 public class WebSocketSendHandler {
 
 	private final MessageNumRepository messageNumRepository;

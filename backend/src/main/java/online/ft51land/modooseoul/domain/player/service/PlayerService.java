@@ -1,6 +1,5 @@
 package online.ft51land.modooseoul.domain.player.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board.entity.Board;
@@ -34,7 +33,7 @@ import java.util.Random;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+//@Transactional
 public class PlayerService {
 
     private final GameRepository gameRepository;

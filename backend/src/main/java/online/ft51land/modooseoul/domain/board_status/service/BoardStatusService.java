@@ -19,7 +19,6 @@ import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+//@Transactional
 public class BoardStatusService {
     private final BoardStatusRepository boardStatusRepository;
     private final PlayerRepository playerRepository;

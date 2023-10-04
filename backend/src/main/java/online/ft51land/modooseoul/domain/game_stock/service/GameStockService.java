@@ -1,6 +1,5 @@
 package online.ft51land.modooseoul.domain.game_stock.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
@@ -16,7 +15,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+//@Transactional
 public class GameStockService {
 
 	private final GameStockRepository gameStockRepository;
