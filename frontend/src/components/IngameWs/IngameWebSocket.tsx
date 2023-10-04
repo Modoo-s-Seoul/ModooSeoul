@@ -30,30 +30,35 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/player-info/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //라운드 시작
       socketClient.subscribe(`/receive/game/round-start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 턴정보 확인
       socketClient.subscribe(`/receive/game/turn/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 턴 종료
       socketClient.subscribe(`/receive/game/pass-turn/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 주사위 굴리기
       socketClient.subscribe(`/receive/game/roll/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 땅 구매
@@ -62,6 +67,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
+          console.log(receivedData);
         }
       );
 
@@ -71,6 +77,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
+          console.log(receivedData);
         }
       );
 
@@ -80,6 +87,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
+          console.log(receivedData);
         }
       );
 
@@ -87,72 +95,84 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/prison/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //공통 턴 시작
       socketClient.subscribe(`/receive/game/free-action/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //출발지 도착
       socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //오일랜드 도착
       socketClient.subscribe(`/receive/game/oil-land/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //지하철 이용 여부 확인
       socketClient.subscribe(`/receive/game/check-subway/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //지하철 이동
       socketClient.subscribe(`/receive/game/subway/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //찬스 카드 도착
       socketClient.subscribe(`/receive/game/chance/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //공통 턴 준비
       socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //타이머 시작,완료,취소 알림
       socketClient.subscribe(`/receive/game/timer/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //공통 턴 행동 완료
       socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //플레이어 퇴장
       socketClient.subscribe(`/receive/game/player-leave/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //게임 종료
       socketClient.subscribe(`/receive/game/end/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //// 개별 구독 ////
@@ -161,12 +181,14 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/dividend/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 뉴스 선택, 확인
       socketClient.subscribe(`/receive/news/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
         setSelectedNews(receivedData.description);
       });
 
@@ -174,54 +196,63 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/ground/sell/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 건물 판매
       socketClient.subscribe(`/receive/building/sell/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 주식 구매
       socketClient.subscribe(`/receive/stock/purchase/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 주식 판매
       socketClient.subscribe(`/receive/stock/sell/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 개인 주식정보 확인
       socketClient.subscribe(`/receive/stock/info/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 탈세자 신고
       socketClient.subscribe(`/receive/report/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 탈세자 신고 결과 공지
       socketClient.subscribe(`/receive/evasion-check/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       //세금 납,탈세 상태 확인
       socketClient.subscribe(`/receive/tax/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
 
       // 찬스 카드 확인
       socketClient.subscribe(`/receive/chance/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
+        console.log(receivedData);
       });
     }
 
