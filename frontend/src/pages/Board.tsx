@@ -109,12 +109,12 @@ export default function Board() {
   const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
 
   const setIsPlayerMove = useSetRecoilState(isPlayerMoveState);
-  const setTRow = useSetRecoilState(trowState); // 현재 턴 row
-  const setTCol = useSetRecoilState(tcolState); // 현재 턴 col
+  const [tRow, setTRow] = useRecoilState(trowState); // 현재 턴 row
+  const [tCol, setTCol] = useRecoilState(tcolState); // 현재 턴 col
   const [sRow, setSRow] = useRecoilState(srowState); // 시작점 선택 row
   const [sCol, setSCol] = useRecoilState(scolState); // 시작점 선택 col
-  const [dice1, setDice1Value] = useRecoilState(dice1State); // 첫번째 주사위 값
-  const [dice2, setDice2Value] = useRecoilState(dice2State); // 두번째 주사위 값
+  const [dice1] = useRecoilState(dice1State); // 첫번째 주사위 값
+  const [dice2] = useRecoilState(dice2State); // 두번째 주사위 값
   const [diceActive, setDiceActive] = useRecoilState(diceActiveState); // 주사위 상태
   const [isRolling, setIsRolling] = useRecoilState(isRollingState); // 주사위 굴리기 버튼 활성화 상태
   const [isUserTurnVisible, setIsUserTurnVisible] = useRecoilState(
@@ -144,7 +144,7 @@ export default function Board() {
   ); // 공통턴 땅판매 토글
 
   // 데이터 보관
-  const [boardData] = useRecoilState(boardDataState); // 보드데이터
+  const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드데이터
   const matchPos = useRecoilValue(matchPosition); // 매칭데이터
   const [backgroundSprite, setBackgroundSprite] = useState<
     Phaser.GameObjects.Graphics[]
@@ -573,10 +573,18 @@ export default function Board() {
     if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
-
-    setDiceActive(true);
-    setDice1Value(Number(devDice1));
-    setDice2Value(Number(devDice2));
+    // (실제구현) 주사위값 변경 요청
+    if (socketClient) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.playerId,
+        "send/roll-test",
+        `{"dice1":${devDice1},"dice2":${devDice2}}`
+      );
+    }
+    // setDiceActive(true);
+    // setDice1Value(Number(devDice1));
+    // setDice2Value(Number(devDice2));
   };
 
   /**실수로 인한 창 닫기, 새로고침 방지 */
@@ -711,13 +719,31 @@ export default function Board() {
 
   /** 땅 정보 변경시 */
   useEffect(() => {
+    console.log("땅 정보 변경", groundChange);
     if (groundChange[0].player !== null && groundChange[0].player !== 6) {
       groundSprite[groundChange[0].index].setTint(
         colorPaletteTint[groundChange[0].player]
       );
+      // 보드 데이터 갱신
+      const newData = { ...boardData };
+      newData[`${tRow}-${tCol}`] = {
+        ...newData[`${tRow}-${tCol}`],
+        sell: true,
+        player: turn,
+      };
+      setBoardData(newData);
     } else if (groundChange[0].player === 6) {
       // 판매요청시
+      console.log("땅 판매요청");
       groundSprite[groundChange[0].index].clearTint();
+      // 보드 데이터 갱신
+      const newGroundData = { ...boardData };
+      newGroundData[`${tRow}-${tCol}`] = {
+        ...newGroundData[`${tRow}-${tCol}`],
+        sell: false,
+        player: null,
+      };
+      setBoardData(newGroundData);
     }
   }, [groundChange]);
 
@@ -736,7 +762,7 @@ export default function Board() {
       ].setAlpha(1);
     } else if (buildingChange[0].player === 6) {
       // 판매요청시
-      console.log("판매요청");
+      console.log("건물 판매요청");
       for (let i = 0; i < buildingChange.length; i++) {
         buildingSprite[
           buildingChange[i].index + buildingChange[i].point

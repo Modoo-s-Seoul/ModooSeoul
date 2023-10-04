@@ -57,7 +57,8 @@
 
   border: 10px solid rgb(78, 78, 78);
   border-radius: 10px;
-  background-color: rgb(126, 126, 126);
+  background-color: rgb(255, 255, 255);
+  color: black;
 
   font-weight: bold;
   font-size: xx-large;
@@ -65,18 +66,19 @@
 }
 
 .ready {
-  border: 10px solid rgb(118, 255, 225);
+  border: 10px solid rgb(81, 163, 97);
 }
 .readyBtn{
   border: none;
-  background-color: rgb(164, 213, 213);
+  background-color: rgb(129, 227, 148);
   font-family: Dongle-Regular !important;
   border-radius: 10px;
   font-size: 20px;
+  width: 80px;
   transition: background-color 0.3s ease-in-out;
 }
 .readyBtn:hover{
-  background-color: rgb(98, 190, 190);
+  background-color: rgb(87, 156, 101);
 }
 
 .crown {

@@ -51,6 +51,12 @@ export interface defaultMatch {
   col: number;
 }
 
+/**(타입) 보드판 인덱스 정보 */
+export interface defaultIndex{
+  row: number;
+  col: number;
+}
+
 /**(타입) 땅 변동 기록 */
 export interface groundChangeType {
   player: number | null;

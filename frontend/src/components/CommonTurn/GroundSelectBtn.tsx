@@ -6,16 +6,18 @@ import {
   buildingChangeState,
   builingInfoState,
   displayPlayerDataState,
-  groundChangeState,
   groundMsgNumState,
   isCommonGroundSellActiveState,
   playerDataState,
+  playerInfoState,
   scolState,
   srowState,
   whoAreYouState,
 } from "../../data/IngameData";
 import { useState, useEffect } from "react";
 import { boardDataState } from "../../data/BoardData";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
+import { useSocket } from "../../pages/SocketContext";
 
 export default function GroundSelectBtn() {
   // 기본인자
@@ -27,28 +29,29 @@ export default function GroundSelectBtn() {
   const sCol = useRecoilValue(scolState); // 선택 장소 col
   // 플레이어 개인정보
   const whoAreYou = useRecoilValue(whoAreYouState);
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
   // 데이터
-  const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
+  const [boardData] = useRecoilState(boardDataState); // 보드 데이터
   const [turnData, setTurnData] = useState(boardData[`${sRow}-${sCol}`]); // 선택 장소 데이터
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 플레이어 전광판 정보
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
-  const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
 
   /** 땅판매 함수 */
   const sellGround = () => {
-    // 보드 데이터 갱신
-    const newGroundData = { ...boardData };
-    newGroundData[`${sRow}-${sCol}`] = {
-      ...newGroundData[`${sRow}-${sCol}`],
-      sell: false,
-      player: null,
-    };
-    setBoardData(newGroundData);
-    // 땅 변동사항 업데이트
-    setGroundChange([{ player: 6, index: turnData.index }]);
+    console.log(turnData.order + 1);
+    // 실제 구현
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      `send/ground-sell`,
+      `{"boardIdx":${turnData.order + 1}}`
+    );
+
     // 땅 팔시 건물도 모두 매각
     const newBuildingData = { ...builingData };
     for (let i = 0; i < 3; i++) {
@@ -68,7 +71,7 @@ export default function GroundSelectBtn() {
     const newPlayerData = [...playerData];
     newPlayerData[whoAreYou] = {
       ...newPlayerData[whoAreYou],
-      money: newPlayerData[whoAreYou].money + turnData.price,
+      cash: newPlayerData[whoAreYou].cash + turnData.price,
     };
     setPlayerData(newPlayerData);
     setDisplayPlayerData(newPlayerData);
