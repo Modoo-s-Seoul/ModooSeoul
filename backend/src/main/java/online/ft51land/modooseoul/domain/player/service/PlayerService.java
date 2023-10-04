@@ -64,6 +64,14 @@ public class PlayerService {
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
 
+    public List<Player> getPlayersByGame(Game game) {
+        List<Player> players = new ArrayList<>();
+        for (String playerId : game.getPlayers()) {
+            players.add(getPlayerById(playerId));
+        }
+        return players;
+    }
+
     // 방 참가 플레이어 정보 보내주기
     public List<PlayerReadyInfoMessage> getPlayersInfoForRoom(Game game) {
         // Message 만들기
@@ -144,11 +152,11 @@ public class PlayerService {
 
         Game game = getGameById(rolledPlayer.getGameId());
 
-        // 턴 정보 확인
-        if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
-            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
+//            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
@@ -190,10 +198,10 @@ public class PlayerService {
 
         Game game = getGameById(player.getGameId());
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
                 .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
@@ -218,11 +226,11 @@ public class PlayerService {
 
         Game game = getGameById(player.getGameId());
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
                 .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
@@ -293,9 +301,6 @@ public class PlayerService {
         return  null;
     }
 
-
-
-
     // 플레이어 방 나가기
     public void leaveGame(Game game, Player player) {
         // 게임에서 플레이어 제외
@@ -315,8 +320,11 @@ public class PlayerService {
 
     public Long passTurn (Player player){
         Game game = getGameById(player.getGameId());
-
-        Long nextTurn = game.passTurn();
+        List<Player> players = new ArrayList<>();
+        for (String playerId : game.getPlayers()) {
+            players.add(getPlayerById(playerId));
+        }
+        Long nextTurn = game.passTurn(players);
         gameRepository.save(game);
         return nextTurn;
     }
@@ -430,7 +438,7 @@ public class PlayerService {
             Game game = gameRepository.findById(player.getGameId())
                     .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
 
-            game.passTurn();
+            game.passTurn(getPlayersByGame(game));
             gameRepository.save(game);
             return PlayerArrivalBoardMessage.of("감옥 도착",boardStatus);
         }
@@ -444,7 +452,7 @@ public class PlayerService {
             Game game = gameRepository.findById(player.getGameId())
                     .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
 
-            game.passTurn();
+            game.passTurn(getPlayersByGame(game));
             gameRepository.save(game);
 
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
@@ -489,8 +497,6 @@ public class PlayerService {
         return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
     }
 
-
-
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId, Game game) {
         //TODO: 통행료 계산 -> 나중에 플레이어의 보유 자산만큼 증가하는 로직 필요
         Long toll = boardStatus.getPrice() * boardStatus.getSynergy() * boardStatus.getOil();
@@ -499,18 +505,7 @@ public class PlayerService {
 
         if(toll > payPlayer.getCash()+payPlayer.getStockMoney()) {
             //파산 경우
-            if(payPlayer.getEstates() != null) {
-                for (Long estate : payPlayer.getEstates()) {
-                    BoardStatus sellBoard = boardStatusRepository.findById(payPlayer.getGameId()+"@"+estate)
-                            .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
-
-                    Board board = getBoardById(String.valueOf(estate));
-                    sellBoard.resetBoard(board.getPrice());
-                    boardStatusRepository.save(sellBoard);
-                }
-            }
-            payPlayer.bankrupt();
-            playerRepository.save(payPlayer);
+            setBankruptedPlayerEstateNull(payPlayer);
             ownerPlayer.receiveToll(toll);
             playerRepository.save(ownerPlayer);
 
@@ -553,15 +548,15 @@ public class PlayerService {
          *
          */
 
-        // 공통턴이 아닐때 pass 요청을 하면 에러
-        if(game.getTurnInfo() < game.getPlayers().size()){
-          throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 공통턴이 아닐때 pass 요청을 하면 에러 TODO : 주석해제하기
+//        if(game.getTurnInfo() < game.getPlayers().size()){
+//          throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
-        // 이미 행동을 완료한 플레이어가 다시 완료 했을 경우 예외 처리
-        if(player.getIsFinish()){
-            throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 이미 행동을 완료한 플레이어가 다시 완료 했을 경우 예외 처리 TODO : 주석해제하기
+//        if(player.getIsFinish()){
+//            throw new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
 
         player.finish();
@@ -600,7 +595,6 @@ public class PlayerService {
     }
 
     // 탈세했는지 확인하기
-
     public PlayerEvasionMessage checkEvasion(Player reporter, Player reportee) {
         // 신고한 사람이 없는 경우
         if (reporter.getReporteePlayerName() == null) {
