@@ -50,10 +50,10 @@ public class BoardStatusService {
             throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
         }
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석 해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         //현재 플레이어가 위치한 땅이 소유자가 없는지 한번 더 체크
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
@@ -113,10 +113,10 @@ public class BoardStatusService {
             throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
         }
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         Long boardIdxForBuilding = player.getCurrentBoardIdx(); //건물 지을 땅 인덱스
 
@@ -246,10 +246,10 @@ public class BoardStatusService {
             throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
         }
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId()+"@"+boardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
