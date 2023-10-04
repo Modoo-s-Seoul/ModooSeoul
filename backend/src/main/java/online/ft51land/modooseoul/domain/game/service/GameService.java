@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.game.service;
 
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,20 +55,23 @@ public class GameService {
     private final StockBoardRepository stockBoardRepository;
 
 
-    @Transactional
+
+
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
                              .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
     }
 
-    @Transactional
+
+
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
         messageNumRepository.save(new MessageNum(game.getId()));
         return GameCreateResponseDto.of(game);
     }
 
-    @Transactional
+
+
     public GameStartMessage gameStart(Game game, List<Player> players) {
 
 //        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
@@ -131,7 +135,8 @@ public class GameService {
     }
 
     // 주식 세팅
-    @Transactional
+
+
     public void setGameStocks(Game game) {
         List<Long> stocksIds = game.getStocks();
         for (Long stockId : stocksIds) {
@@ -143,7 +148,8 @@ public class GameService {
         }
     }
 
-    @Transactional
+
+
     public void setRandomStocks(Game game) {
         // random generator
         Random random = new Random();
@@ -162,7 +168,8 @@ public class GameService {
 
     /* 게임 선 세팅
           player 리스트 랜덤으로 섞어서 다시 저장*/
-    @Transactional
+
+
     public void sequencePlayer(Game game) {
 
         List<String> players = game.getPlayers();
@@ -170,7 +177,8 @@ public class GameService {
         game.setSequencePlayer(players);
     }
 
-    @Transactional
+
+
     public void setNews(Game game) {
         // 최종 저장본
         List<List<News>> news = new ArrayList<>();
@@ -198,7 +206,8 @@ public class GameService {
         game.setNews(news);
     }
 
-    @Transactional
+
+
     public List<PlayerInGameInfoMessage> getPlayersInfo(List<Player> players) {
         List<PlayerInGameInfoMessage> playersInfo = new ArrayList<>();
 
@@ -209,7 +218,8 @@ public class GameService {
         return playersInfo;
     }
 
-    @Transactional
+
+
     public GameRoundStartMessage startRound(Game game, List<Player> players) {
         game.roundStart(game.getCurrentRound() + 1);
 
@@ -246,7 +256,8 @@ public class GameService {
         return GameRoundStartMessage.of(game, gameStocks);
     }
 
-    @Transactional
+
+
     public Long getNextRoundPlayerStockMoney(Player player) {
         Long stockMoney = 0L;
 
@@ -271,7 +282,8 @@ public class GameService {
         return stockMoney;
     }
 
-    @Transactional
+
+
     public List<GameStock> setNextRoundStockPrice(Game game) {
         int passFlag = 0;
         List<GameStock> gameStocks = new ArrayList<>();
@@ -320,33 +332,40 @@ public class GameService {
         return gameStocks;
     }
 
-    @Transactional
+
+
     public PlayerPrisonMessage setPlayerIsPrisoned(Player player) {
         player.setIsPrisoned(true);
 
 	    return PlayerPrisonMessage.of(player);
     }
 
-    @Transactional
+
+
     public void passTurn(Game game) {
         game.passTurn();
         gameRepository.save(game);
     }
 
-    @Transactional
+
+
     public void startTimer(Game game, TimerType timerType) {
         game.startTimer(timerType);
         gameRepository.save(game);
     }
 
 
-    @Transactional
+
+
     public void expiredTimer(Game game) {
         game.expiredTimer();
         gameRepository.save(game);
     }
 
-    @Transactional
+
+
+
+
     public GameEndMessage endGame(Game game, EndType endType) {
         List<Player> players = convertToPlayerList(game.getPlayers());
         game.setEndGame(endType,players.get(0).getId());
@@ -377,7 +396,8 @@ public class GameService {
     }
 
 
-    @Transactional
+
+
     public void playersActionFinish(Game game) {
         // game 에 해당하는 모든 player pass init  , 타이머 종료
         List<Player> playerList = playerRepository.findAllByGameId(game.getId());
@@ -392,7 +412,8 @@ public class GameService {
     }
 
     // 플레이에 참여하고 있는 플레이어의 수 -> 파산하지 않은 플레이어의 수
-    @Transactional
+
+
     public Long getPlayingPlayerCnt(Game game) {
         List<Player> players= playerRepository.findAllByGameId(game.getId());
         Long cnt = 0L;
@@ -404,7 +425,8 @@ public class GameService {
         return cnt;
     }
 
-    @Transactional
+
+
     public boolean checkGameEnd(String gameId) {
         Game game = getGameById(gameId);
         return getPlayingPlayerCnt(game) == 1;
