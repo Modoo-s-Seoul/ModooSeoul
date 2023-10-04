@@ -178,6 +178,7 @@ public class PlayerService {
         // 어디로 이동했는지 저장
         Long bef = rolledPlayer.getCurrentBoardIdx();
         Long aft = (bef + (one + two)) % 32; // 1 ~ 32
+        aft = aft == 0? 32 : aft;
         rolledPlayer.playerMove(aft);
 
         // 월급 받았는지 안 받았는지 여부 저장
@@ -343,7 +344,7 @@ public class PlayerService {
         }
         //지역구 - 내땅
         if(player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
-            return PlayerArrivalBoardMessage.of("플레이어 소유 땅",boardStatus);
+            return PlayerArrivalBoardMessage.of("플레이어 소유 땅",checkPlayer);
         }
         //지역구 - 남땅
         if(!player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
@@ -430,7 +431,7 @@ public class PlayerService {
     public PlayerArrivalBoardMessage<?> specialBoard(BoardStatus boardStatus, Player player) {
         //특수칸 - 시작점
         if(boardStatus.getSpecialName().equals("출발지") && boardStatus.getBoardType() == BoardType.SPECIAL) {
-            return checkAddBuilding(player);
+            return PlayerArrivalBoardMessage.of("출발지 도착",checkAddBuilding(player));
         }
         //특수칸 - 감옥
         if(boardStatus.getSpecialName().equals("감옥") && boardStatus.getBoardType() == BoardType.SPECIAL) {
@@ -479,10 +480,10 @@ public class PlayerService {
                 ,PlayerFTOilLandArriveMessage.of(true, true, true,  player.getEstates()));
     }
 
-    private PlayerArrivalBoardMessage<?> checkAddBuilding( Player player) {
+    private PlayerStartPointArriveMessage checkAddBuilding( Player player) {
 
         if(player.getEstates() == null || player.getEstates().size() == 0) { // 건물을 더 지을 땅이 없다면
-            return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
+            return PlayerStartPointArriveMessage.of(true, false);
         }
         for (Long estate : player.getEstates()) {
             BoardStatus playerBoardStatus = boardStatusRepository.findById(player.getGameId() + "@" + estate)
@@ -490,11 +491,11 @@ public class PlayerService {
             int[] buildings = playerBoardStatus.getBuildings();
             for (int i = 1; i < 4; i++) {
                 if (buildings[i] == 0) {
-                    return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, true));
+                    return PlayerStartPointArriveMessage.of(true, true);
                 }
             }
         }
-        return PlayerArrivalBoardMessage.of("출발지 도착",PlayerStartPointArriveMessage.of(true, false));
+        return PlayerStartPointArriveMessage.of(true, false);
     }
 
     public void tollPayment(BoardStatus boardStatus, String playerId, String ownerId, Game game) {
@@ -545,7 +546,6 @@ public class PlayerService {
          * 패스를 요청한 플레이어의 isFinish 확인
          * isPass가 false 이면 true 로 바꾸기
          * Game의 playerPasscnt 증가
-         *
          */
 
         // 공통턴이 아닐때 pass 요청을 하면 에러 TODO : 주석해제하기
