@@ -344,7 +344,7 @@ public class PlayerService {
         }
         //지역구 - 내땅
         if(player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
-            return PlayerArrivalBoardMessage.of("플레이어 소유 땅",checkPlayer);
+            return PlayerArrivalBoardMessage.of("플레이어 소유 땅",checkMyGround(boardStatus));
         }
         //지역구 - 남땅
         if(!player.getId().equals(boardStatus.getOwnerId()) && boardStatus.getBoardType() == BoardType.DISTRICT) {
@@ -362,6 +362,16 @@ public class PlayerService {
         }
 
         return null;
+    }
+
+    private PlayerCheckMyGroundMessage checkMyGround(BoardStatus boardStatus) {
+        int[] buildings = boardStatus.getBuildings();
+        for (int i = 1; i < 4; i++) {
+            if (buildings[i] == 0) {
+                return PlayerCheckMyGroundMessage.of(true, true);
+            }
+        }
+        return PlayerCheckMyGroundMessage.of(true, false);
     }
 
 
