@@ -171,10 +171,10 @@ export const playerInfoState = atom<PlayerInfo>({
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
   default: [
-    { name: "Player 1", money: 0, color: "dd9090" },
-    { name: "Player 2", money: 0, color: "909add" },
-    { name: "Player 3", money: 0, color: "90dd9a" },
-    { name: "Player 4", money: 0, color: "dddc90" },
+    { name: "Player 1", cash: 0, totalAsset: 0, color: "dd9090" },
+    { name: "Player 2", cash: 0, totalAsset: 0, color: "909add" },
+    { name: "Player 3", cash: 0, totalAsset: 0, color: "90dd9a" },
+    { name: "Player 4", cash: 0, totalAsset: 0, color: "dddc90" },
   ],
 });
 
@@ -182,10 +182,10 @@ export const playerDataState = atom<PlayerData[]>({
 export const displayPlayerDataState = atom<PlayerData[]>({
   key: "displayPlayerDataState",
   default: [
-    { name: "Player 1", money: 0, color: "dd9090" },
-    { name: "Player 2", money: 0, color: "909add" },
-    { name: "Player 3", money: 0, color: "90dd9a" },
-    { name: "Player 4", money: 0, color: "dddc90" },
+    { name: "Player 1", cash: 0, totalAsset: 0, color: "dd9090" },
+    { name: "Player 2", cash: 0, totalAsset: 0, color: "909add" },
+    { name: "Player 3", cash: 0, totalAsset: 0, color: "90dd9a" },
+    { name: "Player 4", cash: 0, totalAsset: 0, color: "dddc90" },
   ],
 });
 
@@ -299,6 +299,12 @@ export const isModalMsgActiveState = atom<boolean>({
 export const modalMsgState = atom<string>({
   key: "modalMsgState",
   default: "",
+});
+
+/** 타이머 */
+export const timerState = atom<boolean>({
+  key: "timerState",
+  default: false,
 });
 
 ///////////////////////// 플레이어 개인

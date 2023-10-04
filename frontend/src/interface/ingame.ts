@@ -22,7 +22,8 @@ export interface PlayerInfo {
 /**(타입) 플레이어의 게임 내 정보 */
 export interface PlayerData {
   name: string;
-  money: number;
+  cash: number;
+  totalAsset: number;
   color: string;
 }
 
