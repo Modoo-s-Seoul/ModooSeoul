@@ -609,8 +609,26 @@ export default function Board() {
   /** 기본 useEffect */
   useEffect(() => {
     // 유저정보 기본 세팅
-    const gameId = weblocation.state.gameId;
-    const playerId = weblocation.state.playerId;
+    let gameId = "test";
+    let playerId = "test";
+    if (weblocation.state) {
+      console.log("전달받은 아이디 있음");
+      gameId = weblocation.state.gameId;
+      playerId = weblocation.state.playerId;
+      window.localStorage.setItem("gameId", gameId);
+      window.localStorage.setItem("playerId", playerId);
+    } else {
+      console.log("전달받은 아이디 없음");
+      const getGameid = window.localStorage.getItem("gameId");
+      const getPlayerid = window.localStorage.getItem("playerId");
+      if (getGameid != null) {
+        gameId = getGameid;
+      }
+      if (getPlayerid) {
+        playerId = getPlayerid;
+      }
+    }
+    console.log("---------------", gameId, playerId);
 
     sendWsMessage(socketClient, gameId, "send/players-info");
 

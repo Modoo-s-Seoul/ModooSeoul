@@ -46,12 +46,12 @@ export default function UserInfo() {
   /** 돈에 변화 감지시 애니메이션 부여 */
   useEffect(() => {
     // 상승 하락 기록
-    if (prevMoneyStates[0] < playerData[0].money) {
+    if (prevMoneyStates[0] < playerData[0].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "0": true,
       }));
-    } else if (prevMoneyStates[0] > playerData[0].money) {
+    } else if (prevMoneyStates[0] > playerData[0].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "0": false,
@@ -69,19 +69,19 @@ export default function UserInfo() {
       }));
       // 이전 돈 기록 업데이트
       const newPrevMoney = [...prevMoneyStates];
-      newPrevMoney[0] = playerData[0].money;
+      newPrevMoney[0] = playerData[0].cash;
       setPrevMoneyStates(newPrevMoney);
     }, 1000);
-  }, [playerData[0].money]);
+  }, [playerData[0].cash]);
 
   useEffect(() => {
     // 상승 하락 기록
-    if (prevMoneyStates[1] < playerData[1].money) {
+    if (prevMoneyStates[1] < playerData[1].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "1": true,
       }));
-    } else if (prevMoneyStates[1] > playerData[1].money) {
+    } else if (prevMoneyStates[1] > playerData[1].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "1": false,
@@ -98,19 +98,19 @@ export default function UserInfo() {
       }));
       // 이전 돈 기록 업데이트
       const newPrevMoney = [...prevMoneyStates];
-      newPrevMoney[1] = playerData[1].money;
+      newPrevMoney[1] = playerData[1].cash;
       setPrevMoneyStates(newPrevMoney);
     }, 1000);
-  }, [playerData[1].money]);
+  }, [playerData[1].cash]);
 
   useEffect(() => {
     // 상승 하락 기록
-    if (prevMoneyStates[2] < playerData[2].money) {
+    if (prevMoneyStates[2] < playerData[2].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "2": true,
       }));
-    } else if (prevMoneyStates[2] > playerData[2].money) {
+    } else if (prevMoneyStates[2] > playerData[2].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "2": false,
@@ -127,19 +127,19 @@ export default function UserInfo() {
       }));
       // 이전 돈 기록 업데이트
       const newPrevMoney = [...prevMoneyStates];
-      newPrevMoney[2] = playerData[2].money;
+      newPrevMoney[2] = playerData[2].cash;
       setPrevMoneyStates(newPrevMoney);
     }, 1000);
-  }, [playerData[2].money]);
+  }, [playerData[2].cash]);
 
   useEffect(() => {
     // 상승 하락 기록
-    if (prevMoneyStates[3] < playerData[3].money) {
+    if (prevMoneyStates[3] < playerData[3].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "3": true,
       }));
-    } else if (prevMoneyStates[3] > playerData[3].money) {
+    } else if (prevMoneyStates[3] > playerData[3].cash) {
       setIsMoneyIncrease((prevState) => ({
         ...prevState,
         "3": false,
@@ -156,10 +156,10 @@ export default function UserInfo() {
       }));
       // 이전 돈 기록 업데이트
       const newPrevMoney = [...prevMoneyStates];
-      newPrevMoney[3] = playerData[3].money;
+      newPrevMoney[3] = playerData[3].cash;
       setPrevMoneyStates(newPrevMoney);
     }, 1000);
-  }, [playerData[3].money]);
+  }, [playerData[3].cash]);
 
   return (
     <>
@@ -194,7 +194,7 @@ export default function UserInfo() {
                   }
                   `}
                   >
-                    {player.money}원
+                    {player.cash}원
                   </div>
                 </div>
               </div>
