@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.messagenum.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.messagenum.entity.MessageNum;
@@ -15,6 +16,7 @@ public class MessageNumService {
 
     private final MessageNumRepository messageNumRepository;
 
+    @Transactional
     public Long getMessageNumByGameId(String gameId){
 
         //받은 방번호로 메시지 넘버를 찾아와서
