@@ -30,7 +30,6 @@ public enum ErrorMessage {
     CANNOT_SELL_STOCK(FORBIDDEN, "보유한 주식이 부족하여 주식을 판매할 수 없습니다."),
     CANNOT_PAY_TAX(FORBIDDEN, "보유한 현금이 부족하여 세금을 납부할 수 없습니다.");
 
-
     private final int code;
     private final String phrase;
 

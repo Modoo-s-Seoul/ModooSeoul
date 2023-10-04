@@ -351,6 +351,7 @@ public class PlayerService {
             return PlayerArrivalBoardMessage.of("지하철 도착",boardStatus);
         }
         //특수칸 - 국세청 board 업데이트 되면 만들기
+        // TODO : 국세청 도착 메시지 만들어야함.
         return null;
     }
 
@@ -464,8 +465,8 @@ public class PlayerService {
         flag = evasionAction(reportee, reporter);
         message = PlayerEvasionMessage.ofReporter(reporter, flag);
 
-        reportee.setReporteePlayerName("");
-        playerRepository.save(reportee);
+        reporter.setReporteePlayerName("");
+        playerRepository.save(reporter);
 
         return message;
     }
@@ -474,34 +475,42 @@ public class PlayerService {
         // 탈세 확인 액션
         if (reportee.getTax() == 0) {
             // 탈세 안 했다면
-            // 신고자 벌금 지불
-            if (player.getCash() + player.getStockMoney() < 1000000L) {
-                // 파산
-                setBankruptedPlayerEstateNull(player);
-            }
-            else if (player.getCash() < 1000000L) {
-                StockBoard stockBoard = stockBoardRepository.findById(player.getId() + "@stockBoard")
-                        .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
-                player.sellAllStock(stockBoard);
-                stockBoardRepository.save(stockBoard);
-            }
-            // 벌금 지불
-            player.payPenalty(1000000L);
 
             // 신고당한 사람에게 10% 줌
             reportee.receivePenalty(100000L);
-
-            playerRepository.save(player);
             playerRepository.save(reportee);
+
+            // 국세청 감사일 경우 이 로직 실행 안됨
+            if (player != null) {
+                // 신고자 벌금 지불
+                if (player.getCash() + player.getStockMoney() < 1000000L) {
+                    // 파산
+                    setBankruptedPlayerEstateNull(player);
+                    return false;
+                }
+                else if (player.getCash() < 1000000L) {
+                    StockBoard stockBoard = stockBoardRepository.findById(player.getId() + "@stockBoard")
+                            .orElseThrow(() -> new BusinessException(ErrorMessage.STOCK_BOARD_NOT_FOUND));
+                    player.sellAllStock(stockBoard);
+                    stockBoardRepository.save(stockBoard);
+                }
+                // 벌금 지불
+                player.payPenalty(1000000L);
+
+                playerRepository.save(player);
+            }
 
             return false; // 탈세 안함
         }
         else {
             // 탈세 했다면
-            // 신고한 사람 포상금 받기
-            player.receivePenalty(5000000L); // 일단 500만원
+            // 국세청 감사일 경우 이 로직 실행 안됨
+            if (player != null) {
+                // 신고한 사람 포상금 받기
+                player.receivePenalty(5000000L); // 일단 500만원
+                playerRepository.save(player);
+            }
 
-            playerRepository.save(player);
             // 이미 지불한 경우
             if (reportee.getTax() == 1L) {
                 return true;
@@ -542,5 +551,21 @@ public class PlayerService {
         }
         player.bankrupt();
         playerRepository.save(player);
+    }
+
+    public PlayerEvasionMessage playerArrivedtaxService(Player player) {
+        // 진짜 국세청을 온건지 확인
+        BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId() + "@"+player.getCurrentBoardIdx())
+                                                       .orElseThrow(() -> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+//        if(!(boardStatus.getBoardType() == BoardType.SPECIAL && boardStatus.getSpecialName().equals("국세청"))){
+//            throw new BusinessException(ErrorMessage.BAD_REQUEST);
+//        }
+
+        // 국세청 도착 시 작업
+        Boolean isEvade = evasionAction(player, null);
+
+        // 메시지 가공
+        return PlayerEvasionMessage.ofGame(isEvade, player);
     }
 }
