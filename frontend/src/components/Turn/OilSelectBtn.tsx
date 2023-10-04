@@ -2,19 +2,29 @@
 import "./Oil.css";
 
 import { useRecoilState } from "recoil";
-import { isOilActiveState, turnState } from "../../data/IngameData";
+import {
+  isOilActiveState,
+  playerInfoState,
+  turnState,
+} from "../../data/IngameData";
 import { useEffect } from "react";
+import { useSocket } from "../../pages/SocketContext";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 
 export default function OilSelectBtn() {
   // 기본인자
-  const [turn, setTurn] = useRecoilState(turnState);
+  const [turn] = useRecoilState(turnState);
   const [isOilActive, setIsOilActive] = useRecoilState(isOilActiveState); // 오일 토글(board에서 감지)
+
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
   /** 선택완료시 */
   const toggleSelectOil = () => {
     setIsOilActive(false);
-    setTurn(turn + 1);
     // 실제구현 - 오일랜드 위치 업데이트 요청
+    sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
   };
 
   /** 시간초과시 */
@@ -22,9 +32,7 @@ export default function OilSelectBtn() {
     // 플레이어 턴일시
     if (isOilActive) {
       const rollTimeout = setTimeout(() => {
-        // 가구현
-        // setTurn(turn + 1);
-        // 실제 구현 - 턴 변경 요청
+        setIsOilActive(false);
       }, 10000);
       if (!isOilActive) {
         clearTimeout(rollTimeout);
