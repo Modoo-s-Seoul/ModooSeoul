@@ -13,6 +13,7 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.news.entity.News;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
+import online.ft51land.modooseoul.domain.player.dto.request.PlayerDiceTestRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerJoinRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
@@ -163,6 +164,46 @@ public class PlayerService {
         diceRoller.setSeed(System.currentTimeMillis());
         Long one = diceRoller.nextLong(6) + 1;
         Long two = diceRoller.nextLong(6) + 1;
+
+        // 두 개의 눈금이 같을 경우
+        if (one.equals(two)) {
+            rolledPlayer.updateDouble(!rolledPlayer.getIsDouble());
+        }
+        else {
+            rolledPlayer.updateDouble(false);
+        }
+
+        // 주사위 얼마 나왔는지 저장
+        rolledPlayer.updateDice(one + two);
+
+        // 어디로 이동했는지 저장
+        Long bef = rolledPlayer.getCurrentBoardIdx();
+        Long aft = (bef + (one + two)) % 32; // 1 ~ 32
+        aft = aft == 0? 32 : aft;
+        rolledPlayer.playerMove(aft);
+
+        // 월급 받았는지 안 받았는지 여부 저장
+        Boolean isSalary = bef > aft;
+        if(bef > aft){
+            rolledPlayer.getSalary();
+        }
+
+        // DB 갱신
+        playerRepository.save(rolledPlayer);
+
+        // 메세지 가공 후 리턴
+        return (PlayerDiceMessage.of(one, two, rolledPlayer, isSalary));
+    }
+
+    //주사위굴리기 test
+    public PlayerDiceMessage rollDiceTest(String playerId, PlayerDiceTestRequestDto playerDiceTestRequestDto) {
+        // 주사위 굴린 플레이어
+        Player rolledPlayer = getPlayerById(playerId);
+
+        Game game = getGameById(rolledPlayer.getGameId());
+
+        Long one = playerDiceTestRequestDto.dice1();
+        Long two = playerDiceTestRequestDto.dice2();
 
         // 두 개의 눈금이 같을 경우
         if (one.equals(two)) {
