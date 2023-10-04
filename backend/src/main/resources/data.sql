@@ -123,17 +123,24 @@ INSERT INTO  board (id, price, board_type, district_name) VALUES ('32', '4974000
 
 
 -- BUILDING insert query start
-INSERT INTO building (id, price, name) VALUES (1, '400000', '교통');
-INSERT INTO building (id, price, name) VALUES (2, '200000', '교육');
-INSERT INTO building (id, price, name) VALUES (3, '600000', '유통');
-INSERT INTO building (id, price, name) VALUES (4, '500000', '주거');
-INSERT INTO building (id, price, name) VALUES (5, '700000', '문화');
+INSERT INTO building (id, price, name) VALUES (1, '600000', '교통');
+INSERT INTO building (id, price, name) VALUES (2, '400000', '교육');
+INSERT INTO building (id, price, name) VALUES (3, '800000', '유통');
+INSERT INTO building (id, price, name) VALUES (4, '1000000', '주거');
+INSERT INTO building (id, price, name) VALUES (5, '200000', '문화');
 -- BUILDING insert query end
 
 
+-- CHANCE insert query start
+INSERT INTO chance (id, name, chance_type, description) VALUES (1, '탈세여부확인', 'TAX', '상대방의 탈세 여부를 확인하세요!');
+INSERT INTO chance (id, name, chance_type, description) VALUES (2, '추가뉴스', 'NEWS', '선택하지 않은 뉴스 1종을 볼 수 있습니다!');
+INSERT INTO chance (id, name, chance_type, description) VALUES (3, '로또당첨', 'LOTTO', '로또에 당첨되셨습니다! 수령금(100만원)을 받으세요!');
+INSERT INTO chance (id, name, chance_type, description) VALUES (4, '꽝', 'UNLUCKY', '아쉽게도 꽝입니다.');
+-- CHANCE insert query end
+
 -- SYNERGY insert query start
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('1', '1', '3');
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('2', '1', '4');
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('3', '2', '4');
-INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`) VALUES ('4', '3', '4');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('1', '1', '3','도매, 소매의 밀집지');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('2', '1', '4','서울 교통의 요충지');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('3', '2', '4','제 2의 대치동');
+INSERT INTO `synergy` (`id`, `first_building_id`, `second_building_id`, `description`) VALUES ('4', '3', '4','서울 쇼핑의 중심');
 -- SYNERGY insert query end

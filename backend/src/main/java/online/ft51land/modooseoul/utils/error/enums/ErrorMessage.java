@@ -16,6 +16,7 @@ public enum ErrorMessage {
     STOCK_NOT_FOUND(NOT_FOUND, "해당 주식을 찾을 수 없습니다."),
     BUILDING_NOT_FOUND(NOT_FOUND, "해당 건물 정보를 찾을 수 없습니다."),
     STOCK_BOARD_NOT_FOUND(NOT_FOUND, "해당 주식보드를 찾을 수 없습니다"),
+    CHANCE_NOT_FOUND(NOT_FOUND, "해당 찬스카드 정보를 찾을 수 없습니다."),
     INTERVAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "요청을 처리하는 과정에서 서버가 예상하지 못한 오류가 발생하였습니다."),
     GAME_NOT_FOUND(NOT_FOUND, "해당 방을 찾을 수 없습니다."),
     GAME_ALREADY_FULL(FORBIDDEN, "해당 방의 정원이 이미 가득 찼습니다."),

@@ -12,6 +12,7 @@ import online.ft51land.modooseoul.domain.stock_board.repository.StockBoardReposi
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,7 @@ import java.util.Objects;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class StockBoardService {
 
 	private final PlayerRepository playerRepository;

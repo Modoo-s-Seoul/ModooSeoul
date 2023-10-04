@@ -38,7 +38,8 @@ public class Player extends BaseEntity {
     dice : 주사위
     already_double: 이미 더블했는지 여부
     is_arrested: 검거 여부
-    select_stock_id: 확인한 뉴스의 종목
+    select_news_id: 확인한 뉴스의 id
+    plus_news_id: 찬스카드에서 추가로 확인한 뉴스의 id
     reportee_player_name : 피고자(신고를 당한 사람)
     turn_num : 본인 턴 번호 0 ~ 4
     is_bankrupt :  파산여부
@@ -46,6 +47,7 @@ public class Player extends BaseEntity {
     is_finish : 공통 턴 완료 여부
     dividend : 해당 라운드 수령 배당금
     stockBoardId : 플레이어 주식 보드 아이디
+    chance_num: 찬스카드 번호
      */
     @Id
     private String id;
@@ -86,6 +88,9 @@ public class Player extends BaseEntity {
     @Column(name = "select_news_id")
     private Long selectNewsId;
 
+    @Column(name = "plus_news_id")
+    private Long plusNewsId;
+
     @Column(name = "reportee_player_name")
     private String reporteePlayerName;
 
@@ -104,6 +109,9 @@ public class Player extends BaseEntity {
 
     private String stockBoardId;
 
+
+    @Column(name = "chance_num")
+    private Long chanceNum;
 
     @Builder
     public Player(String nickname, String gameId){
@@ -134,6 +142,7 @@ public class Player extends BaseEntity {
         this.dice = 0L;
         this.isDouble = false;
         this.selectNewsId = 0L;
+        this.plusNewsId = 0L;
 
         this.tax = 0L;
         this.isArrested = false;
@@ -252,12 +261,44 @@ public class Player extends BaseEntity {
         return this.cash;
     }
 
+    public Long payFTOilLandEffect(){
+        this.cash -= 100000;
+        return this.cash;
+    }
+
     public void payPenalty(Long penalty) {
         this.cash -= penalty;
     }
 
     public void receivePenalty(Long penalty) {
         this.cash += penalty;
+    }
+
+    public void setChanceNum(Long chanceNum) {
+        this.chanceNum = chanceNum;
+    }
+
+    public void setSelectNewsId(Long cardIdx) {
+        this.selectNewsId = cardIdx;
+    }
+
+    public void winLotto() {
+        this.cash += 1_000_000L;
+    }
+
+    public void setNews() {
+        this.selectNewsId = 0L;
+        this.plusNewsId = 0L;
+    }
+
+    public void setPlusNewsId(Long cardIdx) {
+        this.plusNewsId = cardIdx;
+    }
+
+    public void sellBuildingAndGround(Long boardIdx, Long boardPrice) {
+        this.estates.remove(boardIdx);
+        this.cash += boardPrice;
+        this.estateMoney -= boardPrice;
     }
 
 }

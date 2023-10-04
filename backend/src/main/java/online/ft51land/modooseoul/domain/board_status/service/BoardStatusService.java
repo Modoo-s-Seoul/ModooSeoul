@@ -3,6 +3,7 @@ package online.ft51land.modooseoul.domain.board_status.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.board_status.dto.message.BuildingPurchaseMessage;
+import online.ft51land.modooseoul.domain.board_status.dto.message.FTOilLandMessage;
 import online.ft51land.modooseoul.domain.board_status.dto.message.GroundPurchaseMessage;
 import online.ft51land.modooseoul.domain.board_status.dto.request.BuildingPurchaseRequestDto;
 import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
@@ -14,9 +15,11 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
+import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +27,20 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class BoardStatusService {
     private final BoardStatusRepository boardStatusRepository;
     private final PlayerRepository playerRepository;
     private final BuildingRepository buildingRepository;
     private final GameRepository gameRepository;
+    private final SynergyReository synergyReository;
+
+
+    public BoardStatus getBoardStatusById(String boardStatusId) {
+        return boardStatusRepository.findById(boardStatusId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+    }
+
 
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
@@ -47,8 +59,7 @@ public class BoardStatusService {
         //현재 플레이어가 위치한 땅이 소유자가 없는지 한번 더 체크
         String curBoardId = player.getGameId()+"@"+player.getCurrentBoardIdx();
 
-        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        BoardStatus boardStatus = getBoardStatusById(curBoardId);
 
         //플레이어 자산으로 땅을 살 수 있는지 체크
         if(player.getCash() < boardStatus.getPrice()) {
@@ -92,6 +103,7 @@ public class BoardStatusService {
 
 
 
+
     public BuildingPurchaseMessage purchaseBuilding(Player player, BuildingPurchaseRequestDto buildingPurchaseRequestDto) {
 
         Game game = gameRepository.findById(player.getGameId())
@@ -117,8 +129,7 @@ public class BoardStatusService {
         //플레이어 땅인지 체크
         String curBoardId = player.getGameId()+"@"+boardIdxForBuilding;
 
-        BoardStatus boardStatus = boardStatusRepository.findById(curBoardId)
-                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+        BoardStatus boardStatus = getBoardStatusById(curBoardId);
 
         //땅의 주인이 플레이어인지확인
         if(!boardStatus.getOwnerId().equals(player.getId())) {
@@ -196,8 +207,26 @@ public class BoardStatusService {
         player.purchaseBuilding(building.getPrice());
         playerRepository.save(player);
 
-        //board status 업데이트
         boardStatus.purchaseBuilding(buildingPurchaseRequestDto.buildingIdx(), buildingPurchaseRequestDto.buildingId(),building.getPrice());
+
+        // 시너지 확인
+        for (int buildingId : boardStatus.getBuildings()) {
+            Long minBuildingId = 0L;
+            Long maxBuildingId = 0L;
+            if(buildingId < buildingPurchaseRequestDto.buildingId()){
+                minBuildingId = (long) buildingId;
+                maxBuildingId = buildingPurchaseRequestDto.buildingId();
+            }else{
+                minBuildingId = buildingPurchaseRequestDto.buildingId();
+                maxBuildingId = (long) buildingId;
+            }
+
+            if(synergyReository.existsByFirstBuildingAndSecondBuilding(minBuildingId, maxBuildingId)){
+                boardStatus.addSynerge();
+            }
+        }
+
+        //board status 업데이트
         boardStatusRepository.save(boardStatus);
 
         return(BuildingPurchaseMessage
@@ -207,5 +236,56 @@ public class BoardStatusService {
                         ,buildingPurchaseRequestDto.buildingIdx()
                         ,buildingPurchaseRequestDto.buildingId()
                         ,player.getId()));
+    }
+
+
+
+    public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
+
+        // 타이머가 활성화 되어 있는지 확인
+        if(!game.getIsTimerActivated()){
+            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+        }
+
+        // 턴 정보 확인
+        if(!player.getTurnNum().equals(game.getTurnInfo())){
+            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+        }
+
+        BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId()+"@"+boardId)
+                .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+        // ftoilland 가 이미 존재 했을 경우
+        if(game.getFtOilLandBoardId() != null){
+
+            // 이미 있는데 그 땅이 선택한 땅이 다를 경우
+            if(boardId != game.getFtOilLandBoardId()){
+                // 이미 있는데 다른 땅을 선택했다면
+                BoardStatus originFTOilLand = boardStatusRepository.findById(player.getGameId()+"@"+game.getFtOilLandBoardId())
+                        .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
+
+                // 기존 ftoilland 일반땅으로 변경
+                originFTOilLand.oilInit();
+                boardStatusRepository.save(originFTOilLand);
+
+            }
+        }
+
+
+        // 게임에 ftoilland 설정
+        game.setFTOilLand(boardId);
+        gameRepository.save(game);
+
+        // 몇배인지 설정
+        boardStatus.updateOil();
+        boardStatusRepository.save(boardStatus);
+
+        // 비용지불
+        player.payFTOilLandEffect();
+        playerRepository.save(player);
+
+
+        return FTOilLandMessage.of(player.getCash(), boardStatus);
+
     }
 }

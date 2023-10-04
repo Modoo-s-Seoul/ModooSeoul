@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.game.service;
 
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import online.ft51land.modooseoul.domain.player.dto.message.PlayerInGameInfoMess
 import online.ft51land.modooseoul.domain.player.dto.message.PlayerPrisonMessage;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.domain.stock.entity.Stock;
 import online.ft51land.modooseoul.domain.stock.repository.StockRepository;
 import online.ft51land.modooseoul.domain.stock_board.entity.StockBoard;
@@ -41,9 +41,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Transactional
 public class GameService {
-
-    private final PlayerService playerService;
 
     private final GameRepository gameRepository;
     private final MessageNumRepository messageNumRepository;
@@ -57,10 +56,13 @@ public class GameService {
 
 
 
+
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
                              .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
     }
+
+
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
@@ -68,9 +70,11 @@ public class GameService {
         return GameCreateResponseDto.of(game);
     }
 
+
+
     public GameStartMessage gameStart(Game game, List<Player> players) {
 
-        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
+//        log.info("플레이어 리스트 = {}, {}", players.get(0), players.get(1));
         // 게임 시작 가능 여부 확인
         int readyCnt = 0;
 
@@ -121,6 +125,7 @@ public class GameService {
         return GameStartMessage.of(true, "게임 시작!");
     }
 
+
     private void setBoard(Game game) {
         List<Board> boardList = boardRepository.findAll();
 
@@ -130,6 +135,8 @@ public class GameService {
     }
 
     // 주식 세팅
+
+
     public void setGameStocks(Game game) {
         List<Long> stocksIds = game.getStocks();
         for (Long stockId : stocksIds) {
@@ -140,6 +147,8 @@ public class GameService {
             gameStockRepository.save(gameStock);
         }
     }
+
+
 
     public void setRandomStocks(Game game) {
         // random generator
@@ -159,12 +168,16 @@ public class GameService {
 
     /* 게임 선 세팅
           player 리스트 랜덤으로 섞어서 다시 저장*/
+
+
     public void sequencePlayer(Game game) {
 
         List<String> players = game.getPlayers();
         Collections.shuffle(players); //리스트 순서 섞기
         game.setSequencePlayer(players);
     }
+
+
 
     public void setNews(Game game) {
         // 최종 저장본
@@ -193,6 +206,8 @@ public class GameService {
         game.setNews(news);
     }
 
+
+
     public List<PlayerInGameInfoMessage> getPlayersInfo(List<Player> players) {
         List<PlayerInGameInfoMessage> playersInfo = new ArrayList<>();
 
@@ -202,6 +217,8 @@ public class GameService {
 
         return playersInfo;
     }
+
+
 
     public GameRoundStartMessage startRound(Game game, List<Player> players) {
         game.roundStart(game.getCurrentRound() + 1);
@@ -227,6 +244,10 @@ public class GameService {
             player.setDevidend();
             // 세금 미납액 증가
             player.setTax(player.getTax() + (player.getTax() / 1000) * 100);
+
+            //플레이어 선택 뉴스 + 추가뉴스 값 초기화
+            player.setNews();
+
             // 저장
             playerRepository.save(player);
         }
@@ -234,6 +255,8 @@ public class GameService {
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
     }
+
+
 
     public Long getNextRoundPlayerStockMoney(Player player) {
         Long stockMoney = 0L;
@@ -258,6 +281,8 @@ public class GameService {
 
         return stockMoney;
     }
+
+
 
     public List<GameStock> setNextRoundStockPrice(Game game) {
         int passFlag = 0;
@@ -307,16 +332,22 @@ public class GameService {
         return gameStocks;
     }
 
+
+
     public PlayerPrisonMessage setPlayerIsPrisoned(Player player) {
         player.setIsPrisoned(true);
 
 	    return PlayerPrisonMessage.of(player);
     }
 
+
+
     public void passTurn(Game game) {
         game.passTurn();
         gameRepository.save(game);
     }
+
+
 
     public void startTimer(Game game, TimerType timerType) {
         game.startTimer(timerType);
@@ -324,12 +355,17 @@ public class GameService {
     }
 
 
+
+
     public void expiredTimer(Game game) {
         game.expiredTimer();
         gameRepository.save(game);
     }
 
-    @Transactional
+
+
+
+
     public GameEndMessage endGame(Game game, EndType endType) {
         List<Player> players = convertToPlayerList(game.getPlayers());
         game.setEndGame(endType,players.get(0).getId());
@@ -341,7 +377,8 @@ public class GameService {
         List<Player> sortedPlayers = new ArrayList<>();
 
         for (String playerId : players) {
-            Player player = playerService.getPlayerById(playerId);
+            Player player = playerRepository.findById(playerId)
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));;
             sortedPlayers.add(player);
         }
         return  sortToMoney(sortedPlayers);
@@ -359,6 +396,8 @@ public class GameService {
     }
 
 
+
+
     public void playersActionFinish(Game game) {
         // game 에 해당하는 모든 player pass init  , 타이머 종료
         List<Player> playerList = playerRepository.findAllByGameId(game.getId());
@@ -373,6 +412,8 @@ public class GameService {
     }
 
     // 플레이에 참여하고 있는 플레이어의 수 -> 파산하지 않은 플레이어의 수
+
+
     public Long getPlayingPlayerCnt(Game game) {
         List<Player> players= playerRepository.findAllByGameId(game.getId());
         Long cnt = 0L;
@@ -384,4 +425,10 @@ public class GameService {
         return cnt;
     }
 
+
+
+    public boolean checkGameEnd(String gameId) {
+        Game game = getGameById(gameId);
+        return getPlayingPlayerCnt(game) == 1;
+    }
 }

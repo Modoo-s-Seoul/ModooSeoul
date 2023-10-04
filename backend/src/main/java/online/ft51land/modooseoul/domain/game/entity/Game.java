@@ -44,6 +44,8 @@ public class Game extends BaseEntity {
     turn_info : 턴정보
     finishedPlayerCnt : 공통 턴에서 본인의 행동을 완료한 플레이어의 수
     isTimerActivated : 타이머 활성화 여부
+    timerType: 돌아가는 타이머의 타입
+    ftOilLandBoardId : FT OilLand인 땅 번호
      */
 
 	@Id
@@ -91,6 +93,8 @@ public class Game extends BaseEntity {
 	private Boolean isTimerActivated;
 
 	private TimerType timerType;
+
+	private Long ftOilLandBoardId;
 
 	@Builder
 	public Game() {
@@ -177,5 +181,12 @@ public class Game extends BaseEntity {
 		this.endType = endType;
 		this.winPlayerId = winPlayerId;
 		this.endTime = LocalDateTime.now();
+	}
+
+    public void setFTOilLand(Long boardId) {
+		this.ftOilLandBoardId = boardId;
+    }
+	public void ftOilLandInit() {
+		this.ftOilLandBoardId = null;
 	}
 }
