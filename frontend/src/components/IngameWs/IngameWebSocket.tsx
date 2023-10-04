@@ -14,7 +14,6 @@ import {
   dice2State,
   isPrisonState,
   stockState,
-  stockLabelState,
 } from "../../data/IngameData";
 
 export default function IngameWebSocket() {
@@ -23,14 +22,13 @@ export default function IngameWebSocket() {
   const setPlayerInfo = useSetRecoilState(playerInfoState); // 플레이어 인게임 정보
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const setRound = useSetRecoilState(roundState); // 현재 라운드
-  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const setTurn = useSetRecoilState(turnState); // 현재 플레이 순서
   const setTimer = useSetRecoilState(timerState); // 현재 플레이 순서
   const setSelectedNews = useSetRecoilState(selectedNewsState); // 뉴스
   const setDice1Value = useSetRecoilState(dice1State);
   const setDice2Value = useSetRecoilState(dice2State);
   const setPrison = useSetRecoilState(isPrisonState);
   const [stock, setStock] = useRecoilState(stockState);
-  const [stockLabel, setStockLabel] = useRecoilState(stockLabelState);
 
   // 게임 정보
   const weblocation = useLocation();
@@ -80,7 +78,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/round-start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("round-start: ", receivedData);
         setRound(receivedData.currentRound);
         /* 주식 정보 업데이트 */
         const newStock = [...stock];
@@ -93,16 +91,12 @@ export default function IngameWebSocket() {
           }
           newStock[i] = {
             ...newStock[i],
-            stockPrice: [
-              ...newStock[i].stockPrice,
-              receivedData.stockPrices[i],
-            ],
+            currentPrice: receivedData.stockPrices[i],
+            stockHistory: receivedData.stockPricesHistory[i],
           };
         }
 
-        const newLabel = [...stockLabel, `${turn}R`];
         setStock(newStock);
-        setStockLabel(newLabel);
       });
 
       //타이머 시작,완료,취소 알림
@@ -119,6 +113,8 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        setTimer(receivedData.isTimerActivated);
+        setTurn(receivedData.turnInfo);
       });
 
       // 주사위 굴리기
@@ -205,13 +201,6 @@ export default function IngameWebSocket() {
 
       //찬스 카드 도착
       socketClient.subscribe(`/receive/game/chance/${gameId}`, (msg) => {
-        const res = JSON.parse(msg.body);
-        const receivedData = res.data;
-        console.log(receivedData);
-      });
-
-      //공통 턴 준비
-      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
