@@ -1,13 +1,14 @@
-![부트캠프 홍보지](https://github.com/BootCampFire/.github/assets/99172832/fca4f7fd-2f14-425f-97d5-5d5c6c98328a)
+<!-- 대문 이미지 넣기  -->
 
 
 
-# 🔥 캠프 파이어 🔥
-> 부트캠프에 참가하고 있는, 참가를 원하는 사람들의 소통공간, 부트캠프 커뮤니티 
+# 🌎 모두의 서울 🌎
+> 플레이어들이 부동산 투자, 주식투자, 뉴스 예측 및 전략적인 판단력을 활용하는 현실 기반 금융 전략 시뮬레이션 게임
 <br>
-<p align="left">  <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a><a href="https://www.docker.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/> </a> <a href="https://mariadb.org/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/mariadb/mariadb-icon.svg" alt="mariadb" width="40" height="40"/> </a> </p>
-<!-- ### 🔗라이브
-[We-ling.site](We-ling.site)   -->
+
+## 🔗라이브
+[modooseoul.online](https://modooseoul.online)
+<br>
 <br>
 
 ## ✈️ 프로젝트 소개
