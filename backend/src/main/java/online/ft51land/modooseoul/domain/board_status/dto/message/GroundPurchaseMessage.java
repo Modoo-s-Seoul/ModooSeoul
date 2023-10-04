@@ -8,14 +8,14 @@ public record GroundPurchaseMessage(
         Boolean isPurchase,
         String message,
         Long groundIdx,
-        String playerId
+        Long playerIdx
 ) {
-    public static GroundPurchaseMessage of(Boolean isPurchase, PurchaseMessage purchaseMessage, Long groundIdx, String playerId) {
+    public static GroundPurchaseMessage of(Boolean isPurchase, PurchaseMessage purchaseMessage, Long groundIdx, Long playerIdx) {
         return GroundPurchaseMessage.builder()
                 .isPurchase(isPurchase)
                 .message(purchaseMessage.getMessage())
                 .groundIdx(groundIdx)
-                .playerId(playerId)
+                .playerIdx(playerIdx)
                 .build();
     }
 }
