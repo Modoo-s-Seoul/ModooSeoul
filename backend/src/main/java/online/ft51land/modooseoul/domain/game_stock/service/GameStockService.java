@@ -1,5 +1,6 @@
 package online.ft51land.modooseoul.domain.game_stock.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.ft51land.modooseoul.domain.game.entity.Game;
@@ -19,6 +20,7 @@ public class GameStockService {
 
 	private final GameStockRepository gameStockRepository;
 
+	@Transactional
 	public List<GameStock> getGameStockById(Game game){
 		List<GameStock> gameStocks = new ArrayList<>();
 
