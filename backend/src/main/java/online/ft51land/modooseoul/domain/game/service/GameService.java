@@ -399,6 +399,7 @@ public class GameService {
                 cnt ++;
             }
         }
+        log.info("getPlayingPlayerCnt : {} ", cnt);
         return cnt;
     }
 
