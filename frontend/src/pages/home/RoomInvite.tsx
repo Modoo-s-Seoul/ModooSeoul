@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { AlertModal } from "../../components/Base/AlertModal";
 import { alertModalState } from "../../data/CommonData";
+import { handleFullScreen } from "../../components/Base/BaseFunc";
 
 /** 방 입장 컴포넌트 */
 export default function Invite() {
@@ -36,6 +37,7 @@ export default function Invite() {
 
     try {
       const joinResponse = await joinRoom(nickname, pk);
+      handleFullScreen();
       console.log(joinResponse);
 
       if (joinResponse.message === "success") {

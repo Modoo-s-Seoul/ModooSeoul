@@ -35,7 +35,7 @@ export default function Subway() {
     // 실제구현 (감옥반영 요청)
 
     // 가구현
-    setIsSubway([{ player: turn, row: 0, col: 0, move: false }]);
+    setIsSubway([{ player: turn, row: 0, col: 0, move: false, index: 0 }]);
   }, []);
 
   // 초측정
@@ -46,7 +46,7 @@ export default function Subway() {
       } else {
         clearInterval(timer); // 타이머 정지
         // 0초일시 턴 넘기기 (비활성화)
-        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
+        sendWsMessage(socketClient, playerInfo.gameId, "send/turn");
         setUserTurn(false);
       }
     }, 1000);
