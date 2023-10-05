@@ -5,6 +5,7 @@ import { WebInfoLoad } from "./WebInfo";
 import { useNavigate } from "react-router-dom";
 import { musicState } from "../../data/CommonData";
 import { useRecoilValue } from "recoil";
+import SettingIcon from "/assets/setting.svg";
 
 export default function GameOption() {
   /** 옵션창 끄고 켜기 */
@@ -18,7 +19,7 @@ export default function GameOption() {
     <>
       <div className="GameOptionBtnContainer" style={{ cursor: "pointer" }}>
         <div className="GameOptionBtn" onClick={toggleGameOption}>
-          옵션
+          <img src={SettingIcon} alt="설정" />
         </div>
       </div>
 

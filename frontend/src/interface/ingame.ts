@@ -52,7 +52,7 @@ export interface defaultMatch {
 }
 
 /**(타입) 보드판 인덱스 정보 */
-export interface defaultIndex{
+export interface defaultIndex {
   row: number;
   col: number;
 }
@@ -100,4 +100,14 @@ export interface subwayChangeType {
   row: number | null;
   col: number | null;
   move: boolean;
+}
+
+/** (타입) 플레이어 주식 정보 */
+export interface playerStockInfoType {
+  playerStockMoney: number; // 현재 보유 주식 가치
+  prevStockMoney: number; // 이전 라운드 보유 주식 가치
+  stockNames: string[]; //보유 주식 이름
+  purchasePrices: number[]; //보유 주식 별 평단가
+  stockAmounts: number[]; //보유 주식 별 주수
+  stockPrices: number[]; //보유 주식 별 현재 가치
 }

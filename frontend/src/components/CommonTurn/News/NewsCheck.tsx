@@ -5,8 +5,9 @@ import {
   moreNewsState,
 } from "../../../data/IngameData";
 import IngameModal from "../../Base/IngameModal";
-import "./NewsCheckBtn.css";
+import "./NewsCheck.css";
 import { useRecoilValue } from "recoil";
+import NewsIcon from "/assets/news.svg";
 
 /**현재 라운드에서 주어진 뉴스 확인용 버튼 */
 export default function NewsCheck() {
@@ -27,7 +28,7 @@ export default function NewsCheck() {
           style={{ cursor: "pointer" }}
           onClick={toggleNewsCheck}
         >
-          뉴스 확인
+          <img src={NewsIcon} alt="news" width="80%" height="80%" />
         </div>
       )}
 
