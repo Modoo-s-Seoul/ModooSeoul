@@ -36,12 +36,30 @@ export default function StockCheck() {
 
       <IngameModal visible={isStockCheckVisible}>
         <CloseButton onClick={toggleStockCheck} />
-        <div>자산 정보</div>
-        <div>이번 라운드에서 받은 배당금:{dividend}</div>
-        <div>현재 보유 주식 가치:{stockInfo.playerStockMoney}</div>
         <div>
-          이전 라운드 대비{" "}
-          {(playerStockMoney - prevStockMoney) / prevStockMoney}%
+          <div>자산 정보</div>
+          <div>이번 라운드에서 받은 배당금:{dividend}</div>
+          <div>현재 보유 주식 가치:{stockInfo.playerStockMoney}</div>
+          <div>
+            이전 라운드 대비{" "}
+            {prevStockMoney === 0
+              ? 0
+              : (playerStockMoney - prevStockMoney) / prevStockMoney}
+            %
+          </div>
+          {stockNames.map((stock, index) => (
+            <div>
+              <div>{stock}</div>
+              <div>{stockAmounts[index]}</div>
+              <div>{stockPrices[index]}</div>
+              <div>
+                {stockPrices[index] - purchasePrices[index]}원{" "}
+                {(stockPrices[index] - purchasePrices[index]) /
+                  purchasePrices[index]}
+                %
+              </div>
+            </div>
+          ))}
         </div>
       </IngameModal>
     </>

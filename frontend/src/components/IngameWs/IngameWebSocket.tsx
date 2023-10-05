@@ -315,7 +315,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/dividend/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("배당금: ", receivedData);
         setDividend(receivedData.dividend);
       });
 

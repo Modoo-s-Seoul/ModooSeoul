@@ -22,6 +22,7 @@ import RoundInfo from "../components/Base/RoundInfo";
 import OilSelectBtn from "../components/Turn/OilSelectBtn";
 import SubwaySelectBtn from "../components/Turn/SubwaySelectBtn";
 import StartSelectBtn from "../components/Turn/StartSelectBtn";
+import StockCheck from "../components/CommonTurn/Stock/StockCheck";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -1127,6 +1128,7 @@ export default function Board() {
           !isYourTurnVisible && <News />}
       </IngameModal>
       <NewsCheck />
+      <StockCheck />
 
       {/* Phaser 게임구현 */}
       <div ref={game} className="GameScreen" id="gameScreen" />

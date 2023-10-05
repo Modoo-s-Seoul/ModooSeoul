@@ -83,6 +83,8 @@ export default function News() {
       `{"timerType":"SELECT_NEWS"}`
     );
     sendWsMessage(socketClient, playerInfo.gameId, "send/round-start");
+    sendWsMessage(socketClient, playerInfo.gameId, "send/dividend");
+    sendWsMessage(socketClient, playerInfo.playerId, "send/stock/info");
     const newLabel = [...stockLabel, `${stockLabel.length + 1}R`];
     setStockLabel(newLabel);
   }, []);
