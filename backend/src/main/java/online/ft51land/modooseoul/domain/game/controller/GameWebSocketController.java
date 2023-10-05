@@ -191,8 +191,8 @@ public class GameWebSocketController {
 			}
 		};
 
-		log.info("{} 방에서 타이머 시작 : {}", game.getId(), LocalDateTime.now() );
 
+		log.info("{} 방에서 타이머 시작 : {}, DTO: {}", game.getId(), LocalDateTime.now(), gameStartTimerRequestDto.toString());
 		gameService.startTimer(game, gameStartTimerRequestDto.timerType());
 		timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
 
