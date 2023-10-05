@@ -35,7 +35,7 @@ export default function IngameWebSocket() {
   const setRound = useSetRecoilState(roundState); // 현재 라운드
   const setTurn = useSetRecoilState(turnState); // 현재 플레이 순서
   const setTimer = useSetRecoilState(timerState); // 현재 플레이 순서
-  const setSelectedNews = useSetRecoilState(selectedNewsState); // 뉴스
+  const [selectedNews, setSelectedNews] = useRecoilState(selectedNewsState); // 뉴스
   const setDice1Value = useSetRecoilState(dice1State);
   const setDice2Value = useSetRecoilState(dice2State);
   const [stock, setStock] = useRecoilState(stockState);
@@ -324,7 +324,7 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
-        setSelectedNews(receivedData.description);
+        setSelectedNews([...selectedNews, receivedData.description]);
       });
 
       // 땅 판매

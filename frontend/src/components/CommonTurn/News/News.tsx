@@ -106,7 +106,7 @@ export default function News() {
             );
           })}
           <div className={`selectedNews ${selected ? "showSelectedNews" : ""}`}>
-            <h2>{selectedNews}</h2>
+            <h2>{selectedNews[0]}</h2>
           </div>
         </div>
       </div>

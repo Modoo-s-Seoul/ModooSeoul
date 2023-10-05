@@ -359,9 +359,9 @@ export const dirtyMoneyState = atom<number>({
 });
 
 /** 뉴스 보관 */
-export const selectedNewsState = atom<string>({
+export const selectedNewsState = atom<string[]>({
   key: "selectedNewsState",
-  default: "뉴스",
+  default: ["뉴스"],
 });
 
 /** 추가 뉴스 보관 */

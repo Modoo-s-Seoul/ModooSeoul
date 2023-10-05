@@ -46,7 +46,11 @@ export default function NewsCheck() {
           </div>
           {/* <div className="newsCheckTitle">이번 라운드에서 선택된 뉴스</div> */}
           <div className="newsCheckContainer">
-            <div className="newsCheckItems">{selectedNews}</div>
+            <div className="newsCheckItems">
+              {selectedNews.map((news) => (
+                <h1>{news}</h1>
+              ))}
+            </div>
             {moreNews !== "" && (
               <div className="newsCheckItems">{moreNews}</div>
             )}
