@@ -745,9 +745,8 @@ export default function Board() {
       };
       setBoardData(newGroundData);
     }
-    // 돈정보 업데이트
-    const gameId = weblocation.state.gameId;
-    sendWsMessage(socketClient, gameId, "send/players-info");
+    // 돈정보 디스플레이 업데이트
+    setDisplayPlayerData(playerData);
   }, [groundChange]);
 
   /** 건물 정보 변경시 */
@@ -791,6 +790,8 @@ export default function Board() {
         industry: buildingChange[0].industry,
       };
     }
+    // 돈정보 디스플레이 업데이트
+    setDisplayPlayerData(playerData);
   }, [buildingChange]);
 
   /** 유저 턴 구현 */

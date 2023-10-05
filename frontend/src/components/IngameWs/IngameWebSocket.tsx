@@ -11,7 +11,6 @@ import {
   timerState,
   dice1State,
   dice2State,
-  isPrisonState,
   stockState,
   diceActiveState,
   whoAreYouState,
@@ -20,10 +19,11 @@ import {
   buildingChangeState,
 } from "../../data/IngameData";
 import { matchIndex } from "./../../data/IngameData";
+import { sendWsMessage } from "./IngameSendFunction";
 
 export default function IngameWebSocket() {
   // 기본 인자
-
+  const [, setWhoAreYou] = useRecoilState(whoAreYouState);
   // 데이터
   const matchIndexList = useRecoilValue(matchIndex);
 
@@ -36,10 +36,8 @@ export default function IngameWebSocket() {
   const setSelectedNews = useSetRecoilState(selectedNewsState); // 뉴스
   const setDice1Value = useSetRecoilState(dice1State);
   const setDice2Value = useSetRecoilState(dice2State);
-  const setPrison = useSetRecoilState(isPrisonState);
   const [stock, setStock] = useRecoilState(stockState);
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
-  const setWhoAreYou = useSetRecoilState(whoAreYouState); // 본인의 턴 기록
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
   // const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
@@ -179,6 +177,9 @@ export default function IngameWebSocket() {
                 index: matchIndexList[receivedData.groundIdx - 1],
               },
             ]);
+            // 돈정보 업데이트
+            const gameId = weblocation.state.gameId;
+            sendWsMessage(socketClient, gameId, "send/players-info");
           }
         }
       );
@@ -203,6 +204,9 @@ export default function IngameWebSocket() {
                 industry: receivedData.buildingId - 1,
               },
             ]);
+            // 돈정보 업데이트
+            const gameId = weblocation.state.gameId;
+            sendWsMessage(socketClient, gameId, "send/players-info");
           }
         }
       );
@@ -217,12 +221,11 @@ export default function IngameWebSocket() {
         }
       );
 
-      //투옥
+      //감옥
       socketClient.subscribe(`/receive/game/prison/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
-        setPrison(receivedData.isPrisoned);
       });
 
       //공통 턴 시작

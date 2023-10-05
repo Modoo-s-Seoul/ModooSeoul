@@ -13,6 +13,7 @@ import {
   tcolState,
   trowState,
   turnState,
+  whoAreYouState,
 } from "../../data/IngameData";
 import ClickBtn from "../Base/CustomButton";
 import { boardDataState } from "../../data/BoardData";
@@ -53,6 +54,9 @@ export default function Ground() {
   const socketClient = useSocket();
   const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
+  // 플레이어 정보
+  const whoAreyou = useRecoilValue(whoAreYouState);
+
   /** 건물 갯수 세기 */
   useEffect(() => {
     let contB = 0;
@@ -75,15 +79,6 @@ export default function Ground() {
   const buyGround = () => {
     // 실제구현
     sendWsMessage(socketClient, playerInfo.playerId, "send/purchase/ground");
-
-    // 땅 구매비용 발생
-    const newPlayerData = [...playerData];
-    newPlayerData[turn] = {
-      ...newPlayerData[turn],
-      cash: newPlayerData[turn].cash - turnData.price,
-    };
-    setPlayerData(newPlayerData);
-    setDisplayPlayerData(newPlayerData);
 
     // 턴 종료
     // setIsUserTurnVisible(false);
@@ -167,17 +162,19 @@ export default function Ground() {
 
   // 타이머 관련
   useEffect(() => {
-    // 타이머 요청
-    sendWsMessage(
-      socketClient,
-      playerInfo.gameId,
-      `send/timer`,
-      `{"timerType":"ESTATE_PURCHASE"}`
-    );
-    // 언마운트시 타이머 해제
-    return () => {
-      sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
-    };
+    // 타이머 요청 (본인 턴일때만 요청)
+    if (turn == whoAreyou) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.gameId,
+        `send/timer`,
+        `{"timerType":"ESTATE_PURCHASE"}`
+      );
+      // 언마운트시 타이머 해제
+      return () => {
+        sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
+      };
+    }
   }, []);
 
   // 턴데이터 갱신
