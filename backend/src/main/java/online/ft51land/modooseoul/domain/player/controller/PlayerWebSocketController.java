@@ -2,12 +2,8 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
-import online.ft51land.modooseoul.domain.board.entity.enums.BoardType;
-import online.ft51land.modooseoul.domain.board_status.entity.BoardStatus;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
-import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
@@ -91,7 +87,7 @@ public class PlayerWebSocketController {
 
 	// 뉴스 선택하기
 	@MessageMapping("/news/{playerId}")
-	public void playerChooseNews(@DestinationVariable String playerId, @Payload PlayerNewsRequestDto playerNewsRequestDto) {
+	public void playerChooseNews(@DestinationVariable String playerId, @Payload PlayerNewsRequestDto playerNewsRequestDto) throws InterruptedException {
 
 		// game 객체 생성
 		Player player = playerService.getPlayerById(playerId);
@@ -110,6 +106,7 @@ public class PlayerWebSocketController {
 
 		//----------------------플레이어가 뉴스를 모두 뽑았는지 확인
 		if(finishPlayerCnt == gameService.getPlayingPlayerCnt(game)){
+			Thread.sleep(2000);
 			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료
 			gameService.passTurn(game); // 턴 넘기기
 		}
