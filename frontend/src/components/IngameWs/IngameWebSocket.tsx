@@ -422,15 +422,25 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/report/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("탈세자 신고", receivedData);
       });
 
-      // 탈세자 신고 결과 공지
-      socketClient.subscribe(`/receive/evasion-check/${playerId}`, (msg) => {
+      // 탈세자 신고자 개인 공지
+      socketClient.subscribe(`/receive/evasion-notice/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("탈세 신고 개인 공지:", receivedData);
       });
+
+      // 탈세자 신고 결과 전체 공지
+      socketClient.subscribe(
+        `/receive/game/evasion-notice/${gameId}`,
+        (msg) => {
+          const res = JSON.parse(msg.body);
+          const receivedData = res.data;
+          console.log("탈세 신고 결과 공지", receivedData);
+        }
+      );
 
       //세금 납,탈세 상태 확인
       socketClient.subscribe(`/receive/tax/${playerId}`, (msg) => {
