@@ -130,6 +130,10 @@ export default function CommonTurn() {
       "send/timer",
       `{"timerType":"FREE_ACTION"}`
     );
+
+    return () => {
+      setIsPrison(false);
+    };
   }, []);
 
   return (
