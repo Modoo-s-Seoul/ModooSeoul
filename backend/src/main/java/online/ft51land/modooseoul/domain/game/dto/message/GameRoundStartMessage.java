@@ -11,20 +11,24 @@ import java.util.List;
 public record GameRoundStartMessage(
 		Long currentRound,
 		List<String> stockName,
-		List<Long> stockPrices
+		List<Long> stockPrices,
+		List<List<Long>> stockPricesHistory
 ) {
 	public static GameRoundStartMessage of(Game game, List<GameStock> gameStocks) {
 		List<String> stockNames = new ArrayList<>();
 		List<Long> stockPrices = new ArrayList<>();
-		for (GameStock gameStock : gameStocks) {
+		List<List<Long>> stockPricesHistory = new ArrayList<>();
+			for (GameStock gameStock : gameStocks) {
 			stockPrices.add(gameStock.getStockPrice());
 			stockNames.add(gameStock.getStockName());
+			stockPricesHistory.add(gameStock.getStockPriceHistory());
 		}
 		return GameRoundStartMessage
 				.builder()
 				.currentRound(game.getCurrentRound())
 				.stockName(stockNames)
 				.stockPrices(stockPrices)
+				.stockPricesHistory(stockPricesHistory)
 				.build();
 	}
 }

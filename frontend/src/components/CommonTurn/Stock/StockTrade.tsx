@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 
 import { stockChangeType } from "../../../interface/ingame";
-import { stockState } from "../../../data/IngameData";
+import { stockState, stockLabelState } from "../../../data/IngameData";
 
 import Chart from "./Chart";
 import Back from "/assets/Back.svg";
@@ -13,6 +13,7 @@ export default function StockTrade() {
   const [toggleContainer, setToggleContainer] = useState(true); // 모달창 페이지 컨트롤
   const [toggleTrade, setToggleTrade] = useState(true); // 매수/매도창 컨트롤
   const stocks = useRecoilValue(stockState);
+  const stockLabel = useRecoilValue(stockLabelState);
   const [currentStock, setCurrentStock] = useState<stockChangeType>();
 
   /*모달창 페이지 움직이기 */
@@ -26,6 +27,26 @@ export default function StockTrade() {
   /*거래창 페이지 움직이기 */
   const handleTrade = () => {
     setToggleTrade((prev) => !prev);
+  };
+
+  const isHigh = () => {
+    if (currentStock) {
+      if (currentStock.stockHistory.length === 1) {
+        return 0;
+      } else if (
+        currentStock?.currentPrice >
+        currentStock?.stockHistory[currentStock?.stockHistory.length - 2]
+      ) {
+        return 1;
+      } else if (
+        currentStock?.currentPrice <
+        currentStock?.stockHistory[currentStock?.stockHistory.length - 2]
+      ) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }
   };
 
   return (
@@ -69,15 +90,41 @@ export default function StockTrade() {
               ></img>
               <div className="modalBaseTitle">{currentStock?.stockName}</div>
               <div className="modalBaseBody">
-                <Chart />
+                <div className="stockInfoContainer">
+                  <div className="chart">
+                    <Chart
+                      stockPrice={currentStock?.stockHistory}
+                      stockLabels={stockLabel}
+                    />
+                  </div>
+                  <div className="stockPriceBox">
+                    <div className="priceTitle">현재 주가</div>
+                    <div
+                      style={{
+                        color: `${
+                          isHigh() === 0
+                            ? "black"
+                            : isHigh() === 1
+                            ? "red"
+                            : "blue"
+                        }`,
+                      }}
+                    >
+                      {isHigh() === 0 ? "-" : isHigh() === 1 ? "▲" : "▼"}
+                      {currentStock?.currentPrice}
+                    </div>
+                  </div>
+                </div>
                 <div className="stockTradeBox">
                   <div className="tradeButtonContainer">
                     <div
                       className={`buyButton ${
                         toggleTrade ? "buyButtonActive" : ""
                       }`}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleTrade()}
+                      style={{
+                        cursor: `${toggleTrade ? "none" : "pointer"}`,
+                      }}
+                      onClick={toggleTrade ? undefined : () => handleTrade()}
                     >
                       매수
                     </div>
@@ -85,8 +132,10 @@ export default function StockTrade() {
                       className={`sellButton ${
                         !toggleTrade ? "sellButtonActive" : ""
                       }`}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleTrade()}
+                      style={{
+                        cursor: `${!toggleTrade ? "none" : "pointer"}`,
+                      }}
+                      onClick={!toggleTrade ? undefined : () => handleTrade()}
                     >
                       매도
                     </div>
@@ -105,6 +154,7 @@ export default function StockTrade() {
                           style={{
                             display: "flex",
                             justifyContent: "center",
+                            fontSize: "30px",
                           }}
                         >
                           <div className="inputContainer">
@@ -118,7 +168,7 @@ export default function StockTrade() {
                             baseColor="#848484"
                             hoverColor="#ff0e0e"
                             text="사자"
-                            fontsize={30}
+                            fontsize={25}
                           />
                         </div>
                       </div>
@@ -127,6 +177,7 @@ export default function StockTrade() {
                           style={{
                             display: "flex",
                             justifyContent: "center",
+                            fontSize: "30px",
                           }}
                         >
                           <div className="inputContainer">
@@ -140,7 +191,7 @@ export default function StockTrade() {
                             baseColor="#848484"
                             hoverColor="#1d33ff"
                             text="팔자"
-                            fontsize={30}
+                            fontsize={25}
                           />
                         </div>
                       </div>

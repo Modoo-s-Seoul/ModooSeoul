@@ -10,6 +10,7 @@ import {
   buildingChangeType,
   stockChangeType,
   subwayChangeType,
+  playerStockInfoType,
 } from "../interface/ingame";
 
 /*
@@ -87,6 +88,18 @@ export const srowState = atom<number>({
 export const scolState = atom<number>({
   key: "scolState",
   default: 0,
+});
+
+/** 시작 문구 컴포넌트 활성화 */
+export const isGameStartVisibleState = atom<boolean>({
+  key: "isGameStartVisibleState",
+  default: false,
+});
+
+/** 순서 뽑기 컴포넌트 활성화 */
+export const isYourTurnVisibleState = atom<boolean>({
+  key: "isYourTurnVisibleState",
+  default: false,
 });
 
 /** 로딩 컴포넌트 활성화 */
@@ -171,10 +184,10 @@ export const playerInfoState = atom<PlayerInfo>({
 export const playerDataState = atom<PlayerData[]>({
   key: "playerDataState",
   default: [
-    { name: "Player 1", money: 0, color: "dd9090" },
-    { name: "Player 2", money: 0, color: "909add" },
-    { name: "Player 3", money: 0, color: "90dd9a" },
-    { name: "Player 4", money: 0, color: "dddc90" },
+    { name: "Player 1", cash: 0, totalAsset: 0, color: "dd9090" },
+    { name: "Player 2", cash: 0, totalAsset: 0, color: "909add" },
+    { name: "Player 3", cash: 0, totalAsset: 0, color: "90dd9a" },
+    { name: "Player 4", cash: 0, totalAsset: 0, color: "dddc90" },
   ],
 });
 
@@ -182,10 +195,10 @@ export const playerDataState = atom<PlayerData[]>({
 export const displayPlayerDataState = atom<PlayerData[]>({
   key: "displayPlayerDataState",
   default: [
-    { name: "Player 1", money: 0, color: "dd9090" },
-    { name: "Player 2", money: 0, color: "909add" },
-    { name: "Player 3", money: 0, color: "90dd9a" },
-    { name: "Player 4", money: 0, color: "dddc90" },
+    { name: "Player 1", cash: 0, totalAsset: 0, color: "dd9090" },
+    { name: "Player 2", cash: 0, totalAsset: 0, color: "909add" },
+    { name: "Player 3", cash: 0, totalAsset: 0, color: "90dd9a" },
+    { name: "Player 4", cash: 0, totalAsset: 0, color: "dddc90" },
   ],
 });
 
@@ -276,17 +289,29 @@ export const matchPosition = atom<defaultMatch[]>({
   ],
 });
 
+/** 보드판 위치 정보 */
+export const matchIndex = atom({
+  key: "matchIndex",
+  default: [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 22, 31, 30, 29, 28, 27,
+    26, 25, 24, 23, 21, 19, 17, 15, 13, 11, 9,
+  ],
+});
+
 /**게임 내의 모든 주식 종목들의 가격 기록 */
 export const stockState = atom<stockChangeType[]>({
   key: "stockState",
   default: [
-    { stockName: "OO전자", stockPrice: [] },
-    { stockName: "ㅁㅁ건설", stockPrice: [] },
-    { stockName: "XX바이오", stockPrice: [] },
-    // { stockName: "", stockPrice: [] },
-    // { stockName: "", stockPrice: [] },
-    // { stockName: "", stockPrice: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
   ],
+});
+
+/** 주식 그래프 라벨 */
+export const stockLabelState = atom<string[]>({
+  key: "stockLabel",
+  default: [],
 });
 
 /** 모달 메세지 토글 */
@@ -299,6 +324,12 @@ export const isModalMsgActiveState = atom<boolean>({
 export const modalMsgState = atom<string>({
   key: "modalMsgState",
   default: "",
+});
+
+/** 타이머 */
+export const timerState = atom<boolean>({
+  key: "timerState",
+  default: false,
 });
 
 ///////////////////////// 플레이어 개인
@@ -355,4 +386,23 @@ export const isSubwayState = atom<subwayChangeType[]>({
 export const keyRandomState = atom<string>({
   key: "keyRandomState",
   default: "tax",
+});
+
+/** 이번 라운드 시작 시 받은 배당금 */
+export const dividendState = atom<number>({
+  key: "dividendState",
+  default: 0,
+});
+
+/** 플레이어의 주식 정보 */
+export const playerStockInfoState = atom<playerStockInfoType>({
+  key: "playerStockInfoState",
+  default: {
+    playerStockMoney: 0, // 현재 보유 주식 가치
+    prevStockMoney: 0, // 이전 라운드 보유 주식 가치
+    stockNames: [], //보유 주식 이름
+    purchasePrices: [], //보유 주식 별 평단가
+    stockAmounts: [], //보유 주식 별 주수
+    stockPrices: [], //보유 주식 별 현재 가치,
+  },
 });

@@ -14,6 +14,8 @@ import {
   isStartActiveState,
   isSubwayActiveState,
   isUserTurnVisibleState,
+  turnState,
+  whoAreYouState,
 } from "../data/IngameData";
 interface diceRollProps {
   rollDiceInBoard: () => void;
@@ -34,6 +36,9 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   const isNewsVisible = useRecoilValue(isNewsVisibleState); // 뉴스 턴 여부
   const isSubwayActive = useRecoilValue(isSubwayActiveState); // 지하철 턴 여부
   const isStartActive = useRecoilValue(isStartActiveState); // 시작점 턴 여부
+  const turn = useRecoilValue(turnState); // 현재 플레이 순서
+  // 플레이어 개인정보
+  const whoAreYou = useRecoilValue(whoAreYouState); // 본인의 턴
 
   // 실제 주사위 값 설정
   const rollDice = () => {
@@ -161,7 +166,7 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
                 </div>
               </div>
             </div>
-            {!isRolling && (
+            {!isRolling && whoAreYou == turn && (
               <div className="diceTimeBar">
                 <button
                   id="move-button"
