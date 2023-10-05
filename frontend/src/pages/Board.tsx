@@ -159,9 +159,9 @@ export default function Board() {
   const [buildingSprite, setBuildingSprite] = useState<
     Phaser.GameObjects.Image[]
   >([]); //건물 스프라이트
-  const setBuildingInfo = useSetRecoilState(builingInfoState); //건물 정보
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
+  const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
 
   // 플레이어 개인정보
   const whoAreYou = useRecoilValue(whoAreYouState); // 본인의 턴
@@ -745,6 +745,9 @@ export default function Board() {
       };
       setBoardData(newGroundData);
     }
+    // 돈정보 업데이트
+    const gameId = weblocation.state.gameId;
+    sendWsMessage(socketClient, gameId, "send/players-info");
   }, [groundChange]);
 
   /** 건물 정보 변경시 */
@@ -760,6 +763,14 @@ export default function Board() {
       buildingSprite[
         buildingChange[0].index + buildingChange[0].point
       ].setAlpha(1);
+      // 건물 데이터 갱신
+      const newData = { ...builingData };
+      newData[buildingChange[0].index + buildingChange[0].point] = {
+        ...newData[buildingChange[0].index + buildingChange[0].point],
+        sell: true,
+        player: buildingChange[0].player,
+        industry: buildingChange[0].industry,
+      };
     } else if (buildingChange[0].player === 6) {
       // 판매요청시
       console.log("건물 판매요청");
@@ -771,6 +782,14 @@ export default function Board() {
           buildingChange[i].index + buildingChange[i].point
         ].setAlpha(0);
       }
+      // 건물 데이터 갱신
+      const newData = { ...builingData };
+      newData[buildingChange[0].index + buildingChange[0].point] = {
+        ...newData[buildingChange[0].index + buildingChange[0].point],
+        sell: false,
+        player: buildingChange[0].player,
+        industry: buildingChange[0].industry,
+      };
     }
   }, [buildingChange]);
 

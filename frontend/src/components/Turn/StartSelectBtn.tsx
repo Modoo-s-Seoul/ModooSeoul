@@ -210,7 +210,7 @@ export default function StartSelectBtn() {
                         </div>
                       </div>
                       <div className="buildingBuyContainer">
-                        {["교육", "교통", "유통", "주거", "문화"].map(
+                        {["교통", "교육", "유통", "주거", "문화"].map(
                           (label, index) => (
                             <div
                               key={index}

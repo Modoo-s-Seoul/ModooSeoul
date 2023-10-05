@@ -14,6 +14,8 @@ import {
   diceActiveState,
   whoAreYouState,
   groundChangeState,
+  // builingInfoState,
+  buildingChangeState,
 } from "../../data/IngameData";
 import { matchIndex } from "./../../data/IngameData";
 
@@ -35,6 +37,8 @@ export default function IngameWebSocket() {
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const setWhoAreYou = useSetRecoilState(whoAreYouState); // 본인의 턴 기록
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
+  // const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
+  const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
 
   // 게임 정보
   const weblocation = useLocation();
@@ -157,6 +161,20 @@ export default function IngameWebSocket() {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
           console.log(receivedData);
+          // 구매성공시
+          if (receivedData.isPurchase) {
+            const index = receivedData.boardIdx - 1;
+            const order = matchIndexList[index];
+            // 스프라이트 변동 요청
+            setBuildingChange([
+              {
+                player: receivedData.playerIdx,
+                index: order * 3,
+                point: receivedData.buildingIdx - 1,
+                industry: receivedData.buildingId - 1,
+              },
+            ]);
+          }
         }
       );
 
@@ -259,18 +277,26 @@ export default function IngameWebSocket() {
       });
 
       // 땅 판매
-      socketClient.subscribe(`/receive/ground/sell/${playerId}`, (msg) => {
+      socketClient.subscribe(`/receive/game/ground-sell/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
-        // 땅 판매 가능할시
+        console.log("땅판매시도", receivedData);
+        // 땅 변동 요청
         setGroundChange([
           { player: 6, index: matchIndexList[receivedData.groundIdx - 1] },
+        ]);
+        // 건물 변동 요청
+        const index = receivedData.groundIdx - 1;
+        const order = matchIndexList[index];
+        setBuildingChange([
+          { player: 6, index: order * 3, point: 0, industry: -1 },
+          { player: 6, index: order * 3, point: 1, industry: -1 },
+          { player: 6, index: order * 3, point: 2, industry: -1 },
         ]);
       });
 
       // 건물 판매
-      socketClient.subscribe(`/receive/building/sell/${playerId}`, (msg) => {
+      socketClient.subscribe(`/receive/building/sell/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
