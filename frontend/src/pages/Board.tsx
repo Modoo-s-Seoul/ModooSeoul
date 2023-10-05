@@ -1094,9 +1094,17 @@ export default function Board() {
         height="30vh"
         maxWidth="600px"
         minHeight="200px"
-        visible={isNewsVisible}
+        visible={
+          isNewsVisible &&
+          !loadingVisible &&
+          !isGameStartVisible &&
+          !isYourTurnVisible
+        }
       >
-        {isNewsVisible && <News />}
+        {isNewsVisible &&
+          !loadingVisible &&
+          !isGameStartVisible &&
+          !isYourTurnVisible && <News />}
       </IngameModal>
       <NewsCheck />
 
