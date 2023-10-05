@@ -6,11 +6,13 @@ import {
   isUserTurnVisibleState,
   matchPosition,
   modalMsgState,
+  playerInfoState,
   scolState,
   srowState,
   tcolState,
   trowState,
   turnState,
+  whoAreYouState,
 } from "../../data/IngameData";
 import { useEffect, useState } from "react";
 import { boardDataState } from "../../data/BoardData";
@@ -18,6 +20,8 @@ import CloseBtn from "./CloseBtn";
 import CustomButton from "../Base/CustomButton";
 import "./Start.css";
 import MessageModal from "../Base/MessageModal";
+import { useSocket } from "../../pages/SocketContext";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 
 export default function Start() {
   // 기본 인자
@@ -37,6 +41,11 @@ export default function Start() {
   const [selectData, setSelectData] = useState(boardData[`${sRow}-${sCol}`]); // 선택 장소 데이터
   const [builingData] = useRecoilState(builingInfoState); // 건물 데이터
   const matchPos = useRecoilValue(matchPosition); // 매칭데이터
+  // 플레이어 정보
+  const whoAreyou = useRecoilValue(whoAreYouState);
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
   /** 클릭시 */
   const toggleSelectStart = () => {
@@ -74,6 +83,23 @@ export default function Start() {
   useEffect(() => {
     setSelectData(boardData[`${sRow}-${sCol}`]);
   }, [sCol, sRow]);
+
+  // 타이머 관련
+  useEffect(() => {
+    // 타이머 요청 (본인 턴일때만 요청)
+    if (turn == whoAreyou) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.gameId,
+        `send/timer`,
+        `{"timerType":"STARTING_POINT_ARRIVAL"}`
+      );
+      // 언마운트시 타이머 해제
+      return () => {
+        // sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
+      };
+    }
+  }, []);
 
   return (
     <>

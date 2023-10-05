@@ -2,20 +2,24 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   pNumState,
   playerDataState,
-  turnState,
+  playerInfoState,
 } from "../../../data/IngameData";
 import { useState } from "react";
 
 import CustomButton from "../../Base/CustomButton";
+import { useSocket } from "../../../pages/SocketContext";
+import { sendWsMessage } from "../../IngameWs/IngameSendFunction";
 
 /** Key - 탈세여부 확인 */
 export default function KeyCheckThief() {
   // 기본 인자
   const pNum = useRecoilValue(pNumState); // 플레이어 수
-  const [turn, setTurn] = useRecoilState(turnState); // 턴 정보
   const [selected, setSelected] = useState<number | null>(null);
   const [isSubmit, setIsSubmit] = useState(false); // 제출 여부
   const [thiefTrue, setThiefTrue] = useState(false);
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
   // 데이터 보관
   const playerData = useRecoilValue(playerDataState);
 
@@ -39,7 +43,7 @@ export default function KeyCheckThief() {
       setIsSubmit(true);
       // 3초 후에 턴 넘김
       setTimeout(() => {
-        setTurn(turn + 1);
+        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
       }, 3000);
     } else {
       // 고른 사람이 없을시

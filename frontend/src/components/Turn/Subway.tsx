@@ -1,7 +1,8 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   isSubwayState,
   isUserTurnVisibleState,
+  playerInfoState,
   tcolState,
   trowState,
   turnState,
@@ -9,17 +10,24 @@ import {
 import { useEffect, useState } from "react";
 import { boardDataState } from "../../data/BoardData";
 import "./Subway.css";
+import { useSocket } from "../../pages/SocketContext";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 
 export default function Subway() {
+  // 기본인자
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const turn = useRecoilValue(turnState); // 현재 턴
   const boardData = useRecoilValue(boardDataState); // 보드 데이터
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   const setIsSubway = useSetRecoilState(isSubwayState); // 지하철 변경 반영
+
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
+
   // 시간 제한 인자
   const [timeCnt, setTimeCnt] = useState(3);
-  const setTurn = useSetRecoilState(turnState);
   const setUserTurn = useSetRecoilState(isUserTurnVisibleState);
 
   /** 지하철 여부 반영 */
@@ -38,8 +46,8 @@ export default function Subway() {
       } else {
         clearInterval(timer); // 타이머 정지
         // 0초일시 턴 넘기기 (비활성화)
+        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
         setUserTurn(false);
-        setTurn((prev) => prev + 1);
       }
     }, 1000);
     // 컴포넌트가 언마운트될 때 타이머 정리

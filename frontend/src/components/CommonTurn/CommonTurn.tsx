@@ -21,6 +21,9 @@ import StockTrade from "./Stock/StockTrade";
 import IngameModal from "../Base/IngameModal";
 import MessageModal from "../Base/MessageModal";
 import { boardDataState } from "../../data/BoardData";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
+import { useSocket } from "../../pages/SocketContext";
+import { playerInfoState } from "../../data/IngameData";
 
 export default function CommonTurn() {
   // 기본 인자
@@ -41,6 +44,8 @@ export default function CommonTurn() {
   // 데이터 보관
   const matchPos = useRecoilValue(matchPosition); // 매칭데이터
   const boardData = useRecoilValue(boardDataState); // 보드 데이터
+  const socketClient = useSocket();
+  const playerInfo = useRecoilValue(playerInfoState); // 플레이어 고유 정보
 
   /**거래창 열기 */
   const openTrade = () => {
@@ -86,6 +91,10 @@ export default function CommonTurn() {
     }
   };
 
+  const handleComplete = () => {
+    sendWsMessage(socketClient, playerInfo.playerId, `send/action-finish`);
+  };
+
   // 초측정
   useEffect(() => {
     // 턴 수가 공통 턴이 아닐 경우 자동으로 꺼짐(개발용)
@@ -112,7 +121,20 @@ export default function CommonTurn() {
     return () => {
       clearInterval(timer);
     };
-  }, [turn, timeCnt]);
+  }, [turn]);
+
+  useEffect(() => {
+    sendWsMessage(
+      socketClient,
+      playerInfo.gameId,
+      "send/timer",
+      `{"timerType":"FREE_ACTION"}`
+    );
+
+    return () => {
+      setIsPrison(false);
+    };
+  }, []);
 
   return (
     <>
@@ -157,6 +179,15 @@ export default function CommonTurn() {
             >
               탈세 신고
             </div>
+            <button
+              className="completeButton"
+              style={{
+                cursor: "pointer",
+              }}
+              onClick={handleComplete}
+            >
+              완료
+            </button>
           </div>
 
           {/* 주식 */}

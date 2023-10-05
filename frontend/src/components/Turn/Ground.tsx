@@ -1,19 +1,19 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
-  buildingChangeState,
   builingInfoState,
   displayPlayerDataState,
   doubleCntState,
-  groundChangeState,
   isModalMsgActiveState,
   isUserTurnVisibleState,
   matchPosition,
   modalMsgState,
   oilLandState,
   playerDataState,
+  playerInfoState,
   tcolState,
   trowState,
   turnState,
+  whoAreYouState,
 } from "../../data/IngameData";
 import ClickBtn from "../Base/CustomButton";
 import { boardDataState } from "../../data/BoardData";
@@ -22,6 +22,8 @@ import "./Ground.css";
 import CloseBtn from "./CloseBtn";
 import TimeBar from "../Base/TimeBar";
 import MessageModal from "../Base/MessageModal";
+import { useSocket } from "../../pages/SocketContext";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 
 export default function Ground() {
   // 자체 인자
@@ -35,7 +37,7 @@ export default function Ground() {
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
   const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
-  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const [turn] = useRecoilState(turnState); // 현재 플레이 순서
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 플레이어 전광판 정보
   const matchPos = useRecoilValue(matchPosition);
@@ -43,17 +45,29 @@ export default function Ground() {
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
   // 데이터
-  const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드 데이터
-  const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
-  const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
-  const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
-  const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
+  const [boardData] = useRecoilState(boardDataState); // 보드 데이터
+  const [turnData, setTurnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
+  const [builingData] = useRecoilState(builingInfoState); // 건물 데이터
   const oilLand = useRecoilValue(oilLandState); // 오일랜드 위치
+
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
+
+  // 플레이어 정보
+  const whoAreyou = useRecoilValue(whoAreYouState);
 
   /** 건물 갯수 세기 */
   useEffect(() => {
     let contB = 0;
+    console.log(turnData, "에러확인자ㅏ");
     for (let i = 0; i < 3; i++) {
+      console.log(
+        i,
+        "에러확인자ㅏ",
+        builingData,
+        builingData[turnData.index * 3 + i]
+      );
       if (builingData[turnData.index * 3 + i].sell == true) {
         contB = contB + 1;
       }
@@ -63,68 +77,10 @@ export default function Ground() {
 
   /** 땅 구매 */
   const buyGround = () => {
-    // 보드 데이터 갱신
-    const newData = { ...boardData };
-    newData[`${tRow}-${tCol}`] = {
-      ...newData[`${tRow}-${tCol}`],
-      sell: true,
-      player: turn,
-    };
-    setBoardData(newData);
-    // 땅 변동사항 업데이트
-    setGroundChange([{ player: turn, index: turnData.index }]);
-    // 땅 구매비용 발생
-    const newPlayerData = [...playerData];
-    newPlayerData[turn] = {
-      ...newPlayerData[turn],
-      money: newPlayerData[turn].money - turnData.price,
-    };
-    setPlayerData(newPlayerData);
-    setDisplayPlayerData(newPlayerData);
+    // 실제구현
+    sendWsMessage(socketClient, playerInfo.playerId, "send/purchase/ground");
 
     // 턴 종료
-    // setIsUserTurnVisible(false);
-  };
-
-  /** 땅판매 */
-  const sellGround = () => {
-    // 보드 데이터 갱신
-    const newGroundData = { ...boardData };
-    newGroundData[`${tRow}-${tCol}`] = {
-      ...newGroundData[`${tRow}-${tCol}`],
-      sell: false,
-      player: null,
-    };
-    setBoardData(newGroundData);
-    // 땅 변동사항 업데이트
-    setGroundChange([{ player: 6, index: turnData.index }]);
-    // 땅 팔시 건물도 모두 매각
-    const newBuildingData = { ...builingData };
-    for (let i = 0; i < 3; i++) {
-      newBuildingData[turnData.index * 3 + i] = {
-        ...newBuildingData[turnData.index * 3 + i],
-        sell: false,
-        player: null,
-      };
-    }
-    setBuildingInfo(newBuildingData);
-    setBuildingChange([
-      { player: 6, index: turnData.index * 3, point: 0, industry: -1 },
-      { player: 6, index: turnData.index * 3, point: 1, industry: -1 },
-      { player: 6, index: turnData.index * 3, point: 2, industry: -1 },
-    ]);
-    // // 땅 매각비용 발생
-    const newPlayerData = [...playerData];
-    newPlayerData[turn] = {
-      ...newPlayerData[turn],
-      money: newPlayerData[turn].money + turnData.price,
-    };
-    setPlayerData(newPlayerData);
-    setDisplayPlayerData(newPlayerData);
-    // // 건물 매각비용 발생
-
-    // 턴 종료
-    setSelectIndustry(false);
     // setIsUserTurnVisible(false);
   };
 
@@ -139,47 +95,19 @@ export default function Ground() {
 
   /** 건물 구매 */
   const buyBuilding = (num: number) => {
-    // 건물 데이터 갱신
-    const newData = { ...builingData };
-    newData[turnData.index * 3 + num] = {
-      ...newData[turnData.index * 3 + num],
-      sell: true,
-      player: turn,
-      industry: selectedNodes,
-    };
-    setBuildingInfo(newData);
-    // 건물 변동 사항 업데이트
-    setBuildingChange([
-      {
-        player: turn,
-        index: turnData.index * 3,
-        point: num,
-        industry: selectedNodes,
-      },
-    ]);
-    // 건물 건설 비용 발생
+    // 실제 구현
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      "send/purchase/building",
+      `{"boardIdx":${turnData.order}, "buildingIdx": ${
+        num + 1
+      } , "buildingId": ${selectedNodes + 1} }`
+    );
 
     // 턴 종료
     setIsUserTurnVisible(false);
-    setTurn(turn + 1);
-  };
-
-  /** 건물 판매 */
-  const sellBuilding = (num: number) => {
-    // 건물 데이터 갱신
-    const newData = { ...builingData };
-    newData[turnData.index * 3 + num] = {
-      ...newData[turnData.index * 3 + num],
-      sell: false,
-      player: null,
-    };
-    setBuildingInfo(newData);
-    // 건물 변동 사항 업데이트
-    setBuildingChange([
-      { player: 6, index: turnData.index * 3, point: num, industry: -1 },
-    ]);
-    // 턴 종료
-    // setIsUserTurnVisible(false);
+    sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
   };
 
   /** 통행료 지불 */
@@ -188,6 +116,7 @@ export default function Ground() {
       // 이미 구매한땅일시
       const givePlayer = turn;
       const takePlayer = turnData.player;
+      console.log(turnData.sell, turnData, "턴데이터 통행료");
       if (turnData.sell && turnData.player !== turn) {
         // 통행료 지불
         let cost = turnData.cost;
@@ -209,7 +138,7 @@ export default function Ground() {
           console.log("지불", newPlayerData, givePlayer, takePlayer);
           newPlayerData[givePlayer] = {
             ...newPlayerData[givePlayer],
-            money: newPlayerData[givePlayer].money - cost,
+            cash: newPlayerData[givePlayer].cash - cost,
           };
         }
         if (takePlayer != null && takePlayer in newPlayerData) {
@@ -217,7 +146,7 @@ export default function Ground() {
           console.log("지급받");
           newPlayerData[takePlayer] = {
             ...newPlayerData[takePlayer],
-            money: newPlayerData[takePlayer].money + cost,
+            cash: newPlayerData[takePlayer].cash + cost,
           };
         }
 
@@ -225,11 +154,33 @@ export default function Ground() {
         setDisplayPlayerData(newPlayerData);
         setIsUserTurnVisible(!isUserTurnVisibleState);
         if (doubleCnt == 0) {
-          setTurn(turn + 1);
+          sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
         }
       }
     }
   }, [isUserTurnVisibleState]);
+
+  // 타이머 관련
+  useEffect(() => {
+    // 타이머 요청 (본인 턴일때만 요청)
+    if (turn == whoAreyou) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.gameId,
+        `send/timer`,
+        `{"timerType":"ESTATE_PURCHASE"}`
+      );
+      // 언마운트시 타이머 해제
+      return () => {
+        sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
+      };
+    }
+  }, []);
+
+  // 턴데이터 갱신
+  useEffect(() => {
+    setTurnData(boardData[`${tRow}-${tCol}`]);
+  }, [tCol, tRow]);
 
   return (
     <>
@@ -282,17 +233,6 @@ export default function Ground() {
                             />
                           </div>
                         )}
-                        {!isUserTurnVisibleState &&
-                          builingData[turnData.index * 3 + 0].sell && (
-                            <div onClick={() => sellBuilding(0)}>
-                              <ClickBtn
-                                height={30}
-                                width={50}
-                                fontsize={18}
-                                text={"판매"}
-                              />
-                            </div>
-                          )}
                       </div>
                       <div className="groundThreeBox">
                         {builingData[turnData.index * 3 + 1].sell && (
@@ -316,17 +256,6 @@ export default function Ground() {
                             />
                           </div>
                         )}
-                        {!isUserTurnVisibleState &&
-                          builingData[turnData.index * 3 + 1].sell && (
-                            <div onClick={() => sellBuilding(1)}>
-                              <ClickBtn
-                                height={30}
-                                width={50}
-                                fontsize={18}
-                                text={"판매"}
-                              />
-                            </div>
-                          )}
                       </div>
                       <div className="groundThreeBox">
                         {builingData[turnData.index * 3 + 2].sell && (
@@ -350,17 +279,6 @@ export default function Ground() {
                             />
                           </div>
                         )}
-                        {!isUserTurnVisibleState &&
-                          builingData[turnData.index * 3 + 2].sell && (
-                            <div onClick={() => sellBuilding(2)}>
-                              <ClickBtn
-                                height={30}
-                                width={50}
-                                fontsize={18}
-                                text={"판매"}
-                              />
-                            </div>
-                          )}
                       </div>
                     </div>
                   </>
@@ -383,7 +301,7 @@ export default function Ground() {
                 </div>
               </div>
               <div className="buildingBuyContainer">
-                {["교육", "교통", "유통", "주거", "문화"].map(
+                {["교통", "교육", "유통", "주거", "문화"].map(
                   (label, index) => (
                     <div
                       key={index}
@@ -419,17 +337,6 @@ export default function Ground() {
         {boardData[`${tRow}-${tCol}`].sell == true && (
           <>
             <div className="groundBtnContainer">
-              {!isUserTurnVisibleState && (
-                <div onClick={sellGround}>
-                  <ClickBtn
-                    height={50}
-                    width={120}
-                    fontsize={25}
-                    text={"땅 판매"}
-                  />
-                </div>
-              )}
-
               {selectIndustry && (
                 <>
                   <MessageModal />
