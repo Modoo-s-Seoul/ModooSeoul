@@ -539,16 +539,6 @@ public class PlayerService {
         playerRepository.save(payPlayer);
         playerRepository.save(ownerPlayer);
 
-        // 도착한 땅이 ftOilland 였다면
-        if(payPlayer.getCurrentBoardIdx() == game.getFtOilLandBoardId()){
-            // game 내 FTOilland 초기화
-            game.ftOilLandInit();
-            // 땅 Oil 초기화
-            boardStatus.oilInit();
-
-            gameRepository.save(game);
-            boardStatusRepository.save(boardStatus);
-        }
     }
 
     public Long playerActionFinish(Player player, Game game){
@@ -734,11 +724,6 @@ public class PlayerService {
 
             Board board = getBoardById(String.valueOf(playerSellGroundRequestDto.boardIdx()));
 
-            // 파는 땅이 ftoilland 였다면
-            if(game.getFtOilLandBoardId() !=null && game.getFtOilLandBoardId() == playerSellGroundRequestDto.boardIdx()){
-                game.ftOilLandInit();
-                gameRepository.save(game);
-            }
 
             //땅&건물 판매 보드 반영
             boardStatus.resetBoard(board.getPrice());

@@ -254,26 +254,6 @@ public class BoardStatusService {
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId()+"@"+boardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
 
-        // ftoilland 가 이미 존재 했을 경우
-        if(game.getFtOilLandBoardId() != null){
-
-            // 이미 있는데 그 땅이 선택한 땅이 다를 경우
-            if(boardId != game.getFtOilLandBoardId()){
-//                 이미 있는데 다른 땅을 선택했다면
-                BoardStatus originFTOilLand = boardStatusRepository.findById(player.getGameId()+"@"+game.getFtOilLandBoardId())
-                        .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
-
-                // 기존 ftoilland 일반땅으로 변경
-                originFTOilLand.oilInit();
-                boardStatusRepository.save(originFTOilLand);
-
-            }
-        }
-
-
-        // 게임에 ftoilland 설정
-        game.setFTOilLand(boardId);
-        gameRepository.save(game);
 
         // 몇배인지 설정
         boardStatus.updateOil();
