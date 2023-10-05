@@ -95,7 +95,7 @@ public class BoardStatus extends BaseEntity {
     }
 
     public void updateOil(){
-        this.oil +=1L;
+        this.oil = 2L;
     }
 
     public void oilInit() {
