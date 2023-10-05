@@ -90,7 +90,8 @@ export interface buildingChangeType {
 /** (타입) 주식 변동 기록 */
 export interface stockChangeType {
   stockName: string;
-  stockPrice: number[];
+  currentPrice: number;
+  stockHistory: number[];
 }
 
 /** (타입) 지하철 변동 기록 */

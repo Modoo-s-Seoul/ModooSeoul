@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 
 import { stockChangeType } from "../../../interface/ingame";
-import { stockState } from "../../../data/IngameData";
+import { stockState, stockLabelState } from "../../../data/IngameData";
 
 import Chart from "./Chart";
 import Back from "/assets/Back.svg";
@@ -13,6 +13,7 @@ export default function StockTrade() {
   const [toggleContainer, setToggleContainer] = useState(true); // 모달창 페이지 컨트롤
   const [toggleTrade, setToggleTrade] = useState(true); // 매수/매도창 컨트롤
   const stocks = useRecoilValue(stockState);
+  const stockLabel = useRecoilValue(stockLabelState);
   const [currentStock, setCurrentStock] = useState<stockChangeType>();
 
   /*모달창 페이지 움직이기 */
@@ -69,7 +70,10 @@ export default function StockTrade() {
               ></img>
               <div className="modalBaseTitle">{currentStock?.stockName}</div>
               <div className="modalBaseBody">
-                <Chart />
+                <Chart
+                  stockPrice={currentStock?.stockHistory}
+                  stockLabels={stockLabel}
+                />
                 <div className="stockTradeBox">
                   <div className="tradeButtonContainer">
                     <div

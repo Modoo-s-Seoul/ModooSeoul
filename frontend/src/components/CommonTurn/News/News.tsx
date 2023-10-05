@@ -8,6 +8,7 @@ import {
   playerInfoState,
   selectedNewsState,
   pNumState,
+  stockLabelState,
 } from "../../../data/IngameData";
 import TimeBar from "../../Base/TimeBar";
 import "./News.css";
@@ -28,11 +29,7 @@ export default function News() {
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const setNewsVisible = useSetRecoilState(isNewsVisibleState);
   const selectedNews = useRecoilValue(selectedNewsState);
-
-  // 추후삭제 *******************
-  socketClient;
-  playerInfo;
-  round;
+  const [stockLabel, setStockLabel] = useRecoilState(stockLabelState);
 
   const getNews = (idx: number) => {
     sendWsMessage(
@@ -47,6 +44,7 @@ export default function News() {
 
   // 초측정
   useEffect(() => {
+    console.log("턴: ", turn);
     // 턴 수가 뉴스 턴이 아닐 경우 자동으로 꺼짐(개발용)
     if (turn != pNum + 1) {
       setNewsVisible(false);
@@ -66,11 +64,23 @@ export default function News() {
     return () => {
       clearInterval(timer);
     };
-  }, [turn, timeCnt]);
+  }, [turn]);
 
   useEffect(() => {
     console.log("선택된 뉴스:", selectedNews);
   }, [selectedNews]);
+
+  useEffect(() => {
+    sendWsMessage(
+      socketClient,
+      playerInfo.gameId,
+      "send/timer",
+      `{"timerType":"SELECT_NEWS"}`
+    );
+    sendWsMessage(socketClient, playerInfo.gameId, "send/round-start");
+    const newLabel = [...stockLabel, `${round}R`];
+    setStockLabel(newLabel);
+  }, []);
 
   return (
     <>
