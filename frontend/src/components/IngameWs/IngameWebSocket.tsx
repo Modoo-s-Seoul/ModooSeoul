@@ -6,7 +6,6 @@ import {
   selectedNewsState,
   playerDataState,
   playerInfoState,
-  displayPlayerDataState,
   roundState,
   turnState,
   timerState,
@@ -31,7 +30,6 @@ export default function IngameWebSocket() {
   // 세팅할 데이터들
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
   const setPlayerInfo = useSetRecoilState(playerInfoState); // 플레이어 인게임 정보
-  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const setRound = useSetRecoilState(roundState); // 현재 라운드
   const setTurn = useSetRecoilState(turnState); // 현재 플레이 순서
   const setTimer = useSetRecoilState(timerState); // 현재 플레이 순서
