@@ -9,7 +9,7 @@ import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/CustomButton";
 import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
-// import { handleFullScreen } from "../../components/Base/BaseFunc";
+import { handleFullScreen } from "../../components/Base/BaseFunc";
 import { AlertModal } from "../../components/Base/AlertModal";
 import {
   pNumState,
@@ -42,7 +42,7 @@ export default function Room() {
   const handleStartGame = () => {
     if (socketClient !== null) {
       socketClient.send(`/send/start/${gameId}`);
-      // handleFullScreen();
+      handleFullScreen();
     }
   };
 
