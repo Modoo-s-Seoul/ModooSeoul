@@ -64,7 +64,7 @@ export default function News() {
     return () => {
       clearInterval(timer);
     };
-  }, [turn, timeCnt]);
+  }, [turn]);
 
   useEffect(() => {
     console.log("선택된 뉴스:", selectedNews);
