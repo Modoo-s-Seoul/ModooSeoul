@@ -35,7 +35,7 @@ export default function TaxThiefCatch() {
       sendWsMessage(
         socketClient,
         playerInfo.playerId,
-        "sent/report",
+        "send/report",
         `{"reporteeName":${taxThief}}`
       );
       setReported(true);
@@ -50,21 +50,24 @@ export default function TaxThiefCatch() {
       <div className="modalBaseTitle">탈 세 신 고</div>
       <div className="modalBaseBody">
         <div className="taxThiefGrid">
-          {playerData.map((player, index) => (
-            <div
-              key={index}
-              className={`modalBaseButton taxThiefButton ${
-                selected ? "selected" : ""
-              }`}
-              style={{
-                cursor: `${selected ? "" : "pointer"}`,
-                color: `#${player.color}`,
-              }}
-              onClick={() => selectPlayer(player.name, player.color)}
-            >
-              {player.name}
-            </div>
-          ))}
+          {playerData.map((player, index) => {
+            if (player.totalAsset !== 0)
+              return (
+                <div
+                  key={index}
+                  className={`modalBaseButton taxThiefButton ${
+                    selected ? "selected" : ""
+                  }`}
+                  style={{
+                    cursor: `${selected ? "" : "pointer"}`,
+                    color: `#${player.color}`,
+                  }}
+                  onClick={() => selectPlayer(player.name, player.color)}
+                >
+                  {player.name}
+                </div>
+              );
+          })}
           <div
             className={`questionBox ${
               selected && !reported ? "selectedBoxVisible" : ""

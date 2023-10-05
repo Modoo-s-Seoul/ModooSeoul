@@ -10,11 +10,12 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-// interface Props{
+interface Props {
+  stockLabels: string[];
+  stockPrice: number[] | undefined;
+}
 
-// }
-
-export default function Chart() {
+export default function Chart({ stockLabels, stockPrice }: Props) {
   /**이렇게 필요한 구성 요소를 일일히 가져와 등록하는 이유는
    * 모든 모듈 들어있는 자동 패키지를 쓸 경우
    * 번들 크기가 엄청 커지기 때문이다.
@@ -49,10 +50,10 @@ export default function Chart() {
     plugins: {},
   };
 
-  const stockLabels = ["", "", "", "1R", "2R"];
-  const stockPrice = [100, 75, 110, 115, 110];
+  // const stockLabels = ["", "", "", "1R", "2R"];
+  // const stockPrice = [100, 75, 110, 115, 110];
 
-  const data = (labels: string[], price: number[]) => {
+  const data = (labels: string[], price: number[] | undefined) => {
     const chartData = {
       labels: labels,
       datasets: [
