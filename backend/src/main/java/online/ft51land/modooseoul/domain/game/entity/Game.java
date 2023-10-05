@@ -96,6 +96,8 @@ public class Game extends BaseEntity {
 
 	private Long ftOilLandBoardId;
 
+	private Boolean isRoundStart;
+
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
@@ -116,6 +118,7 @@ public class Game extends BaseEntity {
 		this.startTime = LocalDateTime.now();
 		this.currentRound = 0L;
 		this.turnInfo = Long.valueOf(this.players.size()+1);
+		this.isRoundStart = false;
 	}
 
 	public void setSequencePlayer(List<String> players) {
@@ -149,6 +152,7 @@ public class Game extends BaseEntity {
 		this.currentRound = currentRound;
 		this.turnInfo = this.getPlayers().size() + 1L;
 		this.finishedPlayerCnt = 0L;
+		this.isRoundStart = true;
 	}
 
 	public Long addFinishPlayerCnt(){
@@ -196,5 +200,9 @@ public class Game extends BaseEntity {
     }
 	public void ftOilLandInit() {
 		this.ftOilLandBoardId = null;
+	}
+
+	public void setIsRoundStart(Boolean isRoundStart) {
+		this.isRoundStart = isRoundStart;
 	}
 }

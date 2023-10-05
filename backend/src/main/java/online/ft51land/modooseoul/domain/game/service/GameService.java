@@ -243,6 +243,7 @@ public class GameService {
 
         System.out.println("turn : " + game.getTurnInfo());
 
+
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
     }
@@ -404,5 +405,10 @@ public class GameService {
     public boolean checkGameEnd(String gameId) {
         Game game = getGameById(gameId);
         return getPlayingPlayerCnt(game) == 1;
+    }
+
+    public void setIsRoundStartFalse(Game game) {
+        game.setIsRoundStart(false);
+        gameRepository.save(game);
     }
 }
