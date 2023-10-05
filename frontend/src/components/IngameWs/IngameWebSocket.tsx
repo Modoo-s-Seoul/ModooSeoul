@@ -349,6 +349,7 @@ export default function IngameWebSocket() {
           };
 
           setStockInfo(newStockInfo);
+          sendWsMessage(socketClient, gameId, `send/players-info`);
         } else {
           console.log(receivedData.message);
         }
@@ -371,6 +372,7 @@ export default function IngameWebSocket() {
           };
 
           setStockInfo(newStockInfo);
+          sendWsMessage(socketClient, gameId, `send/players-info`);
         } else {
           console.log(receivedData.message);
         }

@@ -1,11 +1,16 @@
 import "./StockTrade.css";
-import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { useSocket } from "../../../pages/SocketContext";
 import { playerInfoState } from "../../../data/IngameData";
 
 import { stockChangeType } from "../../../interface/ingame";
-import { stockState, stockLabelState } from "../../../data/IngameData";
+import {
+  stockState,
+  stockLabelState,
+  playerDataState,
+  displayPlayerDataState,
+} from "../../../data/IngameData";
 
 import Chart from "./Chart";
 import Back from "/assets/Back.svg";
@@ -20,8 +25,10 @@ export default function StockTrade() {
   const stocks = useRecoilValue(stockState);
   const stockLabel = useRecoilValue(stockLabelState);
   const [currentStock, setCurrentStock] = useState<stockChangeType>();
-  const [buyAmount, setBuyAmount] = useState(0);
-  const [sellAmount, setSellAmount] = useState(0);
+  const [buyAmount, setBuyAmount] = useState("");
+  const [sellAmount, setSellAmount] = useState("");
+  const playerData = useRecoilValue(playerDataState);
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState);
 
   /*모달창 페이지 움직이기 */
   const handleContainer = (stockInfo?: stockChangeType) => {
@@ -42,8 +49,11 @@ export default function StockTrade() {
       socketClient,
       playerInfo.playerId,
       `send/stock/purchase`,
-      `{"stockName":"${currentStock?.stockName}","stockAmount":${buyAmount}}`
+      `{"stockName":"${currentStock?.stockName}","stockAmount":${Number(
+        buyAmount
+      )}}`
     );
+    setBuyAmount("");
   };
 
   /** 주식 매도 */
@@ -52,8 +62,11 @@ export default function StockTrade() {
       socketClient,
       playerInfo.playerId,
       `send/stock/sell`,
-      `{"stockName":"${currentStock?.stockName}","stockAmount":${sellAmount}}`
+      `{"stockName":"${currentStock?.stockName}","stockAmount":${Number(
+        sellAmount
+      )}}`
     );
+    setSellAmount("");
   };
 
   const isHigh = () => {
@@ -75,6 +88,23 @@ export default function StockTrade() {
       }
     }
   };
+
+  useEffect(() => {
+    const newData = playerData.find(
+      (player) => player.name === playerInfo.nickname
+    );
+
+    if (newData) {
+      setDisplayPlayerData((prev) => {
+        return prev.map((data) => {
+          if (data.name === playerInfo.nickname) {
+            return { ...newData };
+          }
+          return data;
+        });
+      });
+    }
+  }, [playerData]);
 
   return (
     <>
@@ -188,9 +218,8 @@ export default function StockTrade() {
                             <input
                               className="stockInput"
                               type="number"
-                              onChange={(e) =>
-                                setBuyAmount(Number(e.target.value))
-                              }
+                              value={buyAmount}
+                              onChange={(e) => setBuyAmount(e.target.value)}
                             ></input>
                             <span className="bar"></span>
                           </div>
@@ -219,9 +248,8 @@ export default function StockTrade() {
                             <input
                               className="stockInput"
                               type="number"
-                              onChange={(e) =>
-                                setSellAmount(Number(e.target.value))
-                              }
+                              value={sellAmount}
+                              onChange={(e) => setSellAmount(e.target.value)}
                             ></input>
                             <span className="bar"></span>
                           </div>

@@ -9,6 +9,8 @@ import {
   selectedNewsState,
   pNumState,
   stockLabelState,
+  playerDataState,
+  displayPlayerDataState,
 } from "../../../data/IngameData";
 import TimeBar from "../../Base/TimeBar";
 import "./News.css";
@@ -29,6 +31,8 @@ export default function News() {
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const setNewsVisible = useSetRecoilState(isNewsVisibleState);
   const selectedNews = useRecoilValue(selectedNewsState);
+  const playerData = useRecoilValue(playerDataState);
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState);
   const [stockLabel, setStockLabel] = useRecoilState(stockLabelState);
 
   const getNews = (idx: number) => {
@@ -71,6 +75,7 @@ export default function News() {
   }, [selectedNews]);
 
   useEffect(() => {
+    setDisplayPlayerData(playerData);
     sendWsMessage(
       socketClient,
       playerInfo.gameId,
@@ -78,7 +83,7 @@ export default function News() {
       `{"timerType":"SELECT_NEWS"}`
     );
     sendWsMessage(socketClient, playerInfo.gameId, "send/round-start");
-    const newLabel = [...stockLabel, `${round}R`];
+    const newLabel = [...stockLabel, `${stockLabel.length + 1}R`];
     setStockLabel(newLabel);
   }, []);
 
