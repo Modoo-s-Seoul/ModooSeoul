@@ -78,7 +78,7 @@ export default function Oil() {
       );
       // 언마운트시 타이머 해제
       return () => {
-        sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
+        // sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
       };
     }
   }, []);

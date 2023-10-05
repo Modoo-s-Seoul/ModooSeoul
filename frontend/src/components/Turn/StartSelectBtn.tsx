@@ -60,7 +60,7 @@ export default function StartSelectBtn() {
       setIsStartActive(false);
       setMsgNum(0);
       // 실제구현 - 턴변경 요청
-      sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
+      sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
       // sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
     }
   };
@@ -72,6 +72,7 @@ export default function StartSelectBtn() {
       return;
     }
     setSelectedNodes(index);
+    console.log(turnData);
   };
 
   /** 시간초과시 */
@@ -87,11 +88,7 @@ export default function StartSelectBtn() {
       return () => {
         if (rollTimeout) {
           clearTimeout(rollTimeout);
-          sendWsMessage(
-            socketClient,
-            playerInfo.playerId,
-            "/send/timer-cancel"
-          );
+          sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
         }
       };
     }
@@ -100,6 +97,8 @@ export default function StartSelectBtn() {
   /** 클릭데이터 반영 */
   useEffect(() => {
     setTurnData(boardData[`${sRow}-${sCol}`]);
+    console.log(turnData);
+    console.log(builingData);
   }, [sCol, sRow]);
 
   return (

@@ -100,6 +100,7 @@ export interface subwayChangeType {
   row: number | null;
   col: number | null;
   move: boolean;
+  index : number;
 }
 
 /** (타입) 플레이어 주식 정보 */
