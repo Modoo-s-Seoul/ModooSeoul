@@ -184,7 +184,10 @@ export default function UserInfo() {
                 }`}
               >
                 <div
-                  style={{ color: `#${player.color}` }}
+                  style={{
+                    color: `white`,
+                    backgroundColor: `#${player.color}`,
+                  }}
                   className="playerName"
                 >
                   {player.name}

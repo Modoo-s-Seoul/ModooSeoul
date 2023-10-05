@@ -1,12 +1,18 @@
 import { useRecoilValue } from "recoil";
 import "./RoundInfo.css";
-import { pNumState, roundState, turnState } from "../../data/IngameData";
+import {
+  pNumState,
+  playerDataState,
+  roundState,
+  turnState,
+} from "../../data/IngameData";
 
 export default function RoundInfo() {
   // 턴정보를 바탕으로
   const turn = useRecoilValue(turnState);
   const pNum = useRecoilValue(pNumState);
   const round = useRecoilValue(roundState);
+  const playerData = useRecoilValue(playerDataState);
 
   return (
     <>
@@ -27,14 +33,14 @@ export default function RoundInfo() {
                   turn === 0 ? "selectorTopArrow selectorActive" : ""
                 }`}
               >
-                플레이어1
+                {playerData[0].name}
               </div>
               <div
                 className={`${"selectorBox"} ${
                   turn === 1 ? "selectorTopArrow selectorActive" : ""
                 }`}
               >
-                플레이어2
+                {playerData[1].name}
               </div>
               {pNum !== 2 && (
                 <div
@@ -42,7 +48,7 @@ export default function RoundInfo() {
                     turn === 2 ? "selectorTopArrow selectorActive" : ""
                   }`}
                 >
-                  플레이어3
+                  {playerData[2].name}
                 </div>
               )}
               {pNum === 4 && (
@@ -51,7 +57,7 @@ export default function RoundInfo() {
                     turn === 3 ? "selectorTopArrow selectorActive" : ""
                   }`}
                 >
-                  플레이어4
+                  {playerData[3].name}
                 </div>
               )}
 
