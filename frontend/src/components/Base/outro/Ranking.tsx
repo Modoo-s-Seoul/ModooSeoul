@@ -5,6 +5,8 @@ import {
   isRankingVisibleState,
   rankingDataState,
 } from "../../../data/IngameData";
+import ClickBtn from "../../Base/CustomButton";
+import { useNavigate } from "react-router-dom";
 
 export default function Ranking() {
   // 기본 인자
@@ -12,6 +14,7 @@ export default function Ranking() {
   const [isRankingvisible, setIsRankingvisible] = useRecoilState(
     isRankingVisibleState
   ); // 랭킹 컴포넌트 토글
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 3초 후에 랜덤한 값을 멈추고 특정 값으로 설정
@@ -53,7 +56,18 @@ export default function Ranking() {
               )}
             </div>
             <div className="rankingFooter">
-              <div>나가기</div>
+              <div
+                onClick={() => {
+                  navigate(`/home`);
+                }}
+              >
+                <ClickBtn
+                  width={200}
+                  height={80}
+                  fontsize={30}
+                  text={"나가기"}
+                />
+              </div>
             </div>
           </div>
         </div>
