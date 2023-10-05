@@ -1,20 +1,34 @@
 import "./StockTrade.css";
-import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
+import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSocket } from "../../../pages/SocketContext";
+import { playerInfoState } from "../../../data/IngameData";
 
 import { stockChangeType } from "../../../interface/ingame";
-import { stockState, stockLabelState } from "../../../data/IngameData";
+import {
+  stockState,
+  stockLabelState,
+  playerDataState,
+  displayPlayerDataState,
+} from "../../../data/IngameData";
 
 import Chart from "./Chart";
 import Back from "/assets/Back.svg";
 import CustomButton from "../../Base/CustomButton";
+import { sendWsMessage } from "../../IngameWs/IngameSendFunction";
 
 export default function StockTrade() {
+  const socketClient = useSocket();
+  const playerInfo = useRecoilValue(playerInfoState);
   const [toggleContainer, setToggleContainer] = useState(true); // 모달창 페이지 컨트롤
   const [toggleTrade, setToggleTrade] = useState(true); // 매수/매도창 컨트롤
   const stocks = useRecoilValue(stockState);
   const stockLabel = useRecoilValue(stockLabelState);
   const [currentStock, setCurrentStock] = useState<stockChangeType>();
+  const [buyAmount, setBuyAmount] = useState("");
+  const [sellAmount, setSellAmount] = useState("");
+  const playerData = useRecoilValue(playerDataState);
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState);
 
   /*모달창 페이지 움직이기 */
   const handleContainer = (stockInfo?: stockChangeType) => {
@@ -27,6 +41,32 @@ export default function StockTrade() {
   /*거래창 페이지 움직이기 */
   const handleTrade = () => {
     setToggleTrade((prev) => !prev);
+  };
+
+  /** 주식 매수 */
+  const buyStock = () => {
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      `send/stock/purchase`,
+      `{"stockName":"${currentStock?.stockName}","stockAmount":${Number(
+        buyAmount
+      )}}`
+    );
+    setBuyAmount("");
+  };
+
+  /** 주식 매도 */
+  const sellStock = () => {
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      `send/stock/sell`,
+      `{"stockName":"${currentStock?.stockName}","stockAmount":${Number(
+        sellAmount
+      )}}`
+    );
+    setSellAmount("");
   };
 
   const isHigh = () => {
@@ -48,6 +88,23 @@ export default function StockTrade() {
       }
     }
   };
+
+  useEffect(() => {
+    const newData = playerData.find(
+      (player) => player.name === playerInfo.nickname
+    );
+
+    if (newData) {
+      setDisplayPlayerData((prev) => {
+        return prev.map((data) => {
+          if (data.name === playerInfo.nickname) {
+            return { ...newData };
+          }
+          return data;
+        });
+      });
+    }
+  }, [playerData]);
 
   return (
     <>
@@ -110,7 +167,7 @@ export default function StockTrade() {
                         }`,
                       }}
                     >
-                      {isHigh() === 0 ? "-" : isHigh() === 1 ? "▲" : "▼"}
+                      {isHigh() === 0 ? "" : isHigh() === 1 ? "▲" : "▼"}
                       {currentStock?.currentPrice}
                     </div>
                   </div>
@@ -158,18 +215,25 @@ export default function StockTrade() {
                           }}
                         >
                           <div className="inputContainer">
-                            <input className="stockInput" type="number"></input>
+                            <input
+                              className="stockInput"
+                              type="number"
+                              value={buyAmount}
+                              onChange={(e) => setBuyAmount(e.target.value)}
+                            ></input>
                             <span className="bar"></span>
                           </div>
                           주
                         </div>
                         <div style={{ marginTop: "5%" }}>
-                          <CustomButton
-                            baseColor="#848484"
-                            hoverColor="#ff0e0e"
-                            text="사자"
-                            fontsize={25}
-                          />
+                          <div onClick={buyStock}>
+                            <CustomButton
+                              baseColor="#848484"
+                              hoverColor="#ff0e0e"
+                              text="사자"
+                              fontsize={25}
+                            />
+                          </div>
                         </div>
                       </div>
                       <div className="sellStock">
@@ -181,18 +245,25 @@ export default function StockTrade() {
                           }}
                         >
                           <div className="inputContainer">
-                            <input className="stockInput" type="number"></input>
+                            <input
+                              className="stockInput"
+                              type="number"
+                              value={sellAmount}
+                              onChange={(e) => setSellAmount(e.target.value)}
+                            ></input>
                             <span className="bar"></span>
                           </div>
                           주
                         </div>
                         <div style={{ marginTop: "5%" }}>
-                          <CustomButton
-                            baseColor="#848484"
-                            hoverColor="#1d33ff"
-                            text="팔자"
-                            fontsize={25}
-                          />
+                          <div onClick={sellStock}>
+                            <CustomButton
+                              baseColor="#848484"
+                              hoverColor="#1d33ff"
+                              text="팔자"
+                              fontsize={25}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
