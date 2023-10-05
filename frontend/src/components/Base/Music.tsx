@@ -11,7 +11,7 @@ const BackgroundMusic: React.FC = () => {
     const playMusic = () => {
       // 음악을 재생하고 이벤트 리스너를 제거합니다.
       console.log("배경음악 세팅");
-      audio.muted = true; // 추후 제거 옵션
+      // audio.muted = true; // 추후 제거 옵션
 
       audio.play();
       audio.pause();
