@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSocket } from "../../pages/SocketContext";
 import { useLocation } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   selectedNewsState,
   playerDataState,
@@ -14,9 +14,18 @@ import {
   dice2State,
   isPrisonState,
   stockState,
+  diceActiveState,
+  whoAreYouState,
+  groundChangeState,
 } from "../../data/IngameData";
+import { matchIndex } from "./../../data/IngameData";
 
 export default function IngameWebSocket() {
+  // 기본 인자
+
+  // 데이터
+  const matchIndexList = useRecoilValue(matchIndex);
+
   // 세팅할 데이터들
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
   const setPlayerInfo = useSetRecoilState(playerInfoState); // 플레이어 인게임 정보
@@ -29,15 +38,20 @@ export default function IngameWebSocket() {
   const setDice2Value = useSetRecoilState(dice2State);
   const setPrison = useSetRecoilState(isPrisonState);
   const [stock, setStock] = useRecoilState(stockState);
+  const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
+  const setWhoAreYou = useSetRecoilState(whoAreYouState); // 본인의 턴 기록
+  const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
 
   // 게임 정보
   const weblocation = useLocation();
   let gameId = "test";
   let playerId = "test";
+  let nickname = "test";
   gameId;
   if (weblocation.state) {
     gameId = weblocation.state.gameId;
     playerId = weblocation.state.playerId;
+    nickname = weblocation.state.nickname;
   }
   /**웹소켓 클라이언트 */
   const socketClient = useSocket();
@@ -69,9 +83,13 @@ export default function IngameWebSocket() {
             cash: receivedData[i].cash,
             totalAsset: receivedData[i].totalAsset,
           };
+          // 본인의 턴 기록
+          if (nickname == receivedData[i].nickname) {
+            setWhoAreYou(i);
+            console.log("본인의 턴은", i, "입니다.");
+          }
         }
         setPlayerData(newPlayerData);
-        setDisplayPlayerData(newPlayerData);
       });
 
       //라운드 시작
@@ -108,6 +126,22 @@ export default function IngameWebSocket() {
         setTurn(receivedData.turnInfo);
       });
 
+      // 턴 정보 확인
+      socketClient.subscribe(`/receive/game/turn/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+        setTurn(receivedData.turnInfo);
+      });
+
+      // 턴 종료
+      socketClient.subscribe(`/receive/game/pass-turn/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+        setTurn(receivedData.turnInfo);
+      });
+
       //공통 턴 행동 완료
       socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
@@ -124,6 +158,7 @@ export default function IngameWebSocket() {
         console.log(receivedData);
         setDice1Value(receivedData.first);
         setDice2Value(receivedData.second);
+        setDiceActive(true);
       });
 
       // 땅 구매
@@ -133,6 +168,16 @@ export default function IngameWebSocket() {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
           console.log(receivedData);
+          // 구매 가능할시
+          if (receivedData.isPurchase) {
+            // 땅 변동사항 업데이트
+            setGroundChange([
+              {
+                player: receivedData.playerIdx,
+                index: matchIndexList[receivedData.groundIdx - 1],
+              },
+            ]);
+          }
         }
       );
 
@@ -242,6 +287,10 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        // 땅 판매 가능할시
+        setGroundChange([
+          { player: 6, index: matchIndexList[receivedData.groundIdx - 1] },
+        ]);
       });
 
       // 건물 판매

@@ -89,6 +89,18 @@ export const scolState = atom<number>({
   default: 0,
 });
 
+/** 시작 문구 컴포넌트 활성화 */
+export const isGameStartVisibleState = atom<boolean>({
+  key: "isGameStartVisibleState",
+  default: false,
+});
+
+/** 순서 뽑기 컴포넌트 활성화 */
+export const isYourTurnVisibleState = atom<boolean>({
+  key: "isYourTurnVisibleState",
+  default: false,
+});
+
 /** 로딩 컴포넌트 활성화 */
 export const isLoadingVisibleState = atom<boolean>({
   key: "isLoadingVisibleState",
@@ -274,6 +286,12 @@ export const matchPosition = atom<defaultMatch[]>({
     { row: 8, col: 7 },
     { row: 8, col: 8 },
   ],
+});
+
+/** 보드판 위치 정보 */
+export const matchIndex = atom({
+  key: "matchIndex",
+  default: [0,1,2,3,4,5,6,7,8,10,12,14,16,18,20,22,31,30,29,28,27,26,25,24,23,21,19,17,15,13,11,9],
 });
 
 /**게임 내의 모든 주식 종목들의 가격 기록 */

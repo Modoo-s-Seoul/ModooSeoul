@@ -5,6 +5,7 @@ import {
   buildingChangeState,
   builingInfoState,
   isStartActiveState,
+  playerInfoState,
   scolState,
   srowState,
   startMsgNumState,
@@ -14,17 +15,23 @@ import "./Start.css";
 import { boardDataState } from "../../data/BoardData";
 import { AlertModal } from "../Base/AlertModal";
 import { alertModalState } from "../../data/CommonData";
+import { useSocket } from "../../pages/SocketContext";
+import { sendWsMessage } from "../IngameWs/IngameSendFunction";
 
 export default function StartSelectBtn() {
   // 기본인자
   const sRow = useRecoilValue(srowState); // 선택 장소 row
   const sCol = useRecoilValue(scolState); // 선택 장소 col
-  const [turn, setTurn] = useRecoilState(turnState); // 현재 플레이 순서
+  const [turn] = useRecoilState(turnState); // 현재 플레이 순서
   const [isStartActive, setIsStartActive] = useRecoilState(isStartActiveState); // 오일 토글(board에서 감지)
   const [msgNum, setMsgNum] = useRecoilState(startMsgNumState); // 시작점 선택 순서
   const [selectedNodes, setSelectedNodes] = useState(-1); // 선택된 건물의 인덱스
   const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const [alertVisible, setAlertVisible] = useRecoilState(alertModalState);
+
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
   // 데이터
   const [boardData] = useRecoilState(boardDataState); // 보드 데이터
@@ -63,9 +70,9 @@ export default function StartSelectBtn() {
     } else if (msgNum == 2) {
       buyBuilding(buildWhere);
       setIsStartActive(false);
-      setTurn(turn + 1);
       setMsgNum(0);
       // 실제구현 - 턴변경 요청
+      sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
     }
   };
 
@@ -83,10 +90,7 @@ export default function StartSelectBtn() {
     // 플레이어 턴일시
     if (isStartActive) {
       const rollTimeout = setTimeout(() => {
-        // 가구현
-        // setTurn(turn + 1);
-        // setMsgNum(0);
-        // 실제 구현 - 턴 변경 요청
+        setIsStartActive(false);
       }, 10000);
       if (!isStartActive) {
         clearTimeout(rollTimeout);

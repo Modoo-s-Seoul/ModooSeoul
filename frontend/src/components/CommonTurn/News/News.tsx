@@ -10,9 +10,9 @@ import {
   pNumState,
   stockLabelState,
 } from "../../../data/IngameData";
-import { sendWsMessage } from "../../IngameWs/IngameSendFunction";
 import TimeBar from "../../Base/TimeBar";
 import "./News.css";
+import { sendWsMessage } from "../../IngameWs/IngameSendFunction";
 
 export default function News() {
   // 기본 인자
