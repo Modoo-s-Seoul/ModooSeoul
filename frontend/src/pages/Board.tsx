@@ -548,7 +548,7 @@ export default function Board() {
             setIsPlayerMove(false);
           }, 500);
         }
-      }, i * 200);
+      }, i * 100);
     }
   };
 
@@ -858,7 +858,7 @@ export default function Board() {
       setIsNewsVisible(true);
     } else if (turn < pNum) {
       // 지하철 이동 띄우기
-      if (playerPositions[turn].subway == true) {
+      if (playerPositions[turn].subway == true && turn == whoAreYou) {
         setIsSubwayActive(true);
       }
     }
@@ -869,8 +869,7 @@ export default function Board() {
     const how = subwayChange[0].player;
     if (subwayChange[0].move == true) {
       // 이동 구현
-      const goIndex =
-        boardData[`${subwayChange[0].row}-${subwayChange[0].col}`].order;
+      const goIndex = subwayChange[0].index;
       const totalMove = (goIndex - 25 + 32) % 32;
       console.log(
         "지하철로 인한 이동 구현",
@@ -901,13 +900,21 @@ export default function Board() {
           const y =
             (col + row) * (globalTileSize / 4) + config.scale.height / 2;
           etcSprite[1].setPosition(x + 10, y - 220);
+          setSRow(row);
+          setSCol(col);
           // 토글
           if (isSubway[0].player === null) {
             etcSprite[1].setAlpha(1);
-            setIsSubway([{ player: turn, row: row, col: col, move: false }]);
+            setSRow(row);
+            setSCol(col);
+            setIsSubway([
+              { player: turn, row: row, col: col, move: false, index: 0 },
+            ]);
           } else {
             etcSprite[1].setAlpha(0);
-            setIsSubway([{ player: null, row: row, col: col, move: false }]);
+            setIsSubway([
+              { player: null, row: row, col: col, move: false, index: 0 },
+            ]);
           }
         });
       }
@@ -1051,7 +1058,12 @@ export default function Board() {
           });
         }
       }
-    } else if (backgroundSprite[0] && !isStartActive && !isOilActive) {
+    } else if (
+      backgroundSprite[0] &&
+      !isStartActive &&
+      !isOilActive &&
+      !isSubwayActive
+    ) {
       // 투명 원복
       for (let i = 0; i < groundSprite.length; i++) {
         const row = matchPos[i].row;
@@ -1065,6 +1077,7 @@ export default function Board() {
     isCommonGroundSellActive,
     isStartActive,
     isOilActive,
+    isSubwayActive,
     groundMsgNum,
     sCol,
     sRow,
@@ -1163,39 +1176,41 @@ export default function Board() {
       <div ref={game} className="GameScreen" id="gameScreen" />
 
       {/* 개발자용 */}
-      <div className="devContainer">
-        <input
-          type="number"
-          onChange={(e) => {
-            setDevDice1(Number(e.target.value));
-          }}
-        />
-        <input
-          type="number"
-          onChange={(e) => {
-            setDevDice2(Number(e.target.value));
-          }}
-        />
-        <button onClick={rollDiceDev}>굴리기</button>
-        <button
-          onClick={() => {
-            sendWsMessage(
-              socketClient,
-              playerInfo.playerId,
-              "send/timer-cancel"
-            );
-          }}
-        >
-          타이머 종료
-        </button>
-        <button
-          onClick={() => {
-            sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
-          }}
-        >
-          강제 턴이동
-        </button>
-      </div>
+      {whoAreYou !== 6 && (
+        <div className="devContainer">
+          <input
+            type="number"
+            onChange={(e) => {
+              setDevDice1(Number(e.target.value));
+            }}
+          />
+          <input
+            type="number"
+            onChange={(e) => {
+              setDevDice2(Number(e.target.value));
+            }}
+          />
+          <button onClick={rollDiceDev}>굴리기</button>
+          <button
+            onClick={() => {
+              sendWsMessage(
+                socketClient,
+                playerInfo.playerId,
+                "send/timer-cancel"
+              );
+            }}
+          >
+            타이머 종료
+          </button>
+          <button
+            onClick={() => {
+              sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
+            }}
+          >
+            강제 턴이동
+          </button>
+        </div>
+      )}
     </div>
   );
 }

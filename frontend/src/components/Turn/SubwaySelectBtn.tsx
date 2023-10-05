@@ -9,6 +9,7 @@ import {
   scolState,
   srowState,
   turnState,
+  whoAreYouState,
 } from "../../data/IngameData";
 import { useEffect, useState } from "react";
 import { useSocket } from "../../pages/SocketContext";
@@ -20,7 +21,7 @@ export default function SubwaySelectBtn() {
   const [turn] = useRecoilState(turnState);
   const sRow = useRecoilValue(srowState); // 선택 장소 row
   const sCol = useRecoilValue(scolState); // 선택 장소 col
-  const [isSubway, setIsSubway] = useRecoilState(isSubwayState); // 지하철 변동
+  const [isSubway] = useRecoilState(isSubwayState); // 지하철 변동
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글(board에서 감지)
   // 데이터
@@ -31,6 +32,9 @@ export default function SubwaySelectBtn() {
   const socketClient = useSocket();
   const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
+  // 플레이어 정보
+  const whoAreyou = useRecoilValue(whoAreYouState);
+
   /** 선택완료시 */
   const toggleSelectSubway = () => {
     // 이동안할시
@@ -39,13 +43,9 @@ export default function SubwaySelectBtn() {
       sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
       return;
     }
-    // 이동할시
-    const newSubwayChange = [...isSubway];
-    newSubwayChange[0] = { ...newSubwayChange[0], move: true };
-    setIsSubway(newSubwayChange);
-    setIsSubwayActive(false);
-
+    console.log(turnData.order, "로 요청");
     // 실제구현 - 지하철이동 위치 업데이트 요청
+    sendWsMessage(socketClient, playerInfo.playerId, "send/check-subway");
     sendWsMessage(
       socketClient,
       playerInfo.playerId,
@@ -77,6 +77,23 @@ export default function SubwaySelectBtn() {
       };
     }
   }, [turn, isSubwayActive]);
+
+  // 타이머 관련
+  useEffect(() => {
+    // 타이머 요청 (본인 턴일때만 요청)
+    if (turn == whoAreyou) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.gameId,
+        `send/timer`,
+        `{"timerType":"SUBWAY"}`
+      );
+      // 언마운트시 타이머 해제
+      return () => {
+        sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
+      };
+    }
+  }, []);
 
   return (
     <>
