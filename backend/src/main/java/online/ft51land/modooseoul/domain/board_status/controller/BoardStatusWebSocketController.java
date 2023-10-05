@@ -67,7 +67,7 @@ public class BoardStatusWebSocketController {
     }
 
 
-    @MessageMapping("/select-FTOilLand/{playerId}")
+    @MessageMapping("/oil-land/{playerId}")
     public void selectFTOilLand(@DestinationVariable String playerId, @Payload PlayerFTOilLandRequestDto playerFTOilLandRequestDto){
         Player player = playerService.getPlayerById(playerId);
 
@@ -75,7 +75,7 @@ public class BoardStatusWebSocketController {
 
         FTOilLandMessage ftOilLandMessage = boardStatusService.ftOilLandEffect(game, player, playerFTOilLandRequestDto.boardId());
 
-        webSocketSendHandler.sendToGame("FTOilLand", player.getGameId(), ftOilLandMessage);
+        webSocketSendHandler.sendToGame("oil-land", player.getGameId(), ftOilLandMessage);
 
 
         // 타이머 만료, 턴 넘기기

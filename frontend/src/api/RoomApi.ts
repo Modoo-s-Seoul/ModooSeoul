@@ -2,7 +2,7 @@ import axios from "axios";
 import { CompatClient } from "@stomp/stompjs";
 
 /**서버 ip 주소 */
-export const ipAddress = "http://modooseoul.online:8081";
+export const ipAddress = "http://localhost:8080";
 // export const ipAddress = "http://70.12.108.93:8080";
 /**api 기본 주소 */
 const apiAddress = `${ipAddress}/api/v1`;
