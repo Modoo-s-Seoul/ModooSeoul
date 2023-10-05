@@ -1,23 +1,31 @@
 // import React from 'react';
 import "./Subway.css";
 
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   isSubwayActiveState,
   isSubwayState,
   playerInfoState,
+  scolState,
+  srowState,
   turnState,
 } from "../../data/IngameData";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSocket } from "../../pages/SocketContext";
 import { sendWsMessage } from "../IngameWs/IngameSendFunction";
+import { boardDataState } from "../../data/BoardData";
 
 export default function SubwaySelectBtn() {
   // 기본인자
   const [turn] = useRecoilState(turnState);
+  const sRow = useRecoilValue(srowState); // 선택 장소 row
+  const sCol = useRecoilValue(scolState); // 선택 장소 col
   const [isSubway, setIsSubway] = useRecoilState(isSubwayState); // 지하철 변동
   const [isSubwayActive, setIsSubwayActive] =
     useRecoilState(isSubwayActiveState); // 지하철 토글(board에서 감지)
+  // 데이터
+  const [boardData] = useRecoilState(boardDataState); // 보드 데이터
+  const [turnData, setTurnData] = useState(boardData[`${sRow}-${sCol}`]); // 선택 장소 데이터
 
   // 웹소켓 기본인자
   const socketClient = useSocket();
@@ -38,7 +46,19 @@ export default function SubwaySelectBtn() {
     setIsSubwayActive(false);
 
     // 실제구현 - 지하철이동 위치 업데이트 요청
+    sendWsMessage(
+      socketClient,
+      playerInfo.playerId,
+      "send/subway",
+      `{"boardId":${turnData.order}}`
+    );
   };
+
+  /** 클릭데이터 반영 */
+  useEffect(() => {
+    setTurnData(boardData[`${sRow}-${sCol}`]);
+    console.log(turnData);
+  }, [sCol, sRow]);
 
   /** 시간초과시 */
   useEffect(() => {

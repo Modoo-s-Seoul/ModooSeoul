@@ -63,6 +63,7 @@ import {
   doublePrisonState,
   isGameStartVisibleState,
   isYourTurnVisibleState,
+  oilStartState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
@@ -142,6 +143,7 @@ export default function Board() {
   const [isCommonGroundSellActive, setIsCGSA] = useRecoilState(
     isCommonGroundSellActiveState
   ); // 공통턴 땅판매 토글
+  const oilStart = useRecoilValue(oilStartState); // 오일 시작
 
   // 데이터 보관
   const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드데이터
@@ -388,7 +390,7 @@ export default function Board() {
       config.scale.height / 2 - offset2 - 10,
       "oilframe_0" // 처음 프레임을 설정
     );
-    oileffect.setScale(0.3, 0.3);
+    oileffect.setScale(0.5, 0.5);
     oileffect.setAlpha(0);
     oileffect.anims.play("oilAnimation"); // 애니메이션 재생
 
@@ -556,6 +558,7 @@ export default function Board() {
     if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
     setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
     // (실제구현) 주사위값 변경 요청
+    sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
     if (socketClient) {
       sendWsMessage(socketClient, playerInfo.playerId, "send/roll");
     }
@@ -770,9 +773,10 @@ export default function Board() {
         player: buildingChange[0].player,
         industry: buildingChange[0].industry,
       };
+      setBuildingInfo(newData);
     } else if (buildingChange[0].player === 6) {
       // 판매요청시
-      console.log("건물 판매요청");
+      console.log("건물 판매요청", buildingChange);
       for (let i = 0; i < buildingChange.length; i++) {
         buildingSprite[
           buildingChange[i].index + buildingChange[i].point
@@ -786,9 +790,10 @@ export default function Board() {
       newData[buildingChange[0].index + buildingChange[0].point] = {
         ...newData[buildingChange[0].index + buildingChange[0].point],
         sell: false,
-        player: buildingChange[0].player,
+        player: null,
         industry: buildingChange[0].industry,
       };
+      setBuildingInfo(newData);
     }
     // 돈정보 디스플레이 업데이트
     setDisplayPlayerData(playerData);
@@ -928,9 +933,13 @@ export default function Board() {
               (col + row) * (globalTileSize / 4) + config.scale.height / 2;
             // 토글
             etcSprite[2].setPosition(x, y - offset2 - 10);
+            setSRow(row);
+            setSCol(col);
             if (oilLand === -1) {
               etcSprite[2].setAlpha(1);
               setOilLand(i);
+              setSRow(row);
+              setSCol(col);
             } else {
               etcSprite[2].setAlpha(0);
               setOilLand(-1);
@@ -949,6 +958,20 @@ export default function Board() {
       }
     }
   }, [isOilActive, oilLand]);
+  /** 오일 활성화 */
+  useEffect(() => {
+    if (oilStart) {
+      // 오일 이펙트 전원 활성화!
+      console.log("오일효과가 활성화 되었습니다!", oilLand);
+      const i = oilLand;
+      const row = matchPos[i].row;
+      const col = matchPos[i].col;
+      const x = (col - row) * (globalTileSize / 2) + config.scale.width / 2;
+      const y = (col + row) * (globalTileSize / 4) + config.scale.height / 2;
+      etcSprite[2].setPosition(x, y - offset2 - 10);
+      etcSprite[2].setAlpha(1);
+    }
+  }, [oilStart]);
 
   /** 시작점 선택시 */
   useEffect(() => {
@@ -984,6 +1007,7 @@ export default function Board() {
         }
       }
     } else if (backgroundSprite[0]) {
+      console.log("투명 원복", isStartActive);
       // 투명 원복
       for (let i = 0; i < groundSprite.length; i++) {
         const row = matchPos[i].row;
@@ -1027,7 +1051,7 @@ export default function Board() {
           });
         }
       }
-    } else if (backgroundSprite[0]) {
+    } else if (backgroundSprite[0] && !isStartActive && !isOilActive) {
       // 투명 원복
       for (let i = 0; i < groundSprite.length; i++) {
         const row = matchPos[i].row;
@@ -1037,7 +1061,14 @@ export default function Board() {
         }
       }
     }
-  }, [isCommonGroundSellActive, groundMsgNum, sCol, sRow]);
+  }, [
+    isCommonGroundSellActive,
+    isStartActive,
+    isOilActive,
+    groundMsgNum,
+    sCol,
+    sRow,
+  ]);
 
   /** 변경 이벤트 (오일랜드, 지하철, 시작점, 공통턴땅판매) */
   useEffect(() => {
@@ -1087,14 +1118,6 @@ export default function Board() {
         <UserInfo />
       )}
 
-      {/* 기본 세팅 */}
-      <IngameWebSocket />
-      <GameOption />
-      <OilSelectBtn />
-      <SubwaySelectBtn />
-      <StartSelectBtn />
-      <GroundSelectBtn />
-
       {/* 주사위 */}
       <DiceRoll rollDiceInBoard={rollDice} />
 
@@ -1102,6 +1125,14 @@ export default function Board() {
       <IngameModal visible={isUserTurnVisible && whoAreYou == turn}>
         {isUserTurnVisible && <UserTurn />}
       </IngameModal>
+
+      {/* 기본 세팅 */}
+      <IngameWebSocket />
+      <GameOption />
+      <OilSelectBtn />
+      <SubwaySelectBtn />
+      <StartSelectBtn />
+      <GroundSelectBtn />
 
       {/* 공통턴 */}
       <IngameModal visible={isCommonTurnVisible}>
@@ -1148,19 +1179,21 @@ export default function Board() {
         <button onClick={rollDiceDev}>굴리기</button>
         <button
           onClick={() => {
-            sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
-            // setTurn((turn + pNum + 1) % (pNum + 2));
+            sendWsMessage(
+              socketClient,
+              playerInfo.playerId,
+              "send/timer-cancel"
+            );
           }}
         >
-          턴 하나 뒤로
+          타이머 종료
         </button>
         <button
           onClick={() => {
             sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
-            // setTurn((turn + 1) % (pNum + 2));
           }}
         >
-          턴 하나 앞으로
+          강제 턴이동
         </button>
       </div>
     </div>

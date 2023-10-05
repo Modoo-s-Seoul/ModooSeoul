@@ -88,12 +88,12 @@ export default function Start() {
   useEffect(() => {
     // 타이머 요청 (본인 턴일때만 요청)
     if (turn == whoAreyou) {
-      // sendWsMessage(
-      //   socketClient,
-      //   playerInfo.gameId,
-      //   `send/timer`,
-      //   `{"timerType":"STARTING_POINT_ARRIVAL"}`
-      // );
+      sendWsMessage(
+        socketClient,
+        playerInfo.gameId,
+        `send/timer`,
+        `{"timerType":"STARTING_POINT_ARRIVAL"}`
+      );
       // 언마운트시 타이머 해제
       return () => {
         // sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");

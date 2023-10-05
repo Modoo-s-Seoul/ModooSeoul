@@ -19,6 +19,8 @@ import {
   playerStockInfoState,
   // builingInfoState,
   buildingChangeState,
+  oilStartState,
+  oilLandState,
 } from "../../data/IngameData";
 import { matchIndex } from "./../../data/IngameData";
 import { sendWsMessage } from "./IngameSendFunction";
@@ -45,6 +47,8 @@ export default function IngameWebSocket() {
   const setStockInfo = useSetRecoilState(playerStockInfoState);
   // const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
+  const setOilStart = useSetRecoilState(oilStartState);
+  const setOilLand = useSetRecoilState(oilLandState);
 
   // 게임 정보
   const weblocation = useLocation();
@@ -246,11 +250,19 @@ export default function IngameWebSocket() {
         console.log(receivedData);
       });
 
-      //오일랜드 도착
+      //오일랜드 지정
       socketClient.subscribe(`/receive/game/oil-land/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        // 오일랜드 전체 지정
+        const receiveOrder = receivedData.FTOilLandBoardId - 1;
+        const oilIndex = matchIndexList[receiveOrder];
+        setOilLand(oilIndex);
+        setOilStart(true);
+        // 돈정보 업데이트
+        const gameId = weblocation.state.gameId;
+        sendWsMessage(socketClient, gameId, "send/players-info");
       });
 
       //지하철 이용 여부 확인
@@ -340,9 +352,9 @@ export default function IngameWebSocket() {
         const index = receivedData.groundIdx - 1;
         const order = matchIndexList[index];
         setBuildingChange([
-          { player: 6, index: order * 3, point: 0, industry: -1 },
-          { player: 6, index: order * 3, point: 1, industry: -1 },
-          { player: 6, index: order * 3, point: 2, industry: -1 },
+          { player: 6, index: order * 3 - 1, point: 0, industry: -1 },
+          { player: 6, index: order * 3 - 1, point: 1, industry: -1 },
+          { player: 6, index: order * 3 - 1, point: 2, industry: -1 },
         ]);
       });
 

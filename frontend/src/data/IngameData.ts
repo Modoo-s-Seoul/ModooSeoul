@@ -131,6 +131,11 @@ export const isOilActiveState = atom<boolean>({
   key: "isOilActiveState",
   default: false,
 });
+/** 오일 웹소켓 반환 활성 토글 */
+export const oilStartState = atom<boolean>({
+  key: "oilStartState",
+  default: false,
+});
 
 /** 지하철선택 활성화 */
 export const isSubwayActiveState = atom<boolean>({
