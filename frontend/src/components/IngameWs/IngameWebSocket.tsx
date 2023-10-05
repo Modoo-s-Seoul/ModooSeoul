@@ -78,6 +78,22 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        // 자본금 지금
+        const newPlayerData = [...playerData];
+        for (let i = 0; i < receivedData.length; i++) {
+          newPlayerData[i] = {
+            ...newPlayerData[i],
+            name: receivedData[i].nickname,
+            cash: receivedData[i].cash,
+            totalAsset: receivedData[i].totalAsset,
+          };
+          // 본인의 턴 기록
+          if (nickname == receivedData[i].nickname) {
+            setWhoAreYou(i);
+            console.log("본인의 턴은", i, "입니다.");
+          }
+        }
+        setPlayerData(newPlayerData);
       });
 
       //라운드 시작
