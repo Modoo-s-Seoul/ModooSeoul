@@ -11,6 +11,7 @@ import {
   stockChangeType,
   subwayChangeType,
   playerStockInfoType,
+  rankingPlayerData,
 } from "../interface/ingame";
 
 /*
@@ -96,10 +97,28 @@ export const isGameStartVisibleState = atom<boolean>({
   default: false,
 });
 
+/** 종료 문구 컴포넌트 활성화 */
+export const isGameEndVisibleState = atom<boolean>({
+  key: "isGameEndVisibleState",
+  default: false,
+});
+
 /** 순서 뽑기 컴포넌트 활성화 */
 export const isYourTurnVisibleState = atom<boolean>({
   key: "isYourTurnVisibleState",
   default: false,
+});
+
+/** 순위 컴포넌트 활성화 */
+export const isRankingVisibleState = atom<boolean>({
+  key: "isRankingVisibleState",
+  default: false,
+});
+
+/** 순위 기록 */
+export const rankingDataState = atom<rankingPlayerData[]>({
+  key: "rankingDataState",
+  default: [],
 });
 
 /** 로딩 컴포넌트 활성화 */
@@ -129,6 +148,11 @@ export const isCommonTurnVisibleState = atom<boolean>({
 /** 오일선택 활성화 */
 export const isOilActiveState = atom<boolean>({
   key: "isOilActiveState",
+  default: false,
+});
+/** 오일 웹소켓 반환 활성 토글 */
+export const oilStartState = atom<boolean>({
+  key: "oilStartState",
   default: false,
 });
 
@@ -352,6 +376,12 @@ export const first_money = atom<number>({
   default: 10000000,
 });
 
+/** 탈세 여부 조회 */
+export const isEvadeState = atom<boolean>({
+  key: "isEvadeState",
+  default: false,
+});
+
 /** 탈세금 */
 export const dirtyMoneyState = atom<number>({
   key: "dirtyMoneyState",
@@ -379,13 +409,19 @@ export const isPrisonState = atom<boolean>({
 /** 지하철 변동감지 */
 export const isSubwayState = atom<subwayChangeType[]>({
   key: "isSubwayState",
-  default: [{ player: null, row: 0, col: 0, move: false }],
+  default: [{ player: null, row: 0, col: 0, move: false, index : 0 }],
 });
 
 /** 찬스카드 내용 */
 export const keyRandomState = atom<string>({
   key: "keyRandomState",
   default: "tax",
+});
+
+/** 찬스카드 내용 */
+export const lottoResultState = atom<string>({
+  key: "lottoResultState",
+  default: "",
 });
 
 /** 이번 라운드 시작 시 받은 배당금 */

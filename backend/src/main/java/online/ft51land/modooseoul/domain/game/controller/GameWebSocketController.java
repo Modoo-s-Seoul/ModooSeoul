@@ -11,8 +11,6 @@ import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
-import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -90,6 +88,7 @@ public class GameWebSocketController {
 
 		// 1명 제외하고 모두 파산일 경우
 		if(gameService.checkGameEnd(gameId)) { //파산하지 않은 수가 1명이면
+			log.info("Game end by bankrupt over ");
 			//게임 종료
 			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
 			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
@@ -102,6 +101,11 @@ public class GameWebSocketController {
 		log.info("GameWebSocketController - startRound : {}", gameId);
 		// game, players 객체 생성
 		Game game = gameService.getGameById(gameId);
+
+		// 이미 라운드가 시작했으면 끝
+		if (game.getIsRoundStart())
+			return;
+
 		List<Player> players = new ArrayList<>();
 
 		for (String playerId : game.getPlayers()) {
@@ -114,6 +118,7 @@ public class GameWebSocketController {
 //		}
 
 		if(game.getCurrentRound() >= 10) {
+			log.info("Game end by currentRound over, currentRound: {}", game.getCurrentRound());
 			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.END_OF_TURN);
 			webSocketSendHandler.sendToGame("end", gameId, gameEndMessage);
 			return;
@@ -121,6 +126,7 @@ public class GameWebSocketController {
 
 		GameRoundStartMessage gameRoundStartMessage = gameService.startRound(game, players);
 		webSocketSendHandler.sendToGame("round-start", gameId, gameRoundStartMessage);
+
 	}
 
 	@MessageMapping("/timer/{gameId}")
@@ -130,10 +136,7 @@ public class GameWebSocketController {
 
 		Game game = gameService.getGameById(gameId);
 
-		// 타이머가 이미 활성화 중이라면
-		if(game.getIsTimerActivated()){
-			throw new BusinessException(ErrorMessage.TIMER_ALREADY_ACTIVATED);
-		}
+		gameService.setIsRoundStartFalse(game);
 
 		Timer timer = new Timer();
 
@@ -195,21 +198,25 @@ public class GameWebSocketController {
 
 					// 메시지 보냄
 					webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(timerGame.getIsTimerActivated(), timerGame.getTurnInfo()));
-					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}", timerGame.getId(), LocalDateTime.now() );
+					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}, DTO : {}, IsTimerActivated = {}", timerGame.getId(), LocalDateTime.now(), gameStartTimerRequestDto.toString(), timerGame.getIsTimerActivated() );
 				}else{
 					// TODO : 나중 else 문 지우기
-					System.out.println(" 타이머 비활성후 타이머 만료 " + LocalDateTime.now() +" 현재 턴 : "+ game.getTurnInfo());
+//					System.out.println(" 타이머 비 활성후 타이머 만료 " + LocalDateTime.now() +" 현재 턴 : "+ game.getTurnInfo());
 				}
 
 			}
 		};
 
 
-		log.info("{} 방에서 타이머 시작 : {}, DTO: {}", game.getId(), LocalDateTime.now(), gameStartTimerRequestDto.toString());
-		gameService.startTimer(game, gameStartTimerRequestDto.timerType());
-		timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
+		// 타이머가 이미 활성화 중이라면
+		if(!game.getIsTimerActivated()){
+			gameService.startTimer(game, gameStartTimerRequestDto.timerType());
+			timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
 
-		webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+
+			log.info("{} 방에서 타이머 시작 : {}, DTO: {}, IsTimerActivated = {}",  LocalDateTime.now(), game.getId(), gameStartTimerRequestDto.toString(), game.getIsTimerActivated());
+		}
 
 	}
 
@@ -239,6 +246,7 @@ public class GameWebSocketController {
 			gameService.playersActionFinish(game); // 타이머 만료
 
 			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+			log.info("{} 방에 타이머 취소 : {}, 타이머 타입 : {}, IsTimerActivated ={}", gameId, game.getTimerType(), game.getIsTimerActivated());
 		}
 
 		// 이미 만료되어 있는 경우 무응답

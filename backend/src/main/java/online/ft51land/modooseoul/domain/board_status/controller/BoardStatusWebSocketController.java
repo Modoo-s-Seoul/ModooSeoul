@@ -73,7 +73,7 @@ public class BoardStatusWebSocketController {
 
         Game game = gameService.getGameById(player.getGameId());
 
-        FTOilLandMessage ftOilLandMessage = boardStatusService.ftOilLandEffect(game, player, playerFTOilLandRequestDto.boardId());
+        FTOilLandMessage ftOilLandMessage = boardStatusService.ftOilLandEffect(player, playerFTOilLandRequestDto.boardId());
 
         webSocketSendHandler.sendToGame("oil-land", player.getGameId(), ftOilLandMessage);
 

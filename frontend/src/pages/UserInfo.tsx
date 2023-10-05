@@ -206,6 +206,9 @@ export default function UserInfo() {
                   `}
                   >
                     {player.cash}원
+                    <div className="totalAsset">
+                      총자산 : {player.totalAsset}원
+                    </div>
                   </div>
                 </div>
               </div>

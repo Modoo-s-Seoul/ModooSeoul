@@ -19,6 +19,16 @@ import {
   playerStockInfoState,
   // builingInfoState,
   buildingChangeState,
+  oilStartState,
+  oilLandState,
+  isSubwayState,
+  isSubwayActiveState,
+  isEvadeState,
+  keyRandomState,
+  lottoResultState,
+  moreNewsState,
+  isGameEndVisibleState,
+  rankingDataState,
 } from "../../data/IngameData";
 import { matchIndex } from "./../../data/IngameData";
 import { sendWsMessage } from "./IngameSendFunction";
@@ -45,6 +55,16 @@ export default function IngameWebSocket() {
   const setStockInfo = useSetRecoilState(playerStockInfoState);
   // const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
+  const setOilStart = useSetRecoilState(oilStartState);
+  const setOilLand = useSetRecoilState(oilLandState);
+  const [isSubway, setIsSubway] = useRecoilState(isSubwayState); // 지하철 변동
+  const [, setIsSubwayActive] = useRecoilState(isSubwayActiveState); // 지하철 토글(board에서 감지)
+  const setIsEvade = useSetRecoilState(isEvadeState); // 탈세여부검증
+  const setKeyRandom = useSetRecoilState(keyRandomState);
+  const setLottoResult = useSetRecoilState(lottoResultState);
+  const setMoreNews = useSetRecoilState(moreNewsState);
+  const setIsGameEndVisible = useSetRecoilState(isGameEndVisibleState); // 게임 종료 토글
+  const setRankingData = useSetRecoilState(rankingDataState);
 
   // 게임 정보
   const weblocation = useLocation();
@@ -134,7 +154,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/turn/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("턴정보확인 응답", receivedData);
         setTurn(receivedData.turnInfo);
       });
 
@@ -142,7 +162,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/pass-turn/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("턴종료 응답", receivedData);
         setTurn(receivedData.turnInfo);
       });
 
@@ -159,7 +179,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/roll/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("주사위굴리기 응답", receivedData);
         setDice1Value(receivedData.first);
         setDice2Value(receivedData.second);
         setDiceActive(true);
@@ -171,7 +191,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
-          console.log(receivedData);
+          console.log("땅구매 응답", receivedData);
           // 구매 가능할시
           if (receivedData.isPurchase) {
             // 땅 변동사항 업데이트
@@ -194,7 +214,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
-          console.log(receivedData);
+          console.log("건물구매 응답", receivedData);
           // 구매성공시
           if (receivedData.isPurchase) {
             const index = receivedData.boardIdx - 1;
@@ -221,7 +241,24 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
-          console.log(receivedData);
+          console.log(receivedData, res);
+          // 찬스카드 도착시
+          if (receivedData.board == "찬스 카드 도착") {
+            console.log("찬스카드 정보입니다ㅣ", receivedData);
+            if (receivedData.data.name == "꽝") {
+              setKeyRandom("nothing");
+            } else if (receivedData.data.name == "로또당첨") {
+              setLottoResult(receivedData.data.description);
+              setKeyRandom("lotto");
+              // 돈정보 업데이트
+              const gameId = weblocation.state.gameId;
+              sendWsMessage(socketClient, gameId, "send/players-info");
+            } else if (receivedData.data.name == "추가뉴스") {
+              setKeyRandom("news");
+            } else if (receivedData.data.name == "탈세여부확인") {
+              setKeyRandom("tax");
+            }
+          }
         }
       );
 
@@ -229,7 +266,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/prison/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("감옥 응답", receivedData);
       });
 
       //공통 턴 시작
@@ -243,21 +280,29 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("출발지 응답", receivedData);
       });
 
-      //오일랜드 도착
+      //오일랜드 지정
       socketClient.subscribe(`/receive/game/oil-land/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        // 오일랜드 전체 지정
+        const receiveOrder = receivedData.FTOilLandBoardId - 1;
+        const oilIndex = matchIndexList[receiveOrder];
+        setOilLand(oilIndex);
+        setOilStart(true);
+        // 돈정보 업데이트
+        const gameId = weblocation.state.gameId;
+        sendWsMessage(socketClient, gameId, "send/players-info");
       });
 
       //지하철 이용 여부 확인
       socketClient.subscribe(`/receive/game/check-subway/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("지하철 이용여부 응답", receivedData);
       });
 
       //지하철 이동
@@ -265,13 +310,30 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        // 지하철 변동 - 이동 감지 요청
+        const newSubwayChange = [...isSubway];
+        newSubwayChange[0] = {
+          ...newSubwayChange[0],
+          move: true,
+          index: receivedData.currentBoardId,
+        };
+        setIsSubway(newSubwayChange);
+        setIsSubwayActive(false);
+      });
+
+      // 국세청 검증
+      socketClient.subscribe(`/receive/game/tax-service/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+        setIsEvade(receivedData.isEvade);
       });
 
       //찬스 카드 도착
       socketClient.subscribe(`/receive/game/chance/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("찬스카드 응답", receivedData);
       });
 
       //공통 턴 준비
@@ -306,7 +368,11 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/end/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("게임종료 응답", receivedData);
+        // 게임 종료 선언
+        setIsGameEndVisible(true);
+        // 랭킹 데이터 업데이트
+        setRankingData(receivedData.playerList);
       });
 
       //// 개별 구독 ////
@@ -340,9 +406,9 @@ export default function IngameWebSocket() {
         const index = receivedData.groundIdx - 1;
         const order = matchIndexList[index];
         setBuildingChange([
-          { player: 6, index: order * 3, point: 0, industry: -1 },
-          { player: 6, index: order * 3, point: 1, industry: -1 },
-          { player: 6, index: order * 3, point: 2, industry: -1 },
+          { player: 6, index: order * 3 - 1, point: 0, industry: -1 },
+          { player: 6, index: order * 3 - 1, point: 1, industry: -1 },
+          { player: 6, index: order * 3 - 1, point: 2, industry: -1 },
         ]);
       });
 
@@ -454,6 +520,8 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        setIsEvade(receivedData.isEvade);
+        setMoreNews(receivedData.description);
       });
     }
 

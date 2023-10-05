@@ -100,6 +100,7 @@ export interface subwayChangeType {
   row: number | null;
   col: number | null;
   move: boolean;
+  index : number;
 }
 
 /** (타입) 플레이어 주식 정보 */
@@ -110,4 +111,13 @@ export interface playerStockInfoType {
   purchasePrices: number[]; //보유 주식 별 평단가
   stockAmounts: number[]; //보유 주식 별 주수
   stockPrices: number[]; //보유 주식 별 현재 가치
+}
+
+/**(타입) 랭킹 플레이어 정보 */
+export interface rankingPlayerData {
+  nickname: string;
+  cash: number;
+  stockMoney: number;
+  estateMoney: number;
+  tax: number;
 }
