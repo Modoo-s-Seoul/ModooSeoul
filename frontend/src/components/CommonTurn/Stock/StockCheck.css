@@ -21,3 +21,11 @@
 .stockCheckBtn:hover {
   background-color: rgb(119, 54, 37);
 }
+
+.stockInfoBox {
+  width: 100%;
+  font-size: 30px;
+
+  display: flex;
+  justify-content: space-between;
+}

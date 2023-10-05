@@ -1192,7 +1192,7 @@ export default function Board() {
       <div ref={game} className="GameScreen" id="gameScreen" />
 
       {/* 개발자용 */}
-      {whoAreYou !== 6 && (
+      {/* {whoAreYou !== 6 && (
         <div className="devContainer">
           <input
             type="number"
@@ -1226,7 +1226,7 @@ export default function Board() {
             강제 턴이동
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
