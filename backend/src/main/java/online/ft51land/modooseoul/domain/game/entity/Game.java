@@ -96,8 +96,6 @@ public class Game extends BaseEntity {
 
 	private Boolean isRoundStart;
 
-	private Boolean isRoundStart;
-
 	@Builder
 	public Game() {
 		this.messageNum = 1L;
@@ -199,7 +197,4 @@ public class Game extends BaseEntity {
 		this.isRoundStart = isRoundStart;
 	}
 
-	public void setIsRoundStart(Boolean isRoundStart) {
-		this.isRoundStart = isRoundStart;
-	}
 }
