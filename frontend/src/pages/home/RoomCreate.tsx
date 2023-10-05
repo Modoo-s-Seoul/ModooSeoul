@@ -6,6 +6,7 @@ import ClickBtn from "../../components/Base/CustomButton";
 import { AlertModal } from "../../components/Base/AlertModal";
 import { useRecoilState } from "recoil";
 import { alertModalState } from "../../data/CommonData";
+import { handleFullScreen } from "../../components/Base/BaseFunc";
 
 /** 게임 방생성 컴포넌트 */
 export default function RoomCreate() {
@@ -34,7 +35,7 @@ export default function RoomCreate() {
     try {
       const roomInfo = await createRoom();
       const joinResponse = await joinRoom(nickname, roomInfo.data.id);
-
+      handleFullScreen();
       if (joinResponse.message === "success") {
         navigate(`/home/room`, {
           // 유저 닉네임, 방 id 다음 페이지에 넘기기

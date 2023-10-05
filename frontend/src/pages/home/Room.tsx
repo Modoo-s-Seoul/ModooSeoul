@@ -9,7 +9,7 @@ import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/CustomButton";
 import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
-// import { handleFullScreen } from "../../components/Base/BaseFunc";
+import { handleFullScreen } from "../../components/Base/BaseFunc";
 import { AlertModal } from "../../components/Base/AlertModal";
 import {
   pNumState,
@@ -104,6 +104,7 @@ export default function Room() {
         const message = JSON.parse(msg.body);
         const receivedData = message.data;
         console.log("Start Status:", receivedData);
+        handleFullScreen();
         if (receivedData.isStart === true) {
           navigate(`/game`, {
             // 유저 닉네임, 방 id 다음 페이지에 넘기기
