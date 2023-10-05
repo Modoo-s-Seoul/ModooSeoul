@@ -136,11 +136,6 @@ public class GameWebSocketController {
 
 		gameService.setIsRoundStartFalse(game);
 
-		// 타이머가 이미 활성화 중이라면
-//		if(game.getIsTimerActivated()){
-//			throw new BusinessException(ErrorMessage.TIMER_ALREADY_ACTIVATED);
-//		}
-
 		Timer timer = new Timer();
 
 		TimerTask task = new TimerTask() {
@@ -201,21 +196,24 @@ public class GameWebSocketController {
 
 					// 메시지 보냄
 					webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(timerGame.getIsTimerActivated(), timerGame.getTurnInfo()));
-					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}", timerGame.getId(), LocalDateTime.now() );
+					log.info("{} 방에서 시간이 다되어서 타이머 만료 : {}, DTO : {}", timerGame.getId(), LocalDateTime.now(), gameStartTimerRequestDto.toString() );
 				}else{
 					// TODO : 나중 else 문 지우기
-					System.out.println(" 타이머 비활성후 타이머 만료 " + LocalDateTime.now() +" 현재 턴 : "+ game.getTurnInfo());
+//					System.out.println(" 타이머 비 활성후 타이머 만료 " + LocalDateTime.now() +" 현재 턴 : "+ game.getTurnInfo());
 				}
 
 			}
 		};
 
 
-		log.info("{} 방에서 타이머 시작 : {}, DTO: {}", game.getId(), LocalDateTime.now(), gameStartTimerRequestDto.toString());
-		gameService.startTimer(game, gameStartTimerRequestDto.timerType());
-		timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
+		// 타이머가 이미 활성화 중이라면
+		if(!game.getIsTimerActivated()){
+			log.info("{} 방에서 타이머 시작 : {}, DTO: {}",  LocalDateTime.now(), game.getId(), gameStartTimerRequestDto.toString());
+			gameService.startTimer(game, gameStartTimerRequestDto.timerType());
+			timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
 
-		webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+		}
 
 	}
 
@@ -245,6 +243,7 @@ public class GameWebSocketController {
 			gameService.playersActionFinish(game); // 타이머 만료
 
 			webSocketSendHandler.sendToGame("timer", gameId, GameTimerExpireMessage.of(game.getIsTimerActivated(), game.getTurnInfo()));
+			log.info("{} 방에 타이머 취소 : {}, 타이머 타입 : {}", gameId, game.getTimerType());
 		}
 
 		// 이미 만료되어 있는 경우 무응답
