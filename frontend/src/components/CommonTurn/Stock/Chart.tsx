@@ -32,7 +32,8 @@ export default function Chart({ stockLabels, stockPrice }: Props) {
   );
 
   const options = {
-    responsive: true,
+    // responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
         grid: {
