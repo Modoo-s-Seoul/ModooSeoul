@@ -99,17 +99,24 @@ public class GameService {
         gameRepository.save(game);
 
         // 플레이어 초기 세팅
-        for (int i = 0; i < game.getPlayers().size(); i++) {
-            String playerId = game.getPlayers().get(i);
-            Player player = playerRepository.findById(playerId)
-                    .orElseThrow(()-> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+//        for (int i = 0; i < game.getPlayers().size(); i++) {
+//            String playerId = game.getPlayers().get(i);
+//            Player player = playerRepository.findById(playerId)
+//                    .orElseThrow(()-> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+//
+//            player.playerInit(Long.valueOf(i));
+//            log.info("player turnInfo 저장 -> player: {}, turnNum: {}",player.getNickname(), player.getTurnNum());
+//            playerRepository.save(player);
+//        }
 
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
             player.playerInit(Long.valueOf(i));
             log.info("player turnInfo 저장 -> player: {}, turnNum: {}",player.getNickname(), player.getTurnNum());
             playerRepository.save(player);
         }
 
-        // 플레이어 주식 보드 세팅
+            // 플레이어 주식 보드 세팅
         for (Player player : players) {
             StockBoard stockBoard = new StockBoard(player.getId());
             stockBoard.stockBoardinit(game);
