@@ -102,6 +102,11 @@ public class GameWebSocketController {
 		log.info("GameWebSocketController - startRound : {}", gameId);
 		// game, players 객체 생성
 		Game game = gameService.getGameById(gameId);
+
+		// 이미 라운드가 시작했으면 끝
+		if (game.getIsRoundStart())
+			return;
+
 		List<Player> players = new ArrayList<>();
 
 		for (String playerId : game.getPlayers()) {
@@ -121,6 +126,7 @@ public class GameWebSocketController {
 
 		GameRoundStartMessage gameRoundStartMessage = gameService.startRound(game, players);
 		webSocketSendHandler.sendToGame("round-start", gameId, gameRoundStartMessage);
+
 	}
 
 	@MessageMapping("/timer/{gameId}")
@@ -131,9 +137,9 @@ public class GameWebSocketController {
 		Game game = gameService.getGameById(gameId);
 
 		// 타이머가 이미 활성화 중이라면
-		if(game.getIsTimerActivated()){
-			throw new BusinessException(ErrorMessage.TIMER_ALREADY_ACTIVATED);
-		}
+//		if(game.getIsTimerActivated()){
+//			throw new BusinessException(ErrorMessage.TIMER_ALREADY_ACTIVATED);
+//		}
 
 		Timer timer = new Timer();
 
@@ -255,6 +261,9 @@ public class GameWebSocketController {
 			Player player = playerService.getPlayerById(playerId);
 			webSocketSendHandler.sendToPlayer("free-action", playerId, gameId, PlayerPrisonMessage.of(player));
 		}
+
+		// round 시작 가능으로 바꾸기
+		gameService.setIsRoundStartFalse(game);
 	}
 
 	// 배당금 확인

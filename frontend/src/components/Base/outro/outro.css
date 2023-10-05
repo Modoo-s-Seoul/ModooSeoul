@@ -1,0 +1,63 @@
+.gameEndLogo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50; /* 초기 크기 */
+    animation: shake 1s cubic-bezier(0.36, 0.07, 0.19, 0.97) both infinite, grow 2s ease-out;
+    text-shadow: 2px 2px 2px white, -2px -2px 2px white;
+    z-index: 9999;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-50%, -50%) rotate(-5deg); }
+  20%, 40%, 60%, 80% { transform: translate(-50%, -50%) rotate(5deg); }
+}
+
+@keyframes grow {
+  0% { font-size: 50px; }
+  100% { font-size: 150px; } /* 최종 크기 */
+}
+
+.rankingContainer{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 60vw;
+  height: 60vh;
+  margin: 2%;
+
+  background-color: blanchedalmond;
+  border-radius: 50px;
+  z-index: 10000;
+}
+.rankingInnerContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  margin: 20px;
+  background-color: rgb(146, 122, 86);
+}
+
+.rankingTitle{
+  font-size: 60px;
+}
+.rankingBox{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.rankingRow{
+
+}
+.rankingFooter{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
