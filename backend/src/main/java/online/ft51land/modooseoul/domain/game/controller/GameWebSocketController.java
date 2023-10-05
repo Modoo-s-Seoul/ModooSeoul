@@ -88,6 +88,7 @@ public class GameWebSocketController {
 
 		// 1명 제외하고 모두 파산일 경우
 		if(gameService.checkGameEnd(gameId)) { //파산하지 않은 수가 1명이면
+			log.info("Game end by bankrupt over ");
 			//게임 종료
 			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
 			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
@@ -117,6 +118,7 @@ public class GameWebSocketController {
 //		}
 
 		if(game.getCurrentRound() >= 10) {
+			log.info("Game end by currentRound over, currentRound: {}", game.getCurrentRound());
 			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.END_OF_TURN);
 			webSocketSendHandler.sendToGame("end", gameId, gameEndMessage);
 			return;
