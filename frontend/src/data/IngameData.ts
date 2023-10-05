@@ -361,7 +361,7 @@ export const dirtyMoneyState = atom<number>({
 /** 뉴스 보관 */
 export const selectedNewsState = atom<string[]>({
   key: "selectedNewsState",
-  default: ["뉴스"],
+  default: [],
 });
 
 /** 추가 뉴스 보관 */
