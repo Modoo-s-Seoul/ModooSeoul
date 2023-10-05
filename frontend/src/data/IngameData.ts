@@ -298,13 +298,16 @@ export const matchIndex = atom({
 export const stockState = atom<stockChangeType[]>({
   key: "stockState",
   default: [
-    { stockName: "OO전자", stockPrice: [] },
-    { stockName: "ㅁㅁ건설", stockPrice: [] },
-    { stockName: "XX바이오", stockPrice: [] },
-    // { stockName: "", stockPrice: [] },
-    // { stockName: "", stockPrice: [] },
-    // { stockName: "", stockPrice: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
+    { stockName: "", currentPrice: 0, stockHistory: [] },
   ],
+});
+
+/** 주식 그래프 라벨 */
+export const stockLabelState = atom<string[]>({
+  key: "stockLabel",
+  default: [],
 });
 
 /** 모달 메세지 토글 */

@@ -5,12 +5,15 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   selectedNewsState,
   playerDataState,
+  playerInfoState,
+  displayPlayerDataState,
   roundState,
   turnState,
   timerState,
   dice1State,
   dice2State,
   isPrisonState,
+  stockState,
   diceActiveState,
   whoAreYouState,
   groundChangeState,
@@ -27,6 +30,8 @@ export default function IngameWebSocket() {
 
   // 세팅할 데이터들
   const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 인게임 정보
+  const setPlayerInfo = useSetRecoilState(playerInfoState); // 플레이어 인게임 정보
+  const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 출력용 플레이어 인게임 정보
   const setRound = useSetRecoilState(roundState); // 현재 라운드
   const setTurn = useSetRecoilState(turnState); // 현재 플레이 순서
   const setTimer = useSetRecoilState(timerState); // 현재 플레이 순서
@@ -34,6 +39,7 @@ export default function IngameWebSocket() {
   const setDice1Value = useSetRecoilState(dice1State);
   const setDice2Value = useSetRecoilState(dice2State);
   const setPrison = useSetRecoilState(isPrisonState);
+  const [stock, setStock] = useRecoilState(stockState);
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const setWhoAreYou = useSetRecoilState(whoAreYouState); // 본인의 턴 기록
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
@@ -56,6 +62,13 @@ export default function IngameWebSocket() {
 
   /** 초기구독 */
   useEffect(() => {
+    if (weblocation.state) {
+      setPlayerInfo({
+        nickname: weblocation.state.nickname,
+        gameId: gameId,
+        playerId: playerId,
+      });
+    }
     // WebSocket 연결 설정 및 관리 코드를 이곳에 추가하세요.
     if (socketClient !== null) {
       //// 공통 구독 ////
@@ -87,9 +100,25 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/round-start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("round-start: ", receivedData);
         setRound(receivedData.currentRound);
         /* 주식 정보 업데이트 */
+        const newStock = [...stock];
+        for (let i = 0; i < 3; ++i) {
+          if (newStock[i].stockName.length === 0) {
+            newStock[i] = {
+              ...newStock[i],
+              stockName: receivedData.stockName[i],
+            };
+          }
+          newStock[i] = {
+            ...newStock[i],
+            currentPrice: receivedData.stockPrices[i],
+            stockHistory: receivedData.stockPricesHistory[i],
+          };
+        }
+
+        setStock(newStock);
       });
 
       //타이머 시작,완료,취소 알림
@@ -122,6 +151,8 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        setTimer(receivedData.isTimerActivated);
+        setTurn(receivedData.turnInfo);
       });
 
       // 주사위 굴리기
@@ -233,13 +264,6 @@ export default function IngameWebSocket() {
 
       //찬스 카드 도착
       socketClient.subscribe(`/receive/game/chance/${gameId}`, (msg) => {
-        const res = JSON.parse(msg.body);
-        const receivedData = res.data;
-        console.log(receivedData);
-      });
-
-      //공통 턴 준비
-      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
