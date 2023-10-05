@@ -4,6 +4,7 @@ import CloseButton from "../Base/CloseButton";
 import StockTrade from "../CommonTurn/Stock/StockTrade";
 import NewsCheck from "../CommonTurn/News/NewsCheck";
 import GameOption from "../Base/GameOption";
+import StockCheck from "../CommonTurn/Stock/StockCheck";
 
 /**컴포넌트 테스트용 컴포넌트 */
 export default function TestComponent() {
@@ -17,8 +18,9 @@ export default function TestComponent() {
     <>
       <h1>Test Your Components</h1>
       <button onClick={openModal}>모달 열기</button>
-      <NewsCheck />
       <GameOption />
+      <NewsCheck />
+      <StockCheck />
       <IngameModal visible={isTradeVisible}>
         {isTradeVisible && <StockTrade />}
         <div style={{ cursor: "pointer" }}>

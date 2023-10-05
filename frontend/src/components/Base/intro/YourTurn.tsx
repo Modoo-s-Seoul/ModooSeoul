@@ -57,7 +57,7 @@ export default function YourTurn() {
         socketClient,
         playerInfo.gameId,
         `send/timer`,
-        `{"timerType":"FTOILLAND_ARRIVAL"}`
+        `{"timerType":"SELECT_FIRST_PLAYER"}`
       );
       // 언마운트시 타이머 해제
       return () => {

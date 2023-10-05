@@ -15,32 +15,35 @@
   border-radius: 5px;
   font-size: 17px;
   box-shadow: 2px 2px 2px black;
-  color: white;
   text-shadow: 1px 1px 1px black;
   transition: 0.3s ease;
   /* transform: translate(50%, 0); */
   opacity: 0;
   z-index: 10;
 }
-.newsCheckOuterContainer{
+
+.newsCheckOuterContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
 }
-.newsCheckContainer{
+
+.newsCheckContainer {
   display: flex;
   align-items: center;
   flex: 1;
   justify-content: center;
   flex-direction: column;
 }
-.newsCheckTitle{
+
+.newsCheckTitle {
   font-size: 40px;
   font-weight: 700;
 }
-.newsCheckItems{
+
+.newsCheckItems {
   font-size: 30px;
   margin: 2px;
 }

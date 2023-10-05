@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./DiceRoll.css"; // CSS 파일을 import 해야 합니다.
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   dice1State,
   dice2State,
@@ -16,9 +16,12 @@ import {
   isStartActiveState,
   isSubwayActiveState,
   isUserTurnVisibleState,
+  playerInfoState,
   turnState,
   whoAreYouState,
 } from "../data/IngameData";
+import { sendWsMessage } from "../components/IngameWs/IngameSendFunction";
+import { useSocket } from "./SocketContext";
 interface diceRollProps {
   rollDiceInBoard: () => void;
 }
@@ -43,6 +46,9 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   const isRankingVisible = useRecoilValue(isRankingVisibleState); // 랭킹 컴포넌트 토글인자
   // 플레이어 개인정보
   const whoAreYou = useRecoilValue(whoAreYouState); // 본인의 턴
+  // 웹소켓 기본인자
+  const socketClient = useSocket();
+  const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
 
   // 실제 주사위 값 설정
   const rollDice = () => {
@@ -74,6 +80,23 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
       }, 700);
     }
   }, [diceActive]);
+
+  // 타이머 관련
+  useEffect(() => {
+    // 타이머 요청 (본인 턴일때만 요청)
+    if (turn == whoAreYou) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.gameId,
+        `send/timer`,
+        `{"timerType":"ROLL_DICE"}`
+      );
+      // 언마운트시 타이머 해제
+      return () => {
+        sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
+      };
+    }
+  }, []);
 
   return (
     <>

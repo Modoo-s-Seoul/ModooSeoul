@@ -2,12 +2,9 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   builingInfoState,
   displayPlayerDataState,
-  doubleCntState,
   isModalMsgActiveState,
   isUserTurnVisibleState,
-  matchPosition,
   modalMsgState,
-  oilLandState,
   playerDataState,
   playerInfoState,
   tcolState,
@@ -36,11 +33,9 @@ export default function Ground() {
   const [buildWhere, setBuildWhere] = useState(0); // 부지 위치
   const tRow = useRecoilValue(trowState); // 현재 턴 row
   const tCol = useRecoilValue(tcolState); // 현재 턴 col
-  const doubleCnt = useRecoilValue(doubleCntState); // 더블 카운트
   const [turn] = useRecoilState(turnState); // 현재 플레이 순서
-  const [playerData, setPlayerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
+  const [playerData] = useRecoilState(playerDataState); // 플레이어 현재 정보
   const setDisplayPlayerData = useSetRecoilState(displayPlayerDataState); // 플레이어 전광판 정보
-  const matchPos = useRecoilValue(matchPosition);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
 
@@ -48,7 +43,6 @@ export default function Ground() {
   const [boardData] = useRecoilState(boardDataState); // 보드 데이터
   const [turnData, setTurnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   const [builingData] = useRecoilState(builingInfoState); // 건물 데이터
-  const oilLand = useRecoilValue(oilLandState); // 오일랜드 위치
 
   // 웹소켓 기본인자
   const socketClient = useSocket();
@@ -60,14 +54,7 @@ export default function Ground() {
   /** 건물 갯수 세기 */
   useEffect(() => {
     let contB = 0;
-    console.log(turnData, "에러확인자ㅏ");
     for (let i = 0; i < 3; i++) {
-      console.log(
-        i,
-        "에러확인자ㅏ",
-        builingData,
-        builingData[turnData.index * 3 + i]
-      );
       if (builingData[turnData.index * 3 + i].sell == true) {
         contB = contB + 1;
       }
@@ -79,9 +66,6 @@ export default function Ground() {
   const buyGround = () => {
     // 실제구현
     sendWsMessage(socketClient, playerInfo.playerId, "send/purchase/ground");
-
-    // 턴 종료
-    // setIsUserTurnVisible(false);
   };
 
   /** 건물 카드 클릭시 */
@@ -107,55 +91,18 @@ export default function Ground() {
 
     // 턴 종료
     setIsUserTurnVisible(false);
-    sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
   };
 
   /** 통행료 지불 */
   useEffect(() => {
     if (isUserTurnVisibleState) {
       // 이미 구매한땅일시
-      const givePlayer = turn;
-      const takePlayer = turnData.player;
       console.log(turnData.sell, turnData, "턴데이터 통행료");
       if (turnData.sell && turnData.player !== turn) {
         // 통행료 지불
-        let cost = turnData.cost;
-        if (oilLand !== -1) {
-          const row = matchPos[oilLand].row;
-          const col = matchPos[oilLand].col;
-          if (tRow == row && tCol == col) {
-            // 오일랜드 반영
-            const newCost = cost * 2;
-            cost = newCost;
-          }
-        }
-
-        console.log(givePlayer, "가", takePlayer, "에게", cost);
-
-        const newPlayerData = [...playerData];
-        if (givePlayer in newPlayerData) {
-          // 통행료를 지불하는 플레이어
-          console.log("지불", newPlayerData, givePlayer, takePlayer);
-          newPlayerData[givePlayer] = {
-            ...newPlayerData[givePlayer],
-            cash: newPlayerData[givePlayer].cash - cost,
-          };
-        }
-        if (takePlayer != null && takePlayer in newPlayerData) {
-          // 통행료를 지급받는 플레이어
-          console.log("지급받");
-          newPlayerData[takePlayer] = {
-            ...newPlayerData[takePlayer],
-            cash: newPlayerData[takePlayer].cash + cost,
-          };
-        }
-
-        setPlayerData(newPlayerData);
-        setDisplayPlayerData(newPlayerData);
+        setDisplayPlayerData(playerData);
+        console.log("통행료를 지불하고 턴을 넘깁니다.");
         setIsUserTurnVisible(!isUserTurnVisibleState);
-        if (doubleCnt == 0) {
-          sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
-        }
       }
     }
   }, [isUserTurnVisibleState]);
@@ -172,10 +119,29 @@ export default function Ground() {
       );
       // 언마운트시 타이머 해제
       return () => {
-        sendWsMessage(socketClient, playerInfo.playerId, "/send/timer-cancel");
+        sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
       };
     }
   }, []);
+
+  /** 시간초과시 */
+  useEffect(() => {
+    // 플레이어 턴일시
+    if (isUserTurnVisibleState) {
+      const rollTimeout = setTimeout(() => {
+        setIsUserTurnVisible(false);
+      }, 30000);
+      if (!isUserTurnVisibleState) {
+        clearTimeout(rollTimeout);
+      }
+      return () => {
+        if (rollTimeout) {
+          clearTimeout(rollTimeout);
+          sendWsMessage(socketClient, playerInfo.playerId, "send/timer-cancel");
+        }
+      };
+    }
+  }, [isUserTurnVisibleState]);
 
   // 턴데이터 갱신
   useEffect(() => {
@@ -188,7 +154,7 @@ export default function Ground() {
         {/* 상단 - 닫기 버튼 */}
         <div>
           <CloseBtn />
-          <TimeBar duration={10} />
+          <TimeBar duration={30} />
         </div>
         {/* 중단 - 본 내용 */}
         <div className="groundBody">

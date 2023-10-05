@@ -133,6 +133,7 @@ export default function CommonTurn() {
 
     return () => {
       setIsPrison(false);
+      sendWsMessage(socketClient, playerInfo.playerId, `send/evasion-check`);
     };
   }, []);
 
