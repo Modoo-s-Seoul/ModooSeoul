@@ -154,7 +154,7 @@ export default function Room() {
         </div>
         {curRoomStatus.length > 0 && (
           <div className="roomBody">
-            <h1>{curRoomStatus[0].nickname}의 Room</h1>
+            <div className="roomTitle">{curRoomStatus[0].nickname}의 Room</div>
             <div className="playerCardContainer">
               {/*방장일 경우 방을 생성했기 때문에 준비 완료된 상태인 것으로 간주한다.  */}
               {curRoomStatus.map((ele, index) => {
