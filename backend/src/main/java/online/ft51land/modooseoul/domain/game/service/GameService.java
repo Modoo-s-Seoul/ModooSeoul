@@ -53,23 +53,16 @@ public class GameService {
     private final StockRepository stockRepository;
     private final StockBoardRepository stockBoardRepository;
 
-
-
-
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
                              .orElseThrow(() -> new BusinessException(ErrorMessage.GAME_NOT_FOUND));
     }
-
-
 
     public GameCreateResponseDto create() {
         Game game = gameRepository.save(new Game());
         messageNumRepository.save(new MessageNum(game.getId()));
         return GameCreateResponseDto.of(game);
     }
-
-
 
     public GameStartMessage gameStart(Game game, List<Player> players) {
 
@@ -98,7 +91,7 @@ public class GameService {
 
         // 방 초기 세팅
         game.setBasicInfo(); // 방 기본 정보
-        sequencePlayer(game); // 선 정하기
+        sequencePlayer(game); // 선 정하기 // TODO : 테스트용. 배포시에 주석 풀기
         setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
         setGameStocks(game); // 주식 초기값 저장
@@ -108,11 +101,18 @@ public class GameService {
         // 플레이어 초기 세팅
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            player.playerInit(Long.valueOf(i));
+
+            for(int j = 0; j < players.size(); j++) {
+                if(game.getPlayers().get(j).equals(player.getId())) {
+                    player.playerInit(Long.valueOf(j));
+                }
+            }
+
+            log.info("player turnInfo 저장 -> player: {}, turnNum: {}",player.getNickname(), player.getTurnNum());
             playerRepository.save(player);
         }
 
-        // 플레이어 주식 보드 세팅
+            // 플레이어 주식 보드 세팅
         for (Player player : players) {
             StockBoard stockBoard = new StockBoard(player.getId());
             stockBoard.stockBoardinit(game);
@@ -124,7 +124,6 @@ public class GameService {
         return GameStartMessage.of(true, "게임 시작!");
     }
 
-
     private void setBoard(Game game) {
         List<Board> boardList = boardRepository.findAll();
 
@@ -134,8 +133,6 @@ public class GameService {
     }
 
     // 주식 세팅
-
-
     public void setGameStocks(Game game) {
         List<Long> stocksIds = game.getStocks();
         for (Long stockId : stocksIds) {
@@ -146,8 +143,6 @@ public class GameService {
             gameStockRepository.save(gameStock);
         }
     }
-
-
 
     public void setRandomStocks(Game game) {
         // random generator
@@ -163,20 +158,18 @@ public class GameService {
             }
         }
         game.setStocks(selectedId);
+        gameRepository.save(game);
     }
 
     /* 게임 선 세팅
           player 리스트 랜덤으로 섞어서 다시 저장*/
-
-
     public void sequencePlayer(Game game) {
 
         List<String> players = game.getPlayers();
         Collections.shuffle(players); //리스트 순서 섞기
         game.setSequencePlayer(players);
+        gameRepository.save(game);
     }
-
-
 
     public void setNews(Game game) {
         // 최종 저장본
@@ -203,9 +196,8 @@ public class GameService {
             Collections.shuffle(news.get(i));
         }
         game.setNews(news);
+        gameRepository.save(game);
     }
-
-
 
     public List<PlayerInGameInfoMessage> getPlayersInfo(List<Player> players) {
         List<PlayerInGameInfoMessage> playersInfo = new ArrayList<>();
@@ -216,8 +208,6 @@ public class GameService {
 
         return playersInfo;
     }
-
-
 
     public GameRoundStartMessage startRound(Game game, List<Player> players) {
         game.roundStart(game.getCurrentRound() + 1);
@@ -251,11 +241,11 @@ public class GameService {
             playerRepository.save(player);
         }
 
+        System.out.println("turn : " + game.getTurnInfo());
+
         // 메시지 가공
         return GameRoundStartMessage.of(game, gameStocks);
     }
-
-
 
     public Long getNextRoundPlayerStockMoney(Player player) {
         Long stockMoney = 0L;
@@ -280,8 +270,6 @@ public class GameService {
 
         return stockMoney;
     }
-
-
 
     public List<GameStock> setNextRoundStockPrice(Game game) {
         int passFlag = 0;
@@ -331,39 +319,31 @@ public class GameService {
         return gameStocks;
     }
 
-
-
     public PlayerPrisonMessage setPlayerIsPrisoned(Player player) {
         player.setIsPrisoned(true);
 
 	    return PlayerPrisonMessage.of(player);
     }
 
-
-
     public void passTurn(Game game) {
-        game.passTurn();
+        List<Player> players = new ArrayList<>();
+        for (String playerId : game.getPlayers()) {
+            players.add(playerRepository.findById(playerId)
+                                        .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND)));
+        }
+        game.passTurn(players);
         gameRepository.save(game);
     }
-
-
 
     public void startTimer(Game game, TimerType timerType) {
         game.startTimer(timerType);
         gameRepository.save(game);
     }
 
-
-
-
     public void expiredTimer(Game game) {
         game.expiredTimer();
         gameRepository.save(game);
     }
-
-
-
-
 
     public GameEndMessage endGame(Game game, EndType endType) {
         List<Player> players = convertToPlayerList(game.getPlayers());
@@ -377,7 +357,7 @@ public class GameService {
 
         for (String playerId : players) {
             Player player = playerRepository.findById(playerId)
-                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));;
+                    .orElseThrow(() -> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
             sortedPlayers.add(player);
         }
         return  sortToMoney(sortedPlayers);
@@ -393,9 +373,6 @@ public class GameService {
                 })
                 .collect(Collectors.toList());
     }
-
-
-
 
     public void playersActionFinish(Game game) {
         // game 에 해당하는 모든 player pass init  , 타이머 종료
@@ -423,8 +400,6 @@ public class GameService {
         }
         return cnt;
     }
-
-
 
     public boolean checkGameEnd(String gameId) {
         Game game = getGameById(gameId);

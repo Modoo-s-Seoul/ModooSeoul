@@ -36,6 +36,7 @@ public class GameWebSocketController {
 
 	@MessageMapping("/start/{gameId}")
 	public void gameStart(@DestinationVariable String gameId) {
+		log.info("GameWebSocketController - gameStart : {}", gameId);
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
 		for (String playerId : game.getPlayers()) {
@@ -53,6 +54,8 @@ public class GameWebSocketController {
 	// 현재 턴 정보
 	@MessageMapping("/turn/{gameId}")
 	public void getTurnInfo(@DestinationVariable String gameId) {
+		log.info("GameWebSocketController - getTurnInfo : {}", gameId);
+
 		Game game = gameService.getGameById(gameId);
 
 		webSocketSendHandler.sendToGame("turn", gameId, GameTurnMessage.of(game));
@@ -62,6 +65,8 @@ public class GameWebSocketController {
 	// 턴 종료
 	@MessageMapping("pass-turn/{gameId}")
 	public void passTurn(@DestinationVariable String gameId ){
+		log.info("GameWebSocketController - turn : {}", gameId);
+
 		Game game = gameService.getGameById(gameId);
 		gameService.passTurn(game);
 		webSocketSendHandler.sendToGame("pass-turn", gameId, GameTurnMessage.of(game));
@@ -69,6 +74,9 @@ public class GameWebSocketController {
 
 	@MessageMapping("/players-info/{gameId}")
 	public void getPlayersInfo(@DestinationVariable String gameId) {
+
+		log.info("GameWebSocketController - getPlayersInfo : {}", gameId);
+
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
 
@@ -79,10 +87,19 @@ public class GameWebSocketController {
 		List<PlayerInGameInfoMessage> message = gameService.getPlayersInfo(players);
 
 		webSocketSendHandler.sendToGame("players-info", gameId, message);
+
+		// 1명 제외하고 모두 파산일 경우
+		if(gameService.checkGameEnd(gameId)) { //파산하지 않은 수가 1명이면
+			//게임 종료
+			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
+			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
+		}
 	}
 
 	@MessageMapping("/round-start/{gameId}")
 	public void startRound(@DestinationVariable String gameId) {
+
+		log.info("GameWebSocketController - startRound : {}", gameId);
 		// game, players 객체 생성
 		Game game = gameService.getGameById(gameId);
 		List<Player> players = new ArrayList<>();
@@ -108,6 +125,9 @@ public class GameWebSocketController {
 
 	@MessageMapping("/timer/{gameId}")
 	public void startTimer(@DestinationVariable String gameId, @Payload GameStartTimerRequestDto gameStartTimerRequestDto){
+
+		log.info("GameWebSocketController - startTimer : {} , dto : {}", gameId, gameStartTimerRequestDto);
+
 		Game game = gameService.getGameById(gameId);
 
 		// 타이머가 이미 활성화 중이라면
@@ -166,7 +186,8 @@ public class GameWebSocketController {
 					// ftoilland 도착시 시간내에 땅을 선택하지 못한 경우 -> 타이머 만료, 턴 패스
 					if(gameStartTimerRequestDto.timerType() == TimerType.ESTATE_PURCHASE
 							|| gameStartTimerRequestDto.timerType() == TimerType.STARTING_POINT_ARRIVAL
-							|| gameStartTimerRequestDto.timerType() == TimerType.FTOILLAND_ARRIVAL){
+							|| gameStartTimerRequestDto.timerType() == TimerType.FTOILLAND_ARRIVAL
+							|| gameStartTimerRequestDto.timerType() == TimerType.FREE_ACTION){
 						gameService.passTurn(timerGame);
 					}
 
@@ -183,8 +204,8 @@ public class GameWebSocketController {
 			}
 		};
 
-		log.info("{} 방에서 타이머 시작 : {}", game.getId(), LocalDateTime.now() );
 
+		log.info("{} 방에서 타이머 시작 : {}, DTO: {}", game.getId(), LocalDateTime.now(), gameStartTimerRequestDto.toString());
 		gameService.startTimer(game, gameStartTimerRequestDto.timerType());
 		timer.schedule(task, gameStartTimerRequestDto.timerType().getSeconds()*1000);
 
@@ -195,7 +216,10 @@ public class GameWebSocketController {
 	@MessageMapping("/timer-cancel/{gameId}")
 	public void timerCancel(@DestinationVariable String gameId){
 
+		log.info("GameWebSocketController - timerCancel : {}", gameId);
+
 		Game game = gameService.getGameById(gameId);
+
 
 		// 타이머가 돌아가는 중 액션이 다 끝나서 타이머를 미리 만료시키고 싶은 경우
 		if(game.getIsTimerActivated()){
@@ -208,7 +232,7 @@ public class GameWebSocketController {
 			if(game.getTimerType() == TimerType.ESTATE_PURCHASE
 					|| game.getTimerType()  == TimerType.STARTING_POINT_ARRIVAL
 					|| game.getTimerType()  == TimerType.FTOILLAND_ARRIVAL){
-				game.passTurn();
+				game.passTurn(playerService.getPlayersByGame(game));
 			}
 
 
@@ -222,6 +246,7 @@ public class GameWebSocketController {
 
 	@MessageMapping("/free-action/{gameId}")
 	public void freeActionStart(@DestinationVariable String gameId) {
+		log.info("GameWebSocketController - freeActionStart : {}", gameId);
 		// 객체 만들기
 		Game game = gameService.getGameById(gameId);
 
@@ -235,6 +260,7 @@ public class GameWebSocketController {
 	// 배당금 확인
 	@MessageMapping("/dividends/{gameId}")
 	public void getDevidends(@DestinationVariable String gameId) {
+		log.info("GameWebSocketController - getDevidends : {}", gameId);
 		// 객체 만들기
 		Game game = gameService.getGameById(gameId);
 		for (String playerId : game.getPlayers()) {

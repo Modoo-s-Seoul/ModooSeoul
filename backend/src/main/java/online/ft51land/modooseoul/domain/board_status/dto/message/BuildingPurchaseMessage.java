@@ -10,16 +10,16 @@ public record BuildingPurchaseMessage(
         Long boardIdx,
         Long buildingIdx,
         Long buildingId,
-        String playerId
+        Long playerIdx
 ) {
-    public static BuildingPurchaseMessage of(Boolean isPurchase,PurchaseMessage purchaseMessage, Long boardIdx, Long buildingIdx, Long buildingId, String playerId) {
+    public static BuildingPurchaseMessage of(Boolean isPurchase,PurchaseMessage purchaseMessage, Long boardIdx, Long buildingIdx, Long buildingId, Long playerIdx) {
         return BuildingPurchaseMessage.builder()
                 .isPurchase(isPurchase)
                 .message(purchaseMessage.getMessage())
                 .boardIdx(boardIdx)
                 .buildingIdx(buildingIdx)
                 .buildingId(buildingId)
-                .playerId(playerId)
+                .playerIdx(playerIdx)
                 .build();
     }
 }
