@@ -2,16 +2,11 @@ package online.ft51land.modooseoul.domain.player.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.ft51land.modooseoul.domain.game.dto.message.GameEndMessage;
 import online.ft51land.modooseoul.domain.game.dto.message.GameTimerExpireMessage;
 import online.ft51land.modooseoul.domain.game.entity.Game;
-import online.ft51land.modooseoul.domain.game.entity.enums.EndType;
 import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerNewsRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerReportRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerSellGroundRequestDto;
-import online.ft51land.modooseoul.domain.player.dto.request.PlayerSubwayRequestDto;
+import online.ft51land.modooseoul.domain.player.dto.request.*;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
@@ -33,8 +28,6 @@ public class PlayerWebSocketController {
 	private final GameService gameService;
 
 	private final WebSocketSendHandler webSocketSendHandler;
-
-
 
 	// 플레이어 참가
 	@MessageMapping("/join/{gameId}")
@@ -86,17 +79,36 @@ public class PlayerWebSocketController {
 			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
 		}
 
-		if(gameService.checkGameEnd(player.getGameId())) { //파산하지 않은 수가 1명이면
-			//게임 종료
-			Game game = gameService.getGameById(player.getGameId());
-			GameEndMessage gameEndMessage = gameService.endGame(game, EndType.BANKRUPTCY);
-			webSocketSendHandler.sendToGame("end", game.getId(), gameEndMessage);
+
+	}
+
+	// TODO: 주사위 굴리기 test - 배포시 삭제
+	@MessageMapping("/roll-test/{playerId}")
+	public void playerRollDiceTest(@DestinationVariable String playerId, @Payload PlayerDiceTestRequestDto playerDiceTestRequestDto) {
+		log.info("주사위 굴리기 by {}", playerId);
+
+		Player player = playerService.getPlayerById(playerId);
+
+		// 주사위 굴리고 데이터 가공
+		PlayerDiceMessage playerDiceMessageTest = playerService.rollDiceTest(playerId, playerDiceTestRequestDto);
+
+		// 데이터 전달
+		webSocketSendHandler.sendToGame("roll", player.getGameId(), playerDiceMessageTest);
+
+		//땅 도착 데이터 전달
+		PlayerArrivalBoardMessage<?> playerArrivalBoardMessage =
+				playerService.arrivalBoardInfo(playerId, gameService.getGameById(player.getGameId()));
+		webSocketSendHandler.sendToGame("arrive-board-info", player.getGameId(),playerArrivalBoardMessage);
+
+		if(playerArrivalBoardMessage.board().equals("찬스 카드 도착")) {
+			webSocketSendHandler.sendToPlayer("chance", playerId, player.getGameId(),playerService.chanceBoardInfo(playerId));
 		}
+
 	}
 
 	// 뉴스 선택하기
 	@MessageMapping("/news/{playerId}")
-	public void playerChooseNews(@DestinationVariable String playerId, @Payload PlayerNewsRequestDto playerNewsRequestDto) {
+	public void playerChooseNews(@DestinationVariable String playerId, @Payload PlayerNewsRequestDto playerNewsRequestDto) throws InterruptedException {
 
 		// game 객체 생성
 		Player player = playerService.getPlayerById(playerId);
@@ -115,6 +127,7 @@ public class PlayerWebSocketController {
 
 		//----------------------플레이어가 뉴스를 모두 뽑았는지 확인
 		if(finishPlayerCnt == gameService.getPlayingPlayerCnt(game)){
+			Thread.sleep(2000);
 			gameService.playersActionFinish(game); // game 에 해당하는 모든 player pass init  , 타이머 종료
 			gameService.passTurn(game); // 턴 넘기기
 		}
@@ -267,12 +280,8 @@ public class PlayerWebSocketController {
 
 		PlayerEvasionMessage message = null;
 		Player reportee = null;
-		System.out.println("player.getNickname() = " + player.getNickname());
-		System.out.println("player.getReporteePlayerName() = " + player.getReporteePlayerName());
 		for (String playerIds : game.getPlayers()) {
 			reportee = playerService.getPlayerById(playerIds);
-			System.out.println("reportee.getId() = " + reportee.getId());
-			System.out.println("reportee.getNickname() = " + reportee.getNickname());
 			if (reportee.getNickname().equals(player.getReporteePlayerName())) {
 				message = playerService.checkEvasion(player, reportee);
 				break;
@@ -288,7 +297,7 @@ public class PlayerWebSocketController {
 
 		webSocketSendHandler.sendToPlayer("evasion-reporter", playerId, player.getGameId(), message);
 
-		// 신고 당한 사람에게 보내는 메시지만 만들면 됨
+		// 신고 당한 사람에게 보내는 메시지
 		message = PlayerEvasionMessage.ofGame(message.isEvade(), reportee);
 
 		webSocketSendHandler.sendToGame("evasion-notice", player.getGameId(),message);
@@ -296,6 +305,7 @@ public class PlayerWebSocketController {
 
 	@MessageMapping("/news-check/{playerId}")
 	public void checkNews(@DestinationVariable String playerId) {
+		log.info("뉴스 체크 by {}", playerId);
 		Player player = playerService.getPlayerById(playerId);
 		List<PlayerNewsMessage> playerNewsMessageList = playerService.checkNews(player);
 		webSocketSendHandler.sendToPlayer("news", playerId, player.getGameId(), playerNewsMessageList);
@@ -304,9 +314,29 @@ public class PlayerWebSocketController {
 
 	@MessageMapping("/ground-sell/{playerId}")
 	public void sellGround(@DestinationVariable String playerId, @Payload PlayerSellGroundRequestDto playerSellGroundRequestDto){
+		log.info("땅 판매 by {}, 판매땅 {}",playerId, playerSellGroundRequestDto);
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
 		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(game, player, playerSellGroundRequestDto);
-		webSocketSendHandler.sendToPlayer("ground-sell", playerId, player.getGameId(), playerGroundSellMessage);
+		webSocketSendHandler.sendToGame("ground-sell", player.getGameId(), playerGroundSellMessage);
 	}
+
+	@MessageMapping("/tax-service/{playerId}")
+	public void playerArrivedTaxService(@DestinationVariable String playerId) {
+		// 객체 생성
+		Player player = playerService.getPlayerById(playerId);
+		Game game = gameService.getGameById(player.getGameId());
+
+		// 턴 정보 확인 TODO : 주석해제하기
+//		if(!player.getTurnNum().equals(game.getTurnInfo())){
+//			throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//		}
+
+		// 로직 실행
+		PlayerEvasionMessage message = playerService.playerArrivedtaxService(player);
+
+		// 메시지 전송
+		webSocketSendHandler.sendToGame("tax-service", game.getId(), message);
+	}
+
 }

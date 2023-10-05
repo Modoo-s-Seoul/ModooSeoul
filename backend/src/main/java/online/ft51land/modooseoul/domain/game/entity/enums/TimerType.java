@@ -15,7 +15,7 @@ public enum TimerType {
     ESTATE_PURCHASE(30L),// 부동산 구매
     STARTING_POINT_ARRIVAL(10L),// 출발점 도착
     FTOILLAND_ARRIVAL(10L),// FT OilLand
-    FREE_ACTION(60L);// 1분 액션
+    FREE_ACTION(300L);// 5분 액션
 
 
     private final Long seconds;

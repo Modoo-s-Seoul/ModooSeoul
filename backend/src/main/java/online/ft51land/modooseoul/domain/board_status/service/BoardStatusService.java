@@ -15,7 +15,6 @@ import online.ft51land.modooseoul.domain.game.entity.Game;
 import online.ft51land.modooseoul.domain.game.repository.GameRepository;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.repository.PlayerRepository;
-import online.ft51land.modooseoul.domain.synergy.entity.Synergy;
 import online.ft51land.modooseoul.domain.synergy.repository.SynergyReository;
 import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
 import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
@@ -27,6 +26,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+//@Transactional
 public class BoardStatusService {
     private final BoardStatusRepository boardStatusRepository;
     private final PlayerRepository playerRepository;
@@ -34,10 +34,12 @@ public class BoardStatusService {
     private final GameRepository gameRepository;
     private final SynergyReository synergyReository;
 
+
     public BoardStatus getBoardStatusById(String boardStatusId) {
         return boardStatusRepository.findById(boardStatusId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
     }
+
 
     public GroundPurchaseMessage purchaseGround(Player player) {
         Game game = gameRepository.findById(player.getGameId())
@@ -48,7 +50,7 @@ public class BoardStatusService {
             throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
         }
 
-        // 턴 정보 확인
+        // 턴 정보 확인 TODO : 주석 해제하기
         if(!player.getTurnNum().equals(game.getTurnInfo())){
             throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
         }
@@ -64,7 +66,7 @@ public class BoardStatusService {
                     .of(false
                             , PurchaseMessage.CASH_INSUFFICIENT //구매할 현금이 부족합니다.
                             , player.getCurrentBoardIdx()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
         if(boardStatus.getOwnerId() != null) {
@@ -72,7 +74,7 @@ public class BoardStatusService {
                     .of(false
                             , PurchaseMessage.GROUND_OWNER_EXISTS //땅의 소유자가 있습니다.
                             , player.getCurrentBoardIdx()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
         //초기화
@@ -95,8 +97,9 @@ public class BoardStatusService {
                 .of(true
                         , PurchaseMessage.GROUND_PURCHASE_SUCCESS //땅구매에 성공하였습니다.
                         , player.getCurrentBoardIdx()
-                        , player.getId()));
+                        , player.getTurnNum()));
     }
+
 
 
 
@@ -110,7 +113,7 @@ public class BoardStatusService {
             throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
         }
 
-        // 턴 정보 확인
+        // 턴 정보 확인 TODO : 주석해제하기
         if(!player.getTurnNum().equals(game.getTurnInfo())){
             throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
         }
@@ -135,7 +138,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
         if(boardStatus.getBuildings() == null) {
@@ -152,7 +155,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
 
         }
 
@@ -165,7 +168,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
 
@@ -177,7 +180,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
         }
 
 
@@ -194,7 +197,7 @@ public class BoardStatusService {
                             , boardIdxForBuilding
                             , buildingPurchaseRequestDto.buildingIdx()
                             , buildingPurchaseRequestDto.buildingId()
-                            , player.getId()));
+                            , player.getTurnNum()));
 
         }
 
@@ -231,8 +234,10 @@ public class BoardStatusService {
                         ,boardIdxForBuilding
                         ,buildingPurchaseRequestDto.buildingIdx()
                         ,buildingPurchaseRequestDto.buildingId()
-                        ,player.getId()));
+                        ,player.getTurnNum()));
     }
+
+
 
     public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
 
@@ -241,10 +246,10 @@ public class BoardStatusService {
             throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
         }
 
-        // 턴 정보 확인
-        if(!player.getTurnNum().equals(game.getTurnInfo())){
-            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
-        }
+        // 턴 정보 확인 TODO : 주석해제하기
+//        if(!player.getTurnNum().equals(game.getTurnInfo())){
+//            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
+//        }
 
         BoardStatus boardStatus = boardStatusRepository.findById(player.getGameId()+"@"+boardId)
                 .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));

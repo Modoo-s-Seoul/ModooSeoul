@@ -2,6 +2,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+// import { ipAddress } from "../api/RoomApi";
 import { ipAddress } from "../api/RoomApi";
 import { CompatClient } from "@stomp/stompjs";
 import { SocketContext } from "./SocketContext";

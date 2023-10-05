@@ -189,7 +189,7 @@ public class Player extends BaseEntity {
     }
 
     public void setNextRound(Long stockMoney) {
-        if (this.tax == 1L) // 신고당한 애들
+        if (this.tax == 1L) // 신고당한 애들 미납금 정산시켜주기
             this.tax = 0L;
         this.setIsPrisoned(false);
         this.stockMoney = stockMoney;
@@ -300,4 +300,5 @@ public class Player extends BaseEntity {
         this.cash += boardPrice;
         this.estateMoney -= boardPrice;
     }
+
 }

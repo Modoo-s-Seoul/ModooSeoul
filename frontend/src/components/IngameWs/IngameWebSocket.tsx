@@ -274,6 +274,27 @@ export default function IngameWebSocket() {
         console.log(receivedData);
       });
 
+      //공통 턴 준비
+      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+      });
+
+      //타이머 시작,완료,취소 알림
+      socketClient.subscribe(`/receive/game/timer/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+      });
+
+      //공통 턴 행동 완료
+      socketClient.subscribe(`/receive/game/action-finish/${gameId}`, (msg) => {
+        const res = JSON.parse(msg.body);
+        const receivedData = res.data;
+        console.log(receivedData);
+      });
+
       //플레이어 퇴장
       socketClient.subscribe(`/receive/game/player-leave/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
