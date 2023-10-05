@@ -603,14 +603,6 @@ public class PlayerService {
             gameRepository.save(game);
         }
 
-
-        player.finish();
-        game.addFinishPlayerCnt();
-
-        playerRepository.save(player);
-        gameRepository.save(game);
-
-
         return game.getFinishedPlayerCnt();
     }
 
