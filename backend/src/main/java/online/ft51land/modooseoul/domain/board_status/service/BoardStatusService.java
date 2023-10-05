@@ -241,10 +241,10 @@ public class BoardStatusService {
 
     public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
 
-        // 타이머가 활성화 되어 있는지 확인
-        if(!game.getIsTimerActivated()){
-            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
-        }
+//        // 타이머가 활성화 되어 있는지 확인
+//        if(!game.getIsTimerActivated()){
+//            throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+//        }
 
         // 턴 정보 확인 TODO : 주석해제하기
 //        if(!player.getTurnNum().equals(game.getTurnInfo())){
@@ -259,7 +259,7 @@ public class BoardStatusService {
 
             // 이미 있는데 그 땅이 선택한 땅이 다를 경우
             if(boardId != game.getFtOilLandBoardId()){
-                // 이미 있는데 다른 땅을 선택했다면
+//                 이미 있는데 다른 땅을 선택했다면
                 BoardStatus originFTOilLand = boardStatusRepository.findById(player.getGameId()+"@"+game.getFtOilLandBoardId())
                         .orElseThrow(()-> new BusinessException(ErrorMessage.BOARD_NOT_FOUND));
 
@@ -284,7 +284,7 @@ public class BoardStatusService {
         playerRepository.save(player);
 
 
-        return FTOilLandMessage.of(player.getCash(), boardStatus);
+        return FTOilLandMessage.of(player.getCash(), boardStatus, boardId);
 
     }
 }
