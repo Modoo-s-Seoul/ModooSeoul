@@ -239,7 +239,7 @@ public class BoardStatusService {
 
 
 
-    public FTOilLandMessage ftOilLandEffect(Game game, Player player, Long boardId) {
+    public FTOilLandMessage ftOilLandEffect(Player player, Long boardId) {
 
 //        // 타이머가 활성화 되어 있는지 확인
 //        if(!game.getIsTimerActivated()){
@@ -260,11 +260,15 @@ public class BoardStatusService {
         boardStatusRepository.save(boardStatus);
 
         // 비용지불
+        if(player.getCash() < 100000){
+            return FTOilLandMessage.of(false,null,null,boardId);
+        }
+
         player.payFTOilLandEffect();
         playerRepository.save(player);
 
 
-        return FTOilLandMessage.of(player.getCash(), boardStatus, boardId);
+        return FTOilLandMessage.of(true,player.getCash(), boardStatus, boardId);
 
     }
 }
