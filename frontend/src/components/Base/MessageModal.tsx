@@ -16,7 +16,7 @@ export default function NoLandMessage() {
     }, 2000);
 
     return () => {
-      setIsModalMsgActive(false);
+      // setIsModalMsgActive(false);
       clearTimeout(timer);
     };
   }, [isModalMsgActive]);
