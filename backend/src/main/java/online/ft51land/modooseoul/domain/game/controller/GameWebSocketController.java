@@ -115,6 +115,7 @@ public class GameWebSocketController {
 
 	@MessageMapping("/timer/{gameId}")
 	public void startTimer(@DestinationVariable String gameId, @Payload GameStartTimerRequestDto gameStartTimerRequestDto){
+		log.info("timer start in : {}, gameStartTimerRequestDto : {}", gameId, gameStartTimerRequestDto);
 		Game game = gameService.getGameById(gameId);
 
 		// 타이머가 이미 활성화 중이라면

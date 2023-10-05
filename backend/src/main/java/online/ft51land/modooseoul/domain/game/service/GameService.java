@@ -91,7 +91,7 @@ public class GameService {
 
         // 방 초기 세팅
         game.setBasicInfo(); // 방 기본 정보
-//        sequencePlayer(game); // 선 정하기 // TODO : 테스트용. 배포시에 주석 풀기
+        sequencePlayer(game); // 선 정하기 // TODO : 테스트용. 배포시에 주석 풀기
         setRandomStocks(game); // 주식 3개 정하기
         setNews(game); // 뉴스 저장
         setGameStocks(game); // 주식 초기값 저장
@@ -99,9 +99,13 @@ public class GameService {
         gameRepository.save(game);
 
         // 플레이어 초기 세팅
-        for (int i = 0; i < players.size(); i++) {
-            Player player = players.get(i);
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            String playerId = game.getPlayers().get(i);
+            Player player = playerRepository.findById(playerId)
+                    .orElseThrow(()-> new BusinessException(ErrorMessage.PLAYER_NOT_FOUND));
+
             player.playerInit(Long.valueOf(i));
+            log.info("player turnInfo 저장 -> player: {}, turnNum: {}",player.getNickname(), player.getTurnNum());
             playerRepository.save(player);
         }
 
@@ -151,6 +155,7 @@ public class GameService {
             }
         }
         game.setStocks(selectedId);
+        gameRepository.save(game);
     }
 
     /* 게임 선 세팅
@@ -160,6 +165,7 @@ public class GameService {
         List<String> players = game.getPlayers();
         Collections.shuffle(players); //리스트 순서 섞기
         game.setSequencePlayer(players);
+        gameRepository.save(game);
     }
 
     public void setNews(Game game) {
@@ -187,6 +193,7 @@ public class GameService {
             Collections.shuffle(news.get(i));
         }
         game.setNews(news);
+        gameRepository.save(game);
     }
 
     public List<PlayerInGameInfoMessage> getPlayersInfo(List<Player> players) {
