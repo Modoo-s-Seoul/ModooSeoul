@@ -94,7 +94,7 @@ public class Game extends BaseEntity {
 
 	private TimerType timerType;
 
-	private Long ftOilLandBoardId;
+	private Boolean isRoundStart;
 
 	private Boolean isRoundStart;
 
@@ -195,11 +195,8 @@ public class Game extends BaseEntity {
 		this.endTime = LocalDateTime.now();
 	}
 
-    public void setFTOilLand(Long boardId) {
-		this.ftOilLandBoardId = boardId;
-    }
-	public void ftOilLandInit() {
-		this.ftOilLandBoardId = null;
+	public void setIsRoundStart(Boolean isRoundStart) {
+		this.isRoundStart = isRoundStart;
 	}
 
 	public void setIsRoundStart(Boolean isRoundStart) {
