@@ -7,15 +7,13 @@ import online.ft51land.modooseoul.domain.player.entity.Player;
 public record PlayerGroundSellMessage(
         Boolean isSell,
         String message,
-        Long groundIdx,
-        Player player
+        Long groundIdx
 ) {
-    public static PlayerGroundSellMessage of(Boolean isSell, String message, Long groundIdx, Player player) {
+    public static PlayerGroundSellMessage of(Boolean isSell, String message, Long groundIdx) {
         return PlayerGroundSellMessage.builder()
                 .isSell(isSell)
                 .message(message)
                 .groundIdx(groundIdx)
-                .player(player)
                 .build();
     }
 }

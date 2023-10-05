@@ -308,6 +308,7 @@ public class PlayerWebSocketController {
 
 	@MessageMapping("/news-check/{playerId}")
 	public void checkNews(@DestinationVariable String playerId) {
+		log.info("뉴스 체크 by {}", playerId);
 		Player player = playerService.getPlayerById(playerId);
 		List<PlayerNewsMessage> playerNewsMessageList = playerService.checkNews(player);
 		webSocketSendHandler.sendToPlayer("news", playerId, player.getGameId(), playerNewsMessageList);
@@ -320,7 +321,7 @@ public class PlayerWebSocketController {
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
 		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(game, player, playerSellGroundRequestDto);
-		webSocketSendHandler.sendToPlayer("ground-sell", playerId, player.getGameId(), playerGroundSellMessage);
+		webSocketSendHandler.sendToGame("ground-sell", player.getGameId(), playerGroundSellMessage);
 	}
 
 	@MessageMapping("/tax-service/{playerId}")

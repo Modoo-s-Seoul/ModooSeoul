@@ -789,10 +789,10 @@ public class PlayerService {
             player.sellBuildingAndGround(playerSellGroundRequestDto.boardIdx(), boardPrice);
             playerRepository.save(player);
 
-            return PlayerGroundSellMessage.of(true, "판매 성공", playerSellGroundRequestDto.boardIdx(), player);
+            return PlayerGroundSellMessage.of(true, "판매 성공", playerSellGroundRequestDto.boardIdx());
         }
 
-        return PlayerGroundSellMessage.of(false, "판매 실패", playerSellGroundRequestDto.boardIdx(), player);
+        return PlayerGroundSellMessage.of(false, "판매 실패", playerSellGroundRequestDto.boardIdx());
     }
 
     public PlayerEvasionMessage playerArrivedtaxService(Player player) {
