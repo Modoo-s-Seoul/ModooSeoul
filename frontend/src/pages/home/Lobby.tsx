@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import WebInfo from '../../components/Base/WebInfo';
-import WebOption from '../../components/Base/WebOption';
-import WebClose from '../../components/Base/WebClose';
-import './Lobby.css';
+import { Link } from "react-router-dom";
+import WebInfo from "../../components/Base/WebInfo";
+import WebOption from "../../components/Base/WebOption";
+import WebClose from "../../components/Base/WebClose";
+import "./Lobby.css";
 
 /** 게임로비 컴포넌트 */
 export default function Lobby() {
@@ -22,13 +22,13 @@ export default function Lobby() {
           {/* <div className="title">모두의 서울</div> */}
           <img src="/moduseoul.png" alt="" className="lobbyImg" />
           <div className="lobbyBtnContainer">
-            <Link to={'/home/create'} className="customLink">
-              <div className="lobbyBtn" style={{ cursor: 'pointer' }}>
+            <Link to={"/home/create"} className="customLink">
+              <div className="lobbyBtn" style={{ cursor: "pointer" }}>
                 방 생성
               </div>
             </Link>
-            <Link to={'/home/random'} className="customLink">
-              <div className="lobbyBtn" style={{ cursor: 'pointer' }}>
+            <Link to={"/home/random"} className="customLink">
+              <div className="lobbyBtn" style={{ cursor: "pointer" }}>
                 <div>랜덤 매칭</div>
               </div>
             </Link>

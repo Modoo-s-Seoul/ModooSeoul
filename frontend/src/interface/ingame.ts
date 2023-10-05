@@ -22,7 +22,8 @@ export interface PlayerInfo {
 /**(타입) 플레이어의 게임 내 정보 */
 export interface PlayerData {
   name: string;
-  money: number;
+  cash: number;
+  totalAsset: number;
   color: string;
 }
 
@@ -46,6 +47,12 @@ export interface BoardData {
 
 /**(타입) 보드판 위치 정보 */
 export interface defaultMatch {
+  row: number;
+  col: number;
+}
+
+/**(타입) 보드판 인덱스 정보 */
+export interface defaultIndex {
   row: number;
   col: number;
 }
@@ -83,7 +90,8 @@ export interface buildingChangeType {
 /** (타입) 주식 변동 기록 */
 export interface stockChangeType {
   stockName: string;
-  stockPrice: number[];
+  currentPrice: number;
+  stockHistory: number[];
 }
 
 /** (타입) 지하철 변동 기록 */
@@ -92,4 +100,14 @@ export interface subwayChangeType {
   row: number | null;
   col: number | null;
   move: boolean;
+}
+
+/** (타입) 플레이어 주식 정보 */
+export interface playerStockInfoType {
+  playerStockMoney: number; // 현재 보유 주식 가치
+  prevStockMoney: number; // 이전 라운드 보유 주식 가치
+  stockNames: string[]; //보유 주식 이름
+  purchasePrices: number[]; //보유 주식 별 평단가
+  stockAmounts: number[]; //보유 주식 별 주수
+  stockPrices: number[]; //보유 주식 별 현재 가치
 }

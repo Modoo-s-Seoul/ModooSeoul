@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-// import { ipAddress } from "../../api/RoomApi";
+import { ipAddress } from "../../api/RoomApi";
 import { useSocket } from "../SocketContext";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { alertModalState, roomStatus } from "../../data/CommonData";
@@ -9,7 +9,7 @@ import BackBtn from "../../components/Base/BackBtn";
 import ClickBtn from "../../components/Base/CustomButton";
 import "./Room.css";
 import { CompatClient } from "@stomp/stompjs";
-import { handleFullScreen } from "../../components/Base/BaseFunc";
+// import { handleFullScreen } from "../../components/Base/BaseFunc";
 import { AlertModal } from "../../components/Base/AlertModal";
 import {
   pNumState,
@@ -42,19 +42,20 @@ export default function Room() {
   const handleStartGame = () => {
     if (socketClient !== null) {
       socketClient.send(`/send/start/${gameId}`);
-      handleFullScreen();
+      // handleFullScreen();
     }
   };
 
   /**방 참가 링크 복사 */
   const handleCopyLink = () => {
-    // const gameUrl = `${ipAddress}/home/invite/${gameId}`;
-    const gameUrl = `http://localhost:5173/home/invite/${gameId}`;
+    const gameUrl = `${ipAddress}/home/invite/${gameId}`;
+    // const gameUrl = `http://localhost:5173/home/invite/${gameId}`;
 
     navigator.clipboard
       .writeText(gameUrl)
       .then(() => {
         setModalMsg("링크가 클립보드에 복사되었습니다.");
+        console.log("복사성공");
         setIsModalMsgActive(true);
       })
       .catch((error) => {
@@ -135,9 +136,9 @@ export default function Room() {
 
   return (
     <>
-      <NoLandMessage />
       {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
+        <NoLandMessage />
         <div className="roomHeader">
           <div onClick={() => leaveRoom(socketClient, playerId)}>
             <BackBtn />
@@ -195,9 +196,10 @@ export default function Room() {
                         <div>준비 완료!</div>
                       ) : ele.nickname === nickname ? (
                         <button
+                          className="readyBtn"
                           onClick={() => readyPlayer(socketClient, playerId)}
                         >
-                          레디
+                          Ready
                         </button>
                       ) : (
                         <div>준비 중...</div>
