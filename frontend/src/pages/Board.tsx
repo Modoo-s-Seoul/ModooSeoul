@@ -97,8 +97,8 @@ export default function Board() {
     "assets/alienYellow.png",
   ];
   // 개발자용
-  // const [devDice1, setDevDice1] = useState<number>(0);
-  // const [devDice2, setDevDice2] = useState<number>(0);
+  const [devDice1, setDevDice1] = useState<number>(0);
+  const [devDice2, setDevDice2] = useState<number>(0);
 
   // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
@@ -576,24 +576,24 @@ export default function Board() {
     // setDice2Value(Dice2);
   };
 
-  // /** 주사위 굴리기 함수(개발자용) */
-  // const rollDiceDev = () => {
-  //   if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
-  //   if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
-  //   setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
-  //   // (실제구현) 주사위값 변경 요청
-  //   if (socketClient) {
-  //     sendWsMessage(
-  //       socketClient,
-  //       playerInfo.playerId,
-  //       "send/roll-test",
-  //       `{"dice1":${devDice1},"dice2":${devDice2}}`
-  //     );
-  //   }
-  //   // setDiceActive(true);
-  //   // setDice1Value(Number(devDice1));
-  //   // setDice2Value(Number(devDice2));
-  // };
+  /** 주사위 굴리기 함수(개발자용) */
+  const rollDiceDev = () => {
+    if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
+    if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
+    setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
+    // (실제구현) 주사위값 변경 요청
+    if (socketClient) {
+      sendWsMessage(
+        socketClient,
+        playerInfo.playerId,
+        "send/roll-test",
+        `{"dice1":${devDice1},"dice2":${devDice2}}`
+      );
+    }
+    // setDiceActive(true);
+    // setDice1Value(Number(devDice1));
+    // setDice2Value(Number(devDice2));
+  };
 
   /**실수로 인한 창 닫기, 새로고침 방지 */
   const preventRefresh = (e: BeforeUnloadEvent) => {
@@ -1145,7 +1145,7 @@ export default function Board() {
       {/* Phaser 게임구현 */}
       <div ref={game} className="GameScreen" id="gameScreen" />
 
-      {/* 개발자용
+      {/* 개발자용 */}
       <div className="devContainer">
         <input
           type="number"
@@ -1176,7 +1176,7 @@ export default function Board() {
         >
           턴 하나 앞으로
         </button>
-      </div> */}
+      </div>
     </div>
   );
 }
