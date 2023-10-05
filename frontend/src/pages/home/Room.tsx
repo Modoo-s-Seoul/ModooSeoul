@@ -139,11 +139,11 @@ export default function Room() {
     <>
       {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
-        <NoLandMessage />
         <div className="roomHeader">
           <div onClick={() => leaveRoom(socketClient, playerId)}>
             <BackBtn />
           </div>
+          <NoLandMessage />
           <div
             className="roomHeaderBtn"
             style={{ cursor: "pointer" }}
@@ -154,7 +154,7 @@ export default function Room() {
         </div>
         {curRoomStatus.length > 0 && (
           <div className="roomBody">
-            <div className="roomTitle">{curRoomStatus[0].nickname}의 Room</div>
+            <h1>{curRoomStatus[0].nickname}의 Room</h1>
             <div className="playerCardContainer">
               {/*방장일 경우 방을 생성했기 때문에 준비 완료된 상태인 것으로 간주한다.  */}
               {curRoomStatus.map((ele, index) => {
