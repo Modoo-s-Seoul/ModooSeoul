@@ -27,7 +27,7 @@ export default function Ranking() {
           <div className="rankingInnerContainer">
             <div className="rankingTitle">순위표</div>
             <div className="rankingBox">
-              {rankingData && (
+              {rankingData.length >= 1 && (
                 <>
                   <div className={`rankingRow ranking1`}>
                     <div>1위 {rankingData[0].nickname}</div>
