@@ -11,6 +11,7 @@ import {
   stockChangeType,
   subwayChangeType,
   playerStockInfoType,
+  rankingPlayerData,
 } from "../interface/ingame";
 
 /*
@@ -96,10 +97,28 @@ export const isGameStartVisibleState = atom<boolean>({
   default: false,
 });
 
+/** 종료 문구 컴포넌트 활성화 */
+export const isGameEndVisibleState = atom<boolean>({
+  key: "isGameEndVisibleState",
+  default: false,
+});
+
 /** 순서 뽑기 컴포넌트 활성화 */
 export const isYourTurnVisibleState = atom<boolean>({
   key: "isYourTurnVisibleState",
   default: false,
+});
+
+/** 순위 컴포넌트 활성화 */
+export const isRankingVisibleState = atom<boolean>({
+  key: "isRankingVisibleState",
+  default: false,
+});
+
+/** 순위 기록 */
+export const rankingDataState = atom<rankingPlayerData[]>({
+  key: "rankingDataState",
+  default: [],
 });
 
 /** 로딩 컴포넌트 활성화 */
