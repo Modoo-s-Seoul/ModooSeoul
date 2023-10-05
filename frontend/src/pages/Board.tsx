@@ -1095,7 +1095,7 @@ export default function Board() {
       <GroundSelectBtn />
 
       {/* 주사위 */}
-      {whoAreYou == turn && <DiceRoll rollDiceInBoard={rollDice} />}
+      <DiceRoll rollDiceInBoard={rollDice} />
 
       {/* 유저턴 */}
       <IngameModal visible={isUserTurnVisible && whoAreYou == turn}>
