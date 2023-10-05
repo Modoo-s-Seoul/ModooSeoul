@@ -5,6 +5,9 @@ import {
   // isPrisonState,
   isUserTurnVisibleState,
   playerInfoState,
+  turnState,
+  whoAreYouState,
+  isPrisonState,
 } from "../../data/IngameData";
 import { useEffect, useState } from "react";
 import { boardDataState } from "../../data/BoardData";
@@ -20,6 +23,9 @@ export default function Prison() {
   const boardData = useRecoilValue(boardDataState); // 보드 데이터
   const [turnData] = useState(boardData[`${tRow}-${tCol}`]); // 턴 데이터
   // const setIsPrison = useSetRecoilState(isPrisonState); // 감옥 반영
+  const turn = useRecoilValue(turnState);
+  const whoAreYou = useRecoilValue(whoAreYouState);
+  const setPrison = useSetRecoilState(isPrisonState);
 
   // 웹소켓 기본인자
   const socketClient = useSocket();
@@ -45,7 +51,12 @@ export default function Prison() {
       } else {
         clearInterval(timer); // 타이머 정지
         // 0초일시 턴 넘기기 (비활성화)
-        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
+        if (turn == whoAreYou) {
+          // 턴정보 받아오기 요청
+          sendWsMessage(socketClient, playerInfo.gameId, "send/turn");
+          // 감옥여부 전역 반영
+          setPrison(true);
+        }
         setUserTurn(false);
         /** 감옥 여부 초기화  */
       }
