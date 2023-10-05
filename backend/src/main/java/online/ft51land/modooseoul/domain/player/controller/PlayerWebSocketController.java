@@ -316,6 +316,7 @@ public class PlayerWebSocketController {
 
 	@MessageMapping("/ground-sell/{playerId}")
 	public void sellGround(@DestinationVariable String playerId, @Payload PlayerSellGroundRequestDto playerSellGroundRequestDto){
+		log.info("땅 판매 by {}, 판매땅 {}",playerId, playerSellGroundRequestDto);
 		Player player = playerService.getPlayerById(playerId);
 		Game game = gameService.getGameById(player.getGameId());
 		PlayerGroundSellMessage playerGroundSellMessage = playerService.sellGround(game, player, playerSellGroundRequestDto);
