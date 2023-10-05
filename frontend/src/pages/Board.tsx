@@ -15,7 +15,7 @@ import CommonTurn from "../components/CommonTurn/CommonTurn";
 import DiceRoll from "./DiceRoll";
 import IngameModal from "../components/Base/IngameModal";
 import News from "../components/CommonTurn/News/News";
-import NewsCheck from "../components/CommonTurn/News/NewsCheckBtn";
+import NewsCheck from "../components/CommonTurn/News/NewsCheck";
 import Loading from "../components/Base/Loading";
 import NotMyTurn from "../components/Base/NotMyTurn";
 import RoundInfo from "../components/Base/RoundInfo";
