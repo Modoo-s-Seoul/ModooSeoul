@@ -10,6 +10,7 @@ import {
   buildingChangeType,
   stockChangeType,
   subwayChangeType,
+  playerStockInfoType,
 } from "../interface/ingame";
 
 /*
@@ -291,7 +292,10 @@ export const matchPosition = atom<defaultMatch[]>({
 /** 보드판 위치 정보 */
 export const matchIndex = atom({
   key: "matchIndex",
-  default: [0,1,2,3,4,5,6,7,8,10,12,14,16,18,20,22,31,30,29,28,27,26,25,24,23,21,19,17,15,13,11,9],
+  default: [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 22, 31, 30, 29, 28, 27,
+    26, 25, 24, 23, 21, 19, 17, 15, 13, 11, 9,
+  ],
 });
 
 /**게임 내의 모든 주식 종목들의 가격 기록 */
@@ -382,4 +386,23 @@ export const isSubwayState = atom<subwayChangeType[]>({
 export const keyRandomState = atom<string>({
   key: "keyRandomState",
   default: "tax",
+});
+
+/** 이번 라운드 시작 시 받은 배당금 */
+export const dividendState = atom<number>({
+  key: "dividendState",
+  default: 0,
+});
+
+/** 플레이어의 주식 정보 */
+export const playerStockInfoState = atom<playerStockInfoType>({
+  key: "playerStockInfoState",
+  default: {
+    playerStockMoney: 0, // 현재 보유 주식 가치
+    prevStockMoney: 0, // 이전 라운드 보유 주식 가치
+    stockNames: [], //보유 주식 이름
+    purchasePrices: [], //보유 주식 별 평단가
+    stockAmounts: [], //보유 주식 별 주수
+    stockPrices: [], //보유 주식 별 현재 가치,
+  },
 });

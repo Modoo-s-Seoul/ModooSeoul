@@ -50,16 +50,26 @@
   object-fit: cover;
 }
 
-/*주식 거래 관련 정보들 담을 컨테이너*/
-.stockTradeContainer {
+.stockInfoContainer {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-direction: column;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
 
-  width: 80%;
-  height: 80%;
-  margin: auto;
+.chart {
+  width: 60%;
+  height: 100%;
+}
+
+.stockPriceBox {
+  width: 40%;
+  height: 100%;
+  font-size: xx-large;
+}
+
+.priceTitle {
+  margin-bottom: 20%;
 }
 
 /*매도,매수 창*/
@@ -92,6 +102,7 @@
   width: 50%;
   height: 100%;
   background-color: #c3c3c3;
+  font-size: xx-large;
 }
 
 .sellButton {
@@ -162,6 +173,7 @@
   border: none;
   border-bottom: 1px solid #757575;
   background-color: transparent;
+  margin-top: 15px;
 }
 
 .stockInput:focus {

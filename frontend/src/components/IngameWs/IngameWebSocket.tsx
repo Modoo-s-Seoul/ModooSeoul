@@ -15,6 +15,8 @@ import {
   diceActiveState,
   whoAreYouState,
   groundChangeState,
+  dividendState,
+  playerStockInfoState,
   // builingInfoState,
   buildingChangeState,
 } from "../../data/IngameData";
@@ -39,6 +41,8 @@ export default function IngameWebSocket() {
   const [stock, setStock] = useRecoilState(stockState);
   const setDiceActive = useSetRecoilState(diceActiveState); // 주사위 상태
   const [, setGroundChange] = useRecoilState(groundChangeState); // 땅 변경정보
+  const setDividend = useSetRecoilState(dividendState);
+  const setStockInfo = useSetRecoilState(playerStockInfoState);
   // const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
   const [, setBuildingChange] = useRecoilState(buildingChangeState); // 건물 변경정보
 
@@ -291,6 +295,7 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        setDividend(receivedData.dividend);
       });
 
       // 뉴스 선택, 확인
@@ -332,6 +337,21 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        if (receivedData.status) {
+          console.log("주식 매수 성공: ", receivedData);
+          const newStockInfo = {
+            playerStockMoney: receivedData.playerStockMoney,
+            prevStockMoney: receivedData.prevStockMoney,
+            stockNames: receivedData.stockNames,
+            purchasePrices: receivedData.purchasePrices,
+            stockAmounts: receivedData.stockAmounts,
+            stockPrices: receivedData.stockPrices,
+          };
+
+          setStockInfo(newStockInfo);
+        } else {
+          console.log(receivedData.message);
+        }
       });
 
       // 주식 판매
@@ -339,13 +359,40 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
+        if (receivedData.status) {
+          console.log("주식 매도 성공: ", receivedData);
+          const newStockInfo = {
+            playerStockMoney: receivedData.playerStockMoney,
+            prevStockMoney: receivedData.prevStockMoney,
+            stockNames: receivedData.stockNames,
+            purchasePrices: receivedData.purchasePrices,
+            stockAmounts: receivedData.stockAmounts,
+            stockPrices: receivedData.stockPrices,
+          };
+
+          setStockInfo(newStockInfo);
+        } else {
+          console.log(receivedData.message);
+        }
       });
 
       // 개인 주식정보 확인
       socketClient.subscribe(`/receive/stock/info/${playerId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("개인 주식 정보: ", receivedData);
+        if (receivedData.status) {
+          const newStockInfo = {
+            playerStockMoney: receivedData.playerStockMoney,
+            prevStockMoney: receivedData.prevStockMoney,
+            stockNames: receivedData.stockNames,
+            purchasePrices: receivedData.purchasePrices,
+            stockAmounts: receivedData.stockAmounts,
+            stockPrices: receivedData.stockPrices,
+          };
+
+          setStockInfo(newStockInfo);
+        }
       });
 
       // 탈세자 신고
