@@ -1,57 +1,47 @@
 import { useState } from "react";
-import {
-  selectedNewsState,
-  isNewsVisibleState,
-  moreNewsState,
-} from "../../../data/IngameData";
+import { useRecoilValue } from "recoil";
 import IngameModal from "../../Base/IngameModal";
 import "./StockCheck.css";
-import { useRecoilValue } from "recoil";
-import NewsIcon from "/assets/news.svg";
+import StockIcon from "/assets/stock.svg";
+import CloseButton from "../../Base/CloseButton";
+import { dividendState, playerStockInfoState } from "../../../data/IngameData";
 
-/**현재 라운드에서 주어진 뉴스 확인용 버튼 */
-export default function NewsCheck() {
-  const [isNewsCheckVisible, setIsNewsCheckVisible] = useState(false);
-  const toggleNewsCheck = () => {
-    setIsNewsCheckVisible(!isNewsCheckVisible);
+/**현재 플레이어의 금융 정보 확인용 버튼 */
+export default function StockCheck() {
+  const [isStockCheckVisible, setIsStockCheckVisible] = useState(false);
+  const dividend = useRecoilValue(dividendState);
+  const stockInfo = useRecoilValue(playerStockInfoState);
+  const {
+    playerStockMoney,
+    prevStockMoney,
+    stockNames,
+    purchasePrices,
+    stockAmounts,
+    stockPrices,
+  } = stockInfo;
+
+  const toggleStockCheck = () => {
+    setIsStockCheckVisible(!isStockCheckVisible);
   };
-
-  const selectedNews = useRecoilValue(selectedNewsState);
-  const isNewsVisible = useRecoilValue(isNewsVisibleState);
-  const moreNews = useRecoilValue(moreNewsState); // 추가 뉴스 정보
 
   return (
     <>
-      {!isNewsVisible && (
-        <div
-          className={`newsCheckBtn ${isNewsVisible ? "" : "showSelectedNews"}`}
-          style={{ cursor: "pointer" }}
-          onClick={toggleNewsCheck}
-        >
-          <img src={NewsIcon} alt="news" width="80%" height="80%" />
-        </div>
-      )}
-
-      <IngameModal
-        width="60vw"
-        height="30vh"
-        maxWidth="600px"
-        visible={isNewsCheckVisible}
+      <div
+        className="stockCheckBtn"
+        style={{ cursor: "pointer" }}
+        onClick={toggleStockCheck}
       >
-        <div className="newsCheckOuterContainer">
-          <div className="modalClose">
-            <div onClick={toggleNewsCheck} style={{ cursor: "pointer" }}>
-              ✖
-            </div>
-          </div>
-          {/* <div className="newsCheckTitle">이번 라운드에서 선택된 뉴스</div> */}
-          <div className="newsCheckContainer">
-            <div className="newsCheckItems">{selectedNews}</div>
-            {moreNews !== "" && (
-              <div className="newsCheckItems">{moreNews}</div>
-            )}
-          </div>
-          {/* <div>뉴스 확인 버튼을 다시 누르면 창이 닫힙니다.</div> */}
+        <img src={StockIcon} alt="news" width="80%" height="80%" />
+      </div>
+
+      <IngameModal visible={isStockCheckVisible}>
+        <CloseButton onClick={toggleStockCheck} />
+        <div>자산 정보</div>
+        <div>이번 라운드에서 받은 배당금:{dividend}</div>
+        <div>현재 보유 주식 가치:{stockInfo.playerStockMoney}</div>
+        <div>
+          이전 라운드 대비{" "}
+          {(playerStockMoney - prevStockMoney) / prevStockMoney}%
         </div>
       </IngameModal>
     </>
