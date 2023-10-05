@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { CompatClient } from '@stomp/stompjs';
+import axios from "axios";
+import { CompatClient } from "@stomp/stompjs";
 
 /**서버 ip 주소 */
 export const ipAddress = "https://modooseoul.online";
@@ -12,12 +12,12 @@ const apiAddress = `${ipAddress}/api/v1`;
 
 /**방 생성 및 방 정보 요청 */
 export const createRoom = async () => {
-	try {
-		const { data } = await axios.post(`${apiAddress}/games`);
-		console.log('createRoom');
-		console.log('Room Info: ', data);
+  try {
+    const { data } = await axios.post(`${apiAddress}/games`);
+    console.log("createRoom");
+    console.log("Room Info: ", data);
 
-		/* data 형태 예시:
+    /* data 형태 예시:
       {
         "message": "success",
         "data": {
@@ -29,28 +29,28 @@ export const createRoom = async () => {
       }
     */
 
-		return data;
-	} catch (error) {
-		console.error('서버 오류: Error fetching Room Info:', error);
-		throw error;
-	}
+    return data;
+  } catch (error) {
+    console.error("서버 오류: Error fetching Room Info:", error);
+    throw error;
+  }
 };
 
 /**방 참가 요청 */
 export const joinRoom = async (
-	nickname: string,
-	/**pk값 받아오는거라 undefined일 수 있어서 타입을 이렇게 설정함 */
-	gameId: string | undefined
+  nickname: string,
+  /**pk값 받아오는거라 undefined일 수 있어서 타입을 이렇게 설정함 */
+  gameId: string | undefined
 ) => {
-	try {
-		const { data } = await axios.post(`${apiAddress}/players/join`, {
-			nickname: nickname,
-			gameId: gameId,
-		});
-		console.log('joinRoom');
-		console.log('response: ', data);
+  try {
+    const { data } = await axios.post(`${apiAddress}/players/join`, {
+      nickname: nickname,
+      gameId: gameId,
+    });
+    console.log("joinRoom");
+    console.log("response: ", data);
 
-		/* data 형태 예시:
+    /* data 형태 예시:
 
       {
         "message": "success",
@@ -60,21 +60,21 @@ export const joinRoom = async (
       }
     */
 
-		return data;
-	} catch (error) {
-		console.error('서버 오류: Error fetching joinRoom response:', error);
-		throw error;
-	}
+    return data;
+  } catch (error) {
+    console.error("서버 오류: Error fetching joinRoom response:", error);
+    throw error;
+  }
 };
 
 /**대기방에서 구독된 채널들 끊기 */
 export const unsubscribeRoom = (
-	socketClient: CompatClient | null,
-	playerId: string,
-	gameId: string
+  socketClient: CompatClient | null,
+  playerId: string,
+  gameId: string
 ) => {
-	if (socketClient !== null) {
-		socketClient.unsubscribe(`/receive/game/join/${gameId}`);
-		socketClient.unsubscribe(`/receive/game/ready/${playerId}`);
-	}
+  if (socketClient !== null) {
+    socketClient.unsubscribe(`/receive/game/join/${gameId}`);
+    socketClient.unsubscribe(`/receive/game/ready/${playerId}`);
+  }
 };
