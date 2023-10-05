@@ -6,10 +6,12 @@ import {
   dice2State,
   diceActiveState,
   isCommonTurnVisibleState,
+  isGameEndVisibleState,
   isLoadingVisibleState,
   isNewsVisibleState,
   isOilActiveState,
   isPlayerMoveState,
+  isRankingVisibleState,
   isRollingState,
   isStartActiveState,
   isSubwayActiveState,
@@ -37,6 +39,8 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   const isSubwayActive = useRecoilValue(isSubwayActiveState); // 지하철 턴 여부
   const isStartActive = useRecoilValue(isStartActiveState); // 시작점 턴 여부
   const turn = useRecoilValue(turnState); // 현재 플레이 순서
+  const isGameEndVisible = useRecoilValue(isGameEndVisibleState); // 1. 게임 종료 인자
+  const isRankingVisible = useRecoilValue(isRankingVisibleState); // 랭킹 컴포넌트 토글인자
   // 플레이어 개인정보
   const whoAreYou = useRecoilValue(whoAreYouState); // 본인의 턴
 
@@ -74,6 +78,8 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
   return (
     <>
       {!loadingVisible &&
+        !isGameEndVisible &&
+        !isRankingVisible &&
         !isPlayerMove &&
         !isUserTurnVisible &&
         !isStartActive &&
