@@ -36,30 +36,66 @@ export default function StockCheck() {
 
       <IngameModal visible={isStockCheckVisible}>
         <CloseButton onClick={toggleStockCheck} />
-        <div>
-          <div>자산 정보</div>
-          <div>이번 라운드에서 받은 배당금:{dividend}</div>
-          <div>현재 보유 주식 가치:{stockInfo.playerStockMoney}</div>
-          <div>
-            이전 라운드 대비{" "}
-            {prevStockMoney === 0
-              ? 0
-              : (playerStockMoney - prevStockMoney) / prevStockMoney}
-            %
-          </div>
-          {stockNames.map((stock, index) => (
-            <div>
-              <div>{stock}</div>
-              <div>{stockAmounts[index]}</div>
-              <div>{stockPrices[index]}</div>
-              <div>
-                {stockPrices[index] - purchasePrices[index]}원{" "}
-                {(stockPrices[index] - purchasePrices[index]) /
-                  purchasePrices[index]}
-                %
+        <div className="modalBaseContainer">
+          <div className="modalBaseTitle">자산 정보</div>
+          <div className="modalBaseBody">
+            <div style={{ width: "100%", fontSize: "30px" }}>
+              이번 라운드에서 받은 배당금: {dividend} 원
+            </div>
+            <div style={{ width: "100%", fontSize: "30px" }}>
+              현재 보유 주식 가치:{stockInfo.playerStockMoney} 원
+              <div style={{ fontSize: "20px" }}>
+                이전 라운드 대비{" "}
+                <span
+                  style={{
+                    color: `${
+                      playerStockMoney > prevStockMoney ? "red" : "blue"
+                    }`,
+                  }}
+                >
+                  {prevStockMoney === 0
+                    ? 0
+                    : ((playerStockMoney - prevStockMoney) / prevStockMoney) *
+                      100}
+                  %
+                </span>
               </div>
             </div>
-          ))}
+            {stockNames.map((stock, index) => (
+              <div className="stockInfoBox" key={index}>
+                <div style={{ fontWeight: "bold" }}>
+                  {stock}
+                  <div style={{ fontSize: "20px" }}>
+                    {stockAmounts[index]} 주
+                  </div>
+                </div>
+                <div>
+                  {stockAmounts[index] * purchasePrices[index]} 원
+                  <div
+                    style={{
+                      color: `${
+                        stockPrices[index] > purchasePrices[index]
+                          ? "red"
+                          : "blue"
+                      }`,
+                      fontSize: "20px",
+                    }}
+                  >
+                    {stockPrices[index] > purchasePrices[index] ? "+" : ""}
+                    {(stockPrices[index] - purchasePrices[index]) *
+                      stockAmounts[index]}{" "}
+                    원 (
+                    {stockAmounts[index] === 0
+                      ? 0
+                      : ((stockPrices[index] - purchasePrices[index]) /
+                          purchasePrices[index]) *
+                        100}
+                    %)
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </IngameModal>
     </>
