@@ -14,7 +14,7 @@ export default function GameStart() {
   const setIsYourTurnVisible = useSetRecoilState(isYourTurnVisibleState); // 2. 순서정하기
 
   useEffect(() => {
-    // 3초 후에 랜덤한 값을 멈추고 특정 값으로 설정
+    // 5초 후에 랜덤한 값을 멈추고 특정 값으로 설정
     setTimeout(() => {
       setIsGameStartVisible(false);
       setIsYourTurnVisible(true);

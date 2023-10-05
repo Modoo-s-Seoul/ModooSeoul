@@ -49,7 +49,7 @@ export default function Room() {
   /**방 참가 링크 복사 */
   const handleCopyLink = () => {
     // const gameUrl = `${ipAddress}/home/invite/${gameId}`;
-    const gameUrl = `http://localhost:5173/home/invite/${gameId}`;
+    const gameUrl = `http://modooseoul.online/home/invite/${gameId}`;
 
     navigator.clipboard
       .writeText(gameUrl)

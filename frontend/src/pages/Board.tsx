@@ -65,12 +65,16 @@ import {
   isGameStartVisibleState,
   isYourTurnVisibleState,
   oilStartState,
+  isGameEndVisibleState,
+  isRankingVisibleState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
 import GroundSelectBtn from "../components/CommonTurn/GroundSelectBtn";
 import GameStart from "../components/Base/intro/GameStart";
 import YourTurn from "../components/Base/intro/YourTurn";
+import GameEnd from "../components/Base/outro/GameEnd";
+import Ranking from "../components/Base/outro/Ranking";
 
 ////////  게임 보드 /////////
 export default function Board() {
@@ -165,6 +169,10 @@ export default function Board() {
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
+
+  // 토글
+  const [isGameEndVisible] = useRecoilState(isGameEndVisibleState); // 1. 게임 종료 인자
+  const [isRankingvisible] = useRecoilState(isRankingVisibleState); // 랭킹 컴포넌트 토글
 
   // 플레이어 개인정보
   const whoAreYou = useRecoilValue(whoAreYouState); // 본인의 턴
@@ -1122,6 +1130,8 @@ export default function Board() {
       {loadingVisible && <Loading />}
       {!loadingVisible && <GameStart />}
       {!isGameStartVisible && <YourTurn />}
+      {isGameEndVisible && <GameEnd />}
+      {isRankingvisible && <Ranking />}
       {!loadingVisible && !isGameStartVisible && !isYourTurnVisible && (
         <NotMyTurn />
       )}
@@ -1163,12 +1173,16 @@ export default function Board() {
           isNewsVisible &&
           !loadingVisible &&
           !isGameStartVisible &&
+          !isGameEndVisible &&
+          !isRankingvisible &&
           !isYourTurnVisible
         }
       >
         {isNewsVisible &&
           !loadingVisible &&
           !isGameStartVisible &&
+          !isGameEndVisible &&
+          !isRankingvisible &&
           !isYourTurnVisible && <News />}
       </IngameModal>
       <NewsCheck />

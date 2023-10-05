@@ -193,9 +193,10 @@ public class PlayerWebSocketController {
 
 		Game game = gameService.getGameById(player.getGameId());
 
-		if(!game.getIsTimerActivated()){
-			throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
-		}
+//		TODO:주석 해제하기
+//		if(!game.getIsTimerActivated()){
+//			throw new BusinessException(ErrorMessage.TIMER_EXPIRED);
+//		}
 
 
 		PlayerSubwayMessage message = playerService.takeSubway(player, playerTakeSubwayRequestDto.boardId());

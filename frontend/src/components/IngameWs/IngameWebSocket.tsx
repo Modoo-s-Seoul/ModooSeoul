@@ -27,6 +27,8 @@ import {
   keyRandomState,
   lottoResultState,
   moreNewsState,
+  isGameEndVisibleState,
+  rankingDataState,
 } from "../../data/IngameData";
 import { matchIndex } from "./../../data/IngameData";
 import { sendWsMessage } from "./IngameSendFunction";
@@ -61,6 +63,8 @@ export default function IngameWebSocket() {
   const setKeyRandom = useSetRecoilState(keyRandomState);
   const setLottoResult = useSetRecoilState(lottoResultState);
   const setMoreNews = useSetRecoilState(moreNewsState);
+  const setIsGameEndVisible = useSetRecoilState(isGameEndVisibleState); // 게임 종료 토글
+  const setRankingData = useSetRecoilState(rankingDataState);
 
   // 게임 정보
   const weblocation = useLocation();
@@ -150,7 +154,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/turn/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("턴정보확인 응답", receivedData);
         setTurn(receivedData.turnInfo);
       });
 
@@ -158,7 +162,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/pass-turn/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("턴종료 응답", receivedData);
         setTurn(receivedData.turnInfo);
       });
 
@@ -175,7 +179,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/roll/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("주사위굴리기 응답", receivedData);
         setDice1Value(receivedData.first);
         setDice2Value(receivedData.second);
         setDiceActive(true);
@@ -187,7 +191,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
-          console.log(receivedData);
+          console.log("땅구매 응답", receivedData);
           // 구매 가능할시
           if (receivedData.isPurchase) {
             // 땅 변동사항 업데이트
@@ -210,7 +214,7 @@ export default function IngameWebSocket() {
         (msg) => {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
-          console.log(receivedData);
+          console.log("건물구매 응답", receivedData);
           // 구매성공시
           if (receivedData.isPurchase) {
             const index = receivedData.boardIdx - 1;
@@ -262,7 +266,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/prison/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("감옥 응답", receivedData);
       });
 
       //공통 턴 시작
@@ -276,7 +280,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/start/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("출발지 응답", receivedData);
       });
 
       //오일랜드 지정
@@ -298,7 +302,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/check-subway/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("지하철 이용여부 응답", receivedData);
       });
 
       //지하철 이동
@@ -329,7 +333,7 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/chance/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("찬스카드 응답", receivedData);
       });
 
       //공통 턴 준비
@@ -364,7 +368,11 @@ export default function IngameWebSocket() {
       socketClient.subscribe(`/receive/game/end/${gameId}`, (msg) => {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
-        console.log(receivedData);
+        console.log("게임종료 응답", receivedData);
+        // 게임 종료 선언
+        setIsGameEndVisible(true);
+        // 랭킹 데이터 업데이트
+        setRankingData(receivedData.playerList);
       });
 
       //// 개별 구독 ////
