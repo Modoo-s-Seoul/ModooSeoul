@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  isEvadeState,
   pNumState,
   playerDataState,
   playerInfoState,
@@ -16,12 +17,12 @@ export default function KeyCheckThief() {
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const [selected, setSelected] = useState<number | null>(null);
   const [isSubmit, setIsSubmit] = useState(false); // 제출 여부
-  const [thiefTrue, setThiefTrue] = useState(false);
   // 웹소켓 기본인자
   const socketClient = useSocket();
   const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
   // 데이터 보관
   const playerData = useRecoilValue(playerDataState);
+  const isEvade = useRecoilValue(isEvadeState);
 
   /** 선택한 태그를 업데이트하는 함수 */
   const handleClick = (tag: number) => {
@@ -37,8 +38,6 @@ export default function KeyCheckThief() {
   /** 제출 버튼을 클릭했을 때 실행되는 함수 */
   const handleSubmit = () => {
     if (selected !== null) {
-      // 탈세범 여부 받아오기
-      setThiefTrue(true);
       // 로드 태그 스위치
       setIsSubmit(true);
       // 3초 후에 턴 넘김
@@ -88,7 +87,7 @@ export default function KeyCheckThief() {
             <>
               <div className="keyThiefResult">
                 <div>{playerData[selected].name}</div>
-                <div>탈세범 : {thiefTrue ? "O" : "X"}</div>
+                <div>탈세범 : {isEvade ? "탈세 적발" : "모범 납세 확인"}</div>
               </div>
             </>
           )}

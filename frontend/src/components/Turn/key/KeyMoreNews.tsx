@@ -7,10 +7,10 @@ import { sendWsMessage } from "../../IngameWs/IngameSendFunction";
 /** Key - 뉴스 더 제공받기 */
 export default function KeyMoreNews() {
   // 기본 인자
-  const moreNews = useRecoilValue(moreNewsState); // 추가 뉴스 정보
   // 웹소켓 기본인자
   const socketClient = useSocket();
   const [playerInfo] = useRecoilState(playerInfoState); // 플레이어 고유 정보
+  const moreNews = useRecoilValue(moreNewsState);
 
   // 자동 언마운트
   useEffect(() => {
