@@ -11,8 +11,6 @@ import online.ft51land.modooseoul.domain.game.service.GameService;
 import online.ft51land.modooseoul.domain.player.dto.message.*;
 import online.ft51land.modooseoul.domain.player.entity.Player;
 import online.ft51land.modooseoul.domain.player.service.PlayerService;
-import online.ft51land.modooseoul.utils.error.enums.ErrorMessage;
-import online.ft51land.modooseoul.utils.error.exception.custom.BusinessException;
 import online.ft51land.modooseoul.utils.websocket.WebSocketSendHandler;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -135,6 +133,8 @@ public class GameWebSocketController {
 		log.info("GameWebSocketController - startTimer : {} , dto : {}", gameId, gameStartTimerRequestDto);
 
 		Game game = gameService.getGameById(gameId);
+
+		gameService.setIsRoundStartFalse(game);
 
 		// 타이머가 이미 활성화 중이라면
 //		if(game.getIsTimerActivated()){
@@ -261,9 +261,6 @@ public class GameWebSocketController {
 			Player player = playerService.getPlayerById(playerId);
 			webSocketSendHandler.sendToPlayer("free-action", playerId, gameId, PlayerPrisonMessage.of(player));
 		}
-
-		// round 시작 가능으로 바꾸기
-		gameService.setIsRoundStartFalse(game);
 	}
 
 	// 배당금 확인
