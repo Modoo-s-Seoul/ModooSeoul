@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-// import { ipAddress } from "../../api/RoomApi";
+import { ipAddress } from "../../api/RoomApi";
 import { useSocket } from "../SocketContext";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { alertModalState, roomStatus } from "../../data/CommonData";
@@ -48,8 +48,8 @@ export default function Room() {
 
   /**방 참가 링크 복사 */
   const handleCopyLink = () => {
-    // const gameUrl = `${ipAddress}/home/invite/${gameId}`;
-    const gameUrl = `http://localhost:5173/home/invite/${gameId}`;
+    const gameUrl = `${ipAddress}/home/invite/${gameId}`;
+    // const gameUrl = `http://localhost:5173/home/invite/${gameId}`;
 
     navigator.clipboard
       .writeText(gameUrl)
