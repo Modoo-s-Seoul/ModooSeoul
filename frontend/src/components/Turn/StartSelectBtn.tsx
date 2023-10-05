@@ -72,6 +72,7 @@ export default function StartSelectBtn() {
       return;
     }
     setSelectedNodes(index);
+    console.log(turnData);
   };
 
   /** 시간초과시 */
