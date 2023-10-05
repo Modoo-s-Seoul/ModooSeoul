@@ -82,7 +82,7 @@ export default function IngameWebSocket() {
         const res = JSON.parse(msg.body);
         const receivedData = res.data;
         console.log(receivedData);
-        // 자본금 지금
+        // 자본금 지급
         const newPlayerData = [...playerData];
         for (let i = 0; i < receivedData.length; i++) {
           newPlayerData[i] = {
@@ -378,6 +378,7 @@ export default function IngameWebSocket() {
           };
 
           setStockInfo(newStockInfo);
+          sendWsMessage(socketClient, gameId, `send/players-info`);
         } else {
           console.log(receivedData.message);
         }
@@ -400,6 +401,7 @@ export default function IngameWebSocket() {
           };
 
           setStockInfo(newStockInfo);
+          sendWsMessage(socketClient, gameId, `send/players-info`);
         } else {
           console.log(receivedData.message);
         }
