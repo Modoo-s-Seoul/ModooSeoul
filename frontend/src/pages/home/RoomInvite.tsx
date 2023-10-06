@@ -80,6 +80,12 @@ export default function Invite() {
               name="nickname"
               className="customInput"
               onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handelGoGame();
+                }
+              }}
             />
           </div>
           <div className="clickBtnContainer" onClick={handelGoGame}>
