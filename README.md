@@ -65,16 +65,16 @@
            팀장, 웹소켓, DB 설계
        </td>
        <td align="center" width="130px">
-         게시판, CI/CD
+          Infra, 웹소켓, PPT 제작
        </td>
        <td align="center" width="130px">
-         부트캠프, VS
+         웹소켓, 영상 제작
        </td>
        <td align="center" width="130px">
-         게시판, 디자인
+         웹소켓, 디자인, 클라이언트 구현
        </td>
        <td align="center" width="130px">
-         부트캠프, DBA
+         웹소켓, 클라이언트 구현
        </td>
     </tr>
 </table>
@@ -183,8 +183,8 @@
 ![탈세범확인](https://github.com/TEAM-DGRR/dgrr/assets/73294363/59fc0efd-fc48-430a-aae9-ce303d64cf89)
 <br><br>
 
-## :octocat: Git Commit Convention
-**:bulb: Commit Type**
+## 🎊 Git Commit Convention
+**💡 Commit Type**
 - 타입은 구분과, 태그, 제목으로 구성되고, 태그는 영어로 쓰되 *첫 문자는 소문자*로 한다.
 - `[구분] 태그: 제목` 형태이며 `]` 뒤에는  *space가 있음* `:` *뒤에만 space가 있음*에 유의한다.
 - `[구분]` : `[ALL]`, `[BE]`, `[FE]`
