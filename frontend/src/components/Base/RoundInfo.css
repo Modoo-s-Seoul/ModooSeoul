@@ -47,17 +47,21 @@
   font-size: 1.5vw;
   color: rgb(22, 113, 102);
   position: relative;
+  overflow: hidden;
+  width: 15%;
+  height: 2vw;
+  /* padding-top: 10px; */
 }
 
 .selectorActive {
   color: black;
   font-weight: 700;
-  text-shadow: 1px 1px 1px white;
+  text-shadow: 2px 2px 5px white;
 }
 .selectorTopArrow::before {
   content: "";
   position: absolute;
-  top: -10px; /* 위로 이동하여 텍스트 위에 표시 */
+  top: 0px; /* 위로 이동하여 텍스트 위에 표시 */
   left: 50%; /* 가운데로 정렬 */
   transform: translateX(-50%); /* 수평 가운데 정렬 */
   width: 0;
