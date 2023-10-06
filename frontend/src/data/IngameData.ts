@@ -452,6 +452,7 @@ export const isNotificationVisible = atom<boolean>({
 export const notificationMsg = atom<string>({
   key: "notificationMsg",
   default: "",
+});
 
 /** 월급 변동감지 */
 export const SmallMonenyChangeState = atom<smallMoneyChangeType[]>({
