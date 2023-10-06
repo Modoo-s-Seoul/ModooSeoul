@@ -72,6 +72,12 @@ export default function RoomCreate() {
               name="nickname"
               value={nickname}
               onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleCreateRoom();
+                }
+              }}
               className="customInput"
             />
           </div>

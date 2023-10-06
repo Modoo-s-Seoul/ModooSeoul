@@ -7,7 +7,7 @@
   width: 100vw;
   height: 100vh;
 }
-.playerName{
+.playerName {
   font-size: 27px;
   padding: 2px;
   border-radius: 10px 10px 0px 0px;
@@ -26,14 +26,14 @@
   margin: 20px;
   box-shadow: 1px 1px 10px black;
 }
-.playerInnerContainer{
+.playerInnerContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   flex: 1;
 }
-.playerInnerDefault{
+.playerInnerDefault {
   font-size: 27px;
 }
 
@@ -56,11 +56,11 @@
     transform: scale(1);
   }
 }
-.playerMoneyIncrease{
-  color : green
+.playerMoneyIncrease {
+  color: green;
 }
-.playerMoneyDecrease{
-  color : red
+.playerMoneyDecrease {
+  color: red;
 }
 .sample {
   color: #dddc90;
@@ -92,6 +92,11 @@
   right: 0;
 }
 
-.totalAsset{
+.totalAsset {
   font-size: 20px;
+}
+.smallMoney {
+  text-align: center;
+  align-items: center;
+  color: #0e5b18;
 }

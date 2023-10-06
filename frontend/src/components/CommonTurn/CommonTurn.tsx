@@ -130,6 +130,10 @@ export default function CommonTurn() {
       "send/timer",
       `{"timerType":"FREE_ACTION"}`
     );
+    // 감옥일시 바로 턴종료 요청
+    if (isPrison) {
+      sendWsMessage(socketClient, playerInfo.playerId, `send/action-finish`);
+    }
 
     return () => {
       setIsPrison(false);
@@ -180,15 +184,32 @@ export default function CommonTurn() {
             >
               탈세 신고
             </div>
-            <button
-              className="completeButton"
-              style={{
-                cursor: "pointer",
-              }}
-              onClick={handleComplete}
-            >
-              완료
-            </button>
+            <div>※ 세금을 납부하지않을시 탈세로 간주됩니다 ※</div>
+            <div>이번 라운드 세금 : 321,000원</div>
+            <div className="btnCollect">
+              <MessageModal />
+              <button
+                className="taxButton"
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setModalMsg("세금 납부가 완료되었습니다.");
+                  setIsModalMsgActive(true);
+                }}
+              >
+                세금 납부
+              </button>
+              <button
+                className="completeButton"
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={handleComplete}
+              >
+                완료
+              </button>
+            </div>
           </div>
 
           {/* 주식 */}
