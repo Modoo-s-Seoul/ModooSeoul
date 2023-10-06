@@ -1131,7 +1131,7 @@ export default function Board() {
       {!loadingVisible && <GameStart />}
       {!isGameStartVisible && <YourTurn />}
       {isGameEndVisible && <GameEnd />}
-      {isRankingvisible && <Ranking />}
+      <Ranking />
       {!loadingVisible && !isGameStartVisible && !isYourTurnVisible && (
         <NotMyTurn />
       )}
