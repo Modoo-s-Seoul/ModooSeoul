@@ -5,6 +5,7 @@ import StockTrade from "../CommonTurn/Stock/StockTrade";
 import NewsCheck from "../CommonTurn/News/NewsCheck";
 import GameOption from "../Base/GameOption";
 import StockCheck from "../CommonTurn/Stock/StockCheck";
+import EvaderNotification from "../CommonTurn/EvaderNotification";
 
 /**컴포넌트 테스트용 컴포넌트 */
 export default function TestComponent() {
@@ -27,6 +28,7 @@ export default function TestComponent() {
           <CloseButton onClick={openModal} />
         </div>
       </IngameModal>
+      <EvaderNotification />
     </>
   );
 }

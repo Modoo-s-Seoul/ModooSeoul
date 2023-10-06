@@ -444,6 +444,16 @@ export const playerStockInfoState = atom<playerStockInfoType>({
   },
 });
 
+export const isNotificationVisible = atom<boolean>({
+  key: "isNotificationVisible",
+  default: false,
+});
+
+export const notificationMsg = atom<string>({
+  key: "notificationMsg",
+  default: "",
+});
+
 /** 월급 변동감지 */
 export const SmallMonenyChangeState = atom<smallMoneyChangeType[]>({
   key: "SmallMonenyChangeState",
