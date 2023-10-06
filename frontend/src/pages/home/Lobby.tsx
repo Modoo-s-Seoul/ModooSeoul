@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import WebInfo from "../../components/Base/WebInfo";
 import WebOption from "../../components/Base/WebOption";
-import WebClose from "../../components/Base/WebClose";
+// import WebClose from "../../components/Base/WebClose";
 import "./Lobby.css";
 
 /** 게임로비 컴포넌트 */
@@ -14,7 +14,7 @@ export default function Lobby() {
           <div className="lobbyHeaderBtnContainer">
             <WebInfo />
             <WebOption />
-            <WebClose />
+            {/* <WebClose /> */}
           </div>
         </div>
         {/* 바디부분 - 기능 이동키 */}
@@ -27,11 +27,11 @@ export default function Lobby() {
                 방 생성
               </div>
             </Link>
-            <Link to={"/home/random"} className="customLink">
+            {/* <Link to={"/home/random"} className="customLink">
               <div className="lobbyBtn" style={{ cursor: "pointer" }}>
                 <div>랜덤 매칭</div>
               </div>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

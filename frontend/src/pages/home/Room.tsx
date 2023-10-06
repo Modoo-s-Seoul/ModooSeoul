@@ -139,11 +139,11 @@ export default function Room() {
     <>
       {alertVisible && <AlertModal text={alertMsg} />}
       <div className="roomContainer">
-        <NoLandMessage />
         <div className="roomHeader">
           <div onClick={() => leaveRoom(socketClient, playerId)}>
             <BackBtn />
           </div>
+          <NoLandMessage />
           <div
             className="roomHeaderBtn"
             style={{ cursor: "pointer" }}
