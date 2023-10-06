@@ -61,7 +61,6 @@ import {
   isCommonGroundSellActiveState,
   whoAreYouState,
   groundMsgNumState,
-  doublePrisonState,
   isGameStartVisibleState,
   isYourTurnVisibleState,
   oilStartState,
@@ -105,7 +104,6 @@ export default function Board() {
 
   // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
-  const setDoublePrison = useSetRecoilState(doublePrisonState);
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
@@ -463,28 +461,6 @@ export default function Board() {
     Dice1: number,
     Dice2: number
   ) => {
-    // 더블 맥스 처리
-    if (doubleCnt > 1) {
-      if (Dice1 == Dice2) {
-        setDoublePrison(true);
-        // 캐릭터 감옥이동
-        const tileSize = globalTileSize;
-        const x = 8 * (tileSize / 2) + config.scale.width / 2;
-        const y = 8 * (tileSize / 4) + config.scale.height / 2;
-        playerSprite[turn].setPosition(
-          x + playerPositions[turn].mx,
-          y + playerPositions[turn].my
-        );
-        playerPositions[turn].row = 0;
-        playerPositions[turn].col = 8;
-        // 기본 정보 재세팅
-        setDoubleCnt(0);
-        setIsRolling(false);
-        // 턴넘기기
-        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
-        return;
-      }
-    }
     // 더블 맥스가 아닐시 정상 이동
     for (let i = 0; i < totalDice; i++) {
       setTimeout(() => {
@@ -583,13 +559,6 @@ export default function Board() {
     if (socketClient) {
       sendWsMessage(socketClient, playerInfo.playerId, "send/roll");
     }
-
-    // 주사위 값 결정
-    // const Dice1 = Math.floor(Math.random() * 6) + 1;
-    // const Dice2 = Math.floor(Math.random() * 6) + 1;
-    // setDiceActive(true);
-    // setDice1Value(Dice1);
-    // setDice2Value(Dice2);
   };
 
   /** 주사위 굴리기 함수(개발자용) */
