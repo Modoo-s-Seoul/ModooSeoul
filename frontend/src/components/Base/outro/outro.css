@@ -28,7 +28,7 @@
 
   width: 60vw;
   height: 60vh;
-  margin: 2%;
+  margin: 2px;
 
   background-color: blanchedalmond;
   border-radius: 50px;
@@ -39,9 +39,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
+  height: 100%;
+  flex: 1;
   margin: 20px;
-  background-color: rgb(146, 122, 86);
+  border-radius: 50px;
+  background-color: blanchedalmond;
+  box-shadow: 2px 2px 5px black, inset 2px 2px 5px black;
 }
 
 .rankingTitle{

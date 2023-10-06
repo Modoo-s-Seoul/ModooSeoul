@@ -3,17 +3,18 @@ import "./NotMyTurn.css";
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  displayPlayerDataState,
   doublePrisonState,
-  isCommonTurnVisibleState,
   isModalMsgActiveState,
-  isUserTurnVisibleState,
   modalMsgState,
   pNumState,
   turnState,
   whoAreYouState,
+  // isCommonTurnVisibleState,
+  // isUserTurnVisibleState,
 } from "../../data/IngameData";
 import { useEffect } from "react";
-import MessageModal from "./MessageModal";
+// import MessageModal from "./MessageModal";
 
 /** 본인 턴이 아닐때 보이는 메세지입니다 */
 export default function NotMyTurn() {
@@ -24,13 +25,14 @@ export default function NotMyTurn() {
   const [doublePrison, setDoublePrison] = useRecoilState(doublePrisonState);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
   const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
-  const isUserTurnVisible = useRecoilValue(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
-  const isCommonTurnVisible = useRecoilValue(isCommonTurnVisibleState); // 공통 턴 수행 가능 여부
+  // const isUserTurnVisible = useRecoilValue(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
+  // const isCommonTurnVisible = useRecoilValue(isCommonTurnVisibleState); // 공통 턴 수행 가능 여부
+  const playerData = useRecoilValue(displayPlayerDataState); // 플레이어 현재 정보
 
   // 출력용 플레이어 턴 매칭
   const turnMatch = [];
   for (let i = 0; i < pNum; i++) {
-    turnMatch.push(`Player ${i + 1}의 턴입니다`);
+    turnMatch.push(`${playerData[i].name}의 턴입니다`);
   }
   // 출력용 공통턴 매칭
   turnMatch.push("자유 거래시간입니다.");
@@ -61,7 +63,7 @@ export default function NotMyTurn() {
             </>
           )}
         </div>
-        {!isUserTurnVisible && !isCommonTurnVisible && <MessageModal />}
+        {/* {!isUserTurnVisible && !isCommonTurnVisible && <MessageModal />} */}
       </div>
     </>
   );

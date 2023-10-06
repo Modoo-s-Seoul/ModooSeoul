@@ -15,6 +15,11 @@ interface AnimationStates {
   [key: string]: boolean;
 }
 
+// 단위 끊어서 표현
+function formatCurrency(amount: number): string {
+  return amount.toLocaleString("en-US");
+}
+
 export default function UserInfo() {
   const playerData = useRecoilValue(displayPlayerDataState); // 플레이어 현재 정보
   const turn = useRecoilValue(turnState); // 현재 플레이 순서
@@ -187,6 +192,7 @@ export default function UserInfo() {
                   style={{
                     color: `white`,
                     backgroundColor: `#${player.color}`,
+                    fontSize: "40px",
                   }}
                   className="playerName"
                 >
@@ -205,9 +211,9 @@ export default function UserInfo() {
                   }
                   `}
                   >
-                    {player.cash}원
+                    {formatCurrency(player.cash)}원
                     <div className="totalAsset">
-                      총자산 : {player.totalAsset}원
+                      총자산 : {formatCurrency(player.totalAsset)}원
                     </div>
                   </div>
                 </div>
