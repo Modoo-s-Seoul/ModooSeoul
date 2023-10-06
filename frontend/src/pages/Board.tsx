@@ -1110,6 +1110,11 @@ export default function Board() {
 
   /** 자금 디스플레이 반영 수동 */
   useEffect(() => {
+    // 플레이어 정보 업데이트
+    if (weblocation.state) {
+      const gameId = weblocation.state.gameId;
+      sendWsMessage(socketClient, gameId, "send/players-info");
+    }
     // 돈정보 디스플레이 업데이트
     setDisplayPlayerData(playerData);
   }, [turn]);
