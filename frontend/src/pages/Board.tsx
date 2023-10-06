@@ -23,6 +23,7 @@ import OilSelectBtn from "../components/Turn/OilSelectBtn";
 import SubwaySelectBtn from "../components/Turn/SubwaySelectBtn";
 import StartSelectBtn from "../components/Turn/StartSelectBtn";
 import StockCheck from "../components/CommonTurn/Stock/StockCheck";
+import EvaderNotification from "../components/CommonTurn/EvaderNotification";
 // css 로드
 import "./Board.css";
 // 데이터로드
@@ -67,6 +68,7 @@ import {
   oilStartState,
   isGameEndVisibleState,
   isRankingVisibleState,
+  isNotificationVisible,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
@@ -149,6 +151,8 @@ export default function Board() {
     isCommonGroundSellActiveState
   ); // 공통턴 땅판매 토글
   const oilStart = useRecoilValue(oilStartState); // 오일 시작
+
+  const notificationVisible = useRecoilValue(isNotificationVisible);
 
   // 데이터 보관
   const [boardData, setBoardData] = useRecoilState(boardDataState); // 보드데이터
@@ -1187,6 +1191,7 @@ export default function Board() {
       </IngameModal>
       <NewsCheck />
       <StockCheck />
+      {notificationVisible && <EvaderNotification />}
 
       {/* Phaser 게임구현 */}
       <div ref={game} className="GameScreen" id="gameScreen" />
