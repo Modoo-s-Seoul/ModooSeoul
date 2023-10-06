@@ -36,3 +36,32 @@
 .completeButton:hover {
   background-color: rgb(253, 119, 119);
 }
+
+.btnCollect {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
+.taxButton {
+  width: 150px;
+  height: 60px;
+  background-color: rgb(67, 196, 63);
+  border: none;
+  border-radius: 200px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #fff;
+  font-weight: bold;
+  font-weight: 400;
+  font-size: 30px;
+
+  margin-top: 40px;
+}
+
+.taxButton:hover {
+  background-color: rgb(49, 146, 46);
+}

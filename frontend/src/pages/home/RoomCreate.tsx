@@ -63,8 +63,8 @@ export default function RoomCreate() {
         <div className="roomHeader">
           <BackBtn />
         </div>
-        <div className="roomBody">
-          <h1>방 생성하기</h1>
+        <div className="roomCreateBody">
+          <div className="roomCreateTitle">방 생성하기</div>
           <div className="roomInput">
             <div>닉네임</div>
             <input
@@ -72,15 +72,21 @@ export default function RoomCreate() {
               name="nickname"
               value={nickname}
               onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleCreateRoom();
+                }
+              }}
               className="customInput"
             />
           </div>
           <div className="clickBtnContainer">
             <div onClick={handleCreateRoom}>
               <ClickBtn
-                width={120}
+                width={140}
                 height={60}
-                fontsize={21}
+                fontsize={27}
                 text={"방 생성"}
               />
             </div>

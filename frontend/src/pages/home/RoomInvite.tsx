@@ -71,15 +71,21 @@ export default function Invite() {
         <div className="roomHeader">
           <BackBtn />
         </div>
-        <div>
-          <h1>방 입장하기</h1>
+        <div className="roomCreateBody">
+          <div className="roomCreateTitle">방 입장하기</div>
           <div className="roomInput">
-            <div>닉네임</div>{" "}
+            <div>닉네임</div>
             <input
               type="text"
               name="nickname"
               className="customInput"
               onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handelGoGame();
+                }
+              }}
             />
           </div>
           <div className="clickBtnContainer" onClick={handelGoGame}>

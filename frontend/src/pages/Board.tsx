@@ -62,13 +62,13 @@ import {
   isCommonGroundSellActiveState,
   whoAreYouState,
   groundMsgNumState,
-  doublePrisonState,
   isGameStartVisibleState,
   isYourTurnVisibleState,
   oilStartState,
   isGameEndVisibleState,
   isRankingVisibleState,
   isNotificationVisible,
+  SmallMonenyChangeState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
@@ -101,12 +101,11 @@ export default function Board() {
     "assets/alienYellow.png",
   ];
   // 개발자용
-  const [devDice1, setDevDice1] = useState<number>(0);
-  const [devDice2, setDevDice2] = useState<number>(0);
+  // const [devDice1, setDevDice1] = useState<number>(0);
+  // const [devDice2, setDevDice2] = useState<number>(0);
 
   // 초기 정보
   const [doubleCnt, setDoubleCnt] = useRecoilState(doubleCntState); // 더블 카운트
-  const setDoublePrison = useSetRecoilState(doublePrisonState);
   const pNum = useRecoilValue(pNumState); // 플레이어 수
   const groundChange = useRecoilValue(groundChangeState); // 땅 변동
   const buildingChange = useRecoilValue(buildingChangeState); // 건물 변동
@@ -173,6 +172,9 @@ export default function Board() {
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
+  const [smallMoneryChange, setSmallMoneyChange] = useRecoilState(
+    SmallMonenyChangeState
+  );
 
   // 토글
   const [isGameEndVisible] = useRecoilState(isGameEndVisibleState); // 1. 게임 종료 인자
@@ -423,6 +425,14 @@ export default function Board() {
     const tileSize = globalTileSize;
     const newRow = playerPositions[turn].row + rowOffset;
     const newCol = playerPositions[turn].col + colOffset;
+    // 월급흭득
+    if (newRow == 0 && newCol == 0) {
+      const newSmallMoneyStatus = [...smallMoneryChange];
+      newSmallMoneyStatus[turn] = { player: true };
+      setSmallMoneyChange(newSmallMoneyStatus);
+      // 돈정보 디스플레이 업데이트
+      setDisplayPlayerData(playerData);
+    }
 
     if (newRow >= 0 && newRow < 9 && newCol >= 0 && newCol < 9) {
       playerPositions[turn].row = newRow;
@@ -455,28 +465,6 @@ export default function Board() {
     Dice1: number,
     Dice2: number
   ) => {
-    // 더블 맥스 처리
-    if (doubleCnt > 1) {
-      if (Dice1 == Dice2) {
-        setDoublePrison(true);
-        // 캐릭터 감옥이동
-        const tileSize = globalTileSize;
-        const x = 8 * (tileSize / 2) + config.scale.width / 2;
-        const y = 8 * (tileSize / 4) + config.scale.height / 2;
-        playerSprite[turn].setPosition(
-          x + playerPositions[turn].mx,
-          y + playerPositions[turn].my
-        );
-        playerPositions[turn].row = 0;
-        playerPositions[turn].col = 8;
-        // 기본 정보 재세팅
-        setDoubleCnt(0);
-        setIsRolling(false);
-        // 턴넘기기
-        sendWsMessage(socketClient, playerInfo.gameId, "send/pass-turn");
-        return;
-      }
-    }
     // 더블 맥스가 아닐시 정상 이동
     for (let i = 0; i < totalDice; i++) {
       setTimeout(() => {
@@ -575,33 +563,26 @@ export default function Board() {
     if (socketClient) {
       sendWsMessage(socketClient, playerInfo.playerId, "send/roll");
     }
-
-    // 주사위 값 결정
-    // const Dice1 = Math.floor(Math.random() * 6) + 1;
-    // const Dice2 = Math.floor(Math.random() * 6) + 1;
-    // setDiceActive(true);
-    // setDice1Value(Dice1);
-    // setDice2Value(Dice2);
   };
 
   /** 주사위 굴리기 함수(개발자용) */
-  const rollDiceDev = () => {
-    if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
-    if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
-    setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
-    // (실제구현) 주사위값 변경 요청
-    if (socketClient) {
-      sendWsMessage(
-        socketClient,
-        playerInfo.playerId,
-        "send/roll-test",
-        `{"dice1":${devDice1},"dice2":${devDice2}}`
-      );
-    }
-    // setDiceActive(true);
-    // setDice1Value(Number(devDice1));
-    // setDice2Value(Number(devDice2));
-  };
+  // const rollDiceDev = () => {
+  //   if (turn >= pNum) return; // 턴이 아닐시 주사위 굴리기 무시
+  //   if (isRolling) return; // 이미 주사위가 굴리는 중일 경우 무시
+  //   setIsRolling(true); // 현재 주사위 상태 굴리는 중으로 설정
+  //   // (실제구현) 주사위값 변경 요청
+  //   if (socketClient) {
+  //     sendWsMessage(
+  //       socketClient,
+  //       playerInfo.playerId,
+  //       "send/roll-test",
+  //       `{"dice1":${devDice1},"dice2":${devDice2}}`
+  //     );
+  //   }
+  //   // setDiceActive(true);
+  //   // setDice1Value(Number(devDice1));
+  //   // setDice2Value(Number(devDice2));
+  // };
 
   /**실수로 인한 창 닫기, 새로고침 방지 */
   const preventRefresh = (e: BeforeUnloadEvent) => {
@@ -1127,6 +1108,12 @@ export default function Board() {
     }
   }, [isOilActive, isSubwayActive, isStartActive, isCommonGroundSellActive]);
 
+  /** 자금 디스플레이 반영 수동 */
+  useEffect(() => {
+    // 돈정보 디스플레이 업데이트
+    setDisplayPlayerData(playerData);
+  }, [turn]);
+
   /** 렌더링 부분 */
   return (
     <div>
@@ -1197,7 +1184,7 @@ export default function Board() {
       <div ref={game} className="GameScreen" id="gameScreen" />
 
       {/* 개발자용 */}
-      {whoAreYou !== 6 && (
+      {/* {whoAreYou !== 6 && (
         <div className="devContainer">
           <input
             type="number"
@@ -1231,7 +1218,7 @@ export default function Board() {
             강제 턴이동
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
