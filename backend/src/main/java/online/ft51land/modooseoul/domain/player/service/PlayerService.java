@@ -162,8 +162,12 @@ public class PlayerService {
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
         diceRoller.setSeed(System.currentTimeMillis());
-        Long one = diceRoller.nextLong(6) + 1;
-        Long two = diceRoller.nextLong(6) + 1;
+//        Long one = diceRoller.nextLong(6) + 1;
+//        Long two = diceRoller.nextLong(6) + 1;
+
+
+        Long one = 1L;
+        Long two = 3L;
 
         // 두 개의 눈금이 같을 경우
         if (one.equals(two)) {
