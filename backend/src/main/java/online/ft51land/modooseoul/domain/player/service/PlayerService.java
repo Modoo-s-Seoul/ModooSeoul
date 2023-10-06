@@ -153,7 +153,7 @@ public class PlayerService {
 
         Game game = getGameById(rolledPlayer.getGameId());
 
-        // 턴 정보 확인 TODO : 주석해제하기
+        // 턴 정보 확인
 //        if(!rolledPlayer.getTurnNum().equals(game.getTurnInfo())){
 //            // 주사위 던지기를 요청한 플레이의 턴 순서와 현재 게임의 턴 순서가 맞지 않으면 예외처리
 //            throw  new BusinessException(ErrorMessage.BAD_SEQUENCE_REQUEST);
@@ -166,12 +166,12 @@ public class PlayerService {
         Long two = diceRoller.nextLong(6) + 1;
 
         // 두 개의 눈금이 같을 경우
-        if (one.equals(two)) {
-            rolledPlayer.updateDouble(!rolledPlayer.getIsDouble());
-        }
-        else {
-            rolledPlayer.updateDouble(false);
-        }
+//        if (one.equals(two)) {
+//            rolledPlayer.updateDouble(!rolledPlayer.getIsDouble());
+//        }
+//        else {
+//        }
+        rolledPlayer.updateDouble(false);
 
         // 주사위 얼마 나왔는지 저장
         rolledPlayer.updateDice(one + two);
