@@ -51,7 +51,7 @@ export default function TaxThiefCatch() {
       <div className="modalBaseBody">
         <div className="taxThiefGrid">
           {playerData.map((player, index) => {
-            if (player.totalAsset !== 0)
+            if (player.totalAsset !== 0 && player.name !== playerInfo.nickname)
               return (
                 <div
                   key={index}
