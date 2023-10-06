@@ -130,6 +130,10 @@ export default function CommonTurn() {
       "send/timer",
       `{"timerType":"FREE_ACTION"}`
     );
+    // 감옥일시 바로 턴종료 요청
+    if (isPrison) {
+      sendWsMessage(socketClient, playerInfo.playerId, `send/action-finish`);
+    }
 
     return () => {
       setIsPrison(false);
