@@ -15,6 +15,7 @@
   align-items: center;
   width: 100vw;
   /* margin: auto; */
+  margin-top: 100px;
 }
 
 .roomHeaderBtn {
@@ -23,15 +24,16 @@
 
 .roomTitle {
   font-size: 5vw;
+  margin-bottom: 50px;
 }
 
 .roomInput {
-  margin: 10px;
-  font-size: 2vw;
+  margin: 30px;
+  font-size: 40px;
 }
 
 .roomInput input {
-  width: 20vw;
+  width: 15vw;
   /* height: 5vh; */
 }
 
@@ -90,6 +92,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  flex: 1;
 }
 
 /* roomCreate */
@@ -120,4 +123,16 @@
 .selectActive {
   background-color: rgb(149, 133, 99) !important;
   color: white !important;
+}
+
+.roomCreateBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.roomCreateTitle{
+  font-size: 70px;
+  font-weight: 700;
 }

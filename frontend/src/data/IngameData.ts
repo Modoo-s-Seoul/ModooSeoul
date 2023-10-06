@@ -12,6 +12,7 @@ import {
   subwayChangeType,
   playerStockInfoType,
   rankingPlayerData,
+  smallMoneyChangeType,
 } from "../interface/ingame";
 
 /*
@@ -451,4 +452,14 @@ export const isNotificationVisible = atom<boolean>({
 export const notificationMsg = atom<string>({
   key: "notificationMsg",
   default: "",
+
+/** 월급 변동감지 */
+export const SmallMonenyChangeState = atom<smallMoneyChangeType[]>({
+  key: "SmallMonenyChangeState",
+  default: [
+    { player: false },
+    { player: false },
+    { player: false },
+    { player: false },
+  ],
 });

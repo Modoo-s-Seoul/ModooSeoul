@@ -18,6 +18,7 @@ public class PlayerController {
 
     @PostMapping("/join")
     public BaseResponseDto<PlayerJoinResponseDto> joinGame(@RequestBody PlayerJoinRequestDto playerJoinRequestDto){
+        System.out.println("방 참가 요청");
         return BaseResponseDto.ok(playerService.joinGame(playerJoinRequestDto));
     }
 

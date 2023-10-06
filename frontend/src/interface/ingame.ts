@@ -100,7 +100,12 @@ export interface subwayChangeType {
   row: number | null;
   col: number | null;
   move: boolean;
-  index : number;
+  index: number;
+}
+
+/** (타입) 월급 변동 기록 */
+export interface smallMoneyChangeType {
+  player: boolean;
 }
 
 /** (타입) 플레이어 주식 정보 */
