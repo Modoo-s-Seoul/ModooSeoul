@@ -12,6 +12,7 @@ import {
   subwayChangeType,
   playerStockInfoType,
   rankingPlayerData,
+  smallMoneyChangeType,
 } from "../interface/ingame";
 
 /*
@@ -409,7 +410,7 @@ export const isPrisonState = atom<boolean>({
 /** 지하철 변동감지 */
 export const isSubwayState = atom<subwayChangeType[]>({
   key: "isSubwayState",
-  default: [{ player: null, row: 0, col: 0, move: false, index : 0 }],
+  default: [{ player: null, row: 0, col: 0, move: false, index: 0 }],
 });
 
 /** 찬스카드 내용 */
@@ -441,4 +442,15 @@ export const playerStockInfoState = atom<playerStockInfoType>({
     stockAmounts: [], //보유 주식 별 주수
     stockPrices: [], //보유 주식 별 현재 가치,
   },
+});
+
+/** 월급 변동감지 */
+export const SmallMonenyChangeState = atom<smallMoneyChangeType[]>({
+  key: "SmallMonenyChangeState",
+  default: [
+    { player: false },
+    { player: false },
+    { player: false },
+    { player: false },
+  ],
 });
