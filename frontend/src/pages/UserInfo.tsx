@@ -227,7 +227,9 @@ export default function UserInfo() {
                   }
                   `}
                       >
-                        {formatCurrency(player.cash)}원
+                        <div className="cashText">
+                          {formatCurrency(player.cash)}원
+                        </div>
                         <div className="totalAsset">
                           총자산 : {formatCurrency(player.totalAsset)}원
                         </div>
