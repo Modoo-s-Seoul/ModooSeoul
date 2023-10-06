@@ -29,6 +29,8 @@ import {
   moreNewsState,
   isGameEndVisibleState,
   rankingDataState,
+  isNotificationVisible,
+  notificationMsg,
 } from "../../data/IngameData";
 import { matchIndex } from "./../../data/IngameData";
 import { sendWsMessage } from "./IngameSendFunction";
@@ -65,6 +67,8 @@ export default function IngameWebSocket() {
   const setMoreNews = useSetRecoilState(moreNewsState);
   const setIsGameEndVisible = useSetRecoilState(isGameEndVisibleState); // 게임 종료 토글
   const setRankingData = useSetRecoilState(rankingDataState);
+  const setNotificationVisible = useSetRecoilState(isNotificationVisible);
+  const setNotificationMsg = useSetRecoilState(notificationMsg);
 
   // 게임 정보
   const weblocation = useLocation();
@@ -505,6 +509,8 @@ export default function IngameWebSocket() {
           const res = JSON.parse(msg.body);
           const receivedData = res.data;
           console.log("탈세 신고 결과 공지", receivedData);
+          setNotificationMsg(receivedData.message);
+          setNotificationVisible(true);
         }
       );
 
