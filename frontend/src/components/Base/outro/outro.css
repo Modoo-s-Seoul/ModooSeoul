@@ -5,7 +5,7 @@
   transform: translate(-50%, -50%);
   font-size: 50; /* 초기 크기 */
   animation: shake 1s cubic-bezier(0.36, 0.07, 0.19, 0.97) both infinite,
-    grow 2s ease-out;
+    grow 5s ease-out;
   text-shadow: 2px 2px 2px white, -2px -2px 2px white;
   z-index: 9999;
 }
@@ -85,6 +85,12 @@
   flex: 1;
 }
 .rankingRow {
+  display: flex;
+  border: 10px ridge rgb(255, 255, 255, 0.4);
+  width: 300px;
+  margin: 10px;
+  padding: 10px;
+  font-size: 40px;
 }
 .rankingFooter {
   display: flex;
