@@ -419,7 +419,8 @@ public class PlayerService {
     public PlayerChanceMessage randomChance(Player player) {
         //랜덤 숫자 생성(1~4)
         Random random = new Random();
-        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
+//        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
+        Long chanceNum = 4L;
         player.setChanceNum(chanceNum);
         playerRepository.save(player);
 
