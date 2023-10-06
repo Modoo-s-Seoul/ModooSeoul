@@ -162,12 +162,8 @@ public class PlayerService {
         // 랜덤 숫자 생성
         Random diceRoller = new Random();
         diceRoller.setSeed(System.currentTimeMillis());
-//        Long one = diceRoller.nextLong(6) + 1;
-//        Long two = diceRoller.nextLong(6) + 1;
-
-
-        Long one = 1L;
-        Long two = 3L;
+        Long one = diceRoller.nextLong(6) + 1;
+        Long two = diceRoller.nextLong(6) + 1;
 
         // 두 개의 눈금이 같을 경우
         if (one.equals(two)) {
@@ -423,8 +419,7 @@ public class PlayerService {
     public PlayerChanceMessage randomChance(Player player) {
         //랜덤 숫자 생성(1~4)
         Random random = new Random();
-//        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
-        Long chanceNum = 4L;
+        Long chanceNum = random.nextLong(4) + 1; //chance카드개수(1~4)
         player.setChanceNum(chanceNum);
         playerRepository.save(player);
 
