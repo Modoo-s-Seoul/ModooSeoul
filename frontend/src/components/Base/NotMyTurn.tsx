@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   displayPlayerDataState,
   doublePrisonState,
-  isModalMsgActiveState,
+  // isModalMsgActiveState,
   modalMsgState,
   pNumState,
   turnState,
@@ -24,7 +24,7 @@ export default function NotMyTurn() {
   const whoAreYou = useRecoilValue(whoAreYouState);
   const [doublePrison, setDoublePrison] = useRecoilState(doublePrisonState);
   const setModalMsg = useSetRecoilState(modalMsgState); // 모달 메세지
-  const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
+  // const setIsModalMsgActive = useSetRecoilState(isModalMsgActiveState); // 메세지 모달 토글
   // const isUserTurnVisible = useRecoilValue(isUserTurnVisibleState); // 플레이어 턴 수행 가능 여부
   // const isCommonTurnVisible = useRecoilValue(isCommonTurnVisibleState); // 공통 턴 수행 가능 여부
   const playerData = useRecoilValue(displayPlayerDataState); // 플레이어 현재 정보
@@ -43,7 +43,7 @@ export default function NotMyTurn() {
   useEffect(() => {
     if (doublePrison == true) {
       setModalMsg("더블 3회! 감옥이동");
-      setIsModalMsgActive(true);
+      // setIsModalMsgActive(true);
       setDoublePrison(false);
     }
   }, [doublePrison]);

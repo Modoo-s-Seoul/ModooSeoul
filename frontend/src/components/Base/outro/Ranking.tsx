@@ -33,15 +33,15 @@ export default function Ranking() {
               {rankingData.length >= 1 && (
                 <>
                   <div className={`rankingRow ranking1`}>
-                    <div>1위 {rankingData[0].nickname}</div>
+                    <div>🥇1위 {rankingData[0].nickname}</div>
                   </div>
                   <div className={`rankingRow ranking2`}>
-                    2위 {rankingData[1].nickname}
+                    🥈 2위 {rankingData[1].nickname}
                   </div>
                   {rankingData.length >= 3 && (
                     <>
                       <div className={`rankingRow ranking3`}>
-                        3위 {rankingData[2].nickname}
+                        🥉3위 {rankingData[2].nickname}
                       </div>
                     </>
                   )}

@@ -36,7 +36,7 @@ export default function TaxThiefCatch() {
         socketClient,
         playerInfo.playerId,
         "send/report",
-        `{"reporteeName":"${taxThief}"}`
+        `{"nickname":"${taxThief}"}`
       );
       setReported(true);
       console.log(`${taxThief} has been reported.`);

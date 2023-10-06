@@ -113,9 +113,9 @@ export default function DiceRoll({ rollDiceInBoard }: diceRollProps) {
           <div className="diceContainer">
             <div className="diceContainer">
               <div className="msgContainer">
-                {isRolling && diceone == dicetwo && (
+                {/* {isRolling && diceone == dicetwo && (
                   <div className="doubleMsg">더블</div>
-                )}
+                )} */}
                 {isRolling && <div className="sumMsg">{diceone + dicetwo}</div>}
               </div>
               <div className="flexContainer">
