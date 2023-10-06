@@ -67,6 +67,7 @@ import {
   oilStartState,
   isGameEndVisibleState,
   isRankingVisibleState,
+  SmallMonenyChangeState,
 } from "../data/IngameData";
 import { musicState } from "../data/CommonData";
 import { boardDataState } from "../data/BoardData";
@@ -169,6 +170,9 @@ export default function Board() {
   buildingSprite;
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]); // 플레이어 위치
   const [builingData, setBuildingInfo] = useRecoilState(builingInfoState); // 건물 데이터
+  const [smallMoneryChange, setSmallMoneyChange] = useRecoilState(
+    SmallMonenyChangeState
+  );
 
   // 토글
   const [isGameEndVisible] = useRecoilState(isGameEndVisibleState); // 1. 게임 종료 인자
@@ -419,6 +423,14 @@ export default function Board() {
     const tileSize = globalTileSize;
     const newRow = playerPositions[turn].row + rowOffset;
     const newCol = playerPositions[turn].col + colOffset;
+    // 월급흭득
+    if (newRow == 0 && newCol == 0) {
+      const newSmallMoneyStatus = [...smallMoneryChange];
+      newSmallMoneyStatus[turn] = { player: true };
+      setSmallMoneyChange(newSmallMoneyStatus);
+      // 돈정보 디스플레이 업데이트
+      setDisplayPlayerData(playerData);
+    }
 
     if (newRow >= 0 && newRow < 9 && newCol >= 0 && newCol < 9) {
       playerPositions[turn].row = newRow;
@@ -1122,6 +1134,12 @@ export default function Board() {
       }
     }
   }, [isOilActive, isSubwayActive, isStartActive, isCommonGroundSellActive]);
+
+  /** 자금 디스플레이 반영 수동 */
+  useEffect(() => {
+    // 돈정보 디스플레이 업데이트
+    setDisplayPlayerData(playerData);
+  }, [turn]);
 
   /** 렌더링 부분 */
   return (
