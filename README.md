@@ -1,4 +1,5 @@
 <!-- 대문 이미지 넣기  -->
+![대문사진](https://github.com/Modoo-s-Seoul/ModooSeoul/assets/99172832/2c078e02-2791-42ea-8379-25658e2433ef)
 
 
 
@@ -32,27 +33,27 @@
             멤버
       </td>
       <td align="center" width="130px">
-        <a href="https://github.com/An0401na"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/99172832?v=4"/></a>
+        <a href="https://github.com/An0401na"><img height="100px" width="100px" src="https://github.com/Modoo-s-Seoul/ModooSeoul/assets/99172832/d2526129-4376-4aa9-b69f-0ab965997a91"/></a>
             <br />
             <a href="https://github.com/An0401na">안 나(BE)</a>
       </td>
        <td align="center" width="130px">
-        <a href="https://github.com/yeeeooonn"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/73294363?v=4"/></a>
+        <a href="https://github.com/yeeeooonn"><img height="100px" width="100px" src="https://github.com/Modoo-s-Seoul/ModooSeoul/assets/99172832/0d376c41-405c-43f5-881a-367813938257"/></a>
             <br />
             <a href="https://github.com/yeeeooonn">이수연(BE)</a>
       </td> 
       <td align="center" width="130px">
-        <a href="https://github.com/changkim1"><img height="100px" width="100px" src="https://file.notion.so/f/s/3b0af5b5-2eb3-4ba3-a570-892596ee9aec/image.png?id=3187fc68-9228-45e6-80ae-dc582624de99&table=block&spaceId=5fa1f5f0-4946-41aa-966b-9a3cd388acd0&expirationTimestamp=1696514400000&signature=UmZv9S31GTye7kRPSRHXWqwMNZKMFxgXfRNmXk7VTOg&downloadName=image.png"/></a>
+        <a href="https://github.com/changkim1"><img height="100px" width="100px" src="https://github.com/Modoo-s-Seoul/ModooSeoul/assets/99172832/9d788429-9a6a-4bdf-bbb8-04c997c4a0dc"/></a>
             <br />
             <a href="https://github.com/changkim1">김창희(BE)</a>
       </td>
       <td align="center" width="130px">
-        <a href="https://github.com/archedu-JunhaCho"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/u/122509605?v=4"/></a>
+        <a href="https://github.com/archedu-JunhaCho"><img height="100px" width="100px" src="https://github.com/Modoo-s-Seoul/ModooSeoul/assets/99172832/553ae59c-5ef7-4b62-bb0c-5bad6250804c"/></a>
             <br />
             <a href="https://github.com/archedu-JunhaCho">조준하(FE)</a>
       </td>
        <td align="center" width="130px">
-        <a href="https://github.com/Baejw0111"><img height="100px" width="100px" src="https://file.notion.so/f/s/048ce6da-d4ce-495d-a7d9-9e437a59e152/%EB%B0%B0%EC%A0%95%EC%9B%90_%EC%A6%9D%EB%AA%85%EC%82%AC%EC%A7%84.jpg?id=5b62ec1d-4280-4d06-ad37-c5e41a06e956&table=block&spaceId=5fa1f5f0-4946-41aa-966b-9a3cd388acd0&expirationTimestamp=1696514400000&signature=DSAJa3Pa5wLhoCNE7YarBAJCBqeUa_Sd4A9uESV2OM4&downloadName=%EB%B0%B0%EC%A0%95%EC%9B%90_%EC%A6%9D%EB%AA%85%EC%82%AC%EC%A7%84.jpg"/></a>
+        <a href="https://github.com/Baejw0111"><img height="100px" width="100px" src="https://github.com/Modoo-s-Seoul/ModooSeoul/assets/99172832/d481b264-e169-4bc1-b1f9-5c7812d739f8"/></a>
             <br />
             <a href="https://github.com/Baejw0111">배정원(FE)</a>
       </td> 
